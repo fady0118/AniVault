@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --breakpoint-xs: 30rem;
+  --breakpoint-2xl: 100rem;
+  --breakpoint-3xl: 120rem;
+
+  --text-md: 1rem;
+
+  --color-amethyst-smoke-50: #f8f8fa;
+  --color-amethyst-smoke-100: #f2f2f5;
+  --color-amethyst-smoke-200: #e7e6ee;
+  --color-amethyst-smoke-300: #d5d3df;
+  --color-amethyst-smoke-400: #bdb9cc;
+  --color-amethyst-smoke-500: #a8a1bb;
+  --color-amethyst-smoke-600: #8e83a4;
+  --color-amethyst-smoke-700: #7c7190;
+  --color-amethyst-smoke-800: #685e79;
+  --color-amethyst-smoke-900: #564e64;
+  --color-amethyst-smoke-950: #383342;
+
+
+  --color-dark-amethyst-smoke-50: #1b1e1f;
+  --color-dark-amethyst-smoke-100: #1e2122;
+  --color-dark-amethyst-smoke-200: #242728;
+  --color-dark-amethyst-smoke-300: #2d3133;
+  --color-dark-amethyst-smoke-400: #383448;
+  --color-dark-amethyst-smoke-500: #453e56;
+  --color-dark-amethyst-smoke-600: #554c68;
+  --color-dark-amethyst-smoke-700: #625972;
+  --color-dark-amethyst-smoke-800: #534b61;
+  --color-dark-amethyst-smoke-900: #453e50;
+  --color-dark-amethyst-smoke-950: #2d2935;
+
+  --color-text-light: #383342;
+  --color-text-dark: #f8f8fa;
+}
+
+.duration-300 {
+  transition: all 300ms;
+  animation-duration: 300ms;
+}
+.slide-in-from-top{
+  animation: slideInFromTop ;
+}
+@keyframes slideInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
