@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "tailwindcss";
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  --font-inter: "Inter", sans-serif;
+
   --breakpoint-xs: 30rem;
   --breakpoint-2xl: 100rem;
   --breakpoint-3xl: 120rem;
@@ -38,13 +40,30 @@
   --color-text-dark: #f8f8fa;
 }
 
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, and Opera */
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+}
+
+
 .duration-300 {
   transition: all 300ms;
   animation-duration: 300ms;
 }
-.slide-in-from-top{
-  animation: slideInFromTop ;
+
+.slide-in-from-top {
+  animation: slideInFromTop;
 }
+
 @keyframes slideInFromTop {
   0% {
     opacity: 0;

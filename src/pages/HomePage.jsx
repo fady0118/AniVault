@@ -1,12 +1,25 @@
-import React, { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import HomeSlider from "../components/home/HomeSlider";
+
+//https://api.jikan.moe/v4/schedules?filter=sunday
 export default function HomePage() {
+  const [schedual, setSchedual] = useState([]);
+  useEffect(() => {
+    const date = new Date();
+    const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
+    async function fetchData() {
+      const response = await fetch(`https://api.jikan.moe/v4/schedules?filter=${dayName}`);
+      const data = await response.json();
+      setSchedual(data);
+    }
+    fetchData();
+  }, []);
+  useEffect(() => {
+    console.log(schedual);
+  }, [schedual]);
   return (
-    <div className="flex flex-col justify-between items-center">
-      <div className="w-2/4 h-[159vh] bg-linear-150 from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%"></div>
-      <p>
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eligendi nisi quidem expedita dolorum veritatis, asperiores natus a aspernatur harum deserunt? Sed, suscipit incidunt. Sunt,
-        distinctio aperiam iure itaque vel eligendi.
-      </p>
+    <div className="w-screen">
+      <HomeSlider />
     </div>
   );
 }

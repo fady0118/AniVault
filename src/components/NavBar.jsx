@@ -1,4 +1,5 @@
 import { Menu, MonitorCog, Moon, Search, Sun } from "lucide-react";
+import { useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import SearchModal from "./SearchModal";
 
@@ -12,6 +13,7 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
   const [showThemeList, setShowThemeList] = useState(false);
   const [showNav, setShowNav] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  let navigate = useNavigate();
 
   useEffect(() => {
     themeSelect(theme);
@@ -24,8 +26,8 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
 
   return (
     <>
-      <div className="z-30 w-screen flex justify-between items-center px-5 sm:px-7 lg:px-9 xl:px-12 h-15 capitalize fixed top-0 bg-amethyst-smoke-500/70 dark:bg-dark-amethyst-smoke-100/70 backdrop-blur-3xl shadow-2xl shadow-amethyst-smoke-800/40">
-        <img src="/logo.png" alt="logo" className="h-1/4 xs:h-1/3 grayscale brightness-25 hover:brightness-75 dark:brightness-[150%] dark:hover:brightness-200 duration-300 hover:cursor-pointer" />
+      <nav className="z-30 w-screen flex justify-between items-center px-5 sm:px-7 lg:px-9 xl:px-12 h-15 capitalize fixed top-0 bg-amethyst-smoke-500/70 dark:bg-dark-amethyst-smoke-100/70 backdrop-blur-3xl shadow-2xl shadow-amethyst-smoke-800/40">
+        <img onClick={()=>{navigate('/')}} src="/logo.png" alt="logo" className="h-1/4 xs:h-1/3 grayscale brightness-25 hover:brightness-75 dark:brightness-[150%] dark:hover:brightness-200 duration-300 hover:cursor-pointer" />
         <div className="flex items-center space-x-3 md:space-x-6 ">
           {windowWidth <= 640 && (
             <div id="searchTab" onClick={() => setShowSearchModal(true)} className="group hover:cursor-pointer text-text-light dark:text-text-dark">
@@ -90,7 +92,7 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
                 className="group hover:cursor-pointer hover:bg-dark-amethyst-smoke-700/20 duration-300 flex items-center justify-center px-1.5 py-0.5 space-x-1 font-extralight text-xs rounded-full bg-dark-amethyst-smoke-600/5 text-text-light dark:bg-amethyst-smoke-50/10 dark:text-text-dark "
               >
                 <Search size={12} />
-                <span>Ctrl K</span>
+                <span>Ctrl+K</span>
               </div>
               <div className="flex justify-evenly space-x-6">
                 <div className={classes.navListLinkText}>link1</div>
@@ -141,7 +143,7 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
             </div>
           )}
         </div>
-      </div>
+      </nav>
       {windowWidth <= 640 && showNav && (
         <div className="w-screen flex flex-col fixed top-15 text-sm xs:text-md z-10">
           <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link1</div>
