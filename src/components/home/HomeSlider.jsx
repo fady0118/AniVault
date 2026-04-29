@@ -1,9 +1,10 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
+import Slide from "./Slide";
 
-const arr = Array.from({ length: 10 }, (_, i) => i);
-
-export default function HomeSlider() {
+export default function HomeSlider({ schedual }) {
+  const arr = schedual.slice(0, 9);
+  //   console.log(arr);
   const sliderRef = useRef(null);
   const indexRef = useRef(0);
   const intervalRef = useRef(null);
@@ -31,11 +32,9 @@ export default function HomeSlider() {
 
   return (
     <>
-      <div id="slider" className="relative w-full h-[45vh] flex overflow-x-scroll no-scrollbar" ref={sliderRef}>
-        {arr.map((i) => (
-          <div key={i} className="slide w-full h-full flex justify-center items-center shrink-0 text-6xl">
-            {i}
-          </div>
+      <div id="slider" className="relative w-full h-[55vh] flex overflow-y-hidden overflow-x-scroll no-scrollbar" ref={sliderRef}>
+        {arr.map((animeData, i) => (
+          <Slide key={i} animeData={animeData} />
         ))}
         <div id="manualControls" className="w-full fixed top-[calc(15*0.25rem+22.5vh)] -translate-y-1/2  left-0 flex justify-between items-center px-4">
           <ChevronLeft

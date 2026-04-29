@@ -10,16 +10,10 @@ export default function HomePage() {
     async function fetchData() {
       const response = await fetch(`https://api.jikan.moe/v4/schedules?filter=${dayName}`);
       const data = await response.json();
-      setSchedual(data);
+      setSchedual(data.data?? []);
     }
     fetchData();
   }, []);
-  useEffect(() => {
-    console.log(schedual);
-  }, [schedual]);
-  return (
-    <div className="w-screen">
-      <HomeSlider />
-    </div>
-  );
+
+  return <div className="w-screen">{schedual.length && <HomeSlider schedual={schedual} />}</div>;
 }
