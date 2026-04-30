@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import HomeSlider from "../components/home/HomeSlider";
+import { getSeason } from "../utility/utils";
 
-//https://api.jikan.moe/v4/schedules?filter=sunday
 export default function HomePage() {
-  const [schedual, setSchedual] = useState([]);
+  const [season, setSeason] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    const date = new Date();
-    const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
     async function fetchData() {
-      const response = await fetch(`https://api.jikan.moe/v4/schedules?filter=${dayName}`);
+      const date = new Date();
+      const response = await fetch(`https://api.jikan.moe/v4/seasons/${date.getFullYear()}/${getSeason(date)}?filter=tv&limit=10`);
       const data = await response.json();
-      setSchedual(data.data?? []);
+      setSeason(data.data ?? []);
+      setIsLoading(false);
     }
     fetchData();
   }, []);
 
-  return <div className="w-screen">{schedual.length && <HomeSlider schedual={schedual} />}</div>;
+  return <div className="relative w-screen">{isLoading ? <div>Loading...</div> : <HomeSlider season={season} />}</div>;
 }

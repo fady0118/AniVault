@@ -2,9 +2,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
 import Slide from "./Slide";
 
-export default function HomeSlider({ schedual }) {
-  const arr = schedual.slice(0, 9);
-  //   console.log(arr);
+export default function HomeSlider({ season }) {
   const sliderRef = useRef(null);
   const indexRef = useRef(0);
   const intervalRef = useRef(null);
@@ -19,9 +17,9 @@ export default function HomeSlider({ schedual }) {
   }
   const startInterval = useCallback(() => {
     intervalRef.current = setInterval(() => {
-      indexRef.current = (indexRef.current + 1) % arr.length;
+      indexRef.current = (indexRef.current + 1) % season.length;
       scrollIntoView(indexRef.current);
-    }, 2500);
+    }, 10000);
   }, []);
 
   useEffect(() => {
@@ -32,38 +30,38 @@ export default function HomeSlider({ schedual }) {
 
   return (
     <>
-      <div id="slider" className="relative w-full h-[55vh] flex overflow-y-hidden overflow-x-scroll no-scrollbar" ref={sliderRef}>
-        {arr.map((animeData, i) => (
+      <div id="slider" className="relative w-full rounded-xl left-1/2 -translate-x-1/2 h-[75vh] flex overflow-y-hidden overflow-x-scroll no-scrollbar" ref={sliderRef}>
+        {season.map((animeData, i) => (
           <Slide key={i} animeData={animeData} />
         ))}
-        <div id="manualControls" className="w-full fixed top-[calc(15*0.25rem+22.5vh)] -translate-y-1/2  left-0 flex justify-between items-center px-4">
-          <ChevronLeft
-            size={30}
-            onClick={() => {
-              clearInterval(intervalRef.current);
-              if (indexRef.current <= 0) {
-                indexRef.current = arr.length - 1;
-                scrollIntoView(indexRef.current);
-                startInterval();
-              } else {
-                indexRef.current = indexRef.current - 1;
-                scrollIntoView(indexRef.current);
-                startInterval();
-              }
-            }}
-            className="p-1 box-content rounded-full hover:bg-amethyst-smoke-700/30 hover:cursor-pointer"
-          />
-          <ChevronRight
-            size={30}
-            onClick={() => {
-              clearInterval(intervalRef.current);
-              indexRef.current = (indexRef.current + 1) % arr.length;
+      </div>
+      <div id="manualControls" className="w-full absolute top-1/2 left-1/2 -translate-1/2 flex justify-between items-center px-4">
+        <ChevronLeft
+          size={30}
+          onClick={() => {
+            clearInterval(intervalRef.current);
+            if (indexRef.current <= 0) {
+              indexRef.current = season.length - 1;
               scrollIntoView(indexRef.current);
               startInterval();
-            }}
-            className="p-1 box-content rounded-full hover:bg-amethyst-smoke-700/30 hover:cursor-pointer"
-          />
-        </div>
+            } else {
+              indexRef.current = indexRef.current - 1;
+              scrollIntoView(indexRef.current);
+              startInterval();
+            }
+          }}
+          className="p-1 box-content rounded-full hover:bg-amethyst-smoke-700/30 hover:cursor-pointer"
+        />
+        <ChevronRight
+          size={30}
+          onClick={() => {
+            clearInterval(intervalRef.current);
+            indexRef.current = (indexRef.current + 1) % season.length;
+            scrollIntoView(indexRef.current);
+            startInterval();
+          }}
+          className="p-1 box-content rounded-full hover:bg-amethyst-smoke-700/30 hover:cursor-pointer"
+        />
       </div>
     </>
   );
