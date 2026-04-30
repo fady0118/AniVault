@@ -1,5 +1,4 @@
 export function themeToggler() {
-  console.log("theme toggle");
   // get local & os theme value
   const localTheme = localStorage.getItem("theme");
   const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -12,6 +11,7 @@ export function themeToggler() {
 }
 
 export function getCurrentTheme() {
+  return localStorage.getItem("theme");
   const localTheme = localStorage.getItem("theme");
   switch (localTheme) {
     case "dark":

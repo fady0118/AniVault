@@ -38,7 +38,7 @@ function App() {
   return (
     <div className="font-inter">
       <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} windowWidth={windowWidth}/>
-      <div className="mt-15">
+      <div className="">
         <Outlet />
       </div>
     </div>
