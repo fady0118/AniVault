@@ -21,7 +21,7 @@ export default function HomeSlider({ season }) {
     intervalRef.current = setInterval(() => {
       indexRef.current = (indexRef.current + 1) % season.length;
       scrollIntoView(indexRef.current);
-    }, 10000);
+    }, 5000);
   }, []);
 
   useEffect(() => {
