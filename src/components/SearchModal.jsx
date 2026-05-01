@@ -17,7 +17,7 @@ export default function SearchModal({ showSearchModal, setShowSearchModal }) {
   }, []);
   return (
     <>
-      <div className="z-50 flex flex-col rounded-lg fixed top-1/2 left-1/2 transform -translate-1/2 w-5/6 h-6/7 sm:w-3/4 sm:h-4/5 max-w-2xl  text-xs backdrop-blur-2xl text-text-light dark:text-text-dark bg-amethyst-smoke-400 dark:bg-amethyst-smoke-950 shadow-xl shadow-dark-amethyst-smoke-300/80 dark:shadow-dark-amethyst-smoke-50/80">
+      <div className="z-50 flex flex-col rounded-lg fixed top-1/2 left-1/2 transform -translate-1/2 w-5/6 h-6/7 sm:w-3/4 sm:h-4/5 max-w-2xl  text-xs backdrop-blur-2xl text-text-light dark:text-text-dark bg-amethyst-smoke-500 dark:bg-dark-amethyst-smoke-200 shadow-xl shadow-dark-amethyst-smoke-300/80 dark:shadow-dark-amethyst-smoke-50/80">
         <div className="flex justify-between items-center p-4 border-b border-dark-amethyst-smoke-500/20 dark:border-amethyst-smoke-500/20 ">
           <div className="w-1/2 flex items-center space-x-4">
             <Search size={12} />

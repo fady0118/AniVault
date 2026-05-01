@@ -8,7 +8,7 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchData() {
       const date = new Date();
-      const response = await fetch(`https://api.jikan.moe/v4/seasons/${date.getFullYear()}/${getSeason(date)}?filter=tv&limit=15`);
+      const response = await fetch(`https://api.jikan.moe/v4/seasons/${date.getFullYear()}/${getSeason(date)}?filter=tv&limit=10`);
       const data = await response.json();
       setSeasonList(data.data ?? []);
       setIsLoading(false);

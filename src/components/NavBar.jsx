@@ -26,7 +26,7 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
 
   return (
     <>
-      <nav className="z-30 w-[96vw] flex justify-between items-center px-5 sm:px-7 lg:px-9 xl:px-12 h-12 capitalize fixed top-3 left-1/2 -translate-x-1/2 rounded-lg bg-amethyst-smoke-500/80 dark:bg-dark-amethyst-smoke-100/80 backdrop-blur-3xl shadow-xl shadow-amethyst-smoke-800/30">
+      <nav className="z-30 w-[96vw] flex justify-between items-center px-5 sm:px-7 lg:px-9 xl:px-12 h-12 capitalize fixed top-3 left-1/2 -translate-x-1/2 rounded-lg bg-amethyst-smoke-500 dark:bg-dark-amethyst-smoke-100 backdrop-blur-3xl">
         <img
           onClick={() => {
             navigate("/");
