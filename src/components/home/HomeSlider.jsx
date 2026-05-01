@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Slide from "./Slide";
 
 export default function HomeSlider({ season }) {
+  console.log(season[0]);
   const [indexState, setIndexState] = useState(1);
   const sliderRef = useRef(null);
   const indexRef = useRef(0);
@@ -34,42 +35,43 @@ export default function HomeSlider({ season }) {
           <Slide key={i} animeData={animeData} />
         ))}
       </div>
-        <div
-          id="manualControls"
-          className="w-20 xs:w-26 sm:w-30 md:w-38 lg:w-48 absolute top-[80vh] right-[7vw] flex justify-between items-center p-0 md:py-1.5 md:px-2.5 text-text-light dark:text-text-dark text-shadow-2xs text-shadow-amethyst-smoke-300/50 dark:text-shadow-dark-amethyst-smoke-50/50 rounded-xl bg-amethyst-smoke-400/60 dark:bg-dark-amethyst-smoke-400/60"
-        >
-          <ChevronLeft
-            size={30}
-            onClick={() => {
-              clearInterval(intervalRef.current);
-              if (indexRef.current <= 0) {
-                indexRef.current = season.length - 1;
-                scrollIntoView(indexRef.current);
-                startInterval();
-              } else {
-                indexRef.current = indexRef.current - 1;
-                scrollIntoView(indexRef.current);
-                startInterval();
-              }
-            }}
-            className="p-1 box-content rounded-full hover:bg-amethyst-smoke-700/30 hover:cursor-pointer hover:text-amethyst-smoke-50 duration-300"
-          />
-          <div className="w-3/4 flex justify-evenly items-center text-[0.6rem] xs:text-xs sm:text-sm md:text-md">
-            <span className="font-bold">{indexState}</span>
-            <span className="text-md md:text-xl">/</span>
-            <span className="font-light">{season.length}</span>
-          </div>
-          <ChevronRight
-            size={30}
-            onClick={() => {
-              clearInterval(intervalRef.current);
-              indexRef.current = (indexRef.current + 1) % season.length;
+      <div
+        id="manualControls"
+        className="w-20 xs:w-26 sm:w-30 md:w-38 lg:w-48 absolute top-[40vh] sm:top-[80vh] right-[7vw] flex justify-between items-center p-0 md:py-1.5 md:px-2.5 text-text-light dark:text-text-dark text-shadow-2xs text-shadow-amethyst-smoke-300/50 dark:text-shadow-dark-amethyst-smoke-50/50 rounded-xl bg-amethyst-smoke-400/60 dark:bg-dark-amethyst-smoke-400/60"
+      >
+        <ChevronLeft
+          size={30}
+          onClick={() => {
+            clearInterval(intervalRef.current);
+            if (indexRef.current <= 0) {
+              indexRef.current = season.length - 1;
               scrollIntoView(indexRef.current);
               startInterval();
-            }}
-            className="p-1 box-content rounded-full hover:bg-amethyst-smoke-700/30 hover:cursor-pointer"
-          />
+            } else {
+              indexRef.current = indexRef.current - 1;
+              scrollIntoView(indexRef.current);
+              startInterval();
+            }
+          }}
+          className="p-1 box-content rounded-full hover:bg-amethyst-smoke-700/30 hover:cursor-pointer hover:text-amethyst-smoke-50 duration-300"
+        />
+        <div className="w-3/4 flex justify-evenly items-center text-[0.6rem] xs:text-xs sm:text-sm md:text-md">
+          <span className="font-bold">{indexState}</span>
+          <span className="text-md md:text-xl">/</span>
+          <span className="font-light">{season.length}</span>
         </div>
+        <ChevronRight
+          size={30}
+          onClick={() => {
+            clearInterval(intervalRef.current);
+            indexRef.current = (indexRef.current + 1) % season.length;
+            scrollIntoView(indexRef.current);
+            startInterval();
+          }}
+          className="p-1 box-content rounded-full hover:bg-amethyst-smoke-700/30 hover:cursor-pointer"
+        />
+      </div>
+      <div className="hidden sm:block absolute z-50 w-screen h-screen top-0 bg-[linear-gradient(0deg,#e7e6ee_0%,transparent_5%)] dark:bg-[linear-gradient(0deg,#1b1e1f_0%,transparent_5%)] pointer-events-none"></div>
     </>
   );
 }
