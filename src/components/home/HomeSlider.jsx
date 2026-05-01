@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Slide from "./Slide";
+import TrailerModal from "./TrailerModal";
 
 export default function HomeSlider({ season }) {
   console.log(season[0]);
@@ -28,11 +29,27 @@ export default function HomeSlider({ season }) {
     return () => clearInterval(intervalRef.current);
   }, []);
 
+  // trailer modal
+  const trailerRef = useRef(null);
+  const [showTrailerModal, setShowTrailerModal] = useState(false);
+  function openModal(trailerLink) {
+    trailerRef.current = trailerLink;
+    setShowTrailerModal(true);
+    // pause the interval
+    clearInterval(intervalRef.current);
+  }
+  function closeModal() {
+    trailerRef.current = null;
+    setShowTrailerModal(false);
+    // resume the interval
+    startInterval();
+  }
+
   return (
     <>
       <div id="slider" className="relative w-full rounded-xl left-1/2 -translate-x-1/2 h-screen flex overflow-y-hidden overflow-x-scroll no-scrollbar" ref={sliderRef}>
         {season.map((animeData, i) => (
-          <Slide key={i} animeData={animeData} />
+          <Slide key={i} animeData={animeData} openModal={openModal} />
         ))}
       </div>
       <div
@@ -72,6 +89,7 @@ export default function HomeSlider({ season }) {
         />
       </div>
       <div className="hidden sm:block absolute z-50 w-screen h-screen top-0 bg-[linear-gradient(0deg,#e7e6ee_0%,transparent_5%)] dark:bg-[linear-gradient(0deg,#1b1e1f_0%,transparent_5%)] pointer-events-none"></div>
+      {showTrailerModal && trailerRef.current && <TrailerModal closeModal={closeModal} link={trailerRef.current} />}
     </>
   );
 }

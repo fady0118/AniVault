@@ -3,17 +3,13 @@ import { useEffect } from "react";
 
 export default function SearchModal({ showSearchModal, setShowSearchModal }) {
   useEffect(() => {
-    document.documentElement.addEventListener("keydown", (e) => {
-      if (e.key == "Escape") {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
         setShowSearchModal(false);
       }
-    });
-    return () =>
-      document.documentElement.removeEventListener("keydown", (e) => {
-        if (e.key == "Escape") {
-          setShowSearchModal(false);
-        }
-      });
+    };
+    document.documentElement.addEventListener("keydown", handleKeyDown);
+    return () => document.documentElement.removeEventListener("keydown", handleKeyDown);
   }, []);
   return (
     <>
