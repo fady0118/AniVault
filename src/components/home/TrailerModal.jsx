@@ -19,14 +19,12 @@ export default function TrailerModal({ closeModal, link }) {
       <div className="rounded-xl overflow-hidden w-7/8 sm:w-2/3 aspect-video">
         <iframe
           className="w-full h-full"
-          // width="640"
-          // height="360"
           src={link.split("&autoplay")[0]}
           title="YouTube video player"
-          frameborder="0"
+          frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
         ></iframe>
       </div>
     </div>

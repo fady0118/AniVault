@@ -26,7 +26,7 @@
   --color-amethyst-smoke-900: #564e64;
   --color-amethyst-smoke-950: #383342;
 
-
+  --color-dark-amethyst-smoke-0:#141617;
   --color-dark-amethyst-smoke-50: #1b1e1f;
   --color-dark-amethyst-smoke-100: #1e2122;
   --color-dark-amethyst-smoke-200: #242728;
@@ -49,6 +49,7 @@
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+    /* color: #141617; */
     /* Chrome, Safari, and Opera */
   }
 
