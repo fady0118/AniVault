@@ -60,7 +60,7 @@ export default function Slide({ animeData, openModal }) {
               </div>
             </div>
             <div id="links" className="flex flex-col 2xs:flex-row justify-center items-start 2xs:justify-start 2xs:items-center w-full space-x-5 space-y-3 2xs:space-y-0">
-              <div className="flex justify-center items-center w-3/5 2xs:w-2/5 aspect-9/2 rounded-lg uppercase text-xs 2xs:text-sm font-semibold text-text-dark bg-mal-blue hover:cursor-pointer hover:brightness-125 hover:-translate-y-1 duration-300">
+              <div onClick={()=>{window.location.pathname=`anime/${animeData.mal_id}`}} className="flex justify-center items-center w-3/5 2xs:w-2/5 aspect-9/2 rounded-lg uppercase text-xs 2xs:text-sm font-semibold text-text-dark bg-mal-blue hover:cursor-pointer hover:brightness-125 hover:-translate-y-1 duration-300">
                 More Details
               </div>
               <div
