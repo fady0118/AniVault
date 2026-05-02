@@ -4,6 +4,7 @@ import Slide from "./Slide";
 import TrailerModal from "./TrailerModal";
 
 export default function HomeSlider({ season }) {
+  if (!season.length) return;
   console.log(season[0]);
   const [indexState, setIndexState] = useState(1);
   const sliderRef = useRef(null);
@@ -26,7 +27,21 @@ export default function HomeSlider({ season }) {
   useEffect(() => {
     sliderRef.current.scrollTo({ left: 0, behavior: "auto" });
     startInterval();
-    return () => clearInterval(intervalRef.current);
+    function slideNavigating(e) {
+      console.log(e.key)
+      if (e.key === "ArrowRight") {
+        indexRef.current = (indexRef.current + 1) % season.length;
+        scrollIntoView(indexRef.current);
+      } else if (e.key === "ArrowLeft") {
+        indexRef.current = indexRef.current > 0 ? indexRef.current - 1 : season.length - 1;
+        scrollIntoView(indexRef.current);
+      }
+    }
+    document.documentElement.addEventListener("keydown", slideNavigating);
+    return () => {
+      document.documentElement.removeEventListener("keydown", slideNavigating);
+      clearInterval(intervalRef.current);
+    };
   }, []);
 
   // trailer modal
