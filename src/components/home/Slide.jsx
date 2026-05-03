@@ -39,7 +39,7 @@ export default function Slide({ animeData, openModal }) {
               </a>
             </div>
             {animeData.synopsis && (
-              <div id="synopsis" className="flex text-xs font-light max-h-1/6 overflow-y-hidden">
+              <div id="synopsis" className="flex text-xs font-light max-h-1/6 overflow-y-hidden max-lines-4 cutoff-text-abs">
                 {animeData.synopsis}
               </div>
             )}

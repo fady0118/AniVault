@@ -56,18 +56,19 @@ export default function AnimePage() {
                     <div className="peer">
                       <input className="hidden " type="checkbox" name="synopsisCheckbox" id="synopsisCheckbox" />
                     </div>
-                    <p className={`w-full text-xs font-light overflow-hidden max-h-12 peer-has-checked:max-h-max `}>{animeData.synopsis}</p>
-                    <label htmlFor="synopsisCheckbox" className="text-xs capitalize w-fit hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300">
-                      see more
+                    <p className={`w-full text-xs font-light overflow-hidden max-lines-3 cutoff-text`}>{animeData.synopsis||'synopsis missing..'}</p>
+                    <label htmlFor="synopsisCheckbox" className="text-xs capitalize w-fit hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
+                      before:content-['see_more'] peer-has-checked:before:content-['see_less']"> 
                     </label>
                   </div>
                 </div>
               </div>
               <div className="w-full md:w-[27.5%] py-2 rounded-xl bg-amethyst-smoke-400/75 dark:bg-dark-amethyst-smoke-200/75 min-h-52 order-3 overflow-hidden">
-                {animeData.background && <div>
+                <div>
                   <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">background</div>
-                  <div className="px-3 py-2 text-xs font-light">{animeData.background}</div>
-                </div>}
+                  <div className="px-3 py-2 text-xs font-light">{animeData.background||'background missing..'}</div>
+                  {/* @todo - find an alternative way to fill in the background */}
+                </div>
               </div>
             </div>
           </div>

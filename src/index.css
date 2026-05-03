@@ -10,8 +10,8 @@
   --breakpoint-2xl: 100rem;
   --breakpoint-3xl: 120rem;
 
-  --text-2xs:0.625rem;
-  --text-3xs:0.5rem;
+  --text-2xs: 0.625rem;
+  --text-3xs: 0.5rem;
   --text-md: 1rem;
 
   --color-amethyst-smoke-50: #f8f8fa;
@@ -26,7 +26,7 @@
   --color-amethyst-smoke-900: #564e64;
   --color-amethyst-smoke-950: #383342;
 
-  --color-dark-amethyst-smoke-0:#141617;
+  --color-dark-amethyst-smoke-0: #141617;
   --color-dark-amethyst-smoke-50: #1b1e1f;
   --color-dark-amethyst-smoke-100: #1e2122;
   --color-dark-amethyst-smoke-200: #242728;
@@ -46,6 +46,8 @@
 
 }
 
+@layer components {}
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -58,6 +60,31 @@
     /* IE and Edge */
     scrollbar-width: none;
     /* Firefox */
+  }
+
+  .max-lines-3 {
+    --max-lines: 3;
+  }
+
+  .max-lines-4 {
+    --max-lines: 4;
+  }
+  .max-lines-5 {
+    --max-lines: 5;
+  }
+
+  .peer:has(:not(:checked))~.cutoff-text {
+    display: -webkit-box;
+    -webkit-line-clamp: var(--max-lines);
+    -webkit-box-orient: vertical;
+    overflow-y: hidden;
+  }
+
+  .cutoff-text-abs {
+    display: -webkit-box;
+    -webkit-line-clamp: var(--max-lines);
+    -webkit-box-orient: vertical;
+    overflow-y: hidden;
   }
 }
 
