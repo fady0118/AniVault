@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import AnimePage from "./pages/AnimePage";
 import CharacterPage from "./pages/CharacterPage";
 import PeoplePage from "./pages/PeoplePage";
+import MangaPage from "./pages/MangaPage";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
       { index: true, Component: HomePage },
       { path: "auth", Component: AuthPage },
       { path: "anime/:id", Component: AnimePage },
+      { path: "manga/:id", Component: MangaPage },
       { path: "character/:id", Component: CharacterPage },
       { path: "people/:id", Component: PeoplePage },
     ],

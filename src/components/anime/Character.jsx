@@ -2,7 +2,6 @@ import { useNavigate } from "react-router";
 
 export default function Character({ character }) {
   let navigate = useNavigate();
-  console.log(character);
   const voice_actors = character.voice_actors;
   const voice_actor_jpn = voice_actors.find((actor) => actor.language == "Japanese")?.person;
   const classes = {

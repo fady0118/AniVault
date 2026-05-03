@@ -10,17 +10,14 @@ export default function AnimePage() {
     async function fetchAnime() {
       try {
         const [resAnime, resCharacters] = await Promise.all([fetch(`https://api.jikan.moe/v4/anime/${id}/full`), fetch(`https://api.jikan.moe/v4/anime/${id}/characters`)]);
-        const [animeData, charactersData] = await Promise.all([resAnime.json(), resCharacters.json()]);
-        setAnimeData({ ...animeData.data, characters: charactersData.data } ?? null);
+        const [anime_Data, characters_Data] = await Promise.all([resAnime.json(), resCharacters.json()]);
+        setAnimeData({ ...anime_Data.data, characters: characters_Data.data } ?? null);
       } finally {
         setIsLoading(false);
       }
     }
     fetchAnime();
   }, [id]);
-useEffect(()=>{
-  console.log(animeData)
-},[animeData])
 
   return (
     <>
@@ -31,7 +28,16 @@ useEffect(()=>{
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 mt-15 text-dark-amethyst-smoke-50 dark:text-text-dark">
             <div id="title" className="mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex flex-col">
               <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">{animeData.title}</div>
-              <div className="text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">{animeData.title_english}</div>
+              <div className="flex items-center space-x-1.5">
+                <span className="text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">{animeData.title_english}</span>
+                <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={animeData.url} target="_blank">
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
+                    alt="MyAnimeList Logo"
+                    className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
+                  />
+                </a>
+              </div>
             </div>
 
             <div className="flex flex-col md:flex-row sm:justify-between order-2">
@@ -42,27 +48,29 @@ useEffect(()=>{
               </div>
 
               <div className="w-full md:w-[45%] py-2 flex flex-col space-y-2 rounded-xl box-colors min-h-52 order-2 overflow-hidden">
-                <div id="trailer">
-                  <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed">Watch Trailer</div>
-                  <div className="w-full aspect-video">
-                    <iframe
-                      className="w-full h-full"
-                      src={animeData.trailer.embed_url.split("&autoplay")[0]}
-                      title="YouTube video player"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      allowFullScreen
-                    ></iframe>
+                {animeData.trailer.embed_url && (
+                  <div id="trailer">
+                    <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed">Watch Trailer</div>
+                    <div className="w-full aspect-video">
+                      <iframe
+                        className="w-full h-full"
+                        src={animeData.trailer.embed_url.split("&autoplay")[0]}
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div id="synopsis">
                   <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">synopsis</div>
                   <div className="flex flex-col space-y-1.5 px-3 pt-2 items-end">
                     <div className="peer">
                       <input className="hidden " type="checkbox" name="synopsisCheckbox" id="synopsisCheckbox" />
                     </div>
-                    <p className={`w-full text-xs font-light overflow-hidden max-lines-3 cutoff-text`}>{animeData.synopsis || "synopsis missing.."}</p>
+                    <p className="w-full text-xs font-light overflow-hidden max-lines-3 cutoff-text">{animeData.synopsis || "synopsis missing.."}</p>
                     <label
                       htmlFor="synopsisCheckbox"
                       className="text-xs capitalize w-fit hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
