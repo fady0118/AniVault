@@ -62,6 +62,12 @@
     /* Firefox */
   }
 
+  .max-lines-1 {
+    --max-lines: 1;
+  }
+  .max-lines-2 {
+    --max-lines: 2;
+  }
   .max-lines-3 {
     --max-lines: 3;
   }
@@ -85,6 +91,10 @@
     -webkit-line-clamp: var(--max-lines);
     -webkit-box-orient: vertical;
     overflow-y: hidden;
+  }
+
+  .box-colors{
+    @apply bg-amethyst-smoke-400/75 dark:bg-dark-amethyst-smoke-200/75
   }
 }
 

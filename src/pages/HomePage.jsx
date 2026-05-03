@@ -20,7 +20,7 @@ export default function HomePage() {
 
   return (
     <div className="relative w-screen">
-      {isLoading ? <div>Loading...</div> : <HomeSlider season={seasonList} />}
+      {isLoading ? <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div> : <HomeSlider season={seasonList} />}
       {/* <div className="h-96"></div> */}
     </div>
   );
