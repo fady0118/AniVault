@@ -25,34 +25,15 @@ export default function CharacterPage() {
   const [state, dispatch] = useReducer(reducer, { picIndex: null });
 
   function reducer(state, action) {
-    if (action.type === "next") {
-      if (state.picIndex >= characterData.pictures.length - 1) {
-        return {
-          picIndex: 0,
-        };
-      } else {
-        return {
-          picIndex: state.picIndex + 1,
-        };
-      }
-    } else if (action.type === "prev") {
-      if (state.picIndex <= 0) {
-        return {
-          picIndex: characterData.pictures.length - 1,
-        };
-      } else {
-        return {
-          picIndex: state.picIndex - 1,
-        };
-      }
-    } else if (action.type === "open") {
-      return {
-        picIndex: action.newIndex,
-      };
-    } else if (action.type === "close") {
-      return {
-        picIndex: null,
-      };
+    switch (action.type) {
+      case "next":
+        return { picIndex: state.picIndex >= characterData.pictures.length - 1 ? 0 : state.picIndex + 1 };
+      case "prev":
+        return { picIndex: state.picIndex <= 0 ? characterData.pictures.length - 1 : state.picIndex - 1 };
+      case "open":
+        return {picIndex: action.newIndex}
+      case "close":
+        return {picIndex: null}
     }
   }
 
