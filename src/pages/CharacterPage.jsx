@@ -2,6 +2,7 @@ import { useEffect, useReducer, useState } from "react";
 import { useParams } from "react-router";
 import Pictures from "../components/character/Pictures";
 import Gallery from "../components/character/Gallery";
+import useGallery from "../utility/useGallery";
 
 export default function CharacterPage() {
   const { id } = useParams();
@@ -20,31 +21,8 @@ export default function CharacterPage() {
     fetchCharacter();
   }, [id]);
 
-  // image gallery
-  const [showGalleryModal, setShowGalleryModal] = useState(false);
-  const [state, dispatch] = useReducer(reducer, { picIndex: null });
+  const { dispatch, showModal, openGallery, closeGallery, activeIndex } = useGallery(characterData?.pictures ?? []);
 
-  function reducer(state, action) {
-    switch (action.type) {
-      case "next":
-        return { picIndex: state.picIndex >= characterData.pictures.length - 1 ? 0 : state.picIndex + 1 };
-      case "prev":
-        return { picIndex: state.picIndex <= 0 ? characterData.pictures.length - 1 : state.picIndex - 1 };
-      case "open":
-        return {picIndex: action.newIndex}
-      case "close":
-        return {picIndex: null}
-    }
-  }
-
-  function openGallery(pictureIndex) {
-    dispatch({ type: "open", newIndex: pictureIndex });
-    setShowGalleryModal(true);
-  }
-  function closeGallery() {
-    dispatch({ type: "close" });
-    setShowGalleryModal(false);
-  }
   return (
     <>
       {isLoading ? (
@@ -146,8 +124,15 @@ export default function CharacterPage() {
               </div>
             </div>
           </div>
-          {showGalleryModal && (
-            <Gallery closeGallery={closeGallery} dispatch={dispatch} characterData={characterData} state={state}/>
+          {showModal && (
+            <Gallery
+              data={characterData}
+              activeIndex={activeIndex}
+              closeGallery={closeGallery}
+              onNext={() => dispatch({ type: "next" })}
+              onPrev={() => dispatch({ type: "prev" })}
+              onOpen={(index) => dispatch({ type: "open", newIndex: index })}
+            />
           )}
         </>
       )}

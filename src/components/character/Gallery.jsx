@@ -8,14 +8,15 @@ const classes = {
   arrows:
     "absolute top-1/2 -translate-y-1/2 xs:static bg-amethyst-smoke-950/70 hover:bg-amethyst-smoke-950/50 xs:bg-transparent hover:cursor-pointer xs:hover:bg-amethyst-smoke-400/20 rounded-full p-1 box-content",
 };
-export default function Gallery({ closeGallery, dispatch, characterData, state }) {
+
+export default function Gallery({ data, activeIndex, closeGallery, onNext, onPrev, onOpen }) {
   const { windowWidth } = useContext(WindowContext);
   // arrow navigation
   function handleGalleryActions(e) {
     if (e.key === "ArrowLeft") {
-      dispatch({ type: "prev" });
+      onPrev();
     } else if (e.key === "ArrowRight") {
-      dispatch({ type: "next" });
+      onNext();
     } else if (e.key === "Escape") {
       closeGallery();
     }
@@ -27,15 +28,15 @@ export default function Gallery({ closeGallery, dispatch, characterData, state }
 
   // scroll into view
   useEffect(() => {
-    if (state.picIndex === null) return;
+    if (activeIndex === null) return;
     const galleryMapEl = document.getElementById("galleryMap");
     if (!galleryMapEl) return;
     const galleryMapImages = Array.from(galleryMapEl.querySelectorAll("div.mini-img"));
-    const imageNode = galleryMapImages.find((img) => Number(img.dataset.index) === state.picIndex);
+    const imageNode = galleryMapImages.find((img) => Number(img.dataset.index) === activeIndex);
     if (imageNode) {
       imageNode.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     }
-  }, [state.picIndex]);
+  }, [activeIndex]);
 
   return (
     <div id="galleryModal" className="relative">
@@ -47,20 +48,20 @@ export default function Gallery({ closeGallery, dispatch, characterData, state }
           <div className="flex justify-evenly items-center h-full xs:h-4/5">
             <ChevronLeft
               onClick={() => {
-                dispatch({ type: "prev" });
+                onPrev();
               }}
               className={`left-0 ${classes.arrows}`}
               size={windowWidth <= 480 ? 27 : 36}
             />
             <img
-              key={state.picIndex}
+              key={activeIndex}
               className="h-full w-auto aspect-auto object-cover rounded-lg gallery-image-animation"
-              src={characterData.pictures[state.picIndex].jpg.image_url}
-              alt={`${characterData.name}-picture`}
+              src={data.pictures[activeIndex].jpg.image_url}
+              alt={`${data.name ?? "unknown"}-picture`}
             />
             <ChevronRight
               onClick={() => {
-                dispatch({ type: "next" });
+                onNext();
               }}
               className={`right-0 ${classes.arrows}`}
               size={windowWidth <= 480 ? 27 : 36}
@@ -68,16 +69,16 @@ export default function Gallery({ closeGallery, dispatch, characterData, state }
           </div>
           {windowWidth >= 480 && (
             <div id="galleryMap" className="flex h-1/6 gap-1 p-1 overflow-x-scroll">
-              {characterData.pictures.map((picture, i) => (
+              {data.pictures.map((picture, i) => (
                 <div
                   key={i}
                   data-index={i}
-                  className={`mini-img aspect-square h-full ${state.picIndex === i ? classes.activeImage : ""} ${classes.imageHoverAnimation}`}
+                  className={`mini-img aspect-square h-full ${activeIndex === i ? classes.activeImage : ""} ${classes.imageHoverAnimation}`}
                   onClick={() => {
-                    dispatch({ type: "open", newIndex: i });
+                    onOpen(i);
                   }}
                 >
-                  <img className="h-full w-full object-cover pointer-events-none" src={picture.jpg.image_url} alt={`${characterData.name}-picture`} />
+                  <img className="h-full w-full object-cover pointer-events-none" src={picture.jpg.image_url} alt={`${data.name ?? "unknown"}-picture`} />
                 </div>
               ))}
             </div>

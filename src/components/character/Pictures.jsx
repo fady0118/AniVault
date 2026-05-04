@@ -2,7 +2,6 @@ import { useState } from "react";
 
 export default function Pictures({ pictures, openGallery }) {
   const [showAllPics, setShowAllPics] = useState(false);
-
   return (
     <>
       <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Pictures</div>
@@ -39,7 +38,7 @@ export default function Pictures({ pictures, openGallery }) {
               key={`picture-${i + 10}`}
               className="aspect-2/3 hover:cursor-pointer hover:scale-105 hover:border-4 hover:border-amethyst-smoke-400/30 transition-transform duration-200"
             >
-              <img className="w-full h-full object-cover pointer-events-none" src={picture.jpg.image_url} alt="" />
+              <img className="w-full h-full object-cover pointer-events-none" src={picture.jpg.image_url} />
             </div>
           ))}
       </div>
