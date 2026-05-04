@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { Outlet } from "react-router";
 import NavBar from "./components/NavBar";
 import { getCurrentTheme, themeToggler } from "./utility/utils";
+
+export const WindowContext = createContext(null);
 
 function App() {
   const [theme, setTheme] = useState(getCurrentTheme());
@@ -36,12 +38,14 @@ function App() {
   }, []);
 
   return (
-    <div className="font-inter ">
-      <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} windowWidth={windowWidth}/>
-      <div className="">
-        <Outlet />
+    <WindowContext value={{windowWidth}}>
+      <div className="font-inter ">
+        <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} windowWidth={windowWidth} />
+        <div className="">
+          <Outlet />
+        </div>
       </div>
-    </div>
+    </WindowContext>
   );
 }
 
