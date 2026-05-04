@@ -46,56 +46,69 @@ export default function CharacterPage() {
               </a>
             </div>
           </div>
-          <div className="w-full order-2 flex space-x-3">
-            <div id="image" className="w-1/5 min-w-24">
+          <div className="w-full order-2 flex flex-col sm:flex-row gap-3">
+            <div id="image" className="w-1/5 min-w-24 ">
               <img className="w-full aspect-2/3 object-cover order-1 rounded-lg overflow-hidden" src={characterData.images.jpg.image_url} alt="" />
             </div>
 
-            <div id="about" className="order-2 w-4/5 pt-2 rounded-lg overflow-hidden box-colors">
+            <div id="about" className="order-2 w-full sm:w-4/5 pt-2 rounded-lg overflow-hidden box-colors">
               <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">About</div>
               <div className="p-3 text-xs font-light whitespace-pre-wrap">{characterData.about || "about missing.."}</div>
             </div>
           </div>
-          <div className="order-3 flex flex-row space-x-2">
-            <div id="Animeography" className="box-colors w-1/4 rounded-md py-2 h-fit">
-              <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Animeography</div>
-              <div className="flex flex-col pt-2 space-y-2">
-                {characterData.anime.map((anime) => (
-                  <div key={anime.anime.mal_id} className="flex w-full px-2 space-x-2 border-b border-amethyst-smoke-400/20">
-                    <a className="w-1/3" href={`/anime/${anime.anime.mal_id}`}>
-                      <img className="w-full aspect-3/4 object-cover" src={anime.anime.images.webp.image_url} alt={anime.anime.title} />
-                    </a>
-                    <div className="flex flex-col w-2/3 space-y-1">
-                      <a href={`/anime/${anime.anime.mal_id}`}>
-                        <p className="text-xs text-blue-400">{anime.anime.title}</p>
+          <div className="order-3 flex flex-col md:flex-row gap-3">
+            <div className="order-2 md:order-1 flex flex-col sm:flex-row gap-3 w-full md:w-1/2">
+              <div id="Animeography" className="order-1 box-colors w-full sm:w-1/2 rounded-md py-2 h-fit">
+                <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Animeography</div>
+                <div className="flex flex-col pt-2 space-y-2">
+                  {characterData.anime.map((anime) => (
+                    <div key={anime.anime.mal_id} className="flex w-full px-2 space-x-2 border-b border-amethyst-smoke-400/20">
+                      <a className="w-1/4" href={`/anime/${anime.anime.mal_id}`}>
+                        <img className="w-full aspect-3/4 object-cover" src={anime.anime.images.webp.image_url} alt={anime.anime.title} />
                       </a>
-                      <p className="text-2xs">{anime.role}</p>
+                      <div className="flex flex-col w-3/4 space-y-1">
+                        <a href={`/anime/${anime.anime.mal_id}`}>
+                          <p className="text-xs text-blue-400">{anime.anime.title}</p>
+                        </a>
+                        <p className="text-2xs">{anime.role}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              </div>
+              <div id="Mangaography" className="order-2 box-colors w-full sm:w-1/2 rounded-md py-2 h-fit">
+                <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Mangaography</div>
+                <div className="flex flex-col pt-2 space-y-2">
+                  {characterData.manga.map((manga) => (
+                    <div key={manga.manga.mal_id} className="flex w-full px-2 space-x-2 border-b border-amethyst-smoke-400/20">
+                      <a className="w-1/4" href={`/manga/${manga.manga.mal_id}`}>
+                        <img className="w-full aspect-3/4 object-cover" src={manga.manga.images.webp.image_url} alt={manga.manga.title} />
+                      </a>
+                      <div className="flex flex-col w-3/4 space-y-1">
+                        <a href={`/manga/${manga.manga.mal_id}`}>
+                          <p className="text-xs text-blue-400">{manga.manga.title}</p>
+                        </a>
+                        <p className="text-2xs">{manga.role}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-            <div id="Mangaography" className="box-colors w-1/4 rounded-md py-2 h-fit">
-              <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Mangaography</div>
-              <div className="flex flex-col pt-2 space-y-2">
-                {characterData.manga.map((manga) => (
-                  <div key={manga.manga.mal_id} className="flex w-full px-2 space-x-2 border-b border-amethyst-smoke-400/20">
-                    <a className="w-1/3" href={`/manga/${manga.manga.mal_id}`}>
-                      <img className="w-full aspect-3/4 object-cover" src={manga.manga.images.webp.image_url} alt={manga.manga.title} />
-                    </a>
-                    <div className="flex flex-col w-2/3 space-y-1">
-                      <a href={`/anime/${manga.manga.mal_id}`}>
-                        <p className="text-xs text-blue-400">{manga.manga.title}</p>
-                      </a>
-                      <p className="text-2xs">{manga.role}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col space-y-2 w-1/2 ">
+            <div className="order-1 md:order-2 flex flex-col space-y-2 w-full md:w-1/2">
               <div id="Voices" className="box-colors rounded-md py-2">
                 <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Voice Actors</div>
+                <div className="grid grid-cols-1 2xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-2 gap-2 pt-2">
+                  {characterData.voices.map(voice=>(
+                    <div className="w-full flex gap-1 px-2 border-b border-amethyst-smoke-400/20">
+                      <a className="w-1/4" href={`/people/${voice.person.mal_id}`}><img className="w-full" src={voice.person.images.jpg.image_url} alt={voice.person.name} /></a>
+                      <div className="flex flex-col w-3/4 gap-1">
+                        <a className="text-xs text-blue-400" href={`/people/${voice.person.mal_id}`}>{voice.person.name}</a>
+                        <p className="text-2xs">{voice.language}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
               <div id="Pictures" className="box-colors rounded-md py-2">
                 <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Pictures</div>
