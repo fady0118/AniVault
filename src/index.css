@@ -59,7 +59,7 @@
 
 @layer components {
   .gallery-image-animation {
-    animation: imageZoomIn 0.6s ease-out;
+    animation: imageZoomIn 0.4s ease-out;
   }
 }
 

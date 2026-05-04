@@ -11,16 +11,18 @@ const classes = {
 export default function Gallery({ closeGallery, dispatch, characterData, state }) {
   const { windowWidth } = useContext(WindowContext);
   // arrow navigation
-  function handleArrowNavigation(e) {
+  function handleGalleryActions(e) {
     if (e.key === "ArrowLeft") {
       dispatch({ type: "prev" });
     } else if (e.key === "ArrowRight") {
       dispatch({ type: "next" });
+    } else if (e.key === "Escape") {
+      closeGallery();
     }
   }
   useEffect(() => {
-    document.documentElement.addEventListener("keydown", handleArrowNavigation);
-    return () => document.documentElement.removeEventListener("keydown", handleArrowNavigation);
+    document.documentElement.addEventListener("keydown", handleGalleryActions);
+    return () => document.documentElement.removeEventListener("keydown", handleGalleryActions);
   }, []);
 
   // scroll into view
@@ -50,11 +52,11 @@ export default function Gallery({ closeGallery, dispatch, characterData, state }
               className={`left-0 ${classes.arrows}`}
               size={windowWidth <= 480 ? 27 : 36}
             />
-            <img 
+            <img
               key={state.picIndex}
-              className="h-full w-auto aspect-auto object-cover rounded-lg gallery-image-animation" 
-              src={characterData.pictures[state.picIndex].jpg.image_url} 
-              alt={`${characterData.name}-picture`} 
+              className="h-full w-auto aspect-auto object-cover rounded-lg gallery-image-animation"
+              src={characterData.pictures[state.picIndex].jpg.image_url}
+              alt={`${characterData.name}-picture`}
             />
             <ChevronRight
               onClick={() => {
