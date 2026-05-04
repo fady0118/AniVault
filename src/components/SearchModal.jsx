@@ -27,7 +27,7 @@ export default function SearchModal({ showSearchModal, setShowSearchModal }) {
           </button>
         </div>
       </div>
-      <div className="z-40 fixed w-screen h-screen bg-dark-amethyst-smoke-50/90"></div>
+      <div className="z-40 fixed top-0 w-screen h-screen bg-dark-amethyst-smoke-50/90"></div>
     </>
   );
 }

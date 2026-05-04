@@ -61,6 +61,10 @@
     scrollbar-width: none;
     /* Firefox */
   }
+  .no-scrolling{
+    height:100vh;
+    overflow-y: hidden;
+  }
 
   .max-lines-1 {
     --max-lines: 1;
@@ -95,27 +99,5 @@
 
   .box-colors{
     @apply bg-amethyst-smoke-400/75 dark:bg-dark-amethyst-smoke-200/75
-  }
-}
-
-
-.duration-300 {
-  transition: all 300ms;
-  animation-duration: 300ms;
-}
-
-.slide-in-from-top {
-  animation: slideInFromTop;
-}
-
-@keyframes slideInFromTop {
-  0% {
-    opacity: 0;
-    transform: translateY(-1rem);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
