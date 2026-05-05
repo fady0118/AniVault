@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+const classes = {pictures:"aspect-2/3 hover:cursor-pointer hover:scale-105 hover:border-4 hover:border-amethyst-smoke-400/30 transition-transform duration-200"}
 export default function Pictures({ pictures, openGallery }) {
   const [showAllPics, setShowAllPics] = useState(false);
   return (
@@ -16,12 +17,12 @@ export default function Pictures({ pictures, openGallery }) {
                 openGallery(Number(e.target.dataset.imageIndex));
               }}
               key={`picture-${i}`}
-              className="aspect-2/3 hover:cursor-pointer hover:scale-105 hover:border-4 hover:border-amethyst-smoke-400/30 transition-transform duration-200"
+              className={classes.pictures}
             >
               <img className="w-full h-full object-cover pointer-events-none" src={picture.jpg.image_url} alt="" />
             </div>
           ))}
-          {!showAllPics && pictures.slice(10).length ? (
+          {(!showAllPics && pictures.slice(10).length )?(
             <div
               onClick={() => {
                 setShowAllPics(true);
@@ -30,9 +31,7 @@ export default function Pictures({ pictures, openGallery }) {
             >
               +{pictures.slice(10).length}
             </div>
-          ) : (
-            ""
-          )}
+          ):''}
           {showAllPics &&
             pictures.slice(10).map((picture, i) => (
               <div
@@ -41,7 +40,7 @@ export default function Pictures({ pictures, openGallery }) {
                   openGallery(Number(e.target.dataset.imageIndex));
                 }}
                 key={`picture-${i + 10}`}
-                className="aspect-2/3 hover:cursor-pointer hover:scale-105 hover:border-4 hover:border-amethyst-smoke-400/30 transition-transform duration-200"
+                className={classes.pictures}
               >
                 <img className="w-full h-full object-cover pointer-events-none" src={picture.jpg.image_url} />
               </div>

@@ -13,7 +13,7 @@ export default function CharacterPage() {
       try {
         const [resCharacter, resCharacterPics] = await Promise.all([fetch(`https://api.jikan.moe/v4/characters/${id}/full`), fetch(`https://api.jikan.moe/v4/characters/${id}/pictures`)]);
         const [character_Data, characterPics_Data] = await Promise.all([resCharacter.json(), resCharacterPics.json()]);
-        setCharacterData({ ...character_Data.data, pictures: characterPics_Data.data || [], } ?? null);
+        setCharacterData({ ...character_Data.data, pictures: characterPics_Data.data || [] } ?? null);
       } finally {
         setIsLoading(false);
       }

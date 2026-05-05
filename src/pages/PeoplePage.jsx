@@ -1,11 +1,17 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Voice from "../components/person/Voice";
+import { WindowContext } from "../App";
+import CharacterCardBox from "../components/CardBox/CharacterCardBox";
+import VoicesGrid from "../components/person/VoicesGrid";
 
 export default function PeoplePage() {
   const { id } = useParams();
   const [personData, setPersonData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { windowWidth } = useContext(WindowContext);
+
   useEffect(() => {
     async function fetchPerson() {
       try {
@@ -23,6 +29,12 @@ export default function PeoplePage() {
     const date = new Date(input);
     return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
   }
+
+  const dataArr = personData?.voices.map(({ role, character, anime }) => ({
+    character: { path: "character", role, ...character },
+    anime: { path: "anime", role, ...anime },
+  }));
+
   return (
     <>
       {isLoading ? (
@@ -56,11 +68,11 @@ export default function PeoplePage() {
           </div>
           <div id="vaRoles" className="order-3 pt-2 rounded-lg overflow-hidden box-colors">
             <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Voice Acting Roles</div>
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 auto-rows-fr gap-2 lg:gap-x-5 p-3">
-              {personData.voices.map((voice, i) => (
-                <Voice key={i} voiceData={voice} />
-              ))}
-            </div>
+            {windowWidth >= 480 ? (
+              <VoicesGrid voices={personData.voices} />
+            ) : (
+              <CharacterCardBox dataArr={dataArr} />
+            )}
           </div>
         </div>
       )}

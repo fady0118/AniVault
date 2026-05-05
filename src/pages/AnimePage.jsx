@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import Character from "../components/anime/Character";
+import Character from "../components/CardBox/Box";
+import CharacterCardBox from "../components/CardBox/CharacterCardBox";
 
 export default function AnimePage() {
   let { id } = useParams();
@@ -18,6 +19,12 @@ export default function AnimePage() {
     }
     fetchAnime();
   }, [id]);
+
+const dataArr = animeData?.characters.map(({ role, character, voice_actors }) => ({
+  character:{path:"character",role,...character},
+  voice_actor: {path:"people",...voice_actors.find((actor) => actor.language === "Japanese")?.person}
+}));
+
 
   return (
     <>
@@ -80,11 +87,7 @@ export default function AnimePage() {
                 </div>
                 <div id="characters">
                   <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
-                  <div className="overflow-x-scroll flex mt-2 space-x-0.5">
-                    {animeData?.characters.map((character) => (
-                      <Character key={character.character.mal_id} character={character} />
-                    ))}
-                  </div>
+                  <CharacterCardBox dataArr={dataArr}/>
                 </div>
               </div>
 

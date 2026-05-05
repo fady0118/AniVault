@@ -26,11 +26,7 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
     <>
       <nav className="z-30 w-[95vw] flex justify-between items-center px-5 sm:px-7 lg:px-9 xl:px-12 h-12 capitalize fixed top-3 left-1/2 -translate-x-1/2 rounded-lg bg-amethyst-smoke-400 dark:bg-dark-amethyst-smoke-100 backdrop-blur-3xl">
         <a href="/" className="inline-block h-1/4 xs:h-1/3 ">
-          <img
-          className="w-full h-full grayscale brightness-25 hover:brightness-75 dark:brightness-150 dark:hover:brightness-200 duration-300 hover:cursor-pointer"
-            src="/logo.png"
-            alt="logo"
-          />
+          <img className="w-full h-full grayscale brightness-25 hover:brightness-75 dark:brightness-150 dark:hover:brightness-200 duration-300 hover:cursor-pointer" src="/logo.png" alt="logo" />
         </a>
         <div className="flex items-center space-x-3 md:space-x-6 ">
           {windowWidth <= 640 ? (
@@ -69,16 +65,15 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
             </button>
           </div>
         </div>
-
       </nav>
-        {windowWidth <= 640 && showNav && (
-          <div className="w-[96vw] flex flex-col fixed top-15 left-1/2 -translate-x-1/2 text-sm xs:text-md z-50 rounded-md overflow-hidden">
-            <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link1</div>
-            <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link2</div>
-            <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link3</div>
-          </div>
-        )}
-        {showSearchModal && <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} />}
+      {windowWidth <= 640 && showNav && (
+        <div className="w-[96vw] flex flex-col fixed top-15 left-1/2 -translate-x-1/2 text-sm xs:text-md z-50 rounded-md overflow-hidden">
+          <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link1</div>
+          <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link2</div>
+          <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link3</div>
+        </div>
+      )}
+      {showSearchModal && <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} />}
     </>
   );
 }
