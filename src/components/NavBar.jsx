@@ -72,7 +72,7 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
 
       </nav>
         {windowWidth <= 640 && showNav && (
-          <div className="w-[96vw] flex flex-col fixed top-15 left-1/2 -translate-x-1/2 text-sm xs:text-md z-10 rounded-md overflow-hidden">
+          <div className="w-[96vw] flex flex-col fixed top-15 left-1/2 -translate-x-1/2 text-sm xs:text-md z-50 rounded-md overflow-hidden">
             <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link1</div>
             <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link2</div>
             <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link3</div>
