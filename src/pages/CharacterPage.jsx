@@ -57,7 +57,10 @@ export default function CharacterPage() {
 
               <div id="about" className="order-2 w-full sm:w-4/5 pt-2 rounded-lg overflow-hidden box-colors">
                 <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">About</div>
-                <div className="p-3 text-xs font-light whitespace-pre-wrap">{characterData.about || "No biography written."}</div>
+                <div className="p-3 text-xs font-light flex flex-col space-y-2">
+                  <p className="whitespace-pre-wrap">{characterData.about || "No biography written."}</p>
+                  <p>Member Favorites: {characterData.favorites}</p>
+                </div>
               </div>
             </div>
             <div className="order-3 flex flex-col md:flex-row gap-3">

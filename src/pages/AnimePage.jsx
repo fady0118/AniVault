@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Character from "../components/CardBox/Box";
 import CharacterCardBox from "../components/CardBox/CharacterCardBox";
+import { WindowContext } from "../App";
 
 export default function AnimePage() {
   let { id } = useParams();
   const [animeData, setanimeData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { windowWidth } = useContext(WindowContext);
   useEffect(() => {
     async function fetchAnime() {
       try {
@@ -20,11 +22,10 @@ export default function AnimePage() {
     fetchAnime();
   }, [id]);
 
-const dataArr = animeData?.characters.map(({ role, character, voice_actors }) => ({
-  character:{path:"character",role,...character},
-  voice_actor: {path:"people",...voice_actors.find((actor) => actor.language === "Japanese")?.person}
-}));
-
+  const dataArr = animeData?.characters.map(({ role, character, voice_actors }) => ({
+    character: { path: "character", role, ...character },
+    voice_actor: { path: "people", ...voice_actors.find((actor) => actor.language === "Japanese")?.person },
+  }));
 
   return (
     <>
@@ -47,14 +48,72 @@ const dataArr = animeData?.characters.map(({ role, character, voice_actors }) =>
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row sm:justify-between order-2">
-              <div className="w-full md:w-1/4 rounded-xl box-colors min-h-52 order-1 overflow-hidden">
-                <div id="poster" className="w-full">
-                  <img className="w-full object-cover" src={animeData?.images.jpg.large_image_url} alt={animeData?.title} />
+            <div className="flex flex-col sm:justify-between order-2">
+              <div className="w-full order-1 flex flex-col gap-3">
+                <div className="flex flex-col xs:flex-row items-stretch gap-3 w-full">
+                  <div className="w-1/5 min-w-24 2xs:min-w-36 aspect-2/3 rounded-xl box-colors order-1 overflow-hidden self-auto shrink-0">
+                    <div id="poster" className="w-full h-full">
+                      <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={animeData?.images.jpg.large_image_url} alt={animeData?.title} />
+                    </div>
+                  </div>
+                  <div className="order-1 flex flex-col gap-3">
+                    <div id="details" className="box-colors rounded-lg  w-fit p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
+                      <div className="flex flex-col justify-between pr-2 items-center border-r border-amethyst-smoke-500/20 ">
+                        <p className="text-text-dark text-[1.5em] font-medium px-2 bg-mal-blue rounded-xs uppercase">Score</p>
+                        <p className="text-[2em]/snug font-semibold">{animeData.score}</p>
+                        <p className="font-light text-[1.2em]">{animeData.scored_by.toLocaleString()} users</p>
+                      </div>
+
+                      <div className="grid grid-cols-3 grid-rows-3 items-end gap-x-2 xs:gap-x-4 sm:gap-x-6 capitalize ">
+                        <div className="row-span-2 flex flex-col">
+                          <p className="text-[2em]">Ranked</p>
+                          <p className="text-[1.5em]">#{animeData.rank}</p>
+                        </div>
+                        <div className="row-span-2 flex flex-col">
+                          <p className="text-[2em]">Popularity</p>
+                          <p className="text-[1.5em]">#{animeData.popularity}</p>
+                        </div>
+                        <div className="row-span-2 flex flex-col">
+                          <p className="text-[2em]">Members</p>
+                          <p className="text-[1.5em]">{animeData.members.toLocaleString()}</p>
+                        </div>
+                        <p className="flex flex-row text-[1.2em]">
+                          {animeData.season} {animeData.year}
+                        </p>
+                        <p className="text-[1.2em]">{animeData.type}</p>
+                        <div className="flex flex-row space-x-1.5 flex-wrap text-[1.2em]">
+                          {animeData.studios.map((studio, i) => (
+                            <p key={i}>{studio.name}</p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    {windowWidth > 480 ? (
+                      <div className="w-full py-2 rounded-xl box-colors order-2 overflow-hidden">
+                        <div id="background">
+                          <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">background</div>
+                          <div className="px-3 py-2 text-xs font-light">{animeData?.background || "No background written."}</div>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 </div>
+                {windowWidth <= 480 ? (
+                  <div className="w-full py-2 rounded-xl box-colors order-2 overflow-hidden">
+                    <div id="background">
+                      <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">background</div>
+                      <div className="px-3 py-2 text-xs font-light">{animeData?.background || "No background written."}</div>
+                      {/* @todo - find an alternative way to fill in the background */}
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
 
-              <div className="w-full md:w-[45%] py-2 flex flex-col space-y-2 rounded-xl box-colors min-h-52 order-2 overflow-hidden">
+              <div className="w-full order-2 md:w-[45%] py-2 flex flex-col space-y-2 rounded-xl box-colors min-h-52 overflow-hidden">
                 {animeData?.trailer.embed_url && (
                   <div id="trailer">
                     <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed">Watch Trailer</div>
@@ -87,15 +146,7 @@ const dataArr = animeData?.characters.map(({ role, character, voice_actors }) =>
                 </div>
                 <div id="characters">
                   <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
-                  <CharacterCardBox dataArr={dataArr}/>
-                </div>
-              </div>
-
-              <div className="w-full md:w-[27.5%] py-2 rounded-xl box-colors min-h-52 order-3 overflow-hidden">
-                <div id="background">
-                  <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">background</div>
-                  <div className="px-3 py-2 text-xs font-light">{animeData?.background || "No background written."}</div>
-                  {/* @todo - find an alternative way to fill in the background */}
+                  <CharacterCardBox dataArr={dataArr} />
                 </div>
               </div>
             </div>
