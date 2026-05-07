@@ -24,7 +24,7 @@ export default function MangaPage() {
       {isLoading ? (
         <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
       ) : (
-        <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 mt-15 text-dark-amethyst-smoke-50 dark:text-text-dark">
+        <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 text-dark-amethyst-smoke-50 dark:text-text-dark">
           <div id="title" className="mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex flex-col">
             <span className="text-sm/relaxed sm:text-lg/relaxed">{mangaData.title}</span>
             <div className="flex items-center space-x-1.5">

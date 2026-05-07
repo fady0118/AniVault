@@ -41,7 +41,7 @@ function App() {
     <WindowContext value={{windowWidth}}>
       <div className="font-inter ">
         <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} windowWidth={windowWidth} />
-        <div className="">
+        <div>
           <Outlet />
         </div>
       </div>
