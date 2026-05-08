@@ -48,7 +48,7 @@ export default function AnimePage() {
                   </a>
                 </div>
               </div>
-              <div className="order-2 flex flex-col gap-y-3">
+              <div className="order-2 flex flex-col w-full gap-y-3">
                 <div className="w-full order-1 flex flex-col gap-3">
                   <div className="flex flex-col xs:flex-row items-stretch gap-3 w-full">
                     <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
@@ -65,7 +65,7 @@ export default function AnimePage() {
                             <p className="text-[1.8em]/snug font-semibold">{animeData.score}</p>
                             <p className="font-light text-[1.25em]">{animeData.scored_by.toLocaleString()} users</p>
                           </div>
-                          <div className="grid grid-cols-3 grid-rows-3 items-end gap-x-3 xs:gap-x-4 sm:gap-x-6 md:gap-x-8 lg:gap-x-10 capitalize ">
+                          <div className="grid grid-cols-3 grid-rows-3 items-end gap-x-3  2xs:gap-x-6 md:gap-x-8 lg:gap-x-10 capitalize ">
                             <div className="row-span-2 flex flex-col">
                               <p className="text-[1.8em]">Ranked</p>
                               <p className="text-[1.4em]">#{animeData.rank}</p>
@@ -131,25 +131,72 @@ export default function AnimePage() {
                     ""
                   )}
                 </div>
-                <div className="w-full order-2 py-2 flex flex-col gap-y-3">
-                  <div className="w-full flex flex-col md:flex-row gap-3">
-                    {animeData?.trailer.embed_url && (
-                      <div id="trailer" className="rounded-lg box-colors overflow-hidden w-full md:w-1/2">
-                        <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed">Watch Trailer</div>
-                        <div className="w-full aspect-video">
-                          <iframe
-                            className="w-full h-full"
-                            src={animeData?.trailer.embed_url.split("&autoplay")[0]}
-                            title="YouTube video player"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerPolicy="strict-origin-when-cross-origin"
-                            allowFullScreen
-                          ></iframe>
+
+                <div className="order-2 w-full flex flex-col md:flex-row gap-3">
+                  <div id="information" className="w-full md:w-1/4 rounded-lg box-colors">
+                    <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
+                    <div className="px-3 py-2 text-xs font-light">
+                      <div className="grid grid-cols-1 w-full gap-y-2">
+                        <div className="w-full flex flex-row gap-x-1 items-start capitalize">
+                          <p className="font-semibold ">type:</p>
+                          <p className="text-[0.95em]">{animeData.type}</p>
+                        </div>
+                        <div className="w-full flex flex-row gap-x-1 items-start capitalize">
+                          <p className="font-semibold ">Episodes:</p>
+                          <p className="text-[0.95em]">{animeData.episodes}</p>
+                        </div>
+                        <div className="w-full flex flex-row gap-x-1 items-start capitalize">
+                          <p className="font-semibold">status:</p>
+                          <p className="text-[0.95em]">{animeData.status}</p>
+                        </div>
+                        <div className="w-full flex flex-row gap-x-1 items-start capitalize">
+                          <p className="font-semibold">aired:</p>
+                          <p className="text-[0.95em]">{animeData.aired.string}</p>
+                        </div>
+                        <div className="w-full flex flex-row gap-x-1 items-start capitalize">
+                          <p className="font-semibold ">Premiered:</p>
+                          <p className="text-[0.95em]">
+                            {animeData.season} {animeData.year}
+                          </p>
                         </div>
                       </div>
-                    )}
-                    <div id="synopsis" className="rounded-lg box-colors w-full md:w-1/2 h-fit">
+                    </div>
+                  </div>
+
+                  <div className="w-full md:w-3/4 flex flex-col md:flex-row flex-wrap gap-3">
+                    <div className="flex flex-col md:flex-row gap-3 w-full">
+                      {animeData?.trailer.embed_url && (
+                        <div id="trailer" className="rounded-lg box-colors overflow-hidden w-full md:w-1/2 order-2 md:order-1">
+                          <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed">Watch Trailer</div>
+                          <div className="w-full aspect-video">
+                            <iframe
+                              className="w-full h-full"
+                              src={animeData?.trailer.embed_url.split("&autoplay")[0]}
+                              title="YouTube video player"
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              referrerPolicy="strict-origin-when-cross-origin"
+                              allowFullScreen
+                            ></iframe>
+                          </div>
+                        </div>
+                      )}
+                      <div className="w-full md:w-1/2 h-fit rounded-lg box-colors overflow-hidden order-1 md:order-2">
+                        <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">titles</div>
+                        <div className="flex flex-col px-3 py-2 text-xs font-light">
+                          {animeData.titles
+                            // .filter((title) => title.type !== "Default")
+                            .map((title) => (
+                              <div className="flex flex-row space-x-1 w-full">
+                                <p className="font-semibold min-w-16">{title.type}: </p>
+                                <p>{title.title}</p>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div id="synopsis" className="rounded-lg box-colors h-fit w-full">
                       <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">synopsis</div>
                       <div className="flex flex-col space-y-1.5 px-3 py-2 items-end">
                         <div className="peer">
@@ -159,16 +206,15 @@ export default function AnimePage() {
                         <label
                           htmlFor="synopsisCheckbox"
                           className="text-xs capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
-                          before:content-['see_more'] peer-has-checked:before:content-['see_less']"
+                            before:content-['see_more'] peer-has-checked:before:content-['see_less']"
                         ></label>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="w-full flex justify-center">
-                    <div id="characters" className="rounded-lg box-colors w-full md:w-1/2">
-                      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
-                      <CharacterCardBox dataArr={dataArr} />
+                    <div id="characters" className="flex justify-center w-full">
+                      <div className="rounded-lg box-colors w-full md:w-1/2">
+                        <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
+                        <CharacterCardBox dataArr={dataArr} />
+                      </div>
                     </div>
                   </div>
                 </div>
