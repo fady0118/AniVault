@@ -89,12 +89,11 @@ export default function AnimePage() {
   };
   async function fetchRelations() {
     const allEntries = animeData.relations.flatMap((r) => r.entry);
-    // const images = await Promise.all(allEntries.map(getImage));
     const delay = (ms) => new Promise((res) => setTimeout(res, ms));
     const images = [];
     for (const entry of allEntries) {
       images.push(await getImage(entry));
-      await delay(350); // ~3 req/s safe zone
+      await delay(350);
     }
     setRelationsImgs(images);
   }

@@ -134,14 +134,15 @@ export default function CharacterPage() {
                   </div>
                 </div>
                 <div id="Pictures" className="box-colors rounded-md py-2">
-                  <Pictures pictures={characterData.pictures} openGallery={openGallery} />
+                  <Pictures pictures={characterData.pictures} openGallery={openGallery} cols={2}/>
                 </div>
               </div>
             </div>
           </div>
           {showModal && (
             <Gallery
-              data={characterData}
+              name={characterData.name}
+              pictures={characterData.pictures}
               activeIndex={activeIndex}
               closeGallery={closeGallery}
               onNext={() => dispatch({ type: "next" })}

@@ -9,7 +9,8 @@ const classes = {
     "absolute top-1/2 -translate-y-1/2 xs:static bg-amethyst-smoke-950/70 hover:bg-amethyst-smoke-950/50 xs:bg-transparent hover:cursor-pointer xs:hover:bg-amethyst-smoke-400/20 rounded-full p-1 box-content",
 };
 
-export default function Gallery({ data, activeIndex, closeGallery, onNext, onPrev, onOpen }) {
+export default function Gallery({ pictures, name, activeIndex, closeGallery, onNext, onPrev, onOpen }) {
+  // if (!pictures.length) return;
   const { windowWidth } = useContext(WindowContext);
   // arrow navigation
   function handleGalleryActions(e) {
@@ -56,8 +57,8 @@ export default function Gallery({ data, activeIndex, closeGallery, onNext, onPre
             <img
               key={activeIndex}
               className="h-full w-auto aspect-auto object-cover rounded-lg gallery-image-animation"
-              src={data.pictures[activeIndex].jpg.image_url}
-              alt={`${data.name ?? "unknown"}-picture`}
+              src={pictures[activeIndex].jpg.image_url}
+              alt={`${name ?? "unknown"}-picture`}
             />
             <ChevronRight
               onClick={() => {
@@ -69,7 +70,7 @@ export default function Gallery({ data, activeIndex, closeGallery, onNext, onPre
           </div>
           {windowWidth >= 480 && (
             <div id="galleryMap" className="flex h-1/6 gap-1 p-1 overflow-x-scroll">
-              {data.pictures.map((picture, i) => (
+              {pictures.map((picture, i) => (
                 <div
                   key={i}
                   data-index={i}
@@ -78,7 +79,7 @@ export default function Gallery({ data, activeIndex, closeGallery, onNext, onPre
                     onOpen(i);
                   }}
                 >
-                  <img className="h-full w-full object-cover pointer-events-none" src={picture.jpg.image_url} alt={`${data.name ?? "unknown"}-picture`} />
+                  <img className="h-full w-full object-cover pointer-events-none" src={picture.jpg.image_url} alt={`${name ?? "unknown"}-picture`} />
                 </div>
               ))}
             </div>
