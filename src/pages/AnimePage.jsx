@@ -3,11 +3,13 @@ import { useParams } from "react-router";
 import Character from "../components/CardBox/Box";
 import CharacterCardBox from "../components/CardBox/CharacterCardBox";
 import { WindowContext } from "../App";
+import { LinkIcon } from "lucide-react";
 
 export default function AnimePage() {
   let { id } = useParams();
   const [animeData, setanimeData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [relationsImgs, setRelationsImgs] = useState(null);
   const { windowWidth } = useContext(WindowContext);
   useEffect(() => {
     async function fetchAnime() {
@@ -27,6 +29,75 @@ export default function AnimePage() {
     voice_actor: { path: "people", ...voice_actors.find((actor) => actor.language === "Japanese")?.person },
   }));
 
+  useEffect(() => {
+    if (!animeData) return;
+    fetchRelations();
+  }, [animeData]);
+
+  function renderInfoArr(title, arr) {
+    return (
+      <div className="w-full flex flex-row gap-x-1 items-start capitalize">
+        <p className="font-semibold ">{title}:</p>
+        <p className="flex flex-row flex-wrap">
+          {arr.length
+            ? arr.map((item, i, arr) => (
+                <span key={i} className="whitespace-pre-wrap">
+                  {item.name}
+                  {i !== arr.length - 1 ? ", " : ""}
+                </span>
+              ))
+            : "None found."}
+        </p>
+      </div>
+    );
+  }
+
+  function renderInfoStr(title, str) {
+    return (
+      <div className="w-full flex flex-row gap-x-1 items-start capitalize">
+        <p className="font-semibold ">{title}:</p>
+        <p>{str}</p>
+      </div>
+    );
+  }
+
+  function renderIcon(name) {
+    switch (name) {
+      case "YouTube":
+        return <img alt="YouTube icon" className="h-3" src="https://cdn.myanimelist.net/img/common/external_links/102.png" />;
+      case "AniDB":
+        return <img className="h-3" alt="AniDB icon" src="https://cdn.myanimelist.net/img/common/external_links/200.png" />;
+      case "ANN":
+        return <img className="h-3" alt="ANN icon" src="https://cdn.myanimelist.net/img/common/external_links/201.png" />;
+      case "Wikipedia":
+        return <img className="h-3" alt="Wikipedia icon" src="https://cdn.myanimelist.net/img/common/external_links/202.png" />;
+      case "Syoboi":
+        return <img className="h-3" alt="Syoboi icon" src="https://cdn.myanimelist.net/img/common/external_links/203.png" />;
+      case "Crunchyroll":
+        return <img className="h-3" alt="Crunchyroll icon" src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/crunchyroll.png" />;
+      default:
+        return name.startsWith("@") ? <img className="h-3" alt="twitter icon" src="https://cdn.myanimelist.net/img/common/external_links/101.png" /> : <LinkIcon size={12} />;
+    }
+  }
+  const getImage = async ({ mal_id, type }) => {
+    const res = await fetch(`https://api.jikan.moe/v4/${type}/${mal_id}`);
+    const { data } = await res.json();
+    return {
+      mal_id,
+      image: data.images.jpg.large_image_url,
+    };
+  };
+  async function fetchRelations() {
+    const allEntries = animeData.relations.flatMap((r) => r.entry);
+    // const images = await Promise.all(allEntries.map(getImage));
+    const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+    const images = [];
+    for (const entry of allEntries) {
+      images.push(await getImage(entry));
+      await delay(350); // ~3 req/s safe zone
+    }
+    setRelationsImgs(images);
+  }
   return (
     <>
       {isLoading ? (
@@ -98,7 +169,7 @@ export default function AnimePage() {
                               <div className="peer">
                                 <input type="checkbox" name="background-text-checkbox" id="background-text-checkbox" className="hidden" />
                               </div>
-                              <p className="text-xs font-light max-lines-3 cutoff-text">{animeData?.background || "No background written."}</p>
+                              <p className="text-xs font-light max-lines-3 cutoff-text">{animeData?.background || "No background found."}</p>
                               <label
                                 htmlFor="background-text-checkbox"
                                 className="w-full text-right text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
@@ -119,7 +190,7 @@ export default function AnimePage() {
                           <div className="peer">
                             <input type="checkbox" name="background-text-checkbox" id="background-text-checkbox" className="hidden" />
                           </div>
-                          <p className="text-xs font-light max-lines-4 cutoff-text">{animeData?.background || "No background written."}</p>
+                          <p className="text-xs font-light max-lines-4 cutoff-text">{animeData?.background || "No background found."}</p>
                           <label
                             htmlFor="background-text-checkbox"
                             className="w-full text-right text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
@@ -131,39 +202,73 @@ export default function AnimePage() {
                     ""
                   )}
                 </div>
+                {/* @todo only show see more if there's more lines  */}
+                {/* @todo find alternative source for not found background */}
 
                 <div className="order-2 w-full flex flex-col md:flex-row gap-3">
-                  <div id="information" className="w-full md:w-1/4 rounded-lg box-colors">
-                    <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
-                    <div className="px-3 py-2 text-xs font-light">
-                      <div className="grid grid-cols-1 w-full gap-y-2">
-                        <div className="w-full flex flex-row gap-x-1 items-start capitalize">
-                          <p className="font-semibold ">type:</p>
-                          <p className="text-[0.95em]">{animeData.type}</p>
+                  <div className="w-fit md:w-1/4 max-w-sm flex flex-col justify-between gap-y-2 rounded-lg box-colors">
+                    <div id="information" className="w-full">
+                      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
+                      <div className="px-3 py-2 text-xs font-light">
+                        <div className="grid grid-cols-1 w-full gap-y-2 text-[0.9em] lg:text-[1.05em]">
+                          {renderInfoStr("type", `${animeData.type}`)}
+                          {renderInfoStr("episodes", `${animeData.episodes}`)}
+                          {renderInfoStr("status", `${animeData.status}`)}
+                          {renderInfoStr("aired", `${animeData.aired.string}`)}
+                          {renderInfoStr("premiered", `${animeData.season} ${animeData.year}`)}
+                          {renderInfoStr("broadcast", `${animeData.broadcast.string}`)}
+                          {renderInfoArr("producers", animeData.producers)}
+                          {renderInfoArr("licensors", animeData.licensors)}
+                          {renderInfoArr("studios", animeData.studios)}
+                          {renderInfoStr("source", `${animeData.source}`)}
+                          {renderInfoArr("genres", animeData.genres)}
+                          {renderInfoArr("themes", animeData.themes)}
+                          {renderInfoStr("duration", `${animeData.duration}`)}
+                          {renderInfoStr("rating", `${animeData.rating}`)}
                         </div>
-                        <div className="w-full flex flex-row gap-x-1 items-start capitalize">
-                          <p className="font-semibold ">Episodes:</p>
-                          <p className="text-[0.95em]">{animeData.episodes}</p>
+                      </div>
+                    </div>
+                    <div id="statistics" className="w-full">
+                      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">statistics</div>
+                      <div className="px-3 py-2 text-xs font-light">
+                        <div className="grid grid-cols-1 w-full gap-y-2 text-[0.9em] lg:text-[1.05em]">
+                          {renderInfoStr("score", `${animeData.score} (scored by ${animeData.scored_by.toLocaleString()} users) `)}
+                          {renderInfoStr("ranked", `#${animeData.rank}`)}
+                          {renderInfoStr("popularity", `#${animeData.popularity}`)}
+                          {renderInfoStr("members", `${animeData.members.toLocaleString()}`)}
+                          {renderInfoStr("favorites", `${animeData.favorites.toLocaleString()}`)}
                         </div>
-                        <div className="w-full flex flex-row gap-x-1 items-start capitalize">
-                          <p className="font-semibold">status:</p>
-                          <p className="text-[0.95em]">{animeData.status}</p>
+                      </div>
+                    </div>
+                    <div id="external" className="w-full">
+                      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Available At</div>
+                      <div className="px-3 py-2 text-xs font-light">
+                        <div className="grid grid-cols-1 w-full gap-y-1.5 text-[0.9em] lg:text-[1.05em]">
+                          {animeData.external.map((ext, i) => (
+                            <p className="flex flex-row items-center gap-1.5" key={i}>
+                              {renderIcon(ext.name)}
+                              <a className="text-blue-400" href={ext.url}>
+                                {ext.name}
+                              </a>
+                            </p>
+                          ))}
                         </div>
-                        <div className="w-full flex flex-row gap-x-1 items-start capitalize">
-                          <p className="font-semibold">aired:</p>
-                          <p className="text-[0.95em]">{animeData.aired.string}</p>
-                        </div>
-                        <div className="w-full flex flex-row gap-x-1 items-start capitalize">
-                          <p className="font-semibold ">Premiered:</p>
-                          <p className="text-[0.95em]">
-                            {animeData.season} {animeData.year}
-                          </p>
-                        </div>
+                      </div>
+                    </div>
+                    <div id="streaming" className="w-ful">
+                      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Streaming Platforms</div>
+                      <div className="flex flex-col gap-y-1.5 px-3 py-2 text-xs font-light">
+                        {animeData.streaming.map((stream) => (
+                          <div className="flex flex-row gap-x-2 items-center">
+                            {renderIcon(stream.name)}
+                            <a className="text-blue-400" href={stream.url}>{stream.name}</a>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
 
-                  <div className="w-full md:w-3/4 flex flex-col md:flex-row flex-wrap gap-3">
+                  <div className="w-full md:w-3/4 flex flex-col md:flex-row flex-wrap gap-3 h-fit">
                     <div className="flex flex-col md:flex-row gap-3 w-full">
                       {animeData?.trailer.embed_url && (
                         <div id="trailer" className="rounded-lg box-colors overflow-hidden w-full md:w-1/2 order-2 md:order-1">
@@ -181,13 +286,13 @@ export default function AnimePage() {
                           </div>
                         </div>
                       )}
-                      <div className="w-full md:w-1/2 h-fit rounded-lg box-colors overflow-hidden order-1 md:order-2">
+                      <div className="w-fit md:w-1/2 h-fit rounded-lg box-colors overflow-hidden order-1 md:order-2">
                         <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">titles</div>
-                        <div className="flex flex-col px-3 py-2 text-xs font-light">
+                        <div className="flex flex-col gap-y-1 px-3 py-2 text-xs font-light">
                           {animeData.titles
                             // .filter((title) => title.type !== "Default")
-                            .map((title) => (
-                              <div className="flex flex-row space-x-1 w-full">
+                            .map((title, i) => (
+                              <div key={i} className="flex flex-row space-x-1 w-full">
                                 <p className="font-semibold min-w-16">{title.type}: </p>
                                 <p>{title.title}</p>
                               </div>
@@ -210,10 +315,36 @@ export default function AnimePage() {
                         ></label>
                       </div>
                     </div>
-                    <div id="characters" className="flex justify-center w-full">
-                      <div className="rounded-lg box-colors w-full md:w-1/2">
+                    <div id="characters" className="flex justify-center w-full h-fit">
+                      <div className="rounded-lg box-colors w-full ">
                         <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
                         <CharacterCardBox dataArr={dataArr} />
+                      </div>
+                    </div>
+                    <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs">
+                      <div className="rounded-lg box-colors w-full ">
+                        <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
+                        <div className="flex flex-col">
+                          {animeData.relations.map((relation) => (
+                            <div className="px-2">
+                              <div className="border-b border-amethyst-smoke-200/40 pt-0.5 font-semibold text-sm/relaxed capitalize">{relation.relation}</div>
+                              <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr p-1">
+                                {relation.entry.map((entry) => (
+                                  <div className="flex flex-row w-full">
+                                    <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={entry.url}>
+                                      <img className="w-full h-full object-cover" src={relationsImgs?.find((relationImg) => relationImg.mal_id === entry.mal_id).image} alt={entry.name} />
+                                    </a>
+                                    <div className="w-3/4 flex flex-col px-2">
+                                      <a href={entry.url} className="text-blue-400">
+                                        {entry.name}
+                                      </a>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -221,7 +352,7 @@ export default function AnimePage() {
               </div>
             </div>
             <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full overflow-hidden">
-              <img className="w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-round" src={animeData?.images.jpg.large_image_url} alt={animeData?.title} />
+              <img className="w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y" src={animeData?.images.jpg.large_image_url} alt={animeData?.title} />
             </div>
           </div>
         </>
