@@ -13,7 +13,7 @@ export default function CharacterPage() {
       try {
         const [resCharacter, resCharacterPics] = await Promise.all([fetch(`https://api.jikan.moe/v4/characters/${id}/full`), fetch(`https://api.jikan.moe/v4/characters/${id}/pictures`)]);
         const [character_Data, characterPics_Data] = await Promise.all([resCharacter.json(), resCharacterPics.json()]);
-        setCharacterData({ ...character_Data.data, pictures: characterPics_Data.data || [] } ?? null);
+        setCharacterData({ ...character_Data.data, pictures: characterPics_Data.data || [] });
       } finally {
         setIsLoading(false);
       }
@@ -33,7 +33,7 @@ export default function CharacterPage() {
             <div id="name" className="mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex flex-col">
               <div className="flex flex-wrap space-x-1 items-end font-bold">
                 <span className="text-sm/relaxed sm:text-lg/relaxed">{characterData.name}</span>
-                {characterData.nicknames.map((nickname) => (
+                {characterData?.nicknames?.map((nickname) => (
                   <span key={nickname} className="text-xs/relaxed sm:text-md/relaxed">
                     "{nickname}"
                   </span>
@@ -52,7 +52,7 @@ export default function CharacterPage() {
             </div>
             <div className="w-full order-2 flex flex-col sm:flex-row gap-3">
               <div id="image" className="w-1/5 min-w-24 ">
-                <img className="w-full aspect-2/3 object-cover order-1 rounded-lg overflow-hidden" src={characterData.images.jpg.image_url} alt="" />
+                <img className="w-full aspect-2/3 object-cover order-1 rounded-lg overflow-hidden" src={characterData.images?.jpg.image_url??null} alt="" />
               </div>
 
               <div id="about" className="order-2 w-full sm:w-4/5 pt-2 rounded-lg overflow-hidden box-colors">

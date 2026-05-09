@@ -3,21 +3,41 @@ import { useParams } from "react-router";
 import Character from "../components/CardBox/Box";
 import CharacterCardBox from "../components/CardBox/CharacterCardBox";
 import { WindowContext } from "../App";
-import { LinkIcon, Music4Icon } from "lucide-react";
+import { ChevronRight, LinkIcon, Music4Icon, Star } from "lucide-react";
 
 export default function AnimePage() {
   let { id } = useParams();
   const [animeData, setanimeData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [relationsImgs, setRelationsImgs] = useState([]);
+  const [showAllRelations, setShowAllRelations] = useState(false);
   const { windowWidth } = useContext(WindowContext);
 
   useEffect(() => {
     async function fetchAnime() {
       try {
-        const [resAnime, resCharacters] = await Promise.all([fetch(`https://api.jikan.moe/v4/anime/${id}/full`), fetch(`https://api.jikan.moe/v4/anime/${id}/characters`)]);
-        const [anime_Data, characters_Data] = await Promise.all([resAnime.json(), resCharacters.json()]);
-        setanimeData({ ...anime_Data.data, characters: characters_Data.data } ?? null);
+        const [resAnime, resCharacters, resReviews] = await Promise.all([
+          fetch(`https://api.jikan.moe/v4/anime/${id}/full`),
+          fetch(`https://api.jikan.moe/v4/anime/${id}/characters`),
+          fetch(`https://api.jikan.moe/v4/anime/${20}/reviews`),
+        ]);
+        const [anime_Data, characters_Data, reviews_Data] = await Promise.all([resAnime.json(), resCharacters.json(), resReviews.json()]);
+
+        setanimeData({
+          ...anime_Data.data,
+          characters: characters_Data.data,
+          reviews: {
+            data: reviews_Data.data,
+            stats: {
+              all: reviews_Data.data.length,
+              recommended: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "recommended") ? c + 1 : c), 0),
+              mixedFeelings: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "mixed feelings") ? c + 1 : c), 0),
+              notRecommended: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "not recommended") ? c + 1 : c), 0),
+              avgScore: reviews_Data.data.reduce((c, r) => c + r.score, 0) / reviews_Data.data.length,
+            },
+          },
+          flattenedRelations: anime_Data.data.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))),
+        });
       } finally {
         setIsLoading(false);
       }
@@ -31,22 +51,28 @@ export default function AnimePage() {
   }));
 
   const relationsImgsRef = useRef(relationsImgs);
+  const fetchedBeforeRef = useRef(false);
+  const getImage = async ({ mal_id, type }) => {
+    const res = await fetch(`https://api.jikan.moe/v4/${type}/${mal_id}`);
+    const { data } = await res.json();
+    return {
+      mal_id,
+      image: data?.images.jpg.large_image_url,
+    };
+  };
 
-  useEffect(() => {
-    relationsImgsRef.current = relationsImgs;
-  }, [relationsImgs]);
-
-  function timeout() {
-    setTimeout(() => {
-      if (relationsImgsRef.current?.length) return;
-      fetchRelations();
-    }, 5000);
+  async function fetchRelations(startIndex, lastIndex) {
+    const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+    for (const entry of animeData.flattenedRelations.slice(startIndex, lastIndex)) {
+      await delay(350);
+      const image = await getImage(entry);
+      setRelationsImgs((s) => [...s, { ...entry, ...image }]);
+    }
   }
-
   useEffect(() => {
-    if (!animeData) return;
-    fetchRelations();
-    timeout();
+    if (!animeData || fetchedBeforeRef.current) return;
+    fetchRelations(0, 6);
+    return () => (fetchedBeforeRef.current = true);
   }, [animeData]);
 
   function renderInfoArr(title, arr) {
@@ -102,24 +128,6 @@ export default function AnimePage() {
         return name.startsWith("@") ? <img className="h-3" alt="twitter icon" src="https://cdn.myanimelist.net/img/common/external_links/101.png" /> : <LinkIcon size={12} />;
     }
   }
-  const getImage = async ({ mal_id, type }) => {
-    const res = await fetch(`https://api.jikan.moe/v4/${type}/${mal_id}`);
-    const { data } = await res.json();
-    return {
-      mal_id,
-      image: data?.images.jpg.large_image_url,
-    };
-  };
-  async function fetchRelations() {
-    const allEntries = animeData.relations.flatMap((r) => r.entry);
-    const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-    // const images = [];
-    for (const entry of allEntries) {
-      await delay(350);
-      const image = await getImage(entry);
-      setRelationsImgs((s) => [...s, image]);
-    }
-  }
 
   return (
     <>
@@ -156,8 +164,8 @@ export default function AnimePage() {
                         <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
                           <div className="flex flex-col justify-between pr-2 items-center border-r border-amethyst-smoke-500/20 ">
                             <p className="text-text-dark text-[1.4em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
-                            <p className="text-[1.8em]/snug font-semibold">{animeData.score}</p>
-                            <p className="font-light text-[1.25em]">{animeData.scored_by.toLocaleString()} users</p>
+                            <p className="text-[1.8em]/snug font-semibold">{animeData?.score}</p>
+                            <p className="font-light text-[1.25em]">{animeData?.scored_by.toLocaleString()} users</p>
                           </div>
                           <div className="grid grid-cols-3 grid-rows-3 items-end gap-x-3  2xs:gap-x-6 md:gap-x-8 lg:gap-x-10 capitalize ">
                             <div className="row-span-2 flex flex-col">
@@ -359,33 +367,62 @@ export default function AnimePage() {
                         <CharacterCardBox dataArr={dataArr} />
                       </div>
                     </div>
+
                     <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs">
                       <div className="rounded-lg box-colors w-full ">
                         <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
-                        <div className="flex flex-col">
-                          {animeData.relations.map((relation, i) => (
-                            <div className="px-2" key={i}>
-                              <div className="border-b border-amethyst-smoke-200/40 pt-0.5 font-semibold text-sm/relaxed capitalize">{relation.relation}</div>
-                              <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-1">
-                                {relation.entry.map((entry) => (
-                                  <div key={entry.mal_id} className="flex flex-row w-full">
-                                    {/* @todo replace entry link from mal link to own app link after writing the manga route */}
-                                    <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={entry.url}>
-                                      <img className="w-full h-full object-cover" src={relationsImgs.find((relationImg) => relationImg.mal_id === entry.mal_id)?.image} alt={entry.name} />
-                                    </a>
-                                    <div className="w-3/4 flex flex-col px-2">
-                                      <a href={entry.url} className="text-blue-400">
-                                        {entry.name}
-                                      </a>
-                                    </div>
-                                  </div>
-                                ))}
+
+                        <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2">
+                          {animeData.flattenedRelations.slice(0, 6).map((entry, i) => (
+                            <div key={i} className="flex flex-row w-full">
+                              <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={entry.url}>
+                                <img className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
+                              </a>
+                              <div className="w-3/4 flex flex-col gap-y-1 px-2">
+                                <a href={entry.url} className="text-blue-800 dark:text-blue-400">
+                                  {entry.name}
+                                </a>
+                                <p>
+                                  {entry.relation} ({entry.type})
+                                </p>
                               </div>
                             </div>
                           ))}
+                          {!showAllRelations && animeData.flattenedRelations.length > 6 ? (
+                            <div
+                              onClick={() => {
+                                setShowAllRelations(true);
+                                fetchRelations(6, animeData.flattenedRelations.length);
+                              }}
+                              className="flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20"
+                            >
+                              +{animeData.flattenedRelations.length - 6}
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                          {showAllRelations
+                            ? animeData.flattenedRelations.slice(6).map((entry, i) => (
+                                <div key={i} className="flex flex-row w-full">
+                                  <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={entry.url}>
+                                    <img className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
+                                  </a>
+                                  <div className="w-3/4 flex flex-col gap-y-1 px-2">
+                                    <a href={entry.url} className="text-blue-800 dark:text-blue-400">
+                                      {entry.name}
+                                    </a>
+                                    <p>
+                                      {entry.relation} ({entry.type})
+                                    </p>
+                                  </div>
+                                </div>
+                              ))
+                            : ""}
                         </div>
                       </div>
                     </div>
+                    {/* @todo replace entry link from mal link to own app link after writing the manga route  */}
+
                     {animeData.theme.openings.length || animeData.theme.endings.length ? (
                       <div id="theme" className="flex justify-center w-full h-fit text-2xs lg:text-[11px]">
                         <div className="rounded-lg box-colors w-full grid grid-cols-2 gap-4 py-1">
@@ -424,6 +461,53 @@ export default function AnimePage() {
                     ) : (
                       ""
                     )}
+                  </div>
+                </div>
+
+                <div id="reviews" className="order-3 rounded-lg box-colors w-full py-1">
+                  <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">reviews</div>
+                  <div className="flex flex-col w-full gap-y-2 p-2">
+                    <div className="flex flex-row justify-between text-xs/normal">
+                      <div className="flex flex-row items-center gap-x-1 py-1 px-3 bg-amethyst-smoke-700/30 text-2xs">
+                        <p>Avg Score</p>
+                        <p className="">{animeData.reviews.stats.avgScore}</p>
+                        <Star size={14} color="yellow" />
+                      </div>
+                      <div className="flex flex-col py-1 px-2 bg-amethyst-smoke-700/30">
+                        <div className="flex flex-row flex-wrap items-center gap-x-3 rounded-sm text-2xs">
+                          <div className="flex flex-row items-center capitalize gap-x-1 text-blue-800 dark:text-blue-400">
+                            <Star size={12} className="stroke-blue-800 dark:stroke-blue-400" />
+                            <p>{animeData.reviews.stats.recommended}</p>
+                            <p>recommended</p>
+                          </div>
+                          <div className="flex flex-row items-center capitalize gap-x-1 text-gray-800 dark:text-gray-400">
+                            <Star size={12} className="stroke-gray-800 dark:stroke-gray-400" />
+                            <p>{animeData.reviews.stats.mixedFeelings}</p>
+                            <p>mixed feelings</p>
+                          </div>
+                          <div className="flex flex-row items-center capitalize gap-x-1 text-rose-800 dark:text-rose-400">
+                            <Star size={12} className="stroke-rose-800 dark:stroke-rose-400" />
+                            <p>{animeData.reviews.stats.notRecommended}</p>
+                            <p>not recommended</p>
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            backgroundImage: `linear-gradient(90deg, var(--color-blue-400) ${((animeData.reviews.stats.recommended - 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-gray-400) ${((animeData.reviews.stats.recommended + 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-gray-400) ${((animeData.reviews.stats.recommended + animeData.reviews.stats.mixedFeelings - 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-rose-400) ${((animeData.reviews.stats.recommended + animeData.reviews.stats.mixedFeelings + 1.5) * 100) / animeData.reviews.stats.all}%)`,
+                          }}
+                          className="h-1 w-full px-3"
+                        ></div>
+                      </div>
+                      <div className="flex flex-row gap-x-1 text-2xs">
+                        <ChevronRight size={12} />
+                        <p>All reviews ({animeData.reviews.stats.all})</p>
+                      </div>
+                    </div>
+                    {animeData.reviews.data.map((review) => (
+                      <div key={review.mal_id}>
+                        <div className="flex flex-col"></div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

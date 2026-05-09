@@ -118,6 +118,6 @@
     @apply bg-amethyst-smoke-400/75 dark:bg-dark-amethyst-smoke-200/75
   }
   .blue-link{
-    @apply text-blue-400 hover:border-b border-blue-400
+    @apply text-blue-800 dark:text-blue-400 hover:border-b border-blue-400
   }
 }
