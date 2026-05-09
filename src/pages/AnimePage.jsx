@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import Character from "../components/CardBox/Box";
 import CharacterCardBox from "../components/CardBox/CharacterCardBox";
@@ -11,6 +11,7 @@ export default function AnimePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [relationsImgs, setRelationsImgs] = useState(null);
   const { windowWidth } = useContext(WindowContext);
+
   useEffect(() => {
     async function fetchAnime() {
       try {
@@ -29,9 +30,23 @@ export default function AnimePage() {
     voice_actor: { path: "people", ...voice_actors.find((actor) => actor.language === "Japanese")?.person },
   }));
 
+  const relationsImgsRef = useRef(relationsImgs);
+
+  useEffect(() => {
+    relationsImgsRef.current = relationsImgs;
+  }, [relationsImgs]);
+
+  function timeout() {
+    setTimeout(() => {
+      if (relationsImgsRef.current?.length) return;
+      fetchRelations();
+    }, 5000);
+  }
+
   useEffect(() => {
     if (!animeData) return;
     fetchRelations();
+    timeout();
   }, [animeData]);
 
   function renderInfoArr(title, arr) {
@@ -97,6 +112,7 @@ export default function AnimePage() {
     }
     setRelationsImgs(images);
   }
+
   return (
     <>
       {isLoading ? (
@@ -257,10 +273,12 @@ export default function AnimePage() {
                     <div id="streaming" className="w-ful">
                       <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Streaming Platforms</div>
                       <div className="flex flex-col gap-y-1.5 px-3 py-2 text-xs font-light">
-                        {animeData.streaming.map((stream) => (
-                          <div className="flex flex-row gap-x-2 items-center">
+                        {animeData.streaming.map((stream, i) => (
+                          <div className="flex flex-row gap-x-2 items-center" key={i}>
                             {renderIcon(stream.name)}
-                            <a className="text-blue-400" href={stream.url}>{stream.name}</a>
+                            <a className="text-blue-400" href={stream.url}>
+                              {stream.name}
+                            </a>
                           </div>
                         ))}
                       </div>
@@ -324,12 +342,12 @@ export default function AnimePage() {
                       <div className="rounded-lg box-colors w-full ">
                         <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
                         <div className="flex flex-col">
-                          {animeData.relations.map((relation) => (
-                            <div className="px-2">
+                          {animeData.relations.map((relation, i) => (
+                            <div className="px-2" key={i}>
                               <div className="border-b border-amethyst-smoke-200/40 pt-0.5 font-semibold text-sm/relaxed capitalize">{relation.relation}</div>
                               <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr p-1">
                                 {relation.entry.map((entry) => (
-                                  <div className="flex flex-row w-full">
+                                  <div key={entry.mal_id} className="flex flex-row w-full">
                                     <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={entry.url}>
                                       <img className="w-full h-full object-cover" src={relationsImgs?.find((relationImg) => relationImg.mal_id === entry.mal_id).image} alt={entry.name} />
                                     </a>
