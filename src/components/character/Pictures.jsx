@@ -16,7 +16,6 @@ export default function Pictures({ pictures, openGallery, cols }) {
         <p className="p-3 text-xs font-light">No images found.</p>
       ) : (
         <div className={`grid ${classes.columnsMap[cols]} gap-2 p-2`}>
-          {/* <div className={`grid grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-4 lg:grid-cols-5 gap-2 p-2`}> */}
           {pictures.slice(0, 10).map((picture, i) => (
             <div
               data-image-index={i}

@@ -117,7 +117,19 @@
   .box-colors{
     @apply bg-amethyst-smoke-400/75 dark:bg-dark-amethyst-smoke-200/75
   }
+  .rose-link{
+    @apply text-rose-800 dark:text-rose-400
+  }
+  .gray-link{
+    @apply text-gray-800 dark:text-gray-400
+  }
   .blue-link{
+    @apply text-blue-800 dark:text-blue-400 
+  }
+  .blue-link-b{
     @apply text-blue-800 dark:text-blue-400 hover:border-b border-blue-400
+  }
+  .bottom-border{
+    @apply border-b border-amethyst-smoke-950/40 dark:border-amethyst-smoke-200/40
   }
 }

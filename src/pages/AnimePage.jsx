@@ -22,7 +22,14 @@ export default function AnimePage() {
           fetch(`https://api.jikan.moe/v4/anime/${id}/reviews`),
         ]);
         const [anime_Data, characters_Data, reviews_Data] = await Promise.all([resAnime.json(), resCharacters.json(), resReviews.json()]);
-        console.log(reviews_Data.status);
+
+        const featured = [
+          reviews_Data.data.find((r) => r.tags.some((tag) => tag.toLowerCase() === "recommended")),
+          reviews_Data.data.find((r) => r.tags.some((tag) => tag.toLowerCase() === "mixed feelings")),
+          reviews_Data.data.find((r) => r.tags.some((tag) => tag.toLowerCase() === "not recommended")),
+        ].filter(Boolean);
+        const rest = reviews_Data.data.filter((r) => !featured.map((f) => f.mal_id).includes(r.mal_id));
+
         setanimeData({
           ...anime_Data.data,
           characters: characters_Data.data,
@@ -30,7 +37,10 @@ export default function AnimePage() {
             reviews_Data.status === 500
               ? null
               : {
-                  data: reviews_Data.data,
+                  data: {
+                    featured,
+                    rest,
+                  },
                   stats: {
                     all: reviews_Data.data.length,
                     recommended: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "recommended") ? c + 1 : c), 0),
@@ -47,10 +57,6 @@ export default function AnimePage() {
     }
     fetchAnime();
   }, [id]);
-
-  useEffect(() => {
-    console.log(animeData);
-  }, [animeData]);
 
   const dataArr = animeData?.characters.map(({ role, character, voice_actors }) => ({
     character: { path: "character", role, ...character },
@@ -136,6 +142,11 @@ export default function AnimePage() {
     }
   }
 
+  function dateFormatter(date) {
+    const d = new Date(date);
+    return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  }
+
   return (
     <>
       {isLoading ? (
@@ -167,7 +178,7 @@ export default function AnimePage() {
                     </div>
                     <div className="order-1 flex flex-col gap-3">
                       <div id="details" className="box-colors rounded-lg w-fit">
-                        <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>
+                        <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>
                         <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
                           <div className="flex flex-col justify-between pr-2 items-center border-r border-amethyst-smoke-500/20 ">
                             <p className="text-text-dark text-[1.4em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
@@ -202,7 +213,7 @@ export default function AnimePage() {
                       {windowWidth > 480 ? (
                         <div className="w-full rounded-lg box-colors order-2 overflow-hidden">
                           <div id="background">
-                            <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">background</div>
+                            <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">background</div>
                             <div className="flex flex-col px-3 py-2">
                               <div className="peer">
                                 <input type="checkbox" name="background-text-checkbox" id="background-text-checkbox" className="hidden" />
@@ -227,7 +238,7 @@ export default function AnimePage() {
                   {windowWidth <= 480 ? (
                     <div className="w-full py-2 rounded-lg box-colors order-2 overflow-hidden">
                       <div id="background">
-                        <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">background</div>
+                        <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">background</div>
                         <div className="flex flex-col px-3 py-2">
                           <div className="peer">
                             <input type="checkbox" name="background-text-checkbox" id="background-text-checkbox" className="hidden" />
@@ -252,9 +263,9 @@ export default function AnimePage() {
                 {/* @todo find alternative source for not found background */}
 
                 <div className="order-2 w-full flex flex-col md:flex-row gap-3">
-                  <div className="w-fit md:w-1/4 max-w-sm flex flex-col justify-between h-fit gap-y-8 rounded-lg box-colors">
+                  <div className="w-fit md:w-1/4 max-w-sm flex flex-col justify-between h-fit gap-y-2 md:gap-y-8 rounded-lg box-colors">
                     <div id="information" className="w-full">
-                      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
+                      <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
                           {renderInfoStr("type", `${animeData.type}`)}
@@ -276,7 +287,7 @@ export default function AnimePage() {
                       </div>
                     </div>
                     <div id="statistics" className="w-full">
-                      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">statistics</div>
+                      <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">statistics</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
                           {renderInfoStr("score", `${animeData.score} (scored by ${animeData.scored_by.toLocaleString()} users) `)}
@@ -288,7 +299,7 @@ export default function AnimePage() {
                       </div>
                     </div>
                     <div id="external" className="w-full">
-                      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Available At</div>
+                      <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Available At</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
                           {animeData.external.map((ext, i) => (
@@ -303,7 +314,7 @@ export default function AnimePage() {
                       </div>
                     </div>
                     <div id="streaming" className="w-ful">
-                      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Streaming Platforms</div>
+                      <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Streaming Platforms</div>
                       <div className="flex flex-col gap-y-2.5 px-3 py-2 text-xs font-light">
                         {animeData.streaming.map((stream, i) => (
                           <div className="flex flex-row gap-x-2 items-center" key={i}>
@@ -321,7 +332,7 @@ export default function AnimePage() {
                     <div className="flex flex-col md:flex-row gap-3 w-full">
                       {animeData?.trailer.embed_url && (
                         <div id="trailer" className="rounded-lg box-colors overflow-hidden w-full md:w-1/2 order-2 md:order-1">
-                          <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed">Watch Trailer</div>
+                          <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed">Watch Trailer</div>
                           <div className="w-full aspect-video">
                             <iframe
                               className="w-full h-full"
@@ -336,7 +347,7 @@ export default function AnimePage() {
                         </div>
                       )}
                       <div className="w-fit md:w-1/2 h-fit rounded-lg box-colors overflow-hidden order-1 md:order-2">
-                        <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">titles</div>
+                        <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">titles</div>
                         <div className="flex flex-col gap-y-1 px-3 py-2 text-xs font-light">
                           {animeData.titles
                             // .filter((title) => title.type !== "Default")
@@ -351,7 +362,7 @@ export default function AnimePage() {
                     </div>
 
                     <div id="synopsis" className="rounded-lg box-colors h-fit w-full">
-                      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">synopsis</div>
+                      <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">synopsis</div>
                       <div className="flex flex-col space-y-1.5 px-3 py-2 items-end">
                         <div className="peer">
                           <input className="hidden " type="checkbox" name="synopsisCheckbox" id="synopsisCheckbox" />
@@ -370,14 +381,14 @@ export default function AnimePage() {
                     </div>
                     <div id="characters" className="flex justify-center w-full h-fit">
                       <div className="rounded-lg box-colors w-full ">
-                        <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
+                        <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
                         <CharacterCardBox dataArr={dataArr} />
                       </div>
                     </div>
 
                     <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs">
                       <div className="rounded-lg box-colors w-full ">
-                        <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
+                        <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
 
                         <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2">
                           {animeData.flattenedRelations.slice(0, 6).map((entry, i) => (
@@ -386,7 +397,7 @@ export default function AnimePage() {
                                 <img className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
                               </a>
                               <div className="w-3/4 flex flex-col gap-y-1 px-2">
-                                <a href={entry.url} className="text-blue-800 dark:text-blue-400">
+                                <a href={entry.url} className="blue-link">
                                   {entry.name}
                                 </a>
                                 <p>
@@ -415,7 +426,7 @@ export default function AnimePage() {
                                     <img className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
                                   </a>
                                   <div className="w-3/4 flex flex-col gap-y-1 px-2">
-                                    <a href={entry.url} className="text-blue-800 dark:text-blue-400">
+                                    <a href={entry.url} className="blue-link">
                                       {entry.name}
                                     </a>
                                     <p>
@@ -435,7 +446,7 @@ export default function AnimePage() {
                         <div className="rounded-lg box-colors w-full grid grid-cols-2 gap-4 py-1">
                           {animeData.theme.openings.length ? (
                             <div id="openings">
-                              <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">openings</div>
+                              <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">openings</div>
                               <div className="flex flex-col w-full gap-y-2 p-2">
                                 {animeData.theme.openings.map((opening, i) => (
                                   <div key={i} className="w-full flex flex-row items-center gap-x-2">
@@ -450,7 +461,7 @@ export default function AnimePage() {
                           )}
                           {animeData.theme.endings.length ? (
                             <div id="endings">
-                              <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">endings</div>
+                              <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">endings</div>
                               <div className="flex flex-col w-full gap-y-2 p-2">
                                 {animeData.theme.endings.map((ending, i) => (
                                   <div key={i} className="w-full flex flex-row items-center gap-x-2">
@@ -471,29 +482,29 @@ export default function AnimePage() {
                   </div>
                 </div>
 
-                <div id="reviews" className="order-3 rounded-lg box-colors w-full py-1">
-                  <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">reviews</div>
-                  {animeData.reviews ? (
-                    <div className="flex flex-col w-full text-xs/normal gap-y-2 p-2">
+                {animeData.reviews?.data.featured.length ? (
+                  <div id="reviews" className="order-3 rounded-lg box-colors w-full py-1">
+                    <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">reviews</div>
+                    <div className="flex flex-col w-full text-xs/normal gap-y-2 py-2 px-3">
                       <div className="flex flex-row justify-between ">
                         <div className="flex flex-row items-center gap-x-1 py-1 px-3 bg-amethyst-smoke-700/30 text-2xs">
                           <p>Avg Score</p>
-                          <p className="">{animeData.reviews.stats.avgScore}</p>
+                          <p className="">{animeData.reviews.stats.avgScore.toFixed(2)}</p>
                           <Star size={14} color="yellow" />
                         </div>
                         <div className="flex flex-col py-1 px-2 bg-amethyst-smoke-700/30">
                           <div className="flex flex-row flex-wrap items-center gap-x-3 rounded-sm text-2xs">
-                            <div className="flex flex-row items-center capitalize gap-x-1 text-blue-800 dark:text-blue-400">
+                            <div className="flex flex-row items-center capitalize gap-x-1 blue-link">
                               <Star size={12} className="stroke-blue-800 dark:stroke-blue-400" />
                               <p>{animeData.reviews.stats.recommended}</p>
                               <p>recommended</p>
                             </div>
-                            <div className="flex flex-row items-center capitalize gap-x-1 text-gray-800 dark:text-gray-400">
+                            <div className="flex flex-row items-center capitalize gap-x-1 gray-link">
                               <Star size={12} className="stroke-gray-800 dark:stroke-gray-400" />
                               <p>{animeData.reviews.stats.mixedFeelings}</p>
                               <p>mixed feelings</p>
                             </div>
-                            <div className="flex flex-row items-center capitalize gap-x-1 text-rose-800 dark:text-rose-400">
+                            <div className="flex flex-row items-center capitalize gap-x-1 rose-link">
                               <Star size={12} className="stroke-rose-800 dark:stroke-rose-400" />
                               <p>{animeData.reviews.stats.notRecommended}</p>
                               <p>not recommended</p>
@@ -511,18 +522,56 @@ export default function AnimePage() {
                           <p>All reviews ({animeData.reviews.stats.all})</p>
                         </div>
                       </div>
-                      {animeData.reviews.data.map((review) => (
-                        <div key={review.mal_id}>
-                          <div className="flex flex-col"></div>
+                      {animeData.reviews.data.featured.map((review) => (
+                        <div key={review.mal_id} className="bottom-border">
+                          <div className="flex flex-row">
+                            <div className="flex flex-col justify-start w-[5%]">
+                              <a href={review.user.url} className="w-full aspect-square">
+                                <img className="w-full h-full object-cover" src={review.user.images.webp.image_url} alt={`${review.user.username}-picture`} />
+                              </a>
+                            </div>
+                            <div className="flex flex-col w-[95%] px-3">
+                              <div className="flex flex-row justify-between items-center">
+                                <a className="blue-link font-semibold" href={review.user.url}>
+                                  {review.user.username}
+                                </a>
+                                <p className="text-2xs/snug font-light">{dateFormatter(review.date)}</p>
+                              </div>
+                              <div className="flex flex-row justify-between items-start gap-x-2.5">
+                                {review.tags.map((t, i) => (
+                                  <div key={i} className="flex flex-row items-center gap-x-1 px-1.5 border border-dark-amethyst-smoke-50/20 dark:border-amethyst-smoke-400/20">
+                                    <Star
+                                      size={14}
+                                      className={`${t === "Recommended" ? "stroke-blue-800 dark:stroke-blue-400" : t === "Not Recommended" ? "stroke-rose-800 dark:stroke-rose-400 " : "stroke-gray-800 dark:stroke-gray-400"}`}
+                                    />
+                                    <p
+                                      className={`${t === "Recommended" ? "text-blue-800 dark:text-blue-400" : t === "Not Recommended" ? "text-rose-800 dark:text-rose-400" : "text-gray-800 dark:text-gray-400"}`}
+                                    >
+                                      {t}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                              <div className="flex flex-col gap-y-2 w-full py-3">
+                                <div className="peer">
+                                  <input type="checkbox" className="hidden" name={`review-${review.mal_id}`} id={`review-${review.mal_id}`} />
+                                </div>
+                                <p className="w-full whitespace-pre-wrap max-lines-4 cutoff-text">{review.review}</p>
+                                <label
+                                  htmlFor={`review-${review.mal_id}`}
+                                  className="text-xs w-[95%] text-right capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
+                            before:content-['see_more'] peer-has-checked:before:content-['see_less']"
+                                ></label>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <div className="flex flex-col w-full text-xs/normal p-4">
-                      <p>No reviews found.</p>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
             <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full overflow-hidden">
