@@ -10,7 +10,7 @@ const classes = {
 };
 
 export default function Gallery({ pictures, name, activeIndex, closeGallery, onNext, onPrev, onOpen }) {
-  // if (!pictures.length) return;
+  if (!pictures.length) return;
   const { windowWidth } = useContext(WindowContext);
   // arrow navigation
   function handleGalleryActions(e) {

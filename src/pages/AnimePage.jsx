@@ -19,23 +19,26 @@ export default function AnimePage() {
         const [resAnime, resCharacters, resReviews] = await Promise.all([
           fetch(`https://api.jikan.moe/v4/anime/${id}/full`),
           fetch(`https://api.jikan.moe/v4/anime/${id}/characters`),
-          fetch(`https://api.jikan.moe/v4/anime/${20}/reviews`),
+          fetch(`https://api.jikan.moe/v4/anime/${id}/reviews`),
         ]);
         const [anime_Data, characters_Data, reviews_Data] = await Promise.all([resAnime.json(), resCharacters.json(), resReviews.json()]);
-
+        console.log(reviews_Data.status);
         setanimeData({
           ...anime_Data.data,
           characters: characters_Data.data,
-          reviews: {
-            data: reviews_Data.data,
-            stats: {
-              all: reviews_Data.data.length,
-              recommended: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "recommended") ? c + 1 : c), 0),
-              mixedFeelings: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "mixed feelings") ? c + 1 : c), 0),
-              notRecommended: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "not recommended") ? c + 1 : c), 0),
-              avgScore: reviews_Data.data.reduce((c, r) => c + r.score, 0) / reviews_Data.data.length,
-            },
-          },
+          reviews:
+            reviews_Data.status === 500
+              ? null
+              : {
+                  data: reviews_Data.data,
+                  stats: {
+                    all: reviews_Data.data.length,
+                    recommended: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "recommended") ? c + 1 : c), 0),
+                    mixedFeelings: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "mixed feelings") ? c + 1 : c), 0),
+                    notRecommended: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "not recommended") ? c + 1 : c), 0),
+                    avgScore: reviews_Data.data.reduce((c, r) => c + r.score, 0) / reviews_Data.data.length,
+                  },
+                },
           flattenedRelations: anime_Data.data.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))),
         });
       } finally {
@@ -44,6 +47,10 @@ export default function AnimePage() {
     }
     fetchAnime();
   }, [id]);
+
+  useEffect(() => {
+    console.log(animeData);
+  }, [animeData]);
 
   const dataArr = animeData?.characters.map(({ role, character, voice_actors }) => ({
     character: { path: "character", role, ...character },
@@ -170,22 +177,22 @@ export default function AnimePage() {
                           <div className="grid grid-cols-3 grid-rows-3 items-end gap-x-3  2xs:gap-x-6 md:gap-x-8 lg:gap-x-10 capitalize ">
                             <div className="row-span-2 flex flex-col">
                               <p className="text-[1.8em]">Ranked</p>
-                              <p className="text-[1.4em]">#{animeData.rank}</p>
+                              <p className="text-[1.4em]">#{animeData?.rank}</p>
                             </div>
                             <div className="row-span-2 flex flex-col">
                               <p className="text-[1.8em]">Popularity</p>
-                              <p className="text-[1.4em]">#{animeData.popularity}</p>
+                              <p className="text-[1.4em]">#{animeData?.popularity}</p>
                             </div>
                             <div className="row-span-2 flex flex-col">
                               <p className="text-[1.8em]">Members</p>
-                              <p className="text-[1.4em]">{animeData.members.toLocaleString()}</p>
+                              <p className="text-[1.4em]">{animeData?.members.toLocaleString()}</p>
                             </div>
                             <p className="flex flex-row text-[1.2em]">
-                              {animeData.season} {animeData.year}
+                              {animeData?.season} {animeData?.year}
                             </p>
                             <p className="text-[1.2em]">{animeData.type}</p>
                             <div className="flex flex-row space-x-1.5 flex-wrap text-[1.2em]">
-                              {animeData.studios.map((studio, i) => (
+                              {animeData?.studios.map((studio, i) => (
                                 <p key={i}>{studio.name}</p>
                               ))}
                             </div>
@@ -466,49 +473,55 @@ export default function AnimePage() {
 
                 <div id="reviews" className="order-3 rounded-lg box-colors w-full py-1">
                   <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">reviews</div>
-                  <div className="flex flex-col w-full gap-y-2 p-2">
-                    <div className="flex flex-row justify-between text-xs/normal">
-                      <div className="flex flex-row items-center gap-x-1 py-1 px-3 bg-amethyst-smoke-700/30 text-2xs">
-                        <p>Avg Score</p>
-                        <p className="">{animeData.reviews.stats.avgScore}</p>
-                        <Star size={14} color="yellow" />
-                      </div>
-                      <div className="flex flex-col py-1 px-2 bg-amethyst-smoke-700/30">
-                        <div className="flex flex-row flex-wrap items-center gap-x-3 rounded-sm text-2xs">
-                          <div className="flex flex-row items-center capitalize gap-x-1 text-blue-800 dark:text-blue-400">
-                            <Star size={12} className="stroke-blue-800 dark:stroke-blue-400" />
-                            <p>{animeData.reviews.stats.recommended}</p>
-                            <p>recommended</p>
-                          </div>
-                          <div className="flex flex-row items-center capitalize gap-x-1 text-gray-800 dark:text-gray-400">
-                            <Star size={12} className="stroke-gray-800 dark:stroke-gray-400" />
-                            <p>{animeData.reviews.stats.mixedFeelings}</p>
-                            <p>mixed feelings</p>
-                          </div>
-                          <div className="flex flex-row items-center capitalize gap-x-1 text-rose-800 dark:text-rose-400">
-                            <Star size={12} className="stroke-rose-800 dark:stroke-rose-400" />
-                            <p>{animeData.reviews.stats.notRecommended}</p>
-                            <p>not recommended</p>
-                          </div>
+                  {animeData.reviews ? (
+                    <div className="flex flex-col w-full text-xs/normal gap-y-2 p-2">
+                      <div className="flex flex-row justify-between ">
+                        <div className="flex flex-row items-center gap-x-1 py-1 px-3 bg-amethyst-smoke-700/30 text-2xs">
+                          <p>Avg Score</p>
+                          <p className="">{animeData.reviews.stats.avgScore}</p>
+                          <Star size={14} color="yellow" />
                         </div>
-                        <div
-                          style={{
-                            backgroundImage: `linear-gradient(90deg, var(--color-blue-400) ${((animeData.reviews.stats.recommended - 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-gray-400) ${((animeData.reviews.stats.recommended + 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-gray-400) ${((animeData.reviews.stats.recommended + animeData.reviews.stats.mixedFeelings - 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-rose-400) ${((animeData.reviews.stats.recommended + animeData.reviews.stats.mixedFeelings + 1.5) * 100) / animeData.reviews.stats.all}%)`,
-                          }}
-                          className="h-1 w-full px-3"
-                        ></div>
+                        <div className="flex flex-col py-1 px-2 bg-amethyst-smoke-700/30">
+                          <div className="flex flex-row flex-wrap items-center gap-x-3 rounded-sm text-2xs">
+                            <div className="flex flex-row items-center capitalize gap-x-1 text-blue-800 dark:text-blue-400">
+                              <Star size={12} className="stroke-blue-800 dark:stroke-blue-400" />
+                              <p>{animeData.reviews.stats.recommended}</p>
+                              <p>recommended</p>
+                            </div>
+                            <div className="flex flex-row items-center capitalize gap-x-1 text-gray-800 dark:text-gray-400">
+                              <Star size={12} className="stroke-gray-800 dark:stroke-gray-400" />
+                              <p>{animeData.reviews.stats.mixedFeelings}</p>
+                              <p>mixed feelings</p>
+                            </div>
+                            <div className="flex flex-row items-center capitalize gap-x-1 text-rose-800 dark:text-rose-400">
+                              <Star size={12} className="stroke-rose-800 dark:stroke-rose-400" />
+                              <p>{animeData.reviews.stats.notRecommended}</p>
+                              <p>not recommended</p>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              backgroundImage: `linear-gradient(90deg, var(--color-blue-400) ${((animeData.reviews.stats.recommended - 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-gray-400) ${((animeData.reviews.stats.recommended + 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-gray-400) ${((animeData.reviews.stats.recommended + animeData.reviews.stats.mixedFeelings - 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-rose-400) ${((animeData.reviews.stats.recommended + animeData.reviews.stats.mixedFeelings + 1.5) * 100) / animeData.reviews.stats.all}%)`,
+                            }}
+                            className="h-1 w-full px-3"
+                          ></div>
+                        </div>
+                        <div className="flex flex-row gap-x-1 text-2xs">
+                          <ChevronRight size={12} />
+                          <p>All reviews ({animeData.reviews.stats.all})</p>
+                        </div>
                       </div>
-                      <div className="flex flex-row gap-x-1 text-2xs">
-                        <ChevronRight size={12} />
-                        <p>All reviews ({animeData.reviews.stats.all})</p>
-                      </div>
+                      {animeData.reviews.data.map((review) => (
+                        <div key={review.mal_id}>
+                          <div className="flex flex-col"></div>
+                        </div>
+                      ))}
                     </div>
-                    {animeData.reviews.data.map((review) => (
-                      <div key={review.mal_id}>
-                        <div className="flex flex-col"></div>
-                      </div>
-                    ))}
-                  </div>
+                  ) : (
+                    <div className="flex flex-col w-full text-xs/normal p-4">
+                      <p>No reviews found.</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

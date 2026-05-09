@@ -52,7 +52,7 @@ export default function CharacterPage() {
             </div>
             <div className="w-full order-2 flex flex-col sm:flex-row gap-3">
               <div id="image" className="w-1/5 min-w-24 ">
-                <img className="w-full aspect-2/3 object-cover order-1 rounded-lg overflow-hidden" src={characterData.images?.jpg.image_url??null} alt="" />
+                <img className="w-full aspect-2/3 object-cover order-1 rounded-lg overflow-hidden" src={characterData.images?.jpg.image_url ?? null} alt="" />
               </div>
 
               <div id="about" className="order-2 w-full sm:w-4/5 pt-2 rounded-lg overflow-hidden box-colors">
@@ -134,7 +134,7 @@ export default function CharacterPage() {
                   </div>
                 </div>
                 <div id="Pictures" className="box-colors rounded-md py-2">
-                  <Pictures pictures={characterData.pictures} openGallery={openGallery} cols={2}/>
+                  <Pictures pictures={characterData.pictures} openGallery={openGallery} cols={2} />
                 </div>
               </div>
             </div>
