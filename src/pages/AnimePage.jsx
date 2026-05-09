@@ -3,13 +3,13 @@ import { useParams } from "react-router";
 import Character from "../components/CardBox/Box";
 import CharacterCardBox from "../components/CardBox/CharacterCardBox";
 import { WindowContext } from "../App";
-import { LinkIcon } from "lucide-react";
+import { LinkIcon, Music4Icon } from "lucide-react";
 
 export default function AnimePage() {
   let { id } = useParams();
   const [animeData, setanimeData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [relationsImgs, setRelationsImgs] = useState(null);
+  const [relationsImgs, setRelationsImgs] = useState([]);
   const { windowWidth } = useContext(WindowContext);
 
   useEffect(() => {
@@ -88,6 +88,14 @@ export default function AnimePage() {
         return <img className="h-3" alt="Wikipedia icon" src="https://cdn.myanimelist.net/img/common/external_links/202.png" />;
       case "Syoboi":
         return <img className="h-3" alt="Syoboi icon" src="https://cdn.myanimelist.net/img/common/external_links/203.png" />;
+      case "Netflix":
+        return (
+          <img
+            className="h-3"
+            alt="Crunchyroll icon"
+            src="https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original"
+          />
+        );
       case "Crunchyroll":
         return <img className="h-3" alt="Crunchyroll icon" src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/crunchyroll.png" />;
       default:
@@ -99,18 +107,18 @@ export default function AnimePage() {
     const { data } = await res.json();
     return {
       mal_id,
-      image: data.images.jpg.large_image_url,
+      image: data?.images.jpg.large_image_url,
     };
   };
   async function fetchRelations() {
     const allEntries = animeData.relations.flatMap((r) => r.entry);
     const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-    const images = [];
+    // const images = [];
     for (const entry of allEntries) {
-      images.push(await getImage(entry));
       await delay(350);
+      const image = await getImage(entry);
+      setRelationsImgs((s) => [...s, image]);
     }
-    setRelationsImgs(images);
   }
 
   return (
@@ -184,11 +192,15 @@ export default function AnimePage() {
                               <div className="peer">
                                 <input type="checkbox" name="background-text-checkbox" id="background-text-checkbox" className="hidden" />
                               </div>
-                              <p className="text-xs font-light max-lines-3 cutoff-text">{animeData?.background || "No background found."}</p>
-                              <label
-                                htmlFor="background-text-checkbox"
-                                className="w-full text-right text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                              ></label>
+                              <p className="text-xs font-light max-lines-3 cutoff-text min-h-8">{animeData?.background || "No background found."}</p>
+                              {animeData?.background ? (
+                                <label
+                                  htmlFor="background-text-checkbox"
+                                  className="w-full text-right text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
+                                ></label>
+                              ) : (
+                                ""
+                              )}
                             </div>
                           </div>
                         </div>
@@ -205,11 +217,15 @@ export default function AnimePage() {
                           <div className="peer">
                             <input type="checkbox" name="background-text-checkbox" id="background-text-checkbox" className="hidden" />
                           </div>
-                          <p className="text-xs font-light max-lines-4 cutoff-text">{animeData?.background || "No background found."}</p>
-                          <label
-                            htmlFor="background-text-checkbox"
-                            className="w-full text-right text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                          ></label>
+                          <p className="text-xs font-light max-lines-4 cutoff-text min-h-8">{animeData?.background || "No background found."}</p>
+                          {animeData?.background ? (
+                            <label
+                              htmlFor="background-text-checkbox"
+                              className="w-full text-right text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
+                            ></label>
+                          ) : (
+                            ""
+                          )}
                         </div>
                       </div>
                     </div>
@@ -221,13 +237,13 @@ export default function AnimePage() {
                 {/* @todo find alternative source for not found background */}
 
                 <div className="order-2 w-full flex flex-col md:flex-row gap-3">
-                  <div className="w-fit md:w-1/4 max-w-sm flex flex-col justify-between gap-y-2 rounded-lg box-colors">
+                  <div className="w-fit md:w-1/4 max-w-sm flex flex-col justify-between h-fit gap-y-8 rounded-lg box-colors">
                     <div id="information" className="w-full">
                       <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
                       <div className="px-3 py-2 text-xs font-light">
-                        <div className="grid grid-cols-1 w-full gap-y-2 text-[0.9em] lg:text-[1.05em]">
+                        <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
                           {renderInfoStr("type", `${animeData.type}`)}
-                          {renderInfoStr("episodes", `${animeData.episodes}`)}
+                          {renderInfoStr("episodes", `${animeData.episodes ?? "unknown"}`)}
                           {renderInfoStr("status", `${animeData.status}`)}
                           {renderInfoStr("aired", `${animeData.aired.string}`)}
                           {renderInfoStr("premiered", `${animeData.season} ${animeData.year}`)}
@@ -238,6 +254,7 @@ export default function AnimePage() {
                           {renderInfoStr("source", `${animeData.source}`)}
                           {renderInfoArr("genres", animeData.genres)}
                           {renderInfoArr("themes", animeData.themes)}
+                          {renderInfoArr("demographics", animeData.demographics)}
                           {renderInfoStr("duration", `${animeData.duration}`)}
                           {renderInfoStr("rating", `${animeData.rating}`)}
                         </div>
@@ -246,7 +263,7 @@ export default function AnimePage() {
                     <div id="statistics" className="w-full">
                       <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">statistics</div>
                       <div className="px-3 py-2 text-xs font-light">
-                        <div className="grid grid-cols-1 w-full gap-y-2 text-[0.9em] lg:text-[1.05em]">
+                        <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
                           {renderInfoStr("score", `${animeData.score} (scored by ${animeData.scored_by.toLocaleString()} users) `)}
                           {renderInfoStr("ranked", `#${animeData.rank}`)}
                           {renderInfoStr("popularity", `#${animeData.popularity}`)}
@@ -258,11 +275,11 @@ export default function AnimePage() {
                     <div id="external" className="w-full">
                       <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Available At</div>
                       <div className="px-3 py-2 text-xs font-light">
-                        <div className="grid grid-cols-1 w-full gap-y-1.5 text-[0.9em] lg:text-[1.05em]">
+                        <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
                           {animeData.external.map((ext, i) => (
                             <p className="flex flex-row items-center gap-1.5" key={i}>
                               {renderIcon(ext.name)}
-                              <a className="text-blue-400" href={ext.url}>
+                              <a className="blue-link" href={ext.url}>
                                 {ext.name}
                               </a>
                             </p>
@@ -272,11 +289,11 @@ export default function AnimePage() {
                     </div>
                     <div id="streaming" className="w-ful">
                       <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Streaming Platforms</div>
-                      <div className="flex flex-col gap-y-1.5 px-3 py-2 text-xs font-light">
+                      <div className="flex flex-col gap-y-2.5 px-3 py-2 text-xs font-light">
                         {animeData.streaming.map((stream, i) => (
                           <div className="flex flex-row gap-x-2 items-center" key={i}>
                             {renderIcon(stream.name)}
-                            <a className="text-blue-400" href={stream.url}>
+                            <a className="blue-link" href={stream.url}>
                               {stream.name}
                             </a>
                           </div>
@@ -325,11 +342,15 @@ export default function AnimePage() {
                           <input className="hidden " type="checkbox" name="synopsisCheckbox" id="synopsisCheckbox" />
                         </div>
                         <p className="w-full text-xs font-light overflow-hidden max-lines-4 cutoff-text">{animeData?.synopsis || "synopsis missing.."}</p>
-                        <label
-                          htmlFor="synopsisCheckbox"
-                          className="text-xs capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
+                        {animeData?.synopsis ? (
+                          <label
+                            htmlFor="synopsisCheckbox"
+                            className="text-xs capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
                             before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                        ></label>
+                          ></label>
+                        ) : (
+                          ""
+                        )}
                       </div>
                     </div>
                     <div id="characters" className="flex justify-center w-full h-fit">
@@ -345,11 +366,12 @@ export default function AnimePage() {
                           {animeData.relations.map((relation, i) => (
                             <div className="px-2" key={i}>
                               <div className="border-b border-amethyst-smoke-200/40 pt-0.5 font-semibold text-sm/relaxed capitalize">{relation.relation}</div>
-                              <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr p-1">
+                              <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-1">
                                 {relation.entry.map((entry) => (
                                   <div key={entry.mal_id} className="flex flex-row w-full">
+                                    {/* @todo replace entry link from mal link to own app link after writing the manga route */}
                                     <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={entry.url}>
-                                      <img className="w-full h-full object-cover" src={relationsImgs?.find((relationImg) => relationImg.mal_id === entry.mal_id).image} alt={entry.name} />
+                                      <img className="w-full h-full object-cover" src={relationsImgs.find((relationImg) => relationImg.mal_id === entry.mal_id)?.image} alt={entry.name} />
                                     </a>
                                     <div className="w-3/4 flex flex-col px-2">
                                       <a href={entry.url} className="text-blue-400">
@@ -364,6 +386,44 @@ export default function AnimePage() {
                         </div>
                       </div>
                     </div>
+                    {animeData.theme.openings.length || animeData.theme.endings.length ? (
+                      <div id="theme" className="flex justify-center w-full h-fit text-2xs lg:text-[11px]">
+                        <div className="rounded-lg box-colors w-full grid grid-cols-2 gap-4 py-1">
+                          {animeData.theme.openings.length ? (
+                            <div id="openings">
+                              <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">openings</div>
+                              <div className="flex flex-col w-full gap-y-2 p-2">
+                                {animeData.theme.openings.map((opening, i) => (
+                                  <div key={i} className="w-full flex flex-row items-center gap-x-2">
+                                    <Music4Icon className="w-[10%]" size={16} />
+                                    <p className="w-[90%]">{opening}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                          {animeData.theme.endings.length ? (
+                            <div id="endings">
+                              <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">endings</div>
+                              <div className="flex flex-col w-full gap-y-2 p-2">
+                                {animeData.theme.endings.map((ending, i) => (
+                                  <div key={i} className="w-full flex flex-row items-center gap-x-2">
+                                    <Music4Icon className="w-[10%]" size={16} />
+                                    <p className="w-[90%]">{ending}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
               </div>
