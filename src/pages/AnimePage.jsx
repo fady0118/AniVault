@@ -11,6 +11,7 @@ export default function AnimePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [relationsImgs, setRelationsImgs] = useState([]);
   const [showAllRelations, setShowAllRelations] = useState(false);
+  const animeDataRef = useRef(animeData);
   const { windowWidth } = useContext(WindowContext);
 
   useEffect(() => {
@@ -24,11 +25,11 @@ export default function AnimePage() {
         const [anime_Data, characters_Data, reviews_Data] = await Promise.all([resAnime.json(), resCharacters.json(), resReviews.json()]);
 
         const featured = [
-          reviews_Data.data.find((r) => r.tags.some((tag) => tag.toLowerCase() === "recommended")),
-          reviews_Data.data.find((r) => r.tags.some((tag) => tag.toLowerCase() === "mixed feelings")),
-          reviews_Data.data.find((r) => r.tags.some((tag) => tag.toLowerCase() === "not recommended")),
+          reviews_Data.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "recommended")),
+          reviews_Data.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "mixed feelings")),
+          reviews_Data.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "not recommended")),
         ].filter(Boolean);
-        const rest = reviews_Data.data.filter((r) => !featured.map((f) => f.mal_id).includes(r.mal_id));
+        const rest = reviews_Data.data?.filter((r) => !featured.map((f) => f.mal_id).includes(r.mal_id));
 
         setanimeData({
           ...anime_Data.data,
@@ -42,14 +43,14 @@ export default function AnimePage() {
                     rest,
                   },
                   stats: {
-                    all: reviews_Data.data.length,
-                    recommended: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "recommended") ? c + 1 : c), 0),
-                    mixedFeelings: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "mixed feelings") ? c + 1 : c), 0),
-                    notRecommended: reviews_Data.data.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "not recommended") ? c + 1 : c), 0),
-                    avgScore: reviews_Data.data.reduce((c, r) => c + r.score, 0) / reviews_Data.data.length,
+                    all: reviews_Data.data?.length,
+                    recommended: reviews_Data.data?.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "recommended") ? c + 1 : c), 0),
+                    mixedFeelings: reviews_Data.data?.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "mixed feelings") ? c + 1 : c), 0),
+                    notRecommended: reviews_Data.data?.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "not recommended") ? c + 1 : c), 0),
+                    avgScore: reviews_Data.data?.reduce((c, r) => c + r.score, 0) / reviews_Data.data.length,
                   },
                 },
-          flattenedRelations: anime_Data.data.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))),
+          flattenedRelations: anime_Data.data?.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))),
         });
       } finally {
         setIsLoading(false);
@@ -65,6 +66,7 @@ export default function AnimePage() {
 
   const relationsImgsRef = useRef(relationsImgs);
   const fetchedBeforeRef = useRef(false);
+
   const getImage = async ({ mal_id, type }) => {
     const res = await fetch(`https://api.jikan.moe/v4/${type}/${mal_id}`);
     const { data } = await res.json();
@@ -74,19 +76,56 @@ export default function AnimePage() {
     };
   };
 
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
   async function fetchRelations(startIndex, lastIndex) {
-    const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-    for (const entry of animeData.flattenedRelations.slice(startIndex, lastIndex)) {
-      await delay(350);
+    for (const entry of animeData?.flattenedRelations.slice(startIndex, lastIndex)) {
+      await delay(50);
       const image = await getImage(entry);
       setRelationsImgs((s) => [...s, { ...entry, ...image }]);
     }
   }
+
+  async function fetchSingleRelation(rel) {
+    await delay(350);
+    const image = await getImage(rel);
+    setRelationsImgs((s) => {
+      s = s.filter((r) => r.mal_id !== rel.mal_id);
+      return [...s, { ...rel, ...image }];
+    });
+  }
+
+  async function checkRelatedEntriesImgs() {
+    await delay(50);
+    const entries = Array.from(document.querySelectorAll("#relations>div>div.grid>div>a>img")).map((e) => ({ src: e.getAttribute("src"), mal_id: Number(e.dataset.malId) }));
+    entries.forEach(async (entry) => {
+      if (!entry.src) {
+        const rel = animeDataRef.current?.flattenedRelations?.find((r) => Number(r.mal_id) === entry.mal_id);
+        if (rel) {
+          await fetchSingleRelation(rel);
+        }
+      }
+    });
+  }
+
   useEffect(() => {
     if (!animeData || fetchedBeforeRef.current) return;
     fetchRelations(0, 6);
+    animeDataRef.current = animeData;
     return () => (fetchedBeforeRef.current = true);
   }, [animeData]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const undefinedCheck = Array.from(document.querySelectorAll("#relations>div>div.grid>div>a>img")).some((e) => e.src == null || e.src === "");
+      if (undefinedCheck) {
+        checkRelatedEntriesImgs();
+      } else {
+        clearInterval(interval);
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   function renderInfoArr(title, arr) {
     return (
@@ -153,10 +192,10 @@ export default function AnimePage() {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3);
     return (
-      <div className="flex flex-row gap-x-0.5">
-        {rects.map((r) =>
+      <div className="flex flex-col xs:flex-row flex-wrap gap-0.5">
+        {rects.map((r, i) =>
           r[1] > 0 ? (
-            <div className="flex flex-row items-center gap-x-1 rounded-md border border-blue-400/50 px-1">
+            <div key={i} className="flex flex-row items-center gap-x-0.5 px-0.5 rounded-sm border border-blue-800/50 dark:border-blue-400/50">
               <span>{reactionsArr[r[0]]}</span>
               <span>{((100 * r[1]) / reactions.overall).toFixed(2)}%</span>
             </div>
@@ -221,7 +260,7 @@ export default function AnimePage() {
                             <p className="flex flex-row text-[1.2em]">
                               {animeData?.season} {animeData?.year}
                             </p>
-                            <p className="text-[1.2em]">{animeData.type}</p>
+                            <p className="text-[1.2em]">{animeData?.type}</p>
                             <div className="flex flex-row space-x-1.5 flex-wrap text-[1.2em]">
                               {animeData?.studios.map((studio, i) => (
                                 <p key={i}>{studio.name}</p>
@@ -288,21 +327,21 @@ export default function AnimePage() {
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                          {renderInfoStr("type", `${animeData.type}`)}
-                          {renderInfoStr("episodes", `${animeData.episodes ?? "unknown"}`)}
-                          {renderInfoStr("status", `${animeData.status}`)}
-                          {renderInfoStr("aired", `${animeData.aired.string}`)}
-                          {renderInfoStr("premiered", `${animeData.season} ${animeData.year}`)}
-                          {renderInfoStr("broadcast", `${animeData.broadcast.string}`)}
-                          {renderInfoArr("producers", animeData.producers)}
-                          {renderInfoArr("licensors", animeData.licensors)}
-                          {renderInfoArr("studios", animeData.studios)}
-                          {renderInfoStr("source", `${animeData.source}`)}
-                          {renderInfoArr("genres", animeData.genres)}
-                          {renderInfoArr("themes", animeData.themes)}
-                          {renderInfoArr("demographics", animeData.demographics)}
-                          {renderInfoStr("duration", `${animeData.duration}`)}
-                          {renderInfoStr("rating", `${animeData.rating}`)}
+                          {renderInfoStr("type", `${animeData?.type}`)}
+                          {renderInfoStr("episodes", `${animeData?.episodes ?? "unknown"}`)}
+                          {renderInfoStr("status", `${animeData?.status}`)}
+                          {renderInfoStr("aired", `${animeData?.aired.string}`)}
+                          {renderInfoStr("premiered", `${animeData?.season} ${animeData?.year}`)}
+                          {renderInfoStr("broadcast", `${animeData?.broadcast.string}`)}
+                          {renderInfoArr("producers", animeData?.producers)}
+                          {renderInfoArr("licensors", animeData?.licensors)}
+                          {renderInfoArr("studios", animeData?.studios)}
+                          {renderInfoStr("source", `${animeData?.source}`)}
+                          {renderInfoArr("genres", animeData?.genres)}
+                          {renderInfoArr("themes", animeData?.themes)}
+                          {renderInfoArr("demographics", animeData?.demographics)}
+                          {renderInfoStr("duration", `${animeData?.duration}`)}
+                          {renderInfoStr("rating", `${animeData?.rating}`)}
                         </div>
                       </div>
                     </div>
@@ -310,11 +349,11 @@ export default function AnimePage() {
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">statistics</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                          {renderInfoStr("score", `${animeData.score} (scored by ${animeData.scored_by?.toLocaleString()} users) `)}
-                          {renderInfoStr("ranked", `#${animeData.rank}`)}
-                          {renderInfoStr("popularity", `#${animeData.popularity}`)}
-                          {renderInfoStr("members", `${animeData.members.toLocaleString()}`)}
-                          {renderInfoStr("favorites", `${animeData.favorites.toLocaleString()}`)}
+                          {renderInfoStr("score", `${animeData?.score} (scored by ${animeData?.scored_by?.toLocaleString()} users) `)}
+                          {renderInfoStr("ranked", `#${animeData?.rank}`)}
+                          {renderInfoStr("popularity", `#${animeData?.popularity}`)}
+                          {renderInfoStr("members", `${animeData?.members.toLocaleString()}`)}
+                          {renderInfoStr("favorites", `${animeData?.favorites.toLocaleString()}`)}
                         </div>
                       </div>
                     </div>
@@ -322,7 +361,7 @@ export default function AnimePage() {
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Available At</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                          {animeData.external.map((ext, i) => (
+                          {animeData?.external.map((ext, i) => (
                             <p className="flex flex-row items-center gap-1.5" key={i}>
                               {renderIcon(ext.name)}
                               <a className="blue-link" href={ext.url}>
@@ -333,11 +372,11 @@ export default function AnimePage() {
                         </div>
                       </div>
                     </div>
-                    {animeData.streaming?.length ? (
+                    {animeData?.streaming?.length ? (
                       <div id="streaming" className="w-ful">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Streaming Platforms</div>
                         <div className="flex flex-col gap-y-2.5 px-3 py-2 text-xs font-light">
-                          {animeData.streaming.map((stream, i) => (
+                          {animeData?.streaming.map((stream, i) => (
                             <div className="flex flex-row gap-x-2 items-center" key={i}>
                               {renderIcon(stream.name)}
                               <a className="blue-link" href={stream.url}>
@@ -373,7 +412,7 @@ export default function AnimePage() {
                       <div className="w-fit md:w-1/2 h-fit rounded-lg box-colors overflow-hidden order-1 md:order-2">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">titles</div>
                         <div className="flex flex-col gap-y-1 px-3 py-2 text-xs font-light">
-                          {animeData.titles
+                          {animeData?.titles
                             // .filter((title) => title.type !== "Default")
                             .map((title, i) => (
                               <div key={i} className="flex flex-row space-x-1 w-full">
@@ -410,69 +449,78 @@ export default function AnimePage() {
                       </div>
                     </div>
 
-                    <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs">
-                      <div className="rounded-lg box-colors w-full ">
-                        <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
+                    {animeData?.flattenedRelations.length ? (
+                      <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs">
+                        <div className="rounded-lg box-colors w-full ">
+                          <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
 
-                        <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2">
-                          {animeData.flattenedRelations.slice(0, 6).map((entry, i) => (
-                            <div key={i} className="flex flex-row w-full">
-                              <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={entry.url}>
-                                <img className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
-                              </a>
-                              <div className="w-3/4 flex flex-col gap-y-1 px-2">
-                                <a href={entry.url} className="blue-link">
-                                  {entry.name}
+                          <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2">
+                            {animeData?.flattenedRelations.slice(0, 6).map((entry, i) => (
+                              <div key={i} className="flex flex-row w-full">
+                                <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={`/${entry.type}/${entry.mal_id}`}>
+                                  <img data-mal-id={entry.mal_id} className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
                                 </a>
-                                <p>
-                                  {entry.relation} ({entry.type})
-                                </p>
-                              </div>
-                            </div>
-                          ))}
-                          {!showAllRelations && animeData.flattenedRelations.length > 6 ? (
-                            <div
-                              onClick={() => {
-                                setShowAllRelations(true);
-                                fetchRelations(6, animeData.flattenedRelations.length);
-                              }}
-                              className="flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20"
-                            >
-                              +{animeData.flattenedRelations.length - 6}
-                            </div>
-                          ) : (
-                            ""
-                          )}
-                          {showAllRelations
-                            ? animeData.flattenedRelations.slice(6).map((entry, i) => (
-                                <div key={i} className="flex flex-row w-full">
-                                  <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={entry.url}>
-                                    <img className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
+                                <div className="w-3/4 flex flex-col gap-y-1 px-2">
+                                  <a href={`/${entry.type}/${entry.mal_id}`} className="blue-link">
+                                    {entry.name}
                                   </a>
-                                  <div className="w-3/4 flex flex-col gap-y-1 px-2">
-                                    <a href={entry.url} className="blue-link">
-                                      {entry.name}
-                                    </a>
-                                    <p>
-                                      {entry.relation} ({entry.type})
-                                    </p>
-                                  </div>
+                                  <p>
+                                    {entry.relation} ({entry.type})
+                                  </p>
                                 </div>
-                              ))
-                            : ""}
+                              </div>
+                            ))}
+                            {!showAllRelations && animeData?.flattenedRelations.length > 6 ? (
+                              <div
+                                onClick={() => {
+                                  setShowAllRelations(true);
+                                  fetchRelations(6, animeData?.flattenedRelations.length);
+                                }}
+                                className="flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20"
+                              >
+                                +{animeData?.flattenedRelations.length - 6}
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                            {showAllRelations
+                              ? animeData?.flattenedRelations.slice(6).map((entry, i) => (
+                                  <div key={i} className="flex flex-row w-full">
+                                    <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={`/${entry.type}/${entry.mal_id}`}>
+                                      <img
+                                        className="w-full h-full object-cover"
+                                        data-mal-id={entry.mal_id}
+                                        src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null}
+                                        alt={entry.name}
+                                      />
+                                    </a>
+                                    <div className="w-3/4 flex flex-col gap-y-1 px-2">
+                                      <a href={`/${entry.type}/${entry.mal_id}`} className="blue-link">
+                                        {entry.name}
+                                      </a>
+                                      <p>
+                                        {entry.relation} ({entry.type})
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))
+                              : ""}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ) : (
+                      ""
+                    )}
                     {/* @todo replace entry link from mal link to own app link after writing the manga route  */}
 
-                    {animeData.theme.openings.length || animeData.theme.endings.length ? (
+                    {animeData?.theme.openings.length || animeData?.theme.endings.length ? (
                       <div id="theme" className="flex justify-center w-full h-fit text-2xs lg:text-[11px]">
                         <div className="rounded-lg box-colors w-full grid grid-cols-2 gap-4 py-1">
-                          {animeData.theme.openings.length ? (
+                          {animeData?.theme.openings.length ? (
                             <div id="openings">
                               <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">openings</div>
                               <div className="flex flex-col w-full gap-y-2 p-2">
-                                {animeData.theme.openings.map((opening, i) => (
+                                {animeData?.theme.openings.map((opening, i) => (
                                   <div key={i} className="w-full flex flex-row items-center gap-x-2">
                                     <Music4Icon className="w-[10%]" size={16} />
                                     <p className="w-[90%]">{opening}</p>
@@ -483,11 +531,11 @@ export default function AnimePage() {
                           ) : (
                             ""
                           )}
-                          {animeData.theme.endings.length ? (
+                          {animeData?.theme.endings.length ? (
                             <div id="endings">
                               <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">endings</div>
                               <div className="flex flex-col w-full gap-y-2 p-2">
-                                {animeData.theme.endings.map((ending, i) => (
+                                {animeData?.theme.endings.map((ending, i) => (
                                   <div key={i} className="w-full flex flex-row items-center gap-x-2">
                                     <Music4Icon className="w-[10%]" size={16} />
                                     <p className="w-[90%]">{ending}</p>
@@ -506,50 +554,50 @@ export default function AnimePage() {
                   </div>
                 </div>
 
-                {animeData.reviews?.data.featured.length ? (
+                {animeData?.reviews?.data.featured.length ? (
                   <div id="reviews" className="order-3 rounded-lg box-colors w-full py-1">
                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">reviews</div>
-                    <div className="flex flex-col w-full text-xs/normal gap-y-2 py-2 px-3">
-                      <div className="flex flex-row justify-between ">
+                    <div className="flex flex-col w-full text-2xs/normal sm:text-xs/normal gap-y-2 py-2 px-3">
+                      <div className="flex flex-row flex-wrap gap-y-1 justify-between bottom-border pb-2">
                         <div className="flex flex-row items-center gap-x-1 py-1 px-3 bg-amethyst-smoke-700/30 text-2xs">
                           <p>Avg Score</p>
-                          <p className="">{animeData.reviews.stats.avgScore.toFixed(2)}</p>
+                          <p className="">{animeData?.reviews.stats.avgScore.toFixed(2)}</p>
                           <Star size={14} color="yellow" />
                         </div>
                         <div className="flex flex-col py-1 px-2 bg-amethyst-smoke-700/30">
                           <div className="flex flex-row flex-wrap items-center gap-x-3 rounded-sm text-2xs">
                             <div className="flex flex-row items-center capitalize gap-x-1 blue-link">
                               <Star size={12} className="stroke-blue-800 dark:stroke-blue-400" />
-                              <p>{animeData.reviews.stats.recommended}</p>
+                              <p>{animeData?.reviews.stats.recommended}</p>
                               <p>recommended</p>
                             </div>
                             <div className="flex flex-row items-center capitalize gap-x-1 gray-link">
                               <Star size={12} className="stroke-gray-800 dark:stroke-gray-400" />
-                              <p>{animeData.reviews.stats.mixedFeelings}</p>
+                              <p>{animeData?.reviews.stats.mixedFeelings}</p>
                               <p>mixed feelings</p>
                             </div>
                             <div className="flex flex-row items-center capitalize gap-x-1 rose-link">
                               <Star size={12} className="stroke-rose-800 dark:stroke-rose-400" />
-                              <p>{animeData.reviews.stats.notRecommended}</p>
+                              <p>{animeData?.reviews.stats.notRecommended}</p>
                               <p>not recommended</p>
                             </div>
                           </div>
                           <div
                             style={{
-                              backgroundImage: `linear-gradient(90deg, var(--color-blue-400) ${((animeData.reviews.stats.recommended - 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-gray-400) ${((animeData.reviews.stats.recommended + 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-gray-400) ${((animeData.reviews.stats.recommended + animeData.reviews.stats.mixedFeelings - 1.5) * 100) / animeData.reviews.stats.all}%, var(--color-rose-400) ${((animeData.reviews.stats.recommended + animeData.reviews.stats.mixedFeelings + 1.5) * 100) / animeData.reviews.stats.all}%)`,
+                              backgroundImage: `linear-gradient(90deg, var(--color-blue-400) ${((animeData?.reviews.stats.recommended - 1.5) * 100) / animeData?.reviews.stats.all}%, var(--color-gray-400) ${((animeData?.reviews.stats.recommended + 1.5) * 100) / animeData?.reviews.stats.all}%, var(--color-gray-400) ${((animeData?.reviews.stats.recommended + animeData?.reviews.stats.mixedFeelings - 1.5) * 100) / animeData?.reviews.stats.all}%, var(--color-rose-400) ${((animeData?.reviews.stats.recommended + animeData?.reviews.stats.mixedFeelings + 1.5) * 100) / animeData?.reviews.stats.all}%)`,
                             }}
                             className="h-1 w-full px-3"
                           ></div>
                         </div>
-                        <div className="flex flex-row gap-x-1 text-2xs">
+                        <div className="flex flex-row items-center gap-x-1 text-2xs">
                           <ChevronRight size={12} />
-                          <p>All reviews ({animeData.reviews.stats.all})</p>
+                          <p>All reviews ({animeData?.reviews.stats.all})</p>
                         </div>
                       </div>
-                      {animeData.reviews.data.featured.map((review) => (
+                      {animeData?.reviews.data.featured.map((review) => (
                         <div key={review.mal_id} className="bottom-border">
-                          <div className="flex flex-row">
-                            <div className="flex flex-col justify-start w-[5%]">
+                          <div className="flex flex-col xs:flex-row">
+                            <div className="flex flex-col ml-3 xs:m-0 justify-start w-[5%] min-w-10">
                               <a href={review.user.url} className="w-full aspect-square">
                                 <img className="w-full h-full object-cover" src={review.user.images.webp.image_url} alt={`${review.user.username}-picture`} />
                               </a>
@@ -582,11 +630,10 @@ export default function AnimePage() {
                                 </div>
                                 <p className="w-full whitespace-pre-wrap max-lines-4 cutoff-text">{review.review}</p>
 
-                                <div className="w-[97%] flex flex-row justify-between">
-                                  <div className="flex flex-row space-x-1 items-center text-xs">
+                                <div className="w-[97%] flex flex-row gap-x-2 items-center justify-between">
+                                  <div className="flex flex-row flex-wrap space-x-1 items-center">
                                     {renderReactions(review.reactions)}
-                                    {/* <p>{review.reactions.overall}</p> */}
-                                    {}
+                                    <p>{review.reactions.overall}</p>
                                   </div>
                                   <label
                                     htmlFor={`review-${review.mal_id}`}
