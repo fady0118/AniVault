@@ -146,7 +146,27 @@ export default function AnimePage() {
     const d = new Date(date);
     return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
   }
-
+  function renderReactions(reactions) {
+    const reactionsArr = { nice: "😊", love_it: "😍", funny: "😂", confusing: "🤔", informative: "💡", well_written: "🧠", creative: "🎨" };
+    const rects = Object.entries(reactions)
+      .filter((r) => r[0] !== "overall")
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3);
+    return (
+      <div className="flex flex-row gap-x-0.5">
+        {rects.map((r) =>
+          r[1] > 0 ? (
+            <div className="flex flex-row items-center gap-x-1 rounded-md border border-blue-400/50 px-1">
+              <span>{reactionsArr[r[0]]}</span>
+              <span>{((100 * r[1]) / reactions.overall).toFixed(2)}%</span>
+            </div>
+          ) : (
+            ""
+          ),
+        )}
+      </div>
+    );
+  }
   return (
     <>
       {isLoading ? (
@@ -183,7 +203,7 @@ export default function AnimePage() {
                           <div className="flex flex-col justify-between pr-2 items-center border-r border-amethyst-smoke-500/20 ">
                             <p className="text-text-dark text-[1.4em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
                             <p className="text-[1.8em]/snug font-semibold">{animeData?.score}</p>
-                            <p className="font-light text-[1.25em]">{animeData?.scored_by.toLocaleString()} users</p>
+                            <p className="font-light text-[1.25em]">{animeData?.scored_by?.toLocaleString()} users</p>
                           </div>
                           <div className="grid grid-cols-3 grid-rows-3 items-end gap-x-3  2xs:gap-x-6 md:gap-x-8 lg:gap-x-10 capitalize ">
                             <div className="row-span-2 flex flex-col">
@@ -290,7 +310,7 @@ export default function AnimePage() {
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">statistics</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                          {renderInfoStr("score", `${animeData.score} (scored by ${animeData.scored_by.toLocaleString()} users) `)}
+                          {renderInfoStr("score", `${animeData.score} (scored by ${animeData.scored_by?.toLocaleString()} users) `)}
                           {renderInfoStr("ranked", `#${animeData.rank}`)}
                           {renderInfoStr("popularity", `#${animeData.popularity}`)}
                           {renderInfoStr("members", `${animeData.members.toLocaleString()}`)}
@@ -313,19 +333,23 @@ export default function AnimePage() {
                         </div>
                       </div>
                     </div>
-                    <div id="streaming" className="w-ful">
-                      <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Streaming Platforms</div>
-                      <div className="flex flex-col gap-y-2.5 px-3 py-2 text-xs font-light">
-                        {animeData.streaming.map((stream, i) => (
-                          <div className="flex flex-row gap-x-2 items-center" key={i}>
-                            {renderIcon(stream.name)}
-                            <a className="blue-link" href={stream.url}>
-                              {stream.name}
-                            </a>
-                          </div>
-                        ))}
+                    {animeData.streaming?.length ? (
+                      <div id="streaming" className="w-ful">
+                        <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Streaming Platforms</div>
+                        <div className="flex flex-col gap-y-2.5 px-3 py-2 text-xs font-light">
+                          {animeData.streaming.map((stream, i) => (
+                            <div className="flex flex-row gap-x-2 items-center" key={i}>
+                              {renderIcon(stream.name)}
+                              <a className="blue-link" href={stream.url}>
+                                {stream.name}
+                              </a>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
 
                   <div className="w-full md:w-3/4 flex flex-col md:flex-row flex-wrap gap-3 h-fit">
@@ -557,11 +581,19 @@ export default function AnimePage() {
                                   <input type="checkbox" className="hidden" name={`review-${review.mal_id}`} id={`review-${review.mal_id}`} />
                                 </div>
                                 <p className="w-full whitespace-pre-wrap max-lines-4 cutoff-text">{review.review}</p>
-                                <label
-                                  htmlFor={`review-${review.mal_id}`}
-                                  className="text-xs w-[95%] text-right capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
-                            before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                                ></label>
+
+                                <div className="w-[97%] flex flex-row justify-between">
+                                  <div className="flex flex-row space-x-1 items-center text-xs">
+                                    {renderReactions(review.reactions)}
+                                    {/* <p>{review.reactions.overall}</p> */}
+                                    {}
+                                  </div>
+                                  <label
+                                    htmlFor={`review-${review.mal_id}`}
+                                    className="text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
+                                                              before:content-['see_more'] peer-has-checked:before:content-['see_less']"
+                                  ></label>
+                                </div>
                               </div>
                             </div>
                           </div>
