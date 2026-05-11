@@ -3,7 +3,8 @@ import { useParams } from "react-router";
 import Character from "../components/CardBox/Box";
 import CharacterCardBox from "../components/CardBox/CharacterCardBox";
 import { WindowContext } from "../App";
-import { ChevronRight, LinkIcon, Music4Icon, Star } from "lucide-react";
+import { ChevronRight, Music4Icon, Star } from "lucide-react";
+import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions } from "../utility/utils";
 
 export default function AnimePage() {
   let { id } = useParams();
@@ -30,7 +31,6 @@ export default function AnimePage() {
           reviews_Data.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "not recommended")),
         ].filter(Boolean);
         const rest = reviews_Data.data?.filter((r) => !featured.map((f) => f.mal_id).includes(r.mal_id));
-
         setanimeData({
           ...anime_Data.data,
           characters: characters_Data.data,
@@ -59,14 +59,18 @@ export default function AnimePage() {
     fetchAnime();
   }, [id]);
 
+  // CharacterCardBox data array
   const dataArr = animeData?.characters.map(({ role, character, voice_actors }) => ({
     character: { path: "character", role, ...character },
     voice_actor: { path: "people", ...voice_actors.find((actor) => actor.language === "Japanese")?.person },
   }));
 
-  const relationsImgsRef = useRef(relationsImgs);
+
+  // Relations section
+  // const relationsImgsRef = useRef(relationsImgs);
   const fetchedBeforeRef = useRef(false);
 
+  // fetch single image 
   const getImage = async ({ mal_id, type }) => {
     const res = await fetch(`https://api.jikan.moe/v4/${type}/${mal_id}`);
     const { data } = await res.json();
@@ -76,8 +80,7 @@ export default function AnimePage() {
     };
   };
 
-  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-
+  // fetch relation-images for a slice of flattenedRelations-array and inject into relationsImgs state
   async function fetchRelations(startIndex, lastIndex) {
     for (const entry of animeData?.flattenedRelations.slice(startIndex, lastIndex)) {
       await delay(50);
@@ -86,8 +89,9 @@ export default function AnimePage() {
     }
   }
 
+  // fetch relation-image for a single relation and inject into relationsImgs state
   async function fetchSingleRelation(rel) {
-    await delay(350);
+    await delay(350); // delay for the api rate limit (3req/sec)
     const image = await getImage(rel);
     setRelationsImgs((s) => {
       s = s.filter((r) => r.mal_id !== rel.mal_id);
@@ -95,6 +99,7 @@ export default function AnimePage() {
     });
   }
 
+  // a check for relation-entries with a null image and call the fetchSingleRelation() function
   async function checkRelatedEntriesImgs() {
     await delay(50);
     const entries = Array.from(document.querySelectorAll("#relations>div>div.grid>div>a>img")).map((e) => ({ src: e.getAttribute("src"), mal_id: Number(e.dataset.malId) }));
@@ -108,6 +113,8 @@ export default function AnimePage() {
     });
   }
 
+  // side effect that runs when the animeData is fetched and then fetches relationsImgs for the first 6 relations
+  // set the animeDataRef to point towards the animeData which is useful to solve the stale-closure that occurs later in checkRelatedEntriesImgs()
   useEffect(() => {
     if (!animeData || fetchedBeforeRef.current) return;
     fetchRelations(0, 6);
@@ -115,6 +122,8 @@ export default function AnimePage() {
     return () => (fetchedBeforeRef.current = true);
   }, [animeData]);
 
+  // side effect that sets a 5sec interval fot the check function, first a similar check runs to terminate the interval in the case that all images have src value, 
+  // otherwise it calls the checkRelatedEntriesImgs() function
   useEffect(() => {
     const interval = setInterval(() => {
       const undefinedCheck = Array.from(document.querySelectorAll("#relations>div>div.grid>div>a>img")).some((e) => e.src == null || e.src === "");
@@ -127,85 +136,6 @@ export default function AnimePage() {
     return () => clearInterval(interval);
   }, []);
 
-  function renderInfoArr(title, arr) {
-    return (
-      <div className="w-full flex flex-row gap-x-1 items-start capitalize">
-        <p className="font-semibold ">{title}:</p>
-        <p className="flex flex-row flex-wrap">
-          {arr.length
-            ? arr.map((item, i, arr) => (
-                <span key={i} className="whitespace-pre-wrap">
-                  {item.name}
-                  {i !== arr.length - 1 ? ", " : ""}
-                </span>
-              ))
-            : "None found."}
-        </p>
-      </div>
-    );
-  }
-
-  function renderInfoStr(title, str) {
-    return (
-      <div className="w-full flex flex-row gap-x-1 items-start capitalize">
-        <p className="font-semibold ">{title}:</p>
-        <p>{str}</p>
-      </div>
-    );
-  }
-
-  function renderIcon(name) {
-    switch (name) {
-      case "YouTube":
-        return <img alt="YouTube icon" className="h-3" src="https://cdn.myanimelist.net/img/common/external_links/102.png" />;
-      case "AniDB":
-        return <img className="h-3" alt="AniDB icon" src="https://cdn.myanimelist.net/img/common/external_links/200.png" />;
-      case "ANN":
-        return <img className="h-3" alt="ANN icon" src="https://cdn.myanimelist.net/img/common/external_links/201.png" />;
-      case "Wikipedia":
-        return <img className="h-3" alt="Wikipedia icon" src="https://cdn.myanimelist.net/img/common/external_links/202.png" />;
-      case "Syoboi":
-        return <img className="h-3" alt="Syoboi icon" src="https://cdn.myanimelist.net/img/common/external_links/203.png" />;
-      case "Netflix":
-        return (
-          <img
-            className="h-3"
-            alt="Crunchyroll icon"
-            src="https://upload.wikimedia.org/wikipedia/commons/7/75/Netflix_icon.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original"
-          />
-        );
-      case "Crunchyroll":
-        return <img className="h-3" alt="Crunchyroll icon" src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/crunchyroll.png" />;
-      default:
-        return name.startsWith("@") ? <img className="h-3" alt="twitter icon" src="https://cdn.myanimelist.net/img/common/external_links/101.png" /> : <LinkIcon size={12} />;
-    }
-  }
-
-  function dateFormatter(date) {
-    const d = new Date(date);
-    return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-  }
-  function renderReactions(reactions) {
-    const reactionsArr = { nice: "😊", love_it: "😍", funny: "😂", confusing: "🤔", informative: "💡", well_written: "🧠", creative: "🎨" };
-    const rects = Object.entries(reactions)
-      .filter((r) => r[0] !== "overall")
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3);
-    return (
-      <div className="flex flex-col xs:flex-row flex-wrap gap-0.5">
-        {rects.map((r, i) =>
-          r[1] > 0 ? (
-            <div key={i} className="flex flex-row items-center gap-x-0.5 px-0.5 rounded-sm border border-blue-800/50 dark:border-blue-400/50">
-              <span>{reactionsArr[r[0]]}</span>
-              <span>{((100 * r[1]) / reactions.overall).toFixed(2)}%</span>
-            </div>
-          ) : (
-            ""
-          ),
-        )}
-      </div>
-    );
-  }
   return (
     <>
       {isLoading ? (
@@ -279,10 +209,12 @@ export default function AnimePage() {
                               </div>
                               <p className="text-xs font-light max-lines-3 cutoff-text min-h-8">{animeData?.background || "No background found."}</p>
                               {animeData?.background ? (
-                                <label
-                                  htmlFor="background-text-checkbox"
-                                  className="w-full text-right text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                                ></label>
+                                <div className="w-full flex flex-row justify-end text-xs capitalize">
+                                  <label
+                                    htmlFor="background-text-checkbox"
+                                    className=" hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
+                                  ></label>
+                                </div>
                               ) : (
                                 ""
                               )}
@@ -295,7 +227,7 @@ export default function AnimePage() {
                     </div>
                   </div>
                   {windowWidth <= 480 ? (
-                    <div className="w-full py-2 rounded-lg box-colors order-2 overflow-hidden">
+                    <div className="w-full rounded-lg box-colors order-2 overflow-hidden">
                       <div id="background">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">background</div>
                         <div className="flex flex-col px-3 py-2">
@@ -304,10 +236,12 @@ export default function AnimePage() {
                           </div>
                           <p className="text-xs font-light max-lines-4 cutoff-text min-h-8">{animeData?.background || "No background found."}</p>
                           {animeData?.background ? (
-                            <label
-                              htmlFor="background-text-checkbox"
-                              className="w-full text-right text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                            ></label>
+                            <div className="w-full flex flex-row justify-end text-xs capitalize">
+                              <label
+                                htmlFor="background-text-checkbox"
+                                className=" hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
+                              ></label>
+                            </div>
                           ) : (
                             ""
                           )}
@@ -394,7 +328,7 @@ export default function AnimePage() {
                   <div className="w-full md:w-3/4 flex flex-col md:flex-row flex-wrap gap-3 h-fit">
                     <div className="flex flex-col md:flex-row gap-3 w-full">
                       {animeData?.trailer.embed_url && (
-                        <div id="trailer" className="rounded-lg box-colors overflow-hidden w-full md:w-1/2 order-2 md:order-1">
+                        <div id="trailer" className="rounded-lg box-colors overflow-hidden w-full h-fit md:w-1/2 order-2 md:order-1">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed">Watch Trailer</div>
                           <div className="w-full aspect-video">
                             <iframe
@@ -413,7 +347,6 @@ export default function AnimePage() {
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">titles</div>
                         <div className="flex flex-col gap-y-1 px-3 py-2 text-xs font-light">
                           {animeData?.titles
-                            // .filter((title) => title.type !== "Default")
                             .map((title, i) => (
                               <div key={i} className="flex flex-row space-x-1 w-full">
                                 <p className="font-semibold min-w-16">{title.type}: </p>
@@ -442,12 +375,12 @@ export default function AnimePage() {
                         )}
                       </div>
                     </div>
-                    <div id="characters" className="flex justify-center w-full h-fit">
+                    {dataArr.length?<div id="characters" className="flex justify-center w-full h-fit">
                       <div className="rounded-lg box-colors w-full ">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
                         <CharacterCardBox dataArr={dataArr} />
                       </div>
-                    </div>
+                    </div>:""}
 
                     {animeData?.flattenedRelations.length ? (
                       <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs">
@@ -653,7 +586,7 @@ export default function AnimePage() {
                 )}
               </div>
             </div>
-            <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full overflow-hidden">
+            <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
               <img className="w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y" src={animeData?.images.jpg.large_image_url} alt={animeData?.title} />
             </div>
           </div>

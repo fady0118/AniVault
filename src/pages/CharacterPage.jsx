@@ -88,7 +88,7 @@ export default function CharacterPage() {
                   </div>
                 </div>
                 <div id="Mangaography" className="order-2 box-colors w-full sm:w-1/2 rounded-md py-2 h-fit">
-                  <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Mangaography</div>
+                  <div className="border-b border-amethyst-smoke-200/40 pt-0.5  px-3 font-semibold text-md/relaxed capitalize">Mangaography</div>
                   <div className="flex flex-col pt-2 space-y-2">
                     {!characterData.manga.length ? (
                       <p className="p-3 text-xs font-light">No mangaography found.</p>
@@ -112,7 +112,7 @@ export default function CharacterPage() {
               </div>
               <div className="order-1 md:order-2 flex flex-col space-y-2 w-full md:w-1/2">
                 <div id="Voices" className="box-colors rounded-md py-2">
-                  <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Voice Actors</div>
+                  <div className="border-b border-amethyst-smoke-200/40 pt-0.5  px-3 font-semibold text-md/relaxed capitalize">Voice Actors</div>
                   <div className="grid grid-cols-1 2xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-2 gap-2 pt-2">
                     {!characterData.voices.length ? (
                       <p className="p-3 text-xs font-light">No voice actors found.</p>
@@ -133,7 +133,7 @@ export default function CharacterPage() {
                     )}
                   </div>
                 </div>
-                <div id="Pictures" className="box-colors rounded-md py-2">
+                <div id="Pictures" className="box-colors rounded-md">
                   <Pictures pictures={characterData.pictures} openGallery={openGallery} cols={2} />
                 </div>
               </div>

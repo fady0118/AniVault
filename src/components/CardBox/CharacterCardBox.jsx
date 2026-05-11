@@ -7,7 +7,7 @@ const classes = {
   image_class: "w-full aspect-square object-cover hover:cursor-pointer hover:border-4 hover:border-amethyst-smoke-400/30 duration-100",
   responsive_text: "text-3xs sm:text-2xs md:text-3xs xl:text-2xs",
 };
-export default function CharacterCardBox({ dataArr }) {
+export default function CharacterCardBox({ dataArr, num = 6 }) {
   const [showAllPics, setShowAllPics] = useState(false);
   const transformedDataArr = dataArr?.map(({ ...rest }) => {
     const [data1, data2] = Object.values(rest);
@@ -16,11 +16,16 @@ export default function CharacterCardBox({ dataArr }) {
       data2,
     };
   });
-
+  const widthClass = { 
+    4: "w-1/4", 
+    5: "w-1/5", 
+    6: "w-1/6", 
+    7: "w-1/7", 
+    8: "w-1/8" };
   return (
     <div className="overflow-x-scroll flex mt-2 mx-2 space-x-0.5">
       {transformedDataArr.slice(0, 10).map((dataEntry, i) => (
-        <div key={i} className="flex flex-col w-1/6 min-w-18 shrink-0">
+        <div key={i} className={`flex flex-col ${widthClass[num]} min-w-18 shrink-0`}>
           <Box dataObj={{ data: dataEntry.data1 }} classes={classes} />
           <Box dataObj={{ data: dataEntry.data2 }} classes={classes} />
         </div>
@@ -30,7 +35,7 @@ export default function CharacterCardBox({ dataArr }) {
           onClick={() => {
             setShowAllPics(true);
           }}
-          className="group w-1/6 min-w-18 shrink-0 text-xl border-4 border-amethyst-smoke-400/30"
+          className={`group ${widthClass[num]} min-w-18 shrink-0 text-xl border-4 border-amethyst-smoke-400/30`}
         >
           <p className="w-full h-full flex justify-center items-center  group-hover:cursor-pointer group-hover:scale-105 group-hover:bg-amethyst-smoke-400/15 duration-100">
             +{transformedDataArr.slice(10).length}
@@ -42,7 +47,7 @@ export default function CharacterCardBox({ dataArr }) {
       {transformedDataArr.slice(10).length && showAllPics ? (
         <>
           {transformedDataArr.slice(10).map((dataEntry, i) => (
-            <div key={i} className="flex flex-col w-1/6 min-w-18 shrink-0">
+            <div key={i} className={`flex flex-col ${widthClass[num]} min-w-18 shrink-0`}>
               <Box dataObj={{ data: dataEntry.data1 }} classes={classes} />
               <Box dataObj={{ data: dataEntry.data2 }} classes={classes} />
             </div>

@@ -62,8 +62,8 @@ export default function PeoplePage() {
                 <img className="w-full aspect-2/3 object-cover order-1 rounded-lg overflow-hidden" src={personData.images.jpg.image_url} alt="" />
               </div>
 
-              <div id="about" className="order-2 w-full pt-2 rounded-lg overflow-hidden box-colors">
-                <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">About</div>
+              <div id="about" className="order-2 w-full pt-0.5  rounded-lg overflow-hidden box-colors">
+                <div className="border-b border-amethyst-smoke-200/40 pt-0.5  px-3 font-semibold text-md/relaxed capitalize">About</div>
                 <div className="p-3 text-xs font-light whitespace-pre-wrap">
                   <p>Given name: {personData.given_name}</p>
                   <p>Family name: {personData.family_name}</p>
@@ -72,10 +72,10 @@ export default function PeoplePage() {
                 </div>
               </div>
             </div>
-            <div id="Pictures" className="order-3 box-colors rounded-md py-2">
+            <div id="Pictures" className="order-3 box-colors rounded-md pt-0.5">
               <Pictures pictures={personData?.picturesData} openGallery={openGallery} cols={3} />
             </div>
-            <div id="vaRoles" className="order-3 pt-2 rounded-lg overflow-hidden box-colors">
+            <div id="vaRoles" className="order-3 pt-1 rounded-lg overflow-hidden box-colors">
               <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Voice Acting Roles</div>
               {windowWidth >= 480 ? <VoicesGrid voices={personData?.voices} /> : <CharacterCardBox dataArr={dataArr} />}
             </div>

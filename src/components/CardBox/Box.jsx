@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 
 export default function Box({ dataObj, classes }) {
+  if (dataObj.data == null) return;
   const { role, path, ...rest } = dataObj.data;
   if (!Object.entries(rest).length) return;
   const { images, name, mal_id } = rest;
