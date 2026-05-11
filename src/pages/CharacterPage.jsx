@@ -29,7 +29,7 @@ export default function CharacterPage() {
         <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
       ) : (
         <>
-          <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15">
+          <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3">
             <div id="name" className="mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex flex-col">
               <div className="flex flex-wrap space-x-1 items-end font-bold">
                 <span className="text-sm/relaxed sm:text-lg/relaxed">{characterData.name}</span>

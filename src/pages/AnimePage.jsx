@@ -1,11 +1,14 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import Character from "../components/CardBox/Box";
-import CharacterCardBox from "../components/CardBox/CharacterCardBox";
+import CardBox from "../components/CardBox/CardBox";
 import { WindowContext } from "../App";
 import { ChevronRight, Music4Icon, Star } from "lucide-react";
 import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions } from "../utility/utils";
 import { useRelations } from "../utility/useRelations";
+import useGallery from "../utility/useGallery";
+import Pictures from "../components/character/Pictures";
+import Gallery from "../components/character/Gallery";
 
 export default function AnimePage() {
   let { id } = useParams();
@@ -16,12 +19,20 @@ export default function AnimePage() {
   useEffect(() => {
     async function fetchAnime() {
       try {
-        const [resAnime, resCharacters, resReviews] = await Promise.all([
+        const [resAnime, resCharacters, resReviews, resPictures, resRecommendations] = await Promise.all([
           fetch(`https://api.jikan.moe/v4/anime/${id}/full`),
           fetch(`https://api.jikan.moe/v4/anime/${id}/characters`),
           fetch(`https://api.jikan.moe/v4/anime/${id}/reviews`),
+          fetch(`https://api.jikan.moe/v4/anime/${id}/pictures`),
+          fetch(`https://api.jikan.moe/v4/anime/${id}/recommendations`),
         ]);
-        const [anime_Data, characters_Data, reviews_Data] = await Promise.all([resAnime.json(), resCharacters.json(), resReviews.json()]);
+        const [anime_Data, characters_Data, reviews_Data, pictures_Data, recommendations_Data] = await Promise.all([
+          resAnime.json(),
+          resCharacters.json(),
+          resReviews.json(),
+          resPictures.json(),
+          resRecommendations.json(),
+        ]);
 
         const featured = [
           reviews_Data?.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "recommended")),
@@ -29,6 +40,7 @@ export default function AnimePage() {
           reviews_Data?.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "not recommended")),
         ].filter(Boolean);
         const rest = reviews_Data?.data?.filter((r) => !featured.map((f) => f.mal_id).includes(r.mal_id));
+
         setanimeData({
           ...anime_Data.data,
           characters: characters_Data.data,
@@ -49,6 +61,8 @@ export default function AnimePage() {
                   },
                 },
           flattenedRelations: anime_Data.data?.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))),
+          pictures: pictures_Data.data,
+          recommendations: recommendations_Data.data,
         });
       } finally {
         setIsLoading(false);
@@ -63,6 +77,13 @@ export default function AnimePage() {
     voice_actor: { path: "people", ...voice_actors.find((actor) => actor.language === "Japanese")?.person },
   }));
 
+  // recommendationsCardBox data array
+  const recommendationsDataArr = animeData?.recommendations.map((recommendation) => ({
+    anime: { path: "anime", ...recommendation.entry, name: recommendation.entry.title, votes: recommendation.votes },
+  }));
+  //Gallery Section
+  const { dispatch, showModal, openGallery, closeGallery, activeIndex } = useGallery(animeData?.pictures ?? []);
+
   // Relations section
   const { relationsImgs, showAllRelations, setShowAllRelations, fetchRelations, resetInterval } = useRelations(animeData);
 
@@ -72,7 +93,7 @@ export default function AnimePage() {
         <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
       ) : (
         <>
-          <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center min-h-screen pt-15 text-dark-amethyst-smoke-50 dark:text-text-dark">
+          <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center min-h-screen pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
             <div className="w-[95vw] flex flex-col space-y-3 ">
               <div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-col">
                 <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">{animeData?.title}</div>
@@ -256,7 +277,7 @@ export default function AnimePage() {
                   </div>
 
                   <div className="w-full md:w-3/4 flex flex-col md:flex-row flex-wrap gap-3 h-fit">
-                    <div className="flex flex-col md:flex-row gap-3 w-full">
+                    <div className="flex flex-col md:flex-row gap-3 w-full order-1">
                       {animeData?.trailer.embed_url && (
                         <div id="trailer" className="rounded-lg box-colors overflow-hidden w-full h-fit md:w-1/2 order-2 md:order-1">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed">Watch Trailer</div>
@@ -286,7 +307,7 @@ export default function AnimePage() {
                       </div>
                     </div>
 
-                    <div id="synopsis" className="rounded-lg box-colors h-fit w-full">
+                    <div id="synopsis" className="rounded-lg box-colors h-fit w-full order-2">
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">synopsis</div>
                       <div className="flex flex-col space-y-1.5 px-3 py-2 items-end">
                         <div className="peer">
@@ -304,11 +325,16 @@ export default function AnimePage() {
                         )}
                       </div>
                     </div>
+
+                    <div id="Pictures" className="box-colors rounded-md order-3">
+                      <Pictures pictures={animeData.pictures} openGallery={openGallery} cols={2} />
+                    </div>
+
                     {dataArr.length ? (
-                      <div id="characters" className="flex justify-center w-full h-fit">
+                      <div id="characters" className="flex justify-center w-full h-fit order-4">
                         <div className="rounded-lg box-colors w-full ">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
-                          <CharacterCardBox dataArr={dataArr} />
+                          <CardBox dataArr={dataArr} />
                         </div>
                       </div>
                     ) : (
@@ -316,7 +342,7 @@ export default function AnimePage() {
                     )}
 
                     {animeData?.flattenedRelations.length ? (
-                      <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs">
+                      <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs order-5">
                         <div className="rounded-lg box-colors w-full ">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
 
@@ -381,7 +407,7 @@ export default function AnimePage() {
                     {/* @todo replace entry link from mal link to own app link after writing the manga route  */}
 
                     {animeData?.theme.openings.length || animeData?.theme.endings.length ? (
-                      <div id="theme" className="flex justify-center w-full h-fit text-2xs lg:text-[11px]">
+                      <div id="theme" className="flex justify-center w-full h-fit text-2xs lg:text-[11px] order-6">
                         <div className="rounded-lg box-colors w-full grid grid-cols-2 gap-4 py-1">
                           {animeData?.theme.openings.length ? (
                             <div id="openings">
@@ -518,12 +544,33 @@ export default function AnimePage() {
                 ) : (
                   ""
                 )}
+
+                {animeData?.recommendations ? (
+                  <div id="recommendations" className="order-4 rounded-lg box-colors w-full py-1">
+                    <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">recommendations</div>
+                    <CardBox dataArr={recommendationsDataArr} num={7} aspect="2/3" />
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
             <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
               <img className="w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y" src={animeData?.images.jpg.large_image_url} alt={animeData?.title} />
             </div>
           </div>
+
+          {showModal && (
+            <Gallery
+              name={animeData.name}
+              pictures={animeData.pictures}
+              activeIndex={activeIndex}
+              closeGallery={closeGallery}
+              onNext={() => dispatch({ type: "next" })}
+              onPrev={() => dispatch({ type: "prev" })}
+              onOpen={(index) => dispatch({ type: "open", newIndex: index })}
+            />
+          )}
         </>
       )}
     </>

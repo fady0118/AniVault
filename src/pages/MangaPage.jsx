@@ -5,7 +5,7 @@ import { renderInfoStr, renderInfoArr, renderIcon } from "../utility/utils";
 import useGallery from "../utility/useGallery";
 import Gallery from "../components/character/Gallery";
 import Pictures from "../components/character/Pictures";
-import CharacterCardBox from "../components/CardBox/CharacterCardBox";
+import CardBox from "../components/CardBox/CardBox";
 import { useRelations } from "../utility/useRelations";
 
 export default function MangaPage() {
@@ -49,7 +49,7 @@ export default function MangaPage() {
       {isLoading ? (
         <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
       ) : (
-        <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 text-dark-amethyst-smoke-50 dark:text-text-dark">
+        <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
           <div className="w-[95vw] flex flex-col space-y-3">
             <div id="title" className="mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex flex-col">
               <span className="text-sm/relaxed sm:text-lg/relaxed">{mangaData.title}</span>
@@ -260,7 +260,7 @@ export default function MangaPage() {
                     <div id="characters" className="flex justify-center w-full h-fit order-4">
                       <div className="rounded-lg box-colors w-full ">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters</div>
-                        <CharacterCardBox dataArr={dataArr} num={7} />
+                        <CardBox dataArr={dataArr} num={7} />
                       </div>
                     </div>
                   ) : (
