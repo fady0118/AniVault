@@ -28,7 +28,6 @@ export default function HomeSlider({ season }) {
     startInterval();
 
 function slideNavigating(e) {
-      console.log(e.key)
       if (e.key === "ArrowRight") {
         indexRef.current = (indexRef.current + 1) % season.length;
         scrollIntoView(indexRef.current);

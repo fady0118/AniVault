@@ -64,34 +64,7 @@ export default function AnimePage() {
   }));
 
   // Relations section
-  // const relationsImgsRef = useRef(relationsImgs);
-  const { relationsImgs, showAllRelations, setShowAllRelations, dataRef, getImage, fetchRelations, fetchSingleRelation, checkRelatedEntriesImgs, timesFetchedRef } = useRelations(animeData);
-
-  // side effect that runs when the animeData is fetched and then fetches relationsImgs for the first 6 relations
-  // set the animeDataRef to point towards the animeData which is useful to solve the stale-closure that occurs later in checkRelatedEntriesImgs()
-  useEffect(() => {
-    if (!animeData) return;
-    fetchRelations(0, 6);
-    dataRef.current = animeData;
-  }, [animeData]);
-
-  // side effect that sets a 5sec interval fot the check function, first a similar check runs to terminate the interval in the case that all images have src value,
-  // otherwise it calls the checkRelatedEntriesImgs() function
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const undefinedCheck = Array.from(document.querySelectorAll("#relations>div>div.grid>div>a>img")).some((e) => e.src == null || e.src === "");
-      if (undefinedCheck) {
-        checkRelatedEntriesImgs();
-        timesFetchedRef.current = timesFetchedRef.current + 1;
-      } else {
-        clearInterval(interval);
-      }
-      if (timesFetchedRef.current >= 10) {
-        clearInterval(interval);
-      }
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  const { relationsImgs, showAllRelations, setShowAllRelations, fetchRelations, resetInterval } = useRelations(animeData);
 
   return (
     <>
@@ -368,6 +341,7 @@ export default function AnimePage() {
                                 onClick={() => {
                                   setShowAllRelations(true);
                                   fetchRelations(6, animeData?.flattenedRelations.length);
+                                  resetInterval();
                                 }}
                                 className="flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20"
                               >

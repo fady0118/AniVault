@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { delay } from "./utils";
 
 export function useRelations(data) {
@@ -6,6 +6,7 @@ export function useRelations(data) {
   const [showAllRelations, setShowAllRelations] = useState(false);
   const timesFetchedRef = useRef(0);
   const dataRef = useRef(data);
+  const [resetInt, setResetInt] = useState(0);
 
   // fetch single image
   const getImage = async ({ mal_id, type }) => {
@@ -50,5 +51,37 @@ export function useRelations(data) {
     });
   }
 
-  return { relationsImgs, showAllRelations, setShowAllRelations, dataRef, getImage, fetchRelations, fetchSingleRelation, checkRelatedEntriesImgs, timesFetchedRef };
+  // side effect that runs when the mangaData is fetched and then fetches relationsImgs for the first 6 relations
+  // set the mangaDataRef to point towards the mangaData which is useful to solve the stale-closure that occurs later in checkRelatedEntriesImgs()
+  useEffect(() => {
+    if (!data) return;
+    fetchRelations(0, 6);
+    dataRef.current = data;
+  }, [data]);
+
+  // side effect that sets a 5sec interval fot the check function, first a similar check runs to terminate the interval in the case that all images have src value,
+  // otherwise it calls the checkRelatedEntriesImgs() function
+  useEffect(() => {
+    timesFetchedRef.current = 0; // reset the ref on interval set
+
+    const interval = setInterval(() => {
+      const undefinedCheck = Array.from(document.querySelectorAll("#relations>div>div.grid>div>a>img")).some((e) => e.src == null || e.src === "");
+      if (undefinedCheck) {
+        checkRelatedEntriesImgs();
+        timesFetchedRef.current = timesFetchedRef.current + 1;
+      } else {
+        clearInterval(interval);
+      }
+      if (timesFetchedRef.current >= 10) {
+        clearInterval(interval);
+      }
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [resetInt]);
+
+  function resetInterval() {
+    setResetInt((k) => k + 1);
+  }
+
+  return { relationsImgs, showAllRelations, setShowAllRelations, fetchRelations, resetInterval };
 }
