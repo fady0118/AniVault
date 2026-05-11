@@ -6,6 +6,7 @@ import useGallery from "../utility/useGallery";
 import Gallery from "../components/character/Gallery";
 import Pictures from "../components/character/Pictures";
 import CharacterCardBox from "../components/CardBox/CharacterCardBox";
+import { useRelations } from "../utility/useRelations";
 
 export default function MangaPage() {
   let { id } = useParams();
@@ -41,6 +42,34 @@ export default function MangaPage() {
     character: { path: "character", role, ...character },
   }));
 
+  const { relationsImgs, showAllRelations, setShowAllRelations, dataRef, getImage, fetchRelations, fetchSingleRelation, checkRelatedEntriesImgs, timesFetchedRef } = useRelations(mangaData);
+
+  // side effect that runs when the mangaData is fetched and then fetches relationsImgs for the first 6 relations
+  // set the mangaDataRef to point towards the mangaData which is useful to solve the stale-closure that occurs later in checkRelatedEntriesImgs()
+  useEffect(() => {
+    if (!mangaData) return;
+    fetchRelations(0, 6);
+    dataRef.current = mangaData;
+  }, [mangaData]);
+
+  // side effect that sets a 5sec interval fot the check function, first a similar check runs to terminate the interval in the case that all images have src value,
+  // otherwise it calls the checkRelatedEntriesImgs() function
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const undefinedCheck = Array.from(document.querySelectorAll("#relations>div>div.grid>div>a>img")).some((e) => e.src == null || e.src === "");
+      if (undefinedCheck) {
+        checkRelatedEntriesImgs();
+        timesFetchedRef.current = timesFetchedRef.current + 1;
+      } else {
+        clearInterval(interval);
+      }
+      if (timesFetchedRef.current >= 10) {
+        clearInterval(interval);
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       {isLoading ? (
@@ -66,7 +95,7 @@ export default function MangaPage() {
                 <div className="flex flex-col xs:flex-row items-stretch gap-3 w-full">
                   <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
                     <div id="poster" className="w-full h-full">
-                      <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={mangaData?.images.jpg.large_image_url} alt={mangaData?.title} />
+                      <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={mangaData?.images?.jpg.large_image_url} alt={mangaData?.title} />
                     </div>
                   </div>
                   <div className="order-1 flex flex-col gap-3">
@@ -75,8 +104,8 @@ export default function MangaPage() {
                       <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
                         <div className="flex flex-col justify-between pr-2 items-center border-r border-amethyst-smoke-500/20 ">
                           <p className="text-text-dark text-[1.4em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
-                          <p className="text-[1.8em]/snug font-semibold">{mangaData?.score}</p>
-                          <p className="font-light text-[1.25em]">{mangaData?.scored_by?.toLocaleString()} users</p>
+                          <p className="text-[1.8em]/snug font-semibold">{mangaData?.score || "N/A"}</p>
+                          <p className="font-light text-[1.25em]">{mangaData?.scored_by?.toLocaleString() || "-"} users</p>
                         </div>
                         <div>
                           <div className="grid grid-cols-3 grid-rows-3 items-end gap-x-3  2xs:gap-x-6 md:gap-x-8 lg:gap-x-10 capitalize ">
@@ -90,7 +119,7 @@ export default function MangaPage() {
                             </div>
                             <div className="row-span-2 flex flex-col">
                               <p className="text-[1.8em]">Members</p>
-                              <p className="text-[1.4em]">{mangaData?.members.toLocaleString()}</p>
+                              <p className="text-[1.4em]">{mangaData?.members?.toLocaleString()}</p>
                             </div>
                           </div>
                           <div className="flex flex-row items-center gap-x-2">
@@ -179,7 +208,7 @@ export default function MangaPage() {
                         {renderInfoStr("volumes", `${mangaData?.volumes ?? "?"}`)}
                         {renderInfoStr("chapters", `${mangaData?.chapters ?? "?"}`)}
                         {renderInfoStr("status", `${mangaData?.status}`)}
-                        {renderInfoStr("published", `${mangaData?.published.string}`)}
+                        {renderInfoStr("published", `${mangaData?.published?.string}`)}
                         {renderInfoArr("genres", mangaData?.genres)}
                         {renderInfoArr("themes", mangaData?.themes)}
                         {renderInfoArr("demographics", mangaData?.demographics)}
@@ -195,8 +224,8 @@ export default function MangaPage() {
                         {renderInfoStr("score", `${mangaData?.score} (scored by ${mangaData?.scored_by?.toLocaleString()} users) `)}
                         {renderInfoStr("ranked", `#${mangaData?.rank}`)}
                         {renderInfoStr("popularity", `#${mangaData?.popularity}`)}
-                        {renderInfoStr("members", `${mangaData?.members.toLocaleString()}`)}
-                        {renderInfoStr("favorites", `${mangaData?.favorites.toLocaleString()}`)}
+                        {renderInfoStr("members", `${mangaData?.members?.toLocaleString()}`)}
+                        {renderInfoStr("favorites", `${mangaData?.favorites?.toLocaleString()}`)}
                       </div>
                     </div>
                   </div>
@@ -253,11 +282,74 @@ export default function MangaPage() {
                     <Pictures pictures={mangaData.pictures} openGallery={openGallery} cols={2} />
                   </div>
 
-                  {dataArr.length ? (
+                  {dataArr?.length ? (
                     <div id="characters" className="flex justify-center w-full h-fit order-4">
                       <div className="rounded-lg box-colors w-full ">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters</div>
                         <CharacterCardBox dataArr={dataArr} num={7} />
+                      </div>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                  {mangaData?.flattenedRelations.length ? (
+                    <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs order-5">
+                      <div className="rounded-lg box-colors w-full ">
+                        <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
+
+                        <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2">
+                          {mangaData?.flattenedRelations.slice(0, 6).map((entry, i) => (
+                            <div key={i} className="flex flex-row w-full">
+                              <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={`/${entry.type}/${entry.mal_id}`}>
+                                <img data-mal-id={entry.mal_id} className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
+                              </a>
+                              <div className="w-3/4 flex flex-col gap-y-1 px-2">
+                                <a href={`/${entry.type}/${entry.mal_id}`} className="blue-link">
+                                  {entry.name}
+                                </a>
+                                <p>
+                                  {entry.relation} ({entry.type})
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                          {!showAllRelations && mangaData?.flattenedRelations.length > 6 ? (
+                            <div
+                              onClick={() => {
+                                setShowAllRelations(true);
+                                fetchRelations(6, mangaData?.flattenedRelations.length);
+                              }}
+                              className="flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20"
+                            >
+                              +{mangaData?.flattenedRelations.length - 6}
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                          {showAllRelations
+                            ? mangaData?.flattenedRelations.slice(6).map((entry, i) => (
+                                <div key={i} className="flex flex-row w-full">
+                                  <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={`/${entry.type}/${entry.mal_id}`}>
+                                    <img
+                                      className="w-full h-full object-cover"
+                                      data-mal-id={entry.mal_id}
+                                      src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null}
+                                      alt={entry.name}
+                                    />
+                                  </a>
+                                  <div className="w-3/4 flex flex-col gap-y-1 px-2">
+                                    <a href={`/${entry.type}/${entry.mal_id}`} className="blue-link">
+                                      {entry.name}
+                                    </a>
+                                    <p>
+                                      {entry.relation} ({entry.type})
+                                    </p>
+                                  </div>
+                                </div>
+                              ))
+                            : ""}
+                        </div>
                       </div>
                     </div>
                   ) : (

@@ -5,14 +5,12 @@ import CharacterCardBox from "../components/CardBox/CharacterCardBox";
 import { WindowContext } from "../App";
 import { ChevronRight, Music4Icon, Star } from "lucide-react";
 import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions } from "../utility/utils";
+import { useRelations } from "../utility/useRelations";
 
 export default function AnimePage() {
   let { id } = useParams();
   const [animeData, setanimeData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [relationsImgs, setRelationsImgs] = useState([]);
-  const [showAllRelations, setShowAllRelations] = useState(false);
-  const animeDataRef = useRef(animeData);
   const { windowWidth } = useContext(WindowContext);
 
   useEffect(() => {
@@ -26,11 +24,11 @@ export default function AnimePage() {
         const [anime_Data, characters_Data, reviews_Data] = await Promise.all([resAnime.json(), resCharacters.json(), resReviews.json()]);
 
         const featured = [
-          reviews_Data.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "recommended")),
-          reviews_Data.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "mixed feelings")),
-          reviews_Data.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "not recommended")),
+          reviews_Data?.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "recommended")),
+          reviews_Data?.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "mixed feelings")),
+          reviews_Data?.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "not recommended")),
         ].filter(Boolean);
-        const rest = reviews_Data.data?.filter((r) => !featured.map((f) => f.mal_id).includes(r.mal_id));
+        const rest = reviews_Data?.data?.filter((r) => !featured.map((f) => f.mal_id).includes(r.mal_id));
         setanimeData({
           ...anime_Data.data,
           characters: characters_Data.data,
@@ -47,7 +45,7 @@ export default function AnimePage() {
                     recommended: reviews_Data.data?.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "recommended") ? c + 1 : c), 0),
                     mixedFeelings: reviews_Data.data?.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "mixed feelings") ? c + 1 : c), 0),
                     notRecommended: reviews_Data.data?.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "not recommended") ? c + 1 : c), 0),
-                    avgScore: reviews_Data.data?.reduce((c, r) => c + r.score, 0) / reviews_Data.data.length,
+                    avgScore: reviews_Data.data?.reduce((c, r) => c + r.score, 0) / reviews_Data.data?.length,
                   },
                 },
           flattenedRelations: anime_Data.data?.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))),
@@ -65,71 +63,30 @@ export default function AnimePage() {
     voice_actor: { path: "people", ...voice_actors.find((actor) => actor.language === "Japanese")?.person },
   }));
 
-
   // Relations section
   // const relationsImgsRef = useRef(relationsImgs);
-  const fetchedBeforeRef = useRef(false);
-
-  // fetch single image 
-  const getImage = async ({ mal_id, type }) => {
-    const res = await fetch(`https://api.jikan.moe/v4/${type}/${mal_id}`);
-    const { data } = await res.json();
-    return {
-      mal_id,
-      image: data?.images.jpg.large_image_url,
-    };
-  };
-
-  // fetch relation-images for a slice of flattenedRelations-array and inject into relationsImgs state
-  async function fetchRelations(startIndex, lastIndex) {
-    for (const entry of animeData?.flattenedRelations.slice(startIndex, lastIndex)) {
-      await delay(50);
-      const image = await getImage(entry);
-      setRelationsImgs((s) => [...s, { ...entry, ...image }]);
-    }
-  }
-
-  // fetch relation-image for a single relation and inject into relationsImgs state
-  async function fetchSingleRelation(rel) {
-    await delay(350); // delay for the api rate limit (3req/sec)
-    const image = await getImage(rel);
-    setRelationsImgs((s) => {
-      s = s.filter((r) => r.mal_id !== rel.mal_id);
-      return [...s, { ...rel, ...image }];
-    });
-  }
-
-  // a check for relation-entries with a null image and call the fetchSingleRelation() function
-  async function checkRelatedEntriesImgs() {
-    await delay(50);
-    const entries = Array.from(document.querySelectorAll("#relations>div>div.grid>div>a>img")).map((e) => ({ src: e.getAttribute("src"), mal_id: Number(e.dataset.malId) }));
-    entries.forEach(async (entry) => {
-      if (!entry.src) {
-        const rel = animeDataRef.current?.flattenedRelations?.find((r) => Number(r.mal_id) === entry.mal_id);
-        if (rel) {
-          await fetchSingleRelation(rel);
-        }
-      }
-    });
-  }
+  const { relationsImgs, showAllRelations, setShowAllRelations, dataRef, getImage, fetchRelations, fetchSingleRelation, checkRelatedEntriesImgs, timesFetchedRef } = useRelations(animeData);
 
   // side effect that runs when the animeData is fetched and then fetches relationsImgs for the first 6 relations
   // set the animeDataRef to point towards the animeData which is useful to solve the stale-closure that occurs later in checkRelatedEntriesImgs()
   useEffect(() => {
-    if (!animeData || fetchedBeforeRef.current) return;
+    if (!animeData) return;
     fetchRelations(0, 6);
-    animeDataRef.current = animeData;
-    return () => (fetchedBeforeRef.current = true);
+    dataRef.current = animeData;
   }, [animeData]);
 
-  // side effect that sets a 5sec interval fot the check function, first a similar check runs to terminate the interval in the case that all images have src value, 
+  // side effect that sets a 5sec interval fot the check function, first a similar check runs to terminate the interval in the case that all images have src value,
   // otherwise it calls the checkRelatedEntriesImgs() function
   useEffect(() => {
     const interval = setInterval(() => {
       const undefinedCheck = Array.from(document.querySelectorAll("#relations>div>div.grid>div>a>img")).some((e) => e.src == null || e.src === "");
       if (undefinedCheck) {
         checkRelatedEntriesImgs();
+        timesFetchedRef.current = timesFetchedRef.current + 1;
       } else {
+        clearInterval(interval);
+      }
+      if (timesFetchedRef.current >= 10) {
         clearInterval(interval);
       }
     }, 5000);
@@ -346,13 +303,12 @@ export default function AnimePage() {
                       <div className="w-fit md:w-1/2 h-fit rounded-lg box-colors overflow-hidden order-1 md:order-2">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">titles</div>
                         <div className="flex flex-col gap-y-1 px-3 py-2 text-xs font-light">
-                          {animeData?.titles
-                            .map((title, i) => (
-                              <div key={i} className="flex flex-row space-x-1 w-full">
-                                <p className="font-semibold min-w-16">{title.type}: </p>
-                                <p>{title.title}</p>
-                              </div>
-                            ))}
+                          {animeData?.titles.map((title, i) => (
+                            <div key={i} className="flex flex-row space-x-1 w-full">
+                              <p className="font-semibold min-w-16">{title.type}: </p>
+                              <p>{title.title}</p>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -375,12 +331,16 @@ export default function AnimePage() {
                         )}
                       </div>
                     </div>
-                    {dataArr.length?<div id="characters" className="flex justify-center w-full h-fit">
-                      <div className="rounded-lg box-colors w-full ">
-                        <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
-                        <CharacterCardBox dataArr={dataArr} />
+                    {dataArr.length ? (
+                      <div id="characters" className="flex justify-center w-full h-fit">
+                        <div className="rounded-lg box-colors w-full ">
+                          <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
+                          <CharacterCardBox dataArr={dataArr} />
+                        </div>
                       </div>
-                    </div>:""}
+                    ) : (
+                      ""
+                    )}
 
                     {animeData?.flattenedRelations.length ? (
                       <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs">

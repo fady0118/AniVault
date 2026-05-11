@@ -58,6 +58,7 @@ export function renderInfoStr(title, str) {
 
 // render function for information section for array data
 export function renderInfoArr(title, arr) {
+  if(!(arr?.length)) return;
   return (
     <div className="w-full flex flex-row gap-x-1 items-start capitalize">
       <p className="font-semibold ">{title}:</p>
