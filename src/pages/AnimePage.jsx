@@ -353,7 +353,7 @@ export default function AnimePage() {
                       ""
                     )}
 
-                    {animeQ?.data.flattenedRelations.length ? (
+                    {animeQ?.data?.flattenedRelations.length ? (
                       <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs order-5">
                         <div className="rounded-lg box-colors w-full ">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
@@ -378,8 +378,6 @@ export default function AnimePage() {
                               <div
                                 onClick={() => {
                                   setShowAllRelations(true);
-                                  fetchRelations(6, animeQ?.data?.flattenedRelations.length);
-                                  resetInterval();
                                 }}
                                 className="flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20"
                               >
