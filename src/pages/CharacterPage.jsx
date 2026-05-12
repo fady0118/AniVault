@@ -63,7 +63,10 @@ export default function CharacterPage() {
                 </div>
               </div>
             </div>
-            <div className="order-3 flex flex-col md:flex-row gap-3">
+            <div id="Pictures" className="order-3 box-colors rounded-md">
+              <Pictures pictures={characterData.pictures} openGallery={openGallery} cols={3} />
+            </div>
+            <div className="order-4 flex flex-col md:flex-row gap-3">
               <div className="order-2 md:order-1 flex flex-col sm:flex-row gap-3 w-full md:w-1/2">
                 <div id="Animeography" className="order-1 box-colors w-full sm:w-1/2 rounded-md py-2 h-fit">
                   <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Animeography</div>
@@ -132,9 +135,6 @@ export default function CharacterPage() {
                       ))
                     )}
                   </div>
-                </div>
-                <div id="Pictures" className="box-colors rounded-md">
-                  <Pictures pictures={characterData.pictures} openGallery={openGallery} cols={2} />
                 </div>
               </div>
             </div>

@@ -1,26 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import HomeSlider from "../components/home/HomeSlider";
 import { getSeason } from "../utility/utils";
+import { useQuery } from "@tanstack/react-query";
 
 export default function HomePage() {
-  const [seasonList, setSeasonList] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(`https://api.jikan.moe/v4/seasons/now?filter=tv&limit=10?filter=tv&limit=10`);
-        const data = await response.json();
-        setSeasonList(data.data ?? null);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+  const seasonResults = useQuery({
+    queryKey: ["seasonListData"],
+    queryFn: () => fetch("https://api.jikan.moe/v4/seasons/now?filter=tv&limit=10?filter=tv&limit=10").then((res) => res.json()),
+  });
 
   return (
     <div className="relative w-screen">
-      {isLoading ? <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div> : <HomeSlider season={seasonList} />}
+      {seasonResults.isPending ? <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div> : <HomeSlider season={seasonResults.data.data} />}
       {/* <div className="h-96"></div> */}
     </div>
   );

@@ -9,99 +9,113 @@ import { useRelations } from "../utility/useRelations";
 import useGallery from "../utility/useGallery";
 import Pictures from "../components/character/Pictures";
 import Gallery from "../components/character/Gallery";
+import { useQueries } from "@tanstack/react-query";
 
 export default function AnimePage() {
   let { id } = useParams();
-  const [animeData, setanimeData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const { windowWidth } = useContext(WindowContext);
 
-  useEffect(() => {
-    async function fetchAnime() {
-      try {
-        const [resAnime, resCharacters, resReviews, resPictures, resRecommendations] = await Promise.all([
-          fetch(`https://api.jikan.moe/v4/anime/${id}/full`),
-          fetch(`https://api.jikan.moe/v4/anime/${id}/characters`),
-          fetch(`https://api.jikan.moe/v4/anime/${id}/reviews`),
-          fetch(`https://api.jikan.moe/v4/anime/${id}/pictures`),
-          fetch(`https://api.jikan.moe/v4/anime/${id}/recommendations`),
-        ]);
-        const [anime_Data, characters_Data, reviews_Data, pictures_Data, recommendations_Data] = await Promise.all([
-          resAnime.json(),
-          resCharacters.json(),
-          resReviews.json(),
-          resPictures.json(),
-          resRecommendations.json(),
-        ]);
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ["anime", id],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/full`);
+          if (!res.ok) throw new Error(res.statusText);
+          const anime_Data = await res.json();
+          const flattenedRelations = anime_Data.data?.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))) ?? [];
+          return { ...anime_Data.data, flattenedRelations };
+        },
+      },
+      {
+        queryKey: ["characters", id],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/characters`);
+          if (!res.ok) throw new Error(res.statusText);
+          const characters_Data = await res.json();
+          // charactersCardBox data array
+          const dataArr = characters_Data?.data?.map(({ role, character, voice_actors }) => ({
+            character: { path: "character", role, ...character },
+            voice_actor: { path: "people", ...voice_actors.find((actor) => actor.language === "Japanese")?.person },
+          }));
+          return { ...characters_Data.data, dataArr };
+        },
+      },
+      {
+        queryKey: ["reviews", id],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/reviews`);
+          if (!res.ok) throw new Error(res.statusText);
+          const reviews_Data = await res.json();
+          const allReviews = reviews_Data?.data ?? [];
+          const featured = [
+            allReviews?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "recommended")),
+            allReviews?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "mixed feelings")),
+            allReviews?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "not recommended")),
+          ].filter(Boolean);
+          const rest = allReviews?.filter((r) => !featured.map((f) => f.mal_id).includes(r.mal_id));
+          return {
+            ...reviews_Data,
+            featured,
+            rest,
+            stats: {
+              all: allReviews.length,
+              recommended: allReviews.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "recommended") ? c + 1 : c), 0),
+              mixedFeelings: allReviews.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "mixed feelings") ? c + 1 : c), 0),
+              notRecommended: allReviews.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "not recommended") ? c + 1 : c), 0),
+              avgScore: allReviews.reduce((c, r) => c + r.score, 0) / reviews_Data.data?.length,
+            },
+          };
+        },
+      },
+      {
+        queryKey: ["pictures", id],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/pictures`);
+          if (!res.ok) throw new Error(res.statusText);
+          const pictures_Data = await res.json();
+          return pictures_Data.data || [];
+        },
+      },
+      {
+        queryKey: ["recommendations", id],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/recommendations`);
+          if (!res.ok) throw new Error(res.statusText);
+          const recommendations_Data = await res.json();
+          // recommendationsDataArr data array
+          const recommendationsDataArr = recommendations_Data?.data?.map((recommendation) => ({
+            anime: { path: "anime", ...recommendation.entry, name: recommendation.entry.title, votes: recommendation.votes },
+          }));
+          return { recommendations: recommendations_Data.data, recommendationsDataArr };
+        },
+      },
+    ],
+  });
 
-        const featured = [
-          reviews_Data?.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "recommended")),
-          reviews_Data?.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "mixed feelings")),
-          reviews_Data?.data?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "not recommended")),
-        ].filter(Boolean);
-        const rest = reviews_Data?.data?.filter((r) => !featured.map((f) => f.mal_id).includes(r.mal_id));
+  const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ] = results;
+  const isError = results.some((q) => q.isError);
 
-        setanimeData({
-          ...anime_Data.data,
-          characters: characters_Data.data,
-          reviews:
-            reviews_Data.status === 500
-              ? null
-              : {
-                  data: {
-                    featured,
-                    rest,
-                  },
-                  stats: {
-                    all: reviews_Data.data?.length,
-                    recommended: reviews_Data.data?.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "recommended") ? c + 1 : c), 0),
-                    mixedFeelings: reviews_Data.data?.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "mixed feelings") ? c + 1 : c), 0),
-                    notRecommended: reviews_Data.data?.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "not recommended") ? c + 1 : c), 0),
-                    avgScore: reviews_Data.data?.reduce((c, r) => c + r.score, 0) / reviews_Data.data?.length,
-                  },
-                },
-          flattenedRelations: anime_Data.data?.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))),
-          pictures: pictures_Data.data,
-          recommendations: recommendations_Data.data,
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchAnime();
-  }, [id]);
-
-  // CharacterCardBox data array
-  const dataArr = animeData?.characters.map(({ role, character, voice_actors }) => ({
-    character: { path: "character", role, ...character },
-    voice_actor: { path: "people", ...voice_actors.find((actor) => actor.language === "Japanese")?.person },
-  }));
-
-  // recommendationsCardBox data array
-  const recommendationsDataArr = animeData?.recommendations.map((recommendation) => ({
-    anime: { path: "anime", ...recommendation.entry, name: recommendation.entry.title, votes: recommendation.votes },
-  }));
-  //Gallery Section
-  const { dispatch, showModal, openGallery, closeGallery, activeIndex } = useGallery(animeData?.pictures ?? []);
-
+  // Gallery section
+  const { dispatch, showModal, openGallery, closeGallery, activeIndex } = useGallery(picturesQ?.data);
   // Relations section
-  const { relationsImgs, showAllRelations, setShowAllRelations, fetchRelations, resetInterval } = useRelations(animeData);
+  const { relationsImgs, showAllRelations, setShowAllRelations } = useRelations(animeQ?.data);
 
   return (
     <>
-      {isLoading ? (
+      {animeQ.isPending ? (
         <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
       ) : (
         <>
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center min-h-screen pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
             <div className="w-[95vw] flex flex-col space-y-3 ">
               <div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-col">
-                <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">{animeData?.title}</div>
+                <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">{animeQ?.data?.title}</div>
                 <div className="flex items-center space-x-1.5">
-                  <span className="text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">{animeData?.title_english}</span>
-                  <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={animeData?.url} target="_blank">
+                  <span className="text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">{animeQ?.data?.title_english}</span>
+                  <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={animeQ?.data?.url} target="_blank">
                     <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
+                      src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
                       alt="MyAnimeList Logo"
                       className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
                     />
@@ -113,7 +127,7 @@ export default function AnimePage() {
                   <div className="flex flex-col xs:flex-row items-stretch gap-3 w-full">
                     <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
                       <div id="poster" className="w-full h-full">
-                        <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={animeData?.images.jpg.large_image_url} alt={animeData?.title} />
+                        <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={animeQ?.data?.images.jpg.large_image_url} alt={animeQ?.data?.title} />
                       </div>
                     </div>
                     <div className="order-1 flex flex-col gap-3">
@@ -122,28 +136,28 @@ export default function AnimePage() {
                         <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
                           <div className="flex flex-col justify-between pr-2 items-center border-r border-amethyst-smoke-500/20 ">
                             <p className="text-text-dark text-[1.4em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
-                            <p className="text-[1.8em]/snug font-semibold">{animeData?.score}</p>
-                            <p className="font-light text-[1.25em]">{animeData?.scored_by?.toLocaleString()} users</p>
+                            <p className="text-[1.8em]/snug font-semibold">{animeQ?.data?.score}</p>
+                            <p className="font-light text-[1.25em]">{animeQ?.data?.scored_by?.toLocaleString()} users</p>
                           </div>
                           <div className="grid grid-cols-3 grid-rows-3 items-end gap-x-3  2xs:gap-x-6 md:gap-x-8 lg:gap-x-10 capitalize ">
                             <div className="row-span-2 flex flex-col">
                               <p className="text-[1.8em]">Ranked</p>
-                              <p className="text-[1.4em]">#{animeData?.rank}</p>
+                              <p className="text-[1.4em]">#{animeQ?.data?.rank}</p>
                             </div>
                             <div className="row-span-2 flex flex-col">
                               <p className="text-[1.8em]">Popularity</p>
-                              <p className="text-[1.4em]">#{animeData?.popularity}</p>
+                              <p className="text-[1.4em]">#{animeQ?.data?.popularity}</p>
                             </div>
                             <div className="row-span-2 flex flex-col">
                               <p className="text-[1.8em]">Members</p>
-                              <p className="text-[1.4em]">{animeData?.members.toLocaleString()}</p>
+                              <p className="text-[1.4em]">{animeQ?.data?.members.toLocaleString()}</p>
                             </div>
                             <p className="flex flex-row text-[1.2em]">
-                              {animeData?.season} {animeData?.year}
+                              {animeQ?.data?.season} {animeQ?.data?.year}
                             </p>
-                            <p className="text-[1.2em]">{animeData?.type}</p>
+                            <p className="text-[1.2em]">{animeQ?.data?.type}</p>
                             <div className="flex flex-row space-x-1.5 flex-wrap text-[1.2em]">
-                              {animeData?.studios.map((studio, i) => (
+                              {animeQ?.data?.studios.map((studio, i) => (
                                 <p key={i}>{studio.name}</p>
                               ))}
                             </div>
@@ -158,8 +172,8 @@ export default function AnimePage() {
                               <div className="peer">
                                 <input type="checkbox" name="background-text-checkbox" id="background-text-checkbox" className="hidden" />
                               </div>
-                              <p className="text-xs font-light max-lines-3 cutoff-text min-h-8">{animeData?.background || "No background found."}</p>
-                              {animeData?.background ? (
+                              <p className="text-xs font-light max-lines-3 cutoff-text min-h-8">{animeQ?.data?.background || "No background found."}</p>
+                              {animeQ?.data?.background ? (
                                 <div className="w-full flex flex-row justify-end text-xs capitalize">
                                   <label
                                     htmlFor="background-text-checkbox"
@@ -177,6 +191,7 @@ export default function AnimePage() {
                       )}
                     </div>
                   </div>
+
                   {windowWidth <= 480 ? (
                     <div className="w-full rounded-lg box-colors order-2 overflow-hidden">
                       <div id="background">
@@ -185,8 +200,8 @@ export default function AnimePage() {
                           <div className="peer">
                             <input type="checkbox" name="background-text-checkbox" id="background-text-checkbox" className="hidden" />
                           </div>
-                          <p className="text-xs font-light max-lines-4 cutoff-text min-h-8">{animeData?.background || "No background found."}</p>
-                          {animeData?.background ? (
+                          <p className="text-xs font-light max-lines-4 cutoff-text min-h-8">{animeQ?.data?.background || "No background found."}</p>
+                          {animeQ?.data?.background ? (
                             <div className="w-full flex flex-row justify-end text-xs capitalize">
                               <label
                                 htmlFor="background-text-checkbox"
@@ -212,21 +227,21 @@ export default function AnimePage() {
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                          {renderInfoStr("type", `${animeData?.type}`)}
-                          {renderInfoStr("episodes", `${animeData?.episodes ?? "unknown"}`)}
-                          {renderInfoStr("status", `${animeData?.status}`)}
-                          {renderInfoStr("aired", `${animeData?.aired.string}`)}
-                          {renderInfoStr("premiered", `${animeData?.season} ${animeData?.year}`)}
-                          {renderInfoStr("broadcast", `${animeData?.broadcast.string}`)}
-                          {renderInfoArr("producers", animeData?.producers)}
-                          {renderInfoArr("licensors", animeData?.licensors)}
-                          {renderInfoArr("studios", animeData?.studios)}
-                          {renderInfoStr("source", `${animeData?.source}`)}
-                          {renderInfoArr("genres", animeData?.genres)}
-                          {renderInfoArr("themes", animeData?.themes)}
-                          {renderInfoArr("demographics", animeData?.demographics)}
-                          {renderInfoStr("duration", `${animeData?.duration}`)}
-                          {renderInfoStr("rating", `${animeData?.rating}`)}
+                          {renderInfoStr("type", `${animeQ?.data?.type}`)}
+                          {renderInfoStr("episodes", `${animeQ?.data?.episodes ?? "unknown"}`)}
+                          {renderInfoStr("status", `${animeQ?.data?.status}`)}
+                          {renderInfoStr("aired", `${animeQ?.data?.aired.string}`)}
+                          {renderInfoStr("premiered", `${animeQ?.data?.season} ${animeQ?.data?.year}`)}
+                          {renderInfoStr("broadcast", `${animeQ?.data?.broadcast.string}`)}
+                          {renderInfoArr("producers", animeQ?.data?.producers)}
+                          {renderInfoArr("licensors", animeQ?.data?.licensors)}
+                          {renderInfoArr("studios", animeQ?.data?.studios)}
+                          {renderInfoStr("source", `${animeQ?.data?.source}`)}
+                          {renderInfoArr("genres", animeQ?.data?.genres)}
+                          {renderInfoArr("themes", animeQ?.data?.themes)}
+                          {renderInfoArr("demographics", animeQ?.data?.demographics)}
+                          {renderInfoStr("duration", `${animeQ?.data?.duration}`)}
+                          {renderInfoStr("rating", `${animeQ?.data?.rating}`)}
                         </div>
                       </div>
                     </div>
@@ -234,11 +249,11 @@ export default function AnimePage() {
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">statistics</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                          {renderInfoStr("score", `${animeData?.score} (scored by ${animeData?.scored_by?.toLocaleString()} users) `)}
-                          {renderInfoStr("ranked", `#${animeData?.rank}`)}
-                          {renderInfoStr("popularity", `#${animeData?.popularity}`)}
-                          {renderInfoStr("members", `${animeData?.members.toLocaleString()}`)}
-                          {renderInfoStr("favorites", `${animeData?.favorites.toLocaleString()}`)}
+                          {renderInfoStr("score", `${animeQ?.data?.score} (scored by ${animeQ?.data?.scored_by?.toLocaleString()} users) `)}
+                          {renderInfoStr("ranked", `#${animeQ?.data?.rank}`)}
+                          {renderInfoStr("popularity", `#${animeQ?.data?.popularity}`)}
+                          {renderInfoStr("members", `${animeQ?.data?.members.toLocaleString()}`)}
+                          {renderInfoStr("favorites", `${animeQ?.data?.favorites.toLocaleString()}`)}
                         </div>
                       </div>
                     </div>
@@ -246,7 +261,7 @@ export default function AnimePage() {
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Available At</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                          {animeData?.external.map((ext, i) => (
+                          {animeQ?.data?.external.map((ext, i) => (
                             <p className="flex flex-row items-center gap-1.5" key={i}>
                               {renderIcon(ext.name)}
                               <a className="blue-link" href={ext.url}>
@@ -257,11 +272,11 @@ export default function AnimePage() {
                         </div>
                       </div>
                     </div>
-                    {animeData?.streaming?.length ? (
+                    {animeQ?.data?.streaming?.length ? (
                       <div id="streaming" className="w-ful">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Streaming Platforms</div>
                         <div className="flex flex-col gap-y-2.5 px-3 py-2 text-xs font-light">
-                          {animeData?.streaming.map((stream, i) => (
+                          {animeQ?.data?.streaming.map((stream, i) => (
                             <div className="flex flex-row gap-x-2 items-center" key={i}>
                               {renderIcon(stream.name)}
                               <a className="blue-link" href={stream.url}>
@@ -275,16 +290,15 @@ export default function AnimePage() {
                       ""
                     )}
                   </div>
-
                   <div className="w-full md:w-3/4 flex flex-col md:flex-row flex-wrap gap-3 h-fit">
                     <div className="flex flex-col md:flex-row gap-3 w-full order-1">
-                      {animeData?.trailer.embed_url && (
+                      {animeQ?.data?.trailer.embed_url && (
                         <div id="trailer" className="rounded-lg box-colors overflow-hidden w-full h-fit md:w-1/2 order-2 md:order-1">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed">Watch Trailer</div>
                           <div className="w-full aspect-video">
                             <iframe
                               className="w-full h-full"
-                              src={animeData?.trailer.embed_url.split("&autoplay")[0]}
+                              src={animeQ?.data?.trailer.embed_url.split("&autoplay")[0]}
                               title="YouTube video player"
                               frameBorder="0"
                               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -297,7 +311,7 @@ export default function AnimePage() {
                       <div className="w-fit md:w-1/2 h-fit rounded-lg box-colors overflow-hidden order-1 md:order-2">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">titles</div>
                         <div className="flex flex-col gap-y-1 px-3 py-2 text-xs font-light">
-                          {animeData?.titles.map((title, i) => (
+                          {animeQ?.data?.titles.map((title, i) => (
                             <div key={i} className="flex flex-row space-x-1 w-full">
                               <p className="font-semibold min-w-16">{title.type}: </p>
                               <p>{title.title}</p>
@@ -306,15 +320,14 @@ export default function AnimePage() {
                         </div>
                       </div>
                     </div>
-
                     <div id="synopsis" className="rounded-lg box-colors h-fit w-full order-2">
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">synopsis</div>
                       <div className="flex flex-col space-y-1.5 px-3 py-2 items-end">
                         <div className="peer">
                           <input className="hidden " type="checkbox" name="synopsisCheckbox" id="synopsisCheckbox" />
                         </div>
-                        <p className="w-full text-xs font-light overflow-hidden max-lines-4 cutoff-text">{animeData?.synopsis || "synopsis missing.."}</p>
-                        {animeData?.synopsis ? (
+                        <p className="w-full text-xs font-light overflow-hidden max-lines-4 cutoff-text">{animeQ?.data?.synopsis || "synopsis missing.."}</p>
+                        {animeQ?.data?.synopsis ? (
                           <label
                             htmlFor="synopsisCheckbox"
                             className="text-xs capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
@@ -325,29 +338,28 @@ export default function AnimePage() {
                         )}
                       </div>
                     </div>
-
                     <div id="Pictures" className="box-colors rounded-md order-3">
-                      <Pictures pictures={animeData.pictures} openGallery={openGallery} cols={2} />
+                      <Pictures pictures={picturesQ?.data} openGallery={openGallery} cols={2} />
                     </div>
 
-                    {dataArr.length ? (
+                    {charactersQ?.data?.dataArr.length ? (
                       <div id="characters" className="flex justify-center w-full h-fit order-4">
                         <div className="rounded-lg box-colors w-full ">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
-                          <CardBox dataArr={dataArr} />
+                          <CardBox dataArr={charactersQ?.data?.dataArr} />
                         </div>
                       </div>
                     ) : (
                       ""
                     )}
 
-                    {animeData?.flattenedRelations.length ? (
+                    {animeQ?.data.flattenedRelations.length ? (
                       <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs order-5">
                         <div className="rounded-lg box-colors w-full ">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
 
                           <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2">
-                            {animeData?.flattenedRelations.slice(0, 6).map((entry, i) => (
+                            {animeQ?.data?.flattenedRelations.slice(0, 6).map((entry, i) => (
                               <div key={i} className="flex flex-row w-full">
                                 <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={`/${entry.type}/${entry.mal_id}`}>
                                   <img data-mal-id={entry.mal_id} className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
@@ -362,22 +374,22 @@ export default function AnimePage() {
                                 </div>
                               </div>
                             ))}
-                            {!showAllRelations && animeData?.flattenedRelations.length > 6 ? (
+                            {!showAllRelations && animeQ?.data?.flattenedRelations.length > 6 ? (
                               <div
                                 onClick={() => {
                                   setShowAllRelations(true);
-                                  fetchRelations(6, animeData?.flattenedRelations.length);
+                                  fetchRelations(6, animeQ?.data?.flattenedRelations.length);
                                   resetInterval();
                                 }}
                                 className="flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20"
                               >
-                                +{animeData?.flattenedRelations.length - 6}
+                                +{animeQ?.data?.flattenedRelations.length - 6}
                               </div>
                             ) : (
                               ""
                             )}
                             {showAllRelations
-                              ? animeData?.flattenedRelations.slice(6).map((entry, i) => (
+                              ? animeQ?.data?.flattenedRelations.slice(6).map((entry, i) => (
                                   <div key={i} className="flex flex-row w-full">
                                     <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={`/${entry.type}/${entry.mal_id}`}>
                                       <img
@@ -404,16 +416,15 @@ export default function AnimePage() {
                     ) : (
                       ""
                     )}
-                    {/* @todo replace entry link from mal link to own app link after writing the manga route  */}
 
-                    {animeData?.theme.openings.length || animeData?.theme.endings.length ? (
+                    {animeQ?.data?.theme.openings.length || animeQ?.data?.theme.endings.length ? (
                       <div id="theme" className="flex justify-center w-full h-fit text-2xs lg:text-[11px] order-6">
                         <div className="rounded-lg box-colors w-full grid grid-cols-2 gap-4 py-1">
-                          {animeData?.theme.openings.length ? (
+                          {animeQ?.data?.theme.openings.length ? (
                             <div id="openings">
                               <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">openings</div>
                               <div className="flex flex-col w-full gap-y-2 p-2">
-                                {animeData?.theme.openings.map((opening, i) => (
+                                {animeQ?.data?.theme.openings.map((opening, i) => (
                                   <div key={i} className="w-full flex flex-row items-center gap-x-2">
                                     <Music4Icon className="w-[10%]" size={16} />
                                     <p className="w-[90%]">{opening}</p>
@@ -424,11 +435,11 @@ export default function AnimePage() {
                           ) : (
                             ""
                           )}
-                          {animeData?.theme.endings.length ? (
+                          {animeQ?.data?.theme.endings.length ? (
                             <div id="endings">
                               <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">endings</div>
                               <div className="flex flex-col w-full gap-y-2 p-2">
-                                {animeData?.theme.endings.map((ending, i) => (
+                                {animeQ?.data?.theme.endings.map((ending, i) => (
                                   <div key={i} className="w-full flex flex-row items-center gap-x-2">
                                     <Music4Icon className="w-[10%]" size={16} />
                                     <p className="w-[90%]">{ending}</p>
@@ -447,47 +458,47 @@ export default function AnimePage() {
                   </div>
                 </div>
 
-                {animeData?.reviews?.data.featured.length ? (
+                {reviewsQ?.data?.featured.length ? (
                   <div id="reviews" className="order-3 rounded-lg box-colors w-full py-1">
                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">reviews</div>
                     <div className="flex flex-col w-full text-2xs/normal sm:text-xs/normal gap-y-2 py-2 px-3">
                       <div className="flex flex-row flex-wrap gap-y-1 justify-between bottom-border pb-2">
                         <div className="flex flex-row items-center gap-x-1 py-1 px-3 bg-amethyst-smoke-700/30 text-2xs">
                           <p>Avg Score</p>
-                          <p className="">{animeData?.reviews.stats.avgScore.toFixed(2)}</p>
+                          <p className="">{reviewsQ?.data?.stats.avgScore.toFixed(2)}</p>
                           <Star size={14} color="yellow" />
                         </div>
                         <div className="flex flex-col py-1 px-2 bg-amethyst-smoke-700/30">
                           <div className="flex flex-row flex-wrap items-center gap-x-3 rounded-sm text-2xs">
                             <div className="flex flex-row items-center capitalize gap-x-1 blue-link">
                               <Star size={12} className="stroke-blue-800 dark:stroke-blue-400" />
-                              <p>{animeData?.reviews.stats.recommended}</p>
+                              <p>{reviewsQ?.data?.stats.recommended}</p>
                               <p>recommended</p>
                             </div>
                             <div className="flex flex-row items-center capitalize gap-x-1 gray-link">
                               <Star size={12} className="stroke-gray-800 dark:stroke-gray-400" />
-                              <p>{animeData?.reviews.stats.mixedFeelings}</p>
+                              <p>{reviewsQ?.data?.stats.mixedFeelings}</p>
                               <p>mixed feelings</p>
                             </div>
                             <div className="flex flex-row items-center capitalize gap-x-1 rose-link">
                               <Star size={12} className="stroke-rose-800 dark:stroke-rose-400" />
-                              <p>{animeData?.reviews.stats.notRecommended}</p>
+                              <p>{reviewsQ?.data?.stats.notRecommended}</p>
                               <p>not recommended</p>
                             </div>
                           </div>
                           <div
                             style={{
-                              backgroundImage: `linear-gradient(90deg, var(--color-blue-400) ${((animeData?.reviews.stats.recommended - 1.5) * 100) / animeData?.reviews.stats.all}%, var(--color-gray-400) ${((animeData?.reviews.stats.recommended + 1.5) * 100) / animeData?.reviews.stats.all}%, var(--color-gray-400) ${((animeData?.reviews.stats.recommended + animeData?.reviews.stats.mixedFeelings - 1.5) * 100) / animeData?.reviews.stats.all}%, var(--color-rose-400) ${((animeData?.reviews.stats.recommended + animeData?.reviews.stats.mixedFeelings + 1.5) * 100) / animeData?.reviews.stats.all}%)`,
+                              backgroundImage: `linear-gradient(90deg, var(--color-blue-400) ${((reviewsQ?.data?.stats.recommended - 1.5) * 100) / reviewsQ?.data?.stats.all}%, var(--color-gray-400) ${((reviewsQ?.data?.stats.recommended + 1.5) * 100) / reviewsQ?.data?.stats.all}%, var(--color-gray-400) ${((reviewsQ?.data?.stats.recommended + reviewsQ?.data?.stats.mixedFeelings - 1.5) * 100) / reviewsQ?.data?.stats.all}%, var(--color-rose-400) ${((reviewsQ?.data?.stats.recommended + reviewsQ?.data?.stats.mixedFeelings + 1.5) * 100) / reviewsQ?.data?.stats.all}%)`,
                             }}
                             className="h-1 w-full px-3"
                           ></div>
                         </div>
                         <div className="flex flex-row items-center gap-x-1 text-2xs">
                           <ChevronRight size={12} />
-                          <p>All reviews ({animeData?.reviews.stats.all})</p>
+                          <p>All reviews ({reviewsQ?.data?.stats.all})</p>
                         </div>
                       </div>
-                      {animeData?.reviews.data.featured.map((review) => (
+                      {reviewsQ?.data?.featured.map((review) => (
                         <div key={review.mal_id} className="bottom-border">
                           <div className="flex flex-col xs:flex-row">
                             <div className="flex flex-col ml-3 xs:m-0 justify-start w-[5%] min-w-10">
@@ -545,10 +556,10 @@ export default function AnimePage() {
                   ""
                 )}
 
-                {animeData?.recommendations ? (
+                {recommendationsQ?.data?.recommendations ? (
                   <div id="recommendations" className="order-4 rounded-lg box-colors w-full py-1">
                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">recommendations</div>
-                    <CardBox dataArr={recommendationsDataArr} num={7} aspect="2/3" />
+                    <CardBox dataArr={recommendationsQ?.data?.recommendationsDataArr} num={7} aspect="2/3" />
                   </div>
                 ) : (
                   ""
@@ -556,14 +567,14 @@ export default function AnimePage() {
               </div>
             </div>
             <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
-              <img className="w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y" src={animeData?.images.jpg.large_image_url} alt={animeData?.title} />
+              <img className="w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y" src={animeQ?.data?.images.jpg.large_image_url} alt={animeQ?.data?.title} />
             </div>
           </div>
 
           {showModal && (
             <Gallery
-              name={animeData.name}
-              pictures={animeData.pictures}
+              name={animeQ?.data?.name}
+              pictures={picturesQ?.data}
               activeIndex={activeIndex}
               closeGallery={closeGallery}
               onNext={() => dispatch({ type: "next" })}

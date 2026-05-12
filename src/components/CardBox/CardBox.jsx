@@ -4,7 +4,7 @@ const classes = {
   name_class:
     "absolute bottom-0 left-0 w-full pointer-events-none text-3xs bg-amethyst-smoke-200/70 text-text-light dark:bg-dark-amethyst-smoke-200/70 dark:text-text-dark max-lines-1 cutoff-text-abs",
   role_class: "absolute top-0 right-0 bg-amethyst-smoke-200/70 text-text-light dark:bg-dark-amethyst-smoke-200/70 dark:text-text-dark",
-  responsive_text: "text-3xs sm:text-2xs md:text-3xs xl:text-2xs",
+  responsive_text: "text-2xs sm:text-2xs md:text-xs xl:text-sm",
 };
 export default function CardBox({ dataArr, num = 6, aspect = "square" }) {
   const [showAllPics, setShowAllPics] = useState(false);
@@ -51,8 +51,8 @@ export default function CardBox({ dataArr, num = 6, aspect = "square" }) {
         <>
           {transformedDataArr.slice(10).map((dataEntry, i) => (
             <div key={i} className={`flex flex-col ${widthClass[num]} min-w-18 shrink-0`}>
-              <Box dataObj={{ data: dataEntry.data1 }} classes={classes} />
-              <Box dataObj={{ data: dataEntry.data2 }} classes={classes} />
+              <Box dataObj={{ data: dataEntry.data1 }} classes={classes} image_class={image_class} />
+              <Box dataObj={{ data: dataEntry.data2 }} classes={classes} image_class={image_class} />
             </div>
           ))}
         </>

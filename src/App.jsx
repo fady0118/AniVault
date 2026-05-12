@@ -2,8 +2,10 @@ import { createContext, useCallback, useEffect, useState } from "react";
 import { Outlet } from "react-router";
 import NavBar from "./components/NavBar";
 import { getCurrentTheme, themeToggler } from "./utility/utils";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 export const WindowContext = createContext(null);
+const queryClient = new QueryClient();
 
 function App() {
   const [theme, setTheme] = useState(getCurrentTheme());
@@ -38,13 +40,15 @@ function App() {
   }, []);
 
   return (
-    <WindowContext value={{windowWidth}}>
-      <div className="font-inter ">
-        <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} windowWidth={windowWidth} />
-        <div>
-          <Outlet />
+    <WindowContext value={{ windowWidth }}>
+      <QueryClientProvider client={queryClient}>
+        <div className="font-inter ">
+          <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} windowWidth={windowWidth} />
+          <div>
+            <Outlet />
+          </div>
         </div>
-      </div>
+      </QueryClientProvider>
     </WindowContext>
   );
 }
