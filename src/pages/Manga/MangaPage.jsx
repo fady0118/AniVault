@@ -88,35 +88,37 @@ export default function MangaPage() {
                     <div id="details" className="box-colors rounded-lg w-fit pt-0.5">
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>
                       <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
-                        <div className="flex flex-col justify-between pr-2 items-center border-r border-amethyst-smoke-500/20 ">
+                        <div className="flex flex-col justify-evenly pr-2 items-center border-r border-amethyst-smoke-500/20 ">
                           <p className="text-text-dark text-[1.4em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
                           <p className="text-[1.8em]/snug font-semibold">{mangaQ?.data?.score || "N/A"}</p>
                           <p className="font-light text-[1.25em]">{mangaQ?.data?.scored_by?.toLocaleString() || "-"} users</p>
                         </div>
-                        <div>
-                          <div className="grid grid-cols-3 grid-rows-3 items-end gap-x-3  2xs:gap-x-6 md:gap-x-8 lg:gap-x-10 capitalize ">
-                            <div className="row-span-2 flex flex-col">
+                        <div className="flex flex-col py-1 gap-y-1">
+                          <div className="grid grid-cols-3 items-end gap-x-3  2xs:gap-x-6 md:gap-x-8 lg:gap-x-10 capitalize ">
+                            <div className="flex flex-col">
                               <p className="text-[1.8em]">Ranked</p>
                               <p className="text-[1.4em]">#{mangaQ?.data?.rank}</p>
                             </div>
-                            <div className="row-span-2 flex flex-col">
+                            <div className="flex flex-col">
                               <p className="text-[1.8em]">Popularity</p>
                               <p className="text-[1.4em]">#{mangaQ?.data?.popularity}</p>
                             </div>
-                            <div className="row-span-2 flex flex-col">
+                            <div className="flex flex-col">
                               <p className="text-[1.8em]">Members</p>
                               <p className="text-[1.4em]">{mangaQ?.data?.members?.toLocaleString()}</p>
                             </div>
                           </div>
-                          <div className="flex flex-row items-center gap-x-2">
-                            <p className="text-[1.2em] pr-2 border-r border-amethyst-smoke-950/40 dark:border-amethyst-smoke-200/40">{mangaQ?.data?.type}</p>
-                            <p className="flex flex-row gap-x-0.5 items-center text-[1.2em] pr-2 border-r border-amethyst-smoke-950/40 dark:border-amethyst-smoke-200/40">
+                          <div className="flex flex-row items-center justify-between gap-x-2">
+                            <p className="text-[1.2em]">{mangaQ?.data?.type}</p>
+                              <span className="text-amethyst-smoke-950/40 dark:text-amethyst-smoke-200/40">|</span>
+                            <p className="flex flex-row gap-x-0.5 items-center text-[1.2em]">
                               {mangaQ?.data?.serializations?.map((s, i) => (
                                 <a key={i} className="blue-link-b" href={`/manga/magazine/${s.mal_id}`}>
                                   {s.name}
                                 </a>
                               ))}
                             </p>
+                              <span className="text-amethyst-smoke-950/40 dark:text-amethyst-smoke-200/40">|</span>
                             <div className="flex flex-row items-center text-[1.2em]">
                               {mangaQ?.data?.authors?.map((s, i, arr) => (
                                 <p key={i}>
@@ -198,8 +200,8 @@ export default function MangaPage() {
                         {renderInfoArr("genres", mangaQ?.data?.genres)}
                         {renderInfoArr("themes", mangaQ?.data?.themes)}
                         {renderInfoArr("demographics", mangaQ?.data?.demographics)}
-                        {renderInfoArr("serializations", mangaQ?.data?.serializations)}
-                        {renderInfoArr("authors", mangaQ?.data?.authors)}
+                        {renderInfoArr("serializations", mangaQ?.data?.serializations, "/manga/magazine")}
+                        {renderInfoArr("authors", mangaQ?.data?.authors, "/people")}
                       </div>
                     </div>
                   </div>

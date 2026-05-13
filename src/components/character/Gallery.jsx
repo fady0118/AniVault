@@ -57,7 +57,7 @@ export default function Gallery({ pictures, name, activeIndex, closeGallery, onN
             <img
               key={activeIndex}
               className="h-full w-auto aspect-auto object-cover rounded-lg gallery-image-animation"
-              src={pictures[activeIndex].jpg.image_url}
+              src={pictures[activeIndex].jpg.large_image_url||pictures[activeIndex].jpg.image_url}
               alt={`${name ?? "unknown"}-picture`}
             />
             <ChevronRight

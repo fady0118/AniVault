@@ -83,13 +83,13 @@ export default function MagazinePage() {
           <div className="w-full grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 auto-rows-fr text-2xs gap-3 py-3">
             {magazineQ?.data?.data?.map((manga) => (
               <div className="flex flex-col p-2 capitalize rounded-sm border border-amethyst-smoke-950/40 dark:border-amethyst-smoke-200/40">
-                <div className="row-span-2 flex flex-col grow items-center justify-center text-center">
+                <div className="flex flex-col grow items-center justify-center text-center">
                   <a href={`/${manga.type || "manga"}/${manga.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
                     {manga.title_english || manga.title}
                   </a>
                   <p className="text-[0.9em] font-light">{manga.title_japanese}</p>
                 </div>
-                <div className="row-span-1 flex flex-row justify-evenly items-center overflow-x-hidden capitalize py-1 bg-dark-amethyst-smoke-500/5 dark:bg-amethyst-smoke-500/5">
+                <div className="flex flex-row justify-evenly items-center overflow-x-hidden capitalize py-1 bg-dark-amethyst-smoke-500/5 dark:bg-amethyst-smoke-500/5">
                   <div className="flex flex-row gap-x-1">
                     <p>{getSeason(manga.published.from)},</p>
                     <p>{getYear(manga.published.from)}</p>
@@ -106,14 +106,14 @@ export default function MagazinePage() {
                     </div>
                   </div>
                 </div>
-                <div className="row-span-1 flex flex-row justify-evenly items-center overflow-x-hidden  py-1 bg-dark-amethyst-smoke-500/10 dark:bg-amethyst-smoke-500/10">
+                <div className="flex flex-row justify-evenly items-center overflow-x-hidden  py-1 bg-dark-amethyst-smoke-500/10 dark:bg-amethyst-smoke-500/10">
                   {manga.genres.slice(0, 4).map((genre) => (
                     <a href={genre.url} className="hover-blue-link duration-150">
                       {genre.name}
                     </a>
                   ))}
                 </div>
-                <div className="row-span-7 w-full flex flex-row items-start">
+                <div className="w-full flex flex-row items-start">
                   <div id="poster" className="w-1/2 md:w-2/5">
                     <a href={`/${manga.type || "manga"}/${manga.mal_id}`}>
                       <img className="w-full h-full aspect-auto object-cover" src={`${manga.images.jpg.image_url}`} alt={manga.title_english || manga.title} />
@@ -165,7 +165,7 @@ export default function MagazinePage() {
                     </div>
                   </div>
                 </div>
-                <div className="row-span-1 flex flex-row justify-evenly items-center overflow-x-hidden pt-2 capitalize text-xs">
+                <div className="flex flex-row justify-evenly items-center overflow-x-hidden pt-2 capitalize text-xs">
                   <div className="flex flex-row gap-x-1 items-center">
                     <Star size={14} />
                     <p>{manga.score}</p>

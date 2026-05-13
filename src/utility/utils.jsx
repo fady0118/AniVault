@@ -48,8 +48,8 @@ export function getSeason(d) {
 // helper function for getting the season from a date string
 export function getYear(d) {
   const date = new Date(d);
-  const currentDate = date.toLocaleDateString("en-US",{year:"numeric"})
-  return currentDate
+  const currentDate = date.toLocaleDateString("en-US", { year: "numeric" });
+  return currentDate;
 }
 
 // render function for information section for string data
@@ -63,7 +63,7 @@ export function renderInfoStr(title, str) {
 }
 
 // render function for information section for array data
-export function renderInfoArr(title, arr) {
+export function renderInfoArr(title, arr, path = null) {
   if (!arr?.length) return;
   return (
     <div className="w-full flex flex-row gap-x-1 items-start capitalize">
@@ -71,10 +71,18 @@ export function renderInfoArr(title, arr) {
       <p className="flex flex-row flex-wrap">
         {arr.length
           ? arr.map((item, i, arr) => (
-              <span key={i} className="whitespace-pre-wrap">
-                {item.name}
-                {i !== arr.length - 1 ? ", " : ""}
-              </span>
+              <>
+                {!path ? (
+                  <span key={i} className="whitespace-pre-wrap">
+                    {item.name}
+                    {i !== arr.length - 1 ? ", " : ""}
+                  </span>
+                ) : (
+                  <a key={i} className="blue-link" href={`${path}/${item.mal_id}`}>
+                    {item.name}
+                  </a>
+                )}
+              </>
             ))
           : "None found."}
       </p>
