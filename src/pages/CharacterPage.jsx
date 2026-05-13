@@ -15,7 +15,7 @@ export default function CharacterPage() {
           const res = await fetch(`https://api.jikan.moe/v4/characters/${id}/full`);
           if (!res.ok) throw new Error(res.statusText);
           const character_Data = await res.json();
-          return character_Data.data;
+          return character_Data.data||[];
         },
       },
       {
@@ -24,7 +24,7 @@ export default function CharacterPage() {
           const res = await fetch(`https://api.jikan.moe/v4/characters/${id}/pictures`);
           if (!res.ok) throw new Error(res.statusText);
           const pictures_Data = await res.json();
-          return pictures_Data.data;
+          return pictures_Data.data||[];
         },
       },
     ],

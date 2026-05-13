@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { WindowContext } from "../App";
-import { renderInfoStr, renderInfoArr, renderIcon } from "../utility/utils";
-import useGallery from "../utility/useGallery";
-import Gallery from "../components/character/Gallery";
-import Pictures from "../components/character/Pictures";
-import CardBox from "../components/CardBox/CardBox";
-import { useRelations } from "../utility/useRelations";
+import { WindowContext } from "../../App";
+import { renderInfoStr, renderInfoArr, renderIcon } from "../../utility/utils";
+import useGallery from "../../utility/useGallery";
+import Gallery from "../../components/character/Gallery";
+import Pictures from "../../components/character/Pictures";
+import CardBox from "../../components/CardBox/CardBox";
+import { useRelations } from "../../utility/useRelations";
 import { useQueries } from "@tanstack/react-query";
 
 export default function MangaPage() {
@@ -30,7 +30,7 @@ export default function MangaPage() {
           const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/pictures`);
           if (!res.ok) throw new Error(res.statusText);
           const pictures_Data = await res.json();
-          return pictures_Data.data;
+          return pictures_Data.data ?? [];
         },
       },
       {
@@ -62,17 +62,18 @@ export default function MangaPage() {
         <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
           <div className="w-[95vw] flex flex-col space-y-3">
             <div id="title" className="mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex flex-col">
-              <span className="text-sm/relaxed sm:text-lg/relaxed">{mangaQ?.data.title}</span>
-              <div className="flex items-center space-x-1.5">
-                <span className="text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">{mangaQ?.data.title_japanese}</span>
-                <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={mangaQ?.data.url} target="_blank">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
-                    alt="MyAnimeList Logo"
-                    className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
-                  />
-                </a>
-              </div>
+              <span className="text-sm/relaxed sm:text-lg/relaxed font-bold">{mangaQ?.data.title}</span>
+             <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
+                  <span>{mangaQ?.data.title_english}</span>
+                  <span>{mangaQ?.data.title_japanese}</span>
+                  <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={mangaQ?.data?.url} target="_blank">
+                    <img
+                      src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
+                      alt="MyAnimeList Logo"
+                      className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
+                    />
+                  </a>
+                </div>
             </div>
 
             <div className="order-2 flex flex-col w-full gap-y-3">
@@ -111,7 +112,7 @@ export default function MangaPage() {
                             <p className="text-[1.2em] pr-2 border-r border-amethyst-smoke-950/40 dark:border-amethyst-smoke-200/40">{mangaQ?.data?.type}</p>
                             <p className="flex flex-row gap-x-0.5 items-center text-[1.2em] pr-2 border-r border-amethyst-smoke-950/40 dark:border-amethyst-smoke-200/40">
                               {mangaQ?.data?.serializations?.map((s, i) => (
-                                <a key={i} className="blue-link-b" href={s.url}>
+                                <a key={i} className="blue-link-b" href={`/manga/magazine/${s.mal_id}`}>
                                   {s.name}
                                 </a>
                               ))}
@@ -119,7 +120,7 @@ export default function MangaPage() {
                             <div className="flex flex-row items-center text-[1.2em]">
                               {mangaQ?.data?.authors?.map((s, i, arr) => (
                                 <p key={i}>
-                                  <a className="blue-link-b" href={s.url}>
+                                  <a className="blue-link-b" href={`/${s.type}/${s.mal_id}`}>
                                     {s.name}
                                   </a>
                                   <span className="mr-1.5">{i < arr.length - 1 ? "," : ""}</span>
@@ -267,7 +268,7 @@ export default function MangaPage() {
                     <Pictures pictures={picturesQ?.data} openGallery={openGallery} cols={2} />
                   </div>
 
-                  {charactersQ?.data?.dataArr.length ? (
+                  {charactersQ?.data?.dataArr?.length ? (
                     <div id="characters" className="flex justify-center w-full h-fit order-4">
                       <div className="rounded-lg box-colors w-full ">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters</div>

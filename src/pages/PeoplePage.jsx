@@ -8,6 +8,7 @@ import useGallery from "../utility/useGallery";
 import Pictures from "../components/character/Pictures";
 import Gallery from "../components/character/Gallery";
 import { useQueries } from "@tanstack/react-query";
+import { dateFormatter } from "../utility/utils";
 
 export default function PeoplePage() {
   const { id } = useParams();
@@ -36,16 +37,11 @@ export default function PeoplePage() {
           const res = await fetch(`https://api.jikan.moe/v4/people/${id}/pictures`);
           if (!res.ok) throw new Error(res.statusText);
           const pictures_Data = await res.json();
-          return pictures_Data.data;
+          return pictures_Data.data ?? [];
         },
       },
     ],
   });
-
-  function dateFormatter(input) {
-    const date = new Date(input);
-    return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-  }
 
   const { dispatch, showModal, openGallery, closeGallery, activeIndex } = useGallery(picturesQ?.data ?? []);
 
@@ -71,7 +67,7 @@ export default function PeoplePage() {
                 <img className="w-full aspect-2/3 object-cover order-1 rounded-lg overflow-hidden" src={personQ?.data.images.jpg.image_url} alt="" />
               </div>
 
-              <div id="about" className="order-2 w-full pt-0.5  rounded-lg overflow-hidden box-colors">
+              <div id="about" className="w-full pt-0.5  rounded-lg overflow-hidden box-colors">
                 <div className="border-b border-amethyst-smoke-200/40 pt-0.5  px-3 font-semibold text-md/relaxed capitalize">About</div>
                 <div className="p-3 text-xs font-light whitespace-pre-wrap">
                   <p>Given name: {personQ?.data.given_name}</p>
@@ -84,9 +80,59 @@ export default function PeoplePage() {
             <div id="Pictures" className="order-3 box-colors rounded-md pt-0.5">
               <Pictures pictures={picturesQ?.data} openGallery={openGallery} cols={3} />
             </div>
-            <div id="vaRoles" className="order-3 pt-1 rounded-lg overflow-hidden box-colors">
-              <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Voice Acting Roles</div>
-              {windowWidth >= 480 ? <VoicesGrid voices={personQ?.data?.voices} /> : <CardBox dataArr={personQ?.data?.dataArr} />}
+            {personQ?.data?.voices.length ? (
+              <div id="vaRoles" className="order-4 pt-1 rounded-lg overflow-hidden box-colors">
+                <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Voice Acting Roles</div>
+                {windowWidth >= 480 ? <VoicesGrid voices={personQ?.data?.voices} /> : <CardBox dataArr={personQ?.data?.dataArr} />}
+              </div>
+            ) : (
+              ""
+            )}
+            <div className="w-full order-3 flex flex-col md:flex-row gap-3">
+              {personQ?.data.manga.length ? (
+                <div id="manga" className="order-last pt-1 w-full md:w-1/2 rounded-lg overflow-hidden box-colors">
+                  <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Mangaography</div>
+                  <div className="pt-2 space-y-2 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 auto-rows-fr">
+                    {personQ?.data.manga.map((manga) => (
+                      <div key={manga.manga.mal_id} className="flex w-full px-2 space-x-2 border-b border-amethyst-smoke-400/20">
+                        <a className="w-1/4" href={`/manga/${manga.manga.mal_id}`}>
+                          <img className="w-full h-full aspect-3/4 object-cover" src={manga.manga.images.webp.image_url} alt={manga.manga.title} />
+                        </a>
+                        <div className="flex flex-col w-3/4 space-y-1">
+                          <a href={`/manga/${manga.manga.mal_id}`}>
+                            <p className="text-xs blue-link">{manga.manga.title}</p>
+                          </a>
+                          <p className="text-2xs">{manga.position}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
+              {personQ?.data.anime.length ? (
+                <div id="anime" className="order-last pt-1 w-full md:w-1/2 rounded-lg overflow-hidden box-colors">
+                  <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Animeography</div>
+                  <div className="pt-2 space-y-2 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 auto-rows-fr">
+                    {personQ?.data.anime.map((anime) => (
+                      <div key={anime.anime.mal_id} className="flex w-full px-2 space-x-2 border-b border-amethyst-smoke-400/20">
+                        <a className="w-1/4" href={`/anime/${anime.anime.mal_id}`}>
+                          <img className="w-full h-full aspect-3/4 object-cover" src={anime.anime.images.webp.image_url} alt={anime.anime.title} />
+                        </a>
+                        <div className="flex flex-col w-3/4 space-y-1">
+                          <a href={`/anime/${anime.anime.mal_id}`}>
+                            <p className="text-xs blue-link">{anime.anime.title}</p>
+                          </a>
+                          <p className="text-2xs">{anime.position.split("add ")[1] || anime.position}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
           </div>
           {showModal && (

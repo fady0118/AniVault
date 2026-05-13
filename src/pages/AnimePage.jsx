@@ -110,9 +110,10 @@ export default function AnimePage() {
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center min-h-screen pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
             <div className="w-[95vw] flex flex-col space-y-3 ">
               <div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-col">
-                <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">{animeQ?.data?.title}</div>
-                <div className="flex items-center space-x-1.5">
-                  <span className="text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">{animeQ?.data?.title_english}</span>
+                <div className="text-sm/relaxed sm:text-lg/relaxed font-bold">{animeQ?.data?.title}</div>
+                <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
+                  <span>{animeQ?.data.title_english}</span>
+                  <span>{animeQ?.data.title_japanese}</span>
                   <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={animeQ?.data?.url} target="_blank">
                     <img
                       src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"

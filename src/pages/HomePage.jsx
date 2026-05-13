@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import HomeSlider from "../components/home/HomeSlider";
-import { getSeason } from "../utility/utils";
 import { useQuery } from "@tanstack/react-query";
 
 export default function HomePage() {
