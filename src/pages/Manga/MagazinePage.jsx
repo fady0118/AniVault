@@ -1,16 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useState } from "react";
-import { useParams } from "react-router";
+import { useContext, useEffect, useState } from "react";
+import { useParams, useSearchParams } from "react-router";
 import { WindowContext } from "../../App";
-import { Hash, LucideLayoutGrid, LucideLayoutList, Medal, Star, User } from "lucide-react";
+import { ChevronLeftSquare, ChevronRightSquare, Hash, LucideLayoutGrid, LucideLayoutList, Medal, Star, User } from "lucide-react";
 import { getSeason, getYear } from "../../utility/utils";
 
 export default function MagazinePage() {
   let { id } = useParams();
   const { windowWidth } = useContext(WindowContext);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [letter, setLetter] = useState("");
   const [layout, setLayout] = useState("grid");
+
+  const currentPage = Number(searchParams.get("page") ?? 1);
+
+  const pageSwap = (newPage) => {
+    setSearchParams({ page: newPage });
+  };
 
   const magazineQ = useQuery({
     queryKey: ["magazine", id, currentPage, letter],
@@ -21,6 +27,18 @@ export default function MagazinePage() {
       return magazine_Data;
     },
   });
+
+  function currentPageChange(type) {
+    if (type == "increment") {
+      if (magazineQ?.data?.pagination?.has_next_page) {
+        pageSwap(currentPage + 1);
+      }
+    } else if (type == "decrement") {
+      if (currentPage > 1) {
+        pageSwap(currentPage - 1);
+      }
+    }
+  }
 
   return (
     <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
@@ -37,7 +55,7 @@ export default function MagazinePage() {
         </div>
 
         <div id="pages" className="order-2 w-full flex flex-col box-colors rounded-md px-3 py-2">
-          <div className="w-full flex flex-row flex-wrap justify-between items-center bottom-border text-2xs md:text-xs lg:text-sm capitalize">
+          <div className="w-full flex flex-row  flex-wrap justify-between items-center bottom-border text-2xs md:text-xs lg:text-sm capitalize">
             <div className="flex flex-row flex-wrap">
               {Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i)).map((l) => (
                 <div
@@ -59,30 +77,45 @@ export default function MagazinePage() {
                 #
               </div>
             </div>
-            <div className="flex flex-row gap-x-1">
-              <div>
-                <LucideLayoutGrid
-                  onClick={() => {
-                    setLayout("grid");
-                  }}
-                  size={16}
-                  className="p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
+            <div className="flex flex-row justify-between flex-wrap w-fit gap-x-5">
+              <div className="flex flex-row gap-x-1 items-center">
+                <ChevronLeftSquare
+                  onClick={() => currentPageChange("decrement")}
+                  size={18}
+                  className={`${currentPage === 1 ? "stroke-gray-700" : "stroke-yellow-500"} p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30`}
+                />
+                <p>{currentPage}</p>
+                <ChevronRightSquare
+                  onClick={() => currentPageChange("increment")}
+                  size={18}
+                  className={`${!magazineQ?.data?.pagination?.has_next_page ? "stroke-gray-700" : "stroke-yellow-500"} p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30`}
                 />
               </div>
-              <div>
-                <LucideLayoutList
-                  onClick={() => {
-                    setLayout("tiles");
-                  }}
-                  size={16}
-                  className="p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
-                />
+              <div className="flex flex-row gap-x-0.5">
+                <div>
+                  <LucideLayoutGrid
+                    onClick={() => {
+                      setLayout("grid");
+                    }}
+                    size={18}
+                    className="p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
+                  />
+                </div>
+                <div>
+                  <LucideLayoutList
+                    onClick={() => {
+                      setLayout("tiles");
+                    }}
+                    size={18}
+                    className="p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
+                  />
+                </div>
               </div>
             </div>
           </div>
           <div className="w-full grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 auto-rows-fr text-2xs gap-3 py-3">
             {magazineQ?.data?.data?.map((manga) => (
-              <div className="flex flex-col p-2 capitalize rounded-sm border border-amethyst-smoke-950/40 dark:border-amethyst-smoke-200/40">
+              <div key={manga.mal_id} className="flex flex-col p-2 capitalize rounded-sm border border-amethyst-smoke-950/40 dark:border-amethyst-smoke-200/40">
                 <div className="flex flex-col grow items-center justify-center text-center">
                   <a href={`/${manga.type || "manga"}/${manga.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
                     {manga.title_english || manga.title}
@@ -107,8 +140,8 @@ export default function MagazinePage() {
                   </div>
                 </div>
                 <div className="flex flex-row justify-evenly items-center overflow-x-hidden  py-1 bg-dark-amethyst-smoke-500/10 dark:bg-amethyst-smoke-500/10">
-                  {manga.genres.slice(0, 4).map((genre) => (
-                    <a href={genre.url} className="hover-blue-link duration-150">
+                  {manga.genres.slice(0, 4).map((genre, i) => (
+                    <a key={i} href={genre.url} className="hover-blue-link duration-150">
                       {genre.name}
                     </a>
                   ))}
@@ -136,13 +169,27 @@ export default function MagazinePage() {
                       </div>
                       <div className="flex flex-row flex-wrap gap-x-1.5">
                         <p className="font-semibold">Themes</p>
-                        <div className="flex flex-row flex-wrap gap-x-0 5">{manga.themes.length ? manga.themes.map((theme) => <p className="font-light">{theme.name}</p>) : "-"}</div>
+                        <div className="flex flex-row flex-wrap gap-x-0 5">
+                          {manga.themes.length
+                            ? manga.themes.map((theme, i) => (
+                                <p key={i} className="font-light">
+                                  {theme.name}
+                                </p>
+                              ))
+                            : "-"}
+                        </div>
                       </div>
 
                       <div className="flex flex-row flex-wrap gap-x-1.5">
                         <p className="font-semibold">demographics</p>
                         <div className="flex flex-row flex-wrap gap-x-0 5">
-                          {manga.demographics.length ? manga.demographics.map((demographic) => <p className="font-light">{demographic.name}</p>) : "-"}
+                          {manga.demographics.length
+                            ? manga.demographics.map((demographic, i) => (
+                                <p key={i} className="font-light">
+                                  {demographic.name}
+                                </p>
+                              ))
+                            : "-"}
                         </div>
                       </div>
                     </div>
