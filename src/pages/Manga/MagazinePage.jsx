@@ -2,26 +2,30 @@ import { useQuery } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router";
 import { WindowContext } from "../../App";
-import { ChevronLeftSquare, ChevronRightSquare, Hash, LucideLayoutGrid, LucideLayoutList, Medal, Star, User } from "lucide-react";
+import { ChevronLeftSquare, ChevronRightSquare, Hash, LucideLayoutGrid, LucideLayoutList, Star, User } from "lucide-react";
 import { getSeason, getYear } from "../../utility/utils";
 
 export default function MagazinePage() {
   let { id } = useParams();
   const { windowWidth } = useContext(WindowContext);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [letter, setLetter] = useState("");
   const [layout, setLayout] = useState("grid");
 
   const currentPage = Number(searchParams.get("page") ?? 1);
+  const letterFilter = searchParams.get('letter')??"";
 
   const pageSwap = (newPage) => {
-    setSearchParams({ page: newPage });
+    const letter = searchParams.get("letter")
+    setSearchParams({ page: newPage, letter });
   };
+  const filterByLetter = (letter) => {
+    setSearchParams({ letter });
+  }
 
   const magazineQ = useQuery({
-    queryKey: ["magazine", id, currentPage, letter],
+    queryKey: ["magazine", id, currentPage, letterFilter],
     queryFn: async () => {
-      const res = await fetch(`https://api.jikan.moe/v4/manga?magazines=${id}&page=${currentPage}&letter=${letter}`);
+      const res = await fetch(`https://api.jikan.moe/v4/manga?magazines=${id}&page=${currentPage}&letter=${letterFilter}`);
       if (!res.ok) throw new Error(res.statusText);
       const magazine_Data = await res.json();
       return magazine_Data;
@@ -60,7 +64,7 @@ export default function MagazinePage() {
               {Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i)).map((l) => (
                 <div
                   onClick={() => {
-                    setLetter(l);
+                    filterByLetter(l);
                   }}
                   key={l}
                   className="px-1 hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
@@ -70,7 +74,7 @@ export default function MagazinePage() {
               ))}
               <div
                 onClick={() => {
-                  setLetter("");
+                  filterByLetter("");
                 }}
                 className="px-1 hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
               >
