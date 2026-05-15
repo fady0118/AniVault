@@ -52,7 +52,7 @@ export default function MagazinePage() {
   }
 
   return (
-    <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3 dark:text-amethyst-smoke-400/75 text-dark-amethyst-smoke-100/75">
+    <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3">
       <div className="w-[95vw] flex flex-col space-y-3">
         <div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-row gap-x-1.5 items-center">
           <span className="text-sm/relaxed sm:text-lg/relaxed font-bold">{magazineQ?.data?.data[0]?.serializations[0]?.name}</span>
@@ -88,7 +88,7 @@ export default function MagazinePage() {
                 #
               </div>
             </div>
-            <div id="pages" className="flex flex-row justify-between flex-wrap w-fit gap-x-5">
+            <div id="page" className="flex flex-row justify-between flex-wrap w-fit gap-x-5">
               <div className="flex flex-row gap-x-1 items-center">
                 <ChevronLeftSquare
                   onClick={() => currentPageChange("decrement")}
@@ -253,7 +253,7 @@ export default function MagazinePage() {
                           <a href={`/${manga.type || "manga"}/${manga.mal_id}`} className="text-[15px] font-medium blue-link hover:underline leading-snug truncate">
                             {manga.title_english || manga.title}
                           </a>
-                          <span className="text-xs font-normal whitespace-nowrap">{manga.title_japanese}</span>
+                          <span className="text-xs font-normal whitespace-pre-wrap">{manga.title_japanese}</span>
                         </div>
 
                         <div className="px-3 overflow-y-scroll grow w-full max-h-25">

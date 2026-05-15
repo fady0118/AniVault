@@ -92,15 +92,26 @@ export function renderInfoArr(title, arr, path = null) {
 
 // render function for the external links section that returns an icon imgs for the links data
 export function renderIcon(name) {
+  if (name.toLowerCase().includes("wikipedia")) {
+    return <img className="h-3" alt="Wikipedia icon" src="https://cdn.myanimelist.net/img/common/external_links/202.png" />;
+  } else if (name.toLowerCase().startsWith("@") || name.toLowerCase().includes("x.com")) {
+    return <img className="h-3" alt="twitter icon" src="https://cdn.myanimelist.net/img/common/external_links/101.png" />;
+  }
   switch (name) {
     case "YouTube":
       return <img alt="YouTube icon" className="h-3" src="https://cdn.myanimelist.net/img/common/external_links/102.png" />;
+    case "Facebook":
+      return (
+        <img
+          alt="FaceBook icon"
+          className="h-3"
+          src="https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original"
+        />
+      );
     case "AniDB":
       return <img className="h-3" alt="AniDB icon" src="https://cdn.myanimelist.net/img/common/external_links/200.png" />;
     case "ANN":
       return <img className="h-3" alt="ANN icon" src="https://cdn.myanimelist.net/img/common/external_links/201.png" />;
-    case "Wikipedia":
-      return <img className="h-3" alt="Wikipedia icon" src="https://cdn.myanimelist.net/img/common/external_links/202.png" />;
     case "Syoboi":
       return <img className="h-3" alt="Syoboi icon" src="https://cdn.myanimelist.net/img/common/external_links/203.png" />;
     case "Netflix":
@@ -114,7 +125,7 @@ export function renderIcon(name) {
     case "Crunchyroll":
       return <img className="h-3" alt="Crunchyroll icon" src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/crunchyroll.png" />;
     default:
-      return name.startsWith("@") ? <img className="h-3" alt="twitter icon" src="https://cdn.myanimelist.net/img/common/external_links/101.png" /> : <LinkIcon size={12} />;
+      return <LinkIcon size={12} />;
   }
 }
 
