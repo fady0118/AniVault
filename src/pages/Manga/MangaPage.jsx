@@ -63,17 +63,17 @@ export default function MangaPage() {
           <div className="w-[95vw] flex flex-col space-y-3">
             <div id="title" className="mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex flex-col">
               <span className="text-sm/relaxed sm:text-lg/relaxed font-bold">{mangaQ?.data.title}</span>
-             <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
-                  <span>{mangaQ?.data.title_english}</span>
-                  <span>{mangaQ?.data.title_japanese}</span>
-                  <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={mangaQ?.data?.url} target="_blank">
-                    <img
-                      src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
-                      alt="MyAnimeList Logo"
-                      className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
-                    />
-                  </a>
-                </div>
+              <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
+                <span>{mangaQ?.data.title_english}</span>
+                <span>{mangaQ?.data.title_japanese}</span>
+                <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={mangaQ?.data?.url} target="_blank">
+                  <img
+                    src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
+                    alt="MyAnimeList Logo"
+                    className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
+                  />
+                </a>
+              </div>
             </div>
 
             <div className="order-2 flex flex-col w-full gap-y-3">
@@ -87,14 +87,15 @@ export default function MangaPage() {
                   <div className="order-1 flex flex-col gap-3">
                     <div id="details" className="box-colors rounded-lg w-fit pt-0.5">
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>
-                      <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
+                      <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs lg:text-2xs">
                         <div className="flex flex-col justify-evenly pr-2 items-center border-r border-amethyst-smoke-500/20 ">
                           <p className="text-text-dark text-[1.4em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
                           <p className="text-[1.8em]/snug font-semibold">{mangaQ?.data?.score || "N/A"}</p>
                           <p className="font-light text-[1.25em]">{mangaQ?.data?.scored_by?.toLocaleString() || "-"} users</p>
                         </div>
+
                         <div className="flex flex-col py-1 gap-y-1">
-                          <div className="grid grid-cols-3 items-end gap-x-3  2xs:gap-x-6 md:gap-x-8 lg:gap-x-10 capitalize ">
+                          <div className="grid grid-cols-3 items-start capitalize">
                             <div className="flex flex-col">
                               <p className="text-[1.8em]">Ranked</p>
                               <p className="text-[1.4em]">#{mangaQ?.data?.rank}</p>
@@ -108,21 +109,22 @@ export default function MangaPage() {
                               <p className="text-[1.4em]">{mangaQ?.data?.members?.toLocaleString()}</p>
                             </div>
                           </div>
-                          <div className="flex flex-row items-center justify-between gap-x-2">
-                            <p className="text-[1.2em]">{mangaQ?.data?.type}</p>
-                              <span className="text-amethyst-smoke-950/40 dark:text-amethyst-smoke-200/40">|</span>
-                            <p className="flex flex-row gap-x-0.5 items-center text-[1.2em]">
+
+                          <div className="grid grid-cols-3 items-start divide-x divide-amethyst-smoke-950/40 dark:divide-amethyst-smoke-200/40">
+                            <p className="text-[1.2em] pr-2">{mangaQ?.data?.type}</p>
+
+                            <div className="flex flex-row flex-wrap gap-x-0.5 items-center text-[1.2em] px-2">
                               {mangaQ?.data?.serializations?.map((s, i) => (
-                                <a key={i} className="blue-link-b" href={`/manga/magazine/${s.mal_id}`}>
+                                <a key={i} className="blue-link" href={`/manga/magazine/${s.mal_id}`}>
                                   {s.name}
                                 </a>
                               ))}
-                            </p>
-                              <span className="text-amethyst-smoke-950/40 dark:text-amethyst-smoke-200/40">|</span>
-                            <div className="flex flex-row items-center text-[1.2em]">
+                            </div>
+
+                            <div className="flex flex-row flex-wrap items-center text-[1.2em] pl-2">
                               {mangaQ?.data?.authors?.map((s, i, arr) => (
                                 <p key={i}>
-                                  <a className="blue-link-b" href={`/${s.type}/${s.mal_id}`}>
+                                  <a className="blue-link" href={`/${s.type}/${s.mal_id}`}>
                                     {s.name}
                                   </a>
                                   <span className="mr-1.5">{i < arr.length - 1 ? "," : ""}</span>

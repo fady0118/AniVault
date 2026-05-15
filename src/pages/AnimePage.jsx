@@ -134,22 +134,22 @@ export default function AnimePage() {
                     <div className="order-1 flex flex-col gap-3">
                       <div id="details" className="box-colors rounded-lg w-fit">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>
-                        <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
-                          <div className="flex flex-col justify-between pr-2 items-center border-r border-amethyst-smoke-500/20 ">
+                        <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs lg:text-2xs">
+                          <div className="flex flex-col justify-evenly pr-2 items-center border-r border-amethyst-smoke-500/20 ">
                             <p className="text-text-dark text-[1.4em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
                             <p className="text-[1.8em]/snug font-semibold">{animeQ?.data?.score}</p>
                             <p className="font-light text-[1.25em]">{animeQ?.data?.scored_by?.toLocaleString()} users</p>
                           </div>
-                          <div className="grid grid-cols-3 grid-rows-3 items-end gap-x-3  2xs:gap-x-6 md:gap-x-8 lg:gap-x-10 capitalize ">
-                            <div className="row-span-2 flex flex-col">
+                          {/* <div className="grid grid-cols-3 items-end md:gap-x-8 lg:gap-x-10 capitalize">
+                            <div className="flex flex-col">
                               <p className="text-[1.8em]">Ranked</p>
                               <p className="text-[1.4em]">#{animeQ?.data?.rank}</p>
                             </div>
-                            <div className="row-span-2 flex flex-col">
+                            <div className="flex flex-col">
                               <p className="text-[1.8em]">Popularity</p>
                               <p className="text-[1.4em]">#{animeQ?.data?.popularity}</p>
                             </div>
-                            <div className="row-span-2 flex flex-col">
+                            <div className="flex flex-col">
                               <p className="text-[1.8em]">Members</p>
                               <p className="text-[1.4em]">{animeQ?.data?.members.toLocaleString()}</p>
                             </div>
@@ -159,8 +159,41 @@ export default function AnimePage() {
                             <p className="text-[1.2em]">{animeQ?.data?.type}</p>
                             <div className="flex flex-row space-x-1.5 flex-wrap text-[1.2em]">
                               {animeQ?.data?.studios.map((studio, i) => (
-                                <p key={i}>{studio.name}</p>
+                                <a href={`/producer/${studio.mal_id}`} className="blue-link" key={i}>{studio.name}</a>
                               ))}
+                            </div>
+                          </div> */}
+
+                          <div className="flex flex-col py-1 gap-y-1">
+                            <div className="grid grid-cols-3 items-start capitalize">
+                              <div className="flex flex-col">
+                                <p className="text-[1.8em]">Ranked</p>
+                                <p className="text-[1.4em]">#{animeQ?.data?.rank}</p>
+                              </div>
+                              <div className="flex flex-col">
+                                <p className="text-[1.8em]">Popularity</p>
+                                <p className="text-[1.4em]">#{animeQ?.data?.popularity}</p>
+                              </div>
+                              <div className="flex flex-col">
+                                <p className="text-[1.8em]">Members</p>
+                                <p className="text-[1.4em]">{animeQ?.data?.members?.toLocaleString()}</p>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-3 items-start divide-x divide-amethyst-smoke-950/40 dark:divide-amethyst-smoke-200/40">
+                              <p className="text-[1.2em] pr-2">{animeQ?.data?.type}</p>
+
+                              <p className="flex flex-row text-[1.2em]">
+                                {animeQ?.data?.season} {animeQ?.data?.year}
+                              </p>
+
+                              <div className="flex flex-row space-x-1.5 flex-wrap text-[1.2em]">
+                                {animeQ?.data?.studios.map((studio, i) => (
+                                  <a href={`/producer/${studio.mal_id}`} className="blue-link" key={i}>
+                                    {studio.name}
+                                  </a>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -234,9 +267,9 @@ export default function AnimePage() {
                           {renderInfoStr("aired", `${animeQ?.data?.aired.string}`)}
                           {renderInfoStr("premiered", `${animeQ?.data?.season} ${animeQ?.data?.year}`)}
                           {renderInfoStr("broadcast", `${animeQ?.data?.broadcast.string}`)}
-                          {renderInfoArr("producers", animeQ?.data?.producers)}
+                          {renderInfoArr("producers", animeQ?.data?.producers, "/producer")}
                           {renderInfoArr("licensors", animeQ?.data?.licensors)}
-                          {renderInfoArr("studios", animeQ?.data?.studios)}
+                          {renderInfoArr("studios", animeQ?.data?.studios, "/producer")}
                           {renderInfoStr("source", `${animeQ?.data?.source}`)}
                           {renderInfoArr("genres", animeQ?.data?.genres)}
                           {renderInfoArr("themes", animeQ?.data?.themes)}
@@ -555,7 +588,7 @@ export default function AnimePage() {
                   ""
                 )}
 
-                {recommendationsQ?.data?.recommendations ? (
+                {recommendationsQ?.data?.recommendations.length ? (
                   <div id="recommendations" className="order-4 rounded-lg box-colors w-full py-1">
                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">recommendations</div>
                     <CardBox dataArr={recommendationsQ?.data?.recommendationsDataArr} num={7} aspect="2/3" />

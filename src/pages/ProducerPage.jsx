@@ -38,8 +38,8 @@ export default function ProducerPage() {
       {
         queryKey: ["animes", id, currentPage],
         queryFn: async () => {
-          //   const res = await fetch(`https://api.jikan.moe/v4/anime?producers=${id}&page=${currentPage}`);
-          const res = await fetch(`https://api.jikan.moe/v4/anime?producers=${id}`);
+            const res = await fetch(`https://api.jikan.moe/v4/anime?producers=${id}&page=${currentPage}`);
+        //   const res = await fetch(`https://api.jikan.moe/v4/anime?producers=${id}`);
           const animes_Data = await res.json();
           return animes_Data || [];
         },
@@ -191,7 +191,6 @@ export default function ProducerPage() {
                                 <a href={`/anime/${anime.mal_id}`}>
                                   <img className="w-full aspect-3/4 object-cover" src={`${anime.images.jpg.image_url}`} alt={anime.title_english || anime.title} />
                                 </a>
-                                <div className="absolute top-0 left-0 w-full h-full"></div>
                                 <div className="absolute bottom-0 left-0 py-2 px-3 gap-1 flex flex-col w-full text-xs font-light bg-linear-45 from-35% from-amethyst-smoke-400 dark:from-dark-amethyst-smoke-200 to-75% to-transparent">
                                   <div className="flex items-center gap-2">
                                     <Star size={15} />
@@ -199,11 +198,11 @@ export default function ProducerPage() {
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <User size={15} />
-                                    <span>{anime.members.toLocaleString()}</span>
+                                    <span>{anime.members?.toLocaleString() || "?"}</span>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <Hash size={15} />
-                                    <span>{anime.rank.toLocaleString()}</span>
+                                    <span>{anime.rank?.toLocaleString() || "?"}</span>
                                   </div>
                                 </div>
                               </div>
@@ -320,11 +319,11 @@ export default function ProducerPage() {
                               </div>
                               <div className="flex flex-row gap-x-1 py-1.5 w-1/3 justify-center items-center border-r magazine-border-colors">
                                 <User size={14} />
-                                <p>{anime.members.toLocaleString() || "?"}</p>
+                                <p>{anime.members?.toLocaleString() || "?"}</p>
                               </div>
                               <div className="flex flex-row gap-x-1 py-1.5 w-1/3 justify-center items-center">
                                 <Hash size={14} />
-                                <p>{anime.rank.toLocaleString() || "?"}</p>
+                                <p>{anime.rank?.toLocaleString() || "?"}</p>
                               </div>
                             </div>
                           </div>
@@ -393,11 +392,11 @@ export default function ProducerPage() {
                                 </div>
                                 <div className="flex items-center gap-1">
                                   <User size={13} />
-                                  <span>{anime.members.toLocaleString()}</span>
+                                  <span>{anime.members?.toLocaleString() || "?"}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
                                   <Hash size={13} className="" />
-                                  <span>{anime.rank.toLocaleString()}</span>
+                                  <span>{anime.rank?.toLocaleString() || "?"}</span>
                                 </div>
                               </div>
                             </div>
