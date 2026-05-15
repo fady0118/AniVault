@@ -46,6 +46,9 @@
 
   --color-mal-blue: #2c51a7;
 
+  --color-amethyst-half:#bcb8cc80;
+  --color-dark-amethyst-half:#24272880;
+
 }
 
 @keyframes imageZoomIn {

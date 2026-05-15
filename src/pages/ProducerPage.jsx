@@ -2,12 +2,12 @@ import { useContext, useState } from "react";
 import { useParams, useSearchParams } from "react-router";
 import { WindowContext } from "../App";
 import { useQueries } from "@tanstack/react-query";
-import { dateFormatter, getSeason, getYear, renderIcon } from "../utility/utils";
-import { Baby, BookOpen, Calendar, ChevronLeftSquare, ChevronRightSquare, Grid3x2, Hash, LucideLayoutGrid, LucideLayoutList, Star, User, Videotape } from "lucide-react";
+import { dateFormatter, renderIcon } from "../utility/utils";
+import { Baby, Calendar, ChevronLeftSquare, ChevronRightSquare, Grid3x2, Hash, LucideLayoutGrid, LucideLayoutList, Star, User, Videotape } from "lucide-react";
 
 const classes = {
   gridClasses: {
-    smallGrid: "grid grid-cols-2 sm:grid-cols-3 xs:grid-cols-4 md:grid-cols-5 xl:grid-cols-6 auto-rows-fr",
+    smallGrid: "grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 auto-rows-fr",
     detailedGrid: "grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 auto-rows-fr ",
     tiles: "grid grid-cols-1 auto-rows-fr ",
   },
@@ -181,13 +181,39 @@ export default function ProducerPage() {
                     </div>
                   </div>
 
-                  <div className={`w-full text-2xs gap-x-3 gap-y-3 p-3 ${classes.gridClasses[layout]}`}>
+                  <div className={`w-full text-2xs gap-4 p-3 ${classes.gridClasses[layout]}`}>
                     {animesQ?.data?.data?.map((anime) => (
-                      <div key={anime.mal_id} className="w-full flex flex-col capitalize rounded-md theme-bg-colors">
+                      <div key={anime.mal_id} className="capitalize rounded-md overflow-hidden">
                         {layout === "smallGrid" ? (
-                          <></>
-                        ) : layout === "detailedGrid" ? (
                           <>
+                            <div className="w-full h-fit flex flex-col gap-y-1">
+                              <div className="relative w-full h-fit rounded-md overflow-hidden">
+                                <a href={`/anime/${anime.mal_id}`}>
+                                  <img className="w-full aspect-3/4 object-cover" src={`${anime.images.jpg.image_url}`} alt={anime.title_english || anime.title} />
+                                </a>
+                                <div className="absolute top-0 left-0 w-full h-full"></div>
+                                <div className="absolute bottom-0 left-0 py-2 px-3 gap-1 flex flex-col w-full text-xs font-light bg-linear-45 from-35% from-amethyst-smoke-400 dark:from-dark-amethyst-smoke-200 to-75% to-transparent">
+                                  <div className="flex items-center gap-2">
+                                    <Star size={15} />
+                                    <span>{anime.score}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <User size={15} />
+                                    <span>{anime.members.toLocaleString()}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Hash size={15} />
+                                    <span>{anime.rank.toLocaleString()}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <a href={`/anime/${anime.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer cutoff-text-abs max-lines-1">
+                                {anime.title_english || anime.title}
+                              </a>
+                            </div>
+                          </>
+                        ) : layout === "detailedGrid" ? (
+                          <div className="w-full h-full flex flex-col theme-bg-colors">
                             <div className="flex flex-col grow-0 items-center justify-center text-center py-1.5 border-b magazine-border-colors">
                               <a href={`/anime/${anime.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
                                 {anime.title_english || anime.title}
@@ -301,9 +327,9 @@ export default function ProducerPage() {
                                 <p>{anime.rank.toLocaleString() || "?"}</p>
                               </div>
                             </div>
-                          </>
+                          </div>
                         ) : (
-                          <>
+                          <div className="theme-bg-colors">
                             <div className="flex flex-row grow">
                               <a href={`/anime/${anime.mal_id}`} className="w-1/10 min-w-22 aspect-auto">
                                 <img src={anime.images.jpg.image_url} alt={anime.title_english || anime.title} className="w-full object-cover" />
@@ -375,7 +401,7 @@ export default function ProducerPage() {
                                 </div>
                               </div>
                             </div>
-                          </>
+                          </div>
                         )}
                       </div>
                     ))}
