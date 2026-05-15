@@ -16,7 +16,7 @@ export default function MagazinePage() {
   let { id } = useParams();
   const { windowWidth } = useContext(WindowContext);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [layout, setLayout] = useState("grid");
+  const [layout, setLayout] = useState("grid"); // grid, tiles
 
   const currentPage = Number(searchParams.get("page") ?? 1);
   const letterFilter = searchParams.get("letter") ?? "";

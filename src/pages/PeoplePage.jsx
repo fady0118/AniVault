@@ -67,8 +67,8 @@ export default function PeoplePage() {
                 <img className="w-full aspect-2/3 object-cover order-1 rounded-lg overflow-hidden" src={personQ?.data.images.jpg.image_url} alt="" />
               </div>
 
-              <div id="about" className="w-full pt-0.5  rounded-lg overflow-hidden box-colors">
-                <div className="border-b border-amethyst-smoke-200/40 pt-0.5  px-3 font-semibold text-md/relaxed capitalize">About</div>
+              <div id="about" className="w-full pt-0.5 rounded-lg overflow-hidden box-colors">
+                <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">About</div>
                 <div className="p-3 text-xs font-light whitespace-pre-wrap">
                   <p>Given name: {personQ?.data.given_name}</p>
                   <p>Family name: {personQ?.data.family_name}</p>
