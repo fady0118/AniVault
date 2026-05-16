@@ -1,10 +1,10 @@
 import { Play } from "lucide-react";
 import { useState } from "react";
-import TrailerModal from "./TrailerModal";
+// import VideoModal from "../VideoModal";
 const gradientStyles = `bg-[linear-gradient(0deg,#e7e6ee_20%,#e7e6eea8_50%,transparent_65%)] dark:bg-[linear-gradient(0deg,#1b1e1f_20%,#1b1e1fab_50%,transparent_65%)] sm:bg-[linear-gradient(90deg,#e7e6ee_50%,#e7e6eea8_65%,transparent_100%)] sm:dark:bg-[linear-gradient(90deg,#1b1e1f_50%,#1b1e1fab_65%,transparent_100%)]`;
 
 export default function Slide({ animeData, openModal }) {
-  const [showTrailerModal, setShowTrailerModal] = useState(false);
+  // const [showTrailerModal, setShowTrailerModal] = useState(false);
   return (
     <>
       <div className={`relative slide w-full h-full flex justify-end items-center shrink-0 text-6xl `}>

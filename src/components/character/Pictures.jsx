@@ -16,7 +16,7 @@ export default function Pictures({ pictures, openGallery, cols }) {
         <p className="p-3 text-xs font-light">No pictures found.</p>
       ) : (
         <div className={`grid ${classes.columnsMap[cols]} gap-2 p-2`}>
-          {pictures.slice(0, 10).map((picture, i) => (
+          {pictures.slice(0, 6).map((picture, i) => (
             <div
               data-image-index={i}
               onClick={(e) => {
@@ -28,26 +28,26 @@ export default function Pictures({ pictures, openGallery, cols }) {
               <img className="w-full h-full object-cover pointer-events-none" src={picture.jpg.image_url} alt="" />
             </div>
           ))}
-          {!showAllPics && pictures.slice(10).length ? (
+          {!showAllPics && pictures.slice(6).length ? (
             <div
               onClick={() => {
                 setShowAllPics(true);
               }}
               className="aspect-2/3 flex justify-center items-center text-xl hover:cursor-pointer hover:scale-105 border-4 border-amethyst-smoke-400/30 transition-transform duration-200"
             >
-              +{pictures.slice(10).length}
+              +{pictures.slice(6).length}
             </div>
           ) : (
             ""
           )}
           {showAllPics &&
-            pictures.slice(10).map((picture, i) => (
+            pictures.slice(6).map((picture, i) => (
               <div
-                data-image-index={i + 10}
+                data-image-index={i + 6}
                 onClick={(e) => {
                   openGallery(Number(e.target.dataset.imageIndex));
                 }}
-                key={`picture-${i + 10}`}
+                key={`picture-${i + 6}`}
                 className={classes.pictures}
               >
                 <img className="w-full h-full object-cover pointer-events-none" src={picture.jpg.image_url} />

@@ -1,7 +1,8 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Slide from "./Slide";
-import TrailerModal from "./TrailerModal";
+import VideoModal from "../VideoModal";
+import { useVideoModal } from "../../utility/useVideoModal";
 
 export default function HomeSlider({ season }) {
   if (!season.length) return;
@@ -45,17 +46,14 @@ export default function HomeSlider({ season }) {
   }, []);
 
   // trailer modal
-  const trailerRef = useRef(null);
-  const [showTrailerModal, setShowTrailerModal] = useState(false);
+  const { showVideoModal, videoRef, playVideo, closeVideo } = useVideoModal();
   function openModal(trailerLink) {
-    trailerRef.current = trailerLink;
-    setShowTrailerModal(true);
+    playVideo(trailerLink);
     // pause the interval
     clearInterval(intervalRef.current);
   }
   function closeModal() {
-    trailerRef.current = null;
-    setShowTrailerModal(false);
+    closeVideo();
     // resume the interval
     startInterval();
   }
@@ -104,7 +102,7 @@ export default function HomeSlider({ season }) {
         />
       </div>
       <div className="hidden sm:block absolute z-50 w-screen h-screen top-0 bg-[linear-gradient(0deg,#e7e6ee_0%,transparent_5%)] dark:bg-[linear-gradient(0deg,#1b1e1f_0%,transparent_5%)] pointer-events-none"></div>
-      {showTrailerModal && trailerRef.current && <TrailerModal closeModal={closeModal} link={trailerRef.current} />}
+      {showVideoModal && videoRef.current && <VideoModal closeModal={closeModal} link={videoRef.current} />}
     </>
   );
 }

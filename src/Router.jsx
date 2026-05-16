@@ -2,7 +2,7 @@ import { createBrowserRouter, useRouteError } from "react-router";
 import App from "./App";
 import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
-import AnimePage from "./pages/AnimePage";
+import AnimePage from "./pages/Anime/AnimePage";
 import CharacterPage from "./pages/CharacterPage";
 import PeoplePage from "./pages/PeoplePage";
 import MangaPage from "./pages/Manga/MangaPage";

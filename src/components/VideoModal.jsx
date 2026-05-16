@@ -1,7 +1,7 @@
 import { CircleX } from "lucide-react";
 import { useEffect } from "react";
 
-export default function TrailerModal({ closeModal, link }) {
+export default function VideoModal({ closeModal, link }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {

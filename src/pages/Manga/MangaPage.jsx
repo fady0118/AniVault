@@ -85,35 +85,35 @@ export default function MangaPage() {
                     </div>
                   </div>
                   <div className="order-1 flex flex-col gap-3">
-                    <div id="details" className="box-colors rounded-lg w-fit pt-0.5">
+                    <div id="details" className="box-colors rounded-lg w-fit">
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>
-                      <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs lg:text-2xs">
+                      <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
                         <div className="flex flex-col justify-evenly pr-2 items-center border-r border-amethyst-smoke-500/20 ">
-                          <p className="text-text-dark text-[1.4em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
-                          <p className="text-[1.8em]/snug font-semibold">{mangaQ?.data?.score || "N/A"}</p>
-                          <p className="font-light text-[1.25em]">{mangaQ?.data?.scored_by?.toLocaleString() || "-"} users</p>
+                          <p className="text-text-dark text-[1.5em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
+                          <p className="text-[2em]/snug font-semibold">{mangaQ?.data?.score || "N/A"}</p>
+                          <p className="font-light text-[1.35em]">{mangaQ?.data?.scored_by?.toLocaleString() || "-"} users</p>
                         </div>
 
                         <div className="flex flex-col py-1 gap-y-1">
-                          <div className="grid grid-cols-3 items-start capitalize">
+                          <div className="grid grid-cols-3 items-start gap-x-2 lg:gap-x-5 capitalize">
                             <div className="flex flex-col">
-                              <p className="text-[1.8em]">Ranked</p>
-                              <p className="text-[1.4em]">#{mangaQ?.data?.rank}</p>
+                              <p className="text-[2em]">Ranked</p>
+                              <p className="text-[1.6em]"># {mangaQ?.data?.rank}</p>
                             </div>
                             <div className="flex flex-col">
-                              <p className="text-[1.8em]">Popularity</p>
-                              <p className="text-[1.4em]">#{mangaQ?.data?.popularity}</p>
+                              <p className="text-[2em]">Popularity</p>
+                              <p className="text-[1.6em]"># {mangaQ?.data?.popularity}</p>
                             </div>
                             <div className="flex flex-col">
-                              <p className="text-[1.8em]">Members</p>
-                              <p className="text-[1.4em]">{mangaQ?.data?.members?.toLocaleString()}</p>
+                              <p className="text-[2em]">Members</p>
+                              <p className="text-[1.6em]">{mangaQ?.data?.members?.toLocaleString()}</p>
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-3 items-start divide-x divide-amethyst-smoke-950/40 dark:divide-amethyst-smoke-200/40">
-                            <p className="text-[1.2em] pr-2">{mangaQ?.data?.type}</p>
+                          <div className="grid grid-cols-3 items-start gap-x-2.5 lg:gap-x-5 divide-x divide-amethyst-smoke-950/40 dark:divide-amethyst-smoke-200/40">
+                            <p className="text-[1.35em]">{mangaQ?.data?.type}</p>
 
-                            <div className="flex flex-row flex-wrap gap-x-0.5 items-center text-[1.2em] px-2">
+                            <div className="flex flex-row flex-wrap gap-x-0.5 items-center text-[1.35em]">
                               {mangaQ?.data?.serializations?.map((s, i) => (
                                 <a key={i} className="blue-link" href={`/manga/magazine/${s.mal_id}`}>
                                   {s.name}
@@ -121,7 +121,7 @@ export default function MangaPage() {
                               ))}
                             </div>
 
-                            <div className="flex flex-row flex-wrap items-center text-[1.2em] pl-2">
+                            <div className="flex flex-row flex-wrap items-center text-[1.35em]">
                               {mangaQ?.data?.authors?.map((s, i, arr) => (
                                 <p key={i}>
                                   <a className="blue-link" href={`/${s.type}/${s.mal_id}`}>

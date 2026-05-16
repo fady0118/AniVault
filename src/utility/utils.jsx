@@ -57,7 +57,7 @@ export function renderInfoStr(title, str) {
   return (
     <div className="w-full flex flex-row gap-x-1 items-start capitalize">
       <p className="font-semibold ">{title}:</p>
-      <p>{str}</p>
+      <p>{str.trim()||'?'}</p>
     </div>
   );
 }
@@ -68,24 +68,25 @@ export function renderInfoArr(title, arr, path = null) {
   return (
     <div className="w-full flex flex-row gap-x-1 items-start capitalize">
       <p className="font-semibold ">{title}:</p>
-      <p className="flex flex-row flex-wrap">
+      <div className="flex flex-row flex-wrap">
         {arr.length
           ? arr.map((item, i, arr) => (
-              <>
+              <div key={i}>
                 {!path ? (
-                  <span key={i} className="whitespace-pre-wrap">
+                  <p className="whitespace-pre-wrap">
                     {item.name}
                     {i !== arr.length - 1 ? ", " : ""}
-                  </span>
+                  </p>
                 ) : (
-                  <a key={i} className="blue-link" href={`${path}/${item.mal_id}`}>
+                  <a className="blue-link whitespace-pre-wrap" href={`${path}/${item.mal_id}`}>
                     {item.name}
+                    {i !== arr.length - 1 ? ", " : ""}
                   </a>
                 )}
-              </>
+              </div>
             ))
           : "None found."}
-      </p>
+      </div>
     </div>
   );
 }
@@ -103,7 +104,7 @@ export function renderIcon(name) {
     case "Facebook":
       return (
         <img
-          alt="FaceBook icon"
+          alt="YouTube icon"
           className="h-3"
           src="https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original"
         />
@@ -159,4 +160,16 @@ export function renderReactions(reactions) {
       )}
     </div>
   );
+}
+
+
+// get thumnail from yt embed-url
+export function getYouTubeThumbnail(embedUrl, quality = "hqdefault") {
+  console.log({embedUrl})
+  const match = embedUrl.match(/embed\/([^?&/]+)/)
+  if (!match) {
+    return null;
+  }
+  const videoId = match[1];
+  return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
 }

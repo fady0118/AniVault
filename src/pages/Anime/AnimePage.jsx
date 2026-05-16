@@ -1,21 +1,24 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import Character from "../components/CardBox/Box";
-import CardBox from "../components/CardBox/CardBox";
-import { WindowContext } from "../App";
+import Character from "../../components/CardBox/Box";
+import CardBox from "../../components/CardBox/CardBox";
+import { WindowContext } from "../../App";
 import { ChevronRight, Music4Icon, Star } from "lucide-react";
-import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions } from "../utility/utils";
-import { useRelations } from "../utility/useRelations";
-import useGallery from "../utility/useGallery";
-import Pictures from "../components/character/Pictures";
-import Gallery from "../components/character/Gallery";
+import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions, getYouTubeThumbnail } from "../../utility/utils";
+import { useRelations } from "../../utility/useRelations";
+import useGallery from "../../utility/useGallery";
+import Pictures from "../../components/character/Pictures";
+import Gallery from "../../components/character/Gallery";
 import { useQueries } from "@tanstack/react-query";
+import Video from "../../components/anime/Video";
+import { useVideoModal } from "../../utility/useVideoModal";
+import VideoModal from "../../components/videoModal";
 
 export default function AnimePage() {
   let { id } = useParams();
   const { windowWidth } = useContext(WindowContext);
 
-  const results = useQueries({
+  const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, videosQ] = useQueries({
     queries: [
       {
         queryKey: ["anime", id],
@@ -90,17 +93,24 @@ export default function AnimePage() {
           return { recommendations: recommendations_Data.data, recommendationsDataArr };
         },
       },
+      {
+        queryKey: ["videos", id],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/videos`);
+          if (!res.ok) throw new Error(res.statusText);
+          const videos_Data = await res.json();
+          return videos_Data.data;
+        },
+      },
     ],
   });
 
-  const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ] = results;
-  const isError = results.some((q) => q.isError);
-
-  // Gallery section
+  // Gallery hook
   const { dispatch, showModal, openGallery, closeGallery, activeIndex } = useGallery(picturesQ?.data);
-  // Relations section
+  // Relations hook
   const { relationsImgs, showAllRelations, setShowAllRelations } = useRelations(animeQ?.data);
-
+  // Videos hook
+  const { showVideoModal, videoRef, playVideo, closeVideo } = useVideoModal();
   return (
     <>
       {animeQ.isPending ? (
@@ -112,8 +122,8 @@ export default function AnimePage() {
               <div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-col">
                 <div className="text-sm/relaxed sm:text-lg/relaxed font-bold">{animeQ?.data?.title}</div>
                 <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
-                  <span>{animeQ?.data.title_english}</span>
-                  <span>{animeQ?.data.title_japanese}</span>
+                  {animeQ?.data.title_english ? <span>{animeQ?.data.title_english}</span> : ""}
+                  {animeQ?.data.title_japanese ? <span>{animeQ?.data.title_japanese}</span> : ""}
                   <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={animeQ?.data?.url} target="_blank">
                     <img
                       src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
@@ -134,62 +144,39 @@ export default function AnimePage() {
                     <div className="order-1 flex flex-col gap-3">
                       <div id="details" className="box-colors rounded-lg w-fit">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>
-                        <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs lg:text-2xs">
+                        <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
                           <div className="flex flex-col justify-evenly pr-2 items-center border-r border-amethyst-smoke-500/20 ">
-                            <p className="text-text-dark text-[1.4em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
-                            <p className="text-[1.8em]/snug font-semibold">{animeQ?.data?.score}</p>
-                            <p className="font-light text-[1.25em]">{animeQ?.data?.scored_by?.toLocaleString()} users</p>
+                            <p className="text-text-dark text-[1.5em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
+                            <p className="text-[2em]/snug font-semibold">{animeQ?.data?.score}</p>
+                            <p className="font-light text-[1.35em]">{animeQ?.data?.scored_by?.toLocaleString()} users</p>
                           </div>
-                          {/* <div className="grid grid-cols-3 items-end md:gap-x-8 lg:gap-x-10 capitalize">
-                            <div className="flex flex-col">
-                              <p className="text-[1.8em]">Ranked</p>
-                              <p className="text-[1.4em]">#{animeQ?.data?.rank}</p>
-                            </div>
-                            <div className="flex flex-col">
-                              <p className="text-[1.8em]">Popularity</p>
-                              <p className="text-[1.4em]">#{animeQ?.data?.popularity}</p>
-                            </div>
-                            <div className="flex flex-col">
-                              <p className="text-[1.8em]">Members</p>
-                              <p className="text-[1.4em]">{animeQ?.data?.members.toLocaleString()}</p>
-                            </div>
-                            <p className="flex flex-row text-[1.2em]">
-                              {animeQ?.data?.season} {animeQ?.data?.year}
-                            </p>
-                            <p className="text-[1.2em]">{animeQ?.data?.type}</p>
-                            <div className="flex flex-row space-x-1.5 flex-wrap text-[1.2em]">
-                              {animeQ?.data?.studios.map((studio, i) => (
-                                <a href={`/producer/${studio.mal_id}`} className="blue-link" key={i}>{studio.name}</a>
-                              ))}
-                            </div>
-                          </div> */}
 
                           <div className="flex flex-col py-1 gap-y-1">
-                            <div className="grid grid-cols-3 items-start capitalize">
+                            <div className="grid grid-cols-3 items-start gap-x-2.5 lg:gap-x-5 capitalize">
                               <div className="flex flex-col">
-                                <p className="text-[1.8em]">Ranked</p>
-                                <p className="text-[1.4em]">#{animeQ?.data?.rank}</p>
+                                <p className="text-[2em]">Ranked</p>
+                                <p className="text-[1.6em]">#{animeQ?.data?.rank}</p>
                               </div>
                               <div className="flex flex-col">
-                                <p className="text-[1.8em]">Popularity</p>
-                                <p className="text-[1.4em]">#{animeQ?.data?.popularity}</p>
+                                <p className="text-[2em]">Popularity</p>
+                                <p className="text-[1.6em]">#{animeQ?.data?.popularity}</p>
                               </div>
                               <div className="flex flex-col">
-                                <p className="text-[1.8em]">Members</p>
-                                <p className="text-[1.4em]">{animeQ?.data?.members?.toLocaleString()}</p>
+                                <p className="text-[2em]">Members</p>
+                                <p className="text-[1.6em]">{animeQ?.data?.members?.toLocaleString()}</p>
                               </div>
                             </div>
 
-                            <div className="grid grid-cols-3 items-start divide-x divide-amethyst-smoke-950/40 dark:divide-amethyst-smoke-200/40">
-                              <p className="text-[1.2em] pr-2">{animeQ?.data?.type}</p>
+                            <div className="grid grid-cols-3 items-start gap-x-2 lg:gap-x-5 divide-x divide-amethyst-smoke-950/40 dark:divide-amethyst-smoke-200/40">
+                              <p className="text-[1.35em]">{animeQ?.data?.type}</p>
 
-                              <p className="flex flex-row text-[1.2em]">
+                              <p className="flex flex-row text-[1.35em]">
                                 {animeQ?.data?.season} {animeQ?.data?.year}
                               </p>
 
-                              <div className="flex flex-row space-x-1.5 flex-wrap text-[1.2em]">
+                              <div className="flex flex-row space-x-1.5 flex-wrap text-[1.35em]">
                                 {animeQ?.data?.studios.map((studio, i) => (
-                                  <a href={`/producer/${studio.mal_id}`} className="blue-link" key={i}>
+                                  <a key={i} href={`/producer/${studio.mal_id}`} className="blue-link">
                                     {studio.name}
                                   </a>
                                 ))}
@@ -265,8 +252,8 @@ export default function AnimePage() {
                           {renderInfoStr("episodes", `${animeQ?.data?.episodes ?? "unknown"}`)}
                           {renderInfoStr("status", `${animeQ?.data?.status}`)}
                           {renderInfoStr("aired", `${animeQ?.data?.aired.string}`)}
-                          {renderInfoStr("premiered", `${animeQ?.data?.season} ${animeQ?.data?.year}`)}
-                          {renderInfoStr("broadcast", `${animeQ?.data?.broadcast.string}`)}
+                          {renderInfoStr("premiered", `${animeQ?.data?.season || ""} ${animeQ?.data?.year || ""}`)}
+                          {renderInfoStr("broadcast", `${animeQ?.data?.broadcast.string || ""}`)}
                           {renderInfoArr("producers", animeQ?.data?.producers, "/producer")}
                           {renderInfoArr("licensors", animeQ?.data?.licensors)}
                           {renderInfoArr("studios", animeQ?.data?.studios, "/producer")}
@@ -296,7 +283,7 @@ export default function AnimePage() {
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
                           {animeQ?.data?.external.map((ext, i) => (
-                            <p className="flex flex-row items-center gap-1.5" key={i}>
+                            <p key={i} className="flex flex-row items-center gap-1.5">
                               {renderIcon(ext.name)}
                               <a className="blue-link" href={ext.url}>
                                 {ext.name}
@@ -311,7 +298,7 @@ export default function AnimePage() {
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Streaming Platforms</div>
                         <div className="flex flex-col gap-y-2.5 px-3 py-2 text-xs font-light">
                           {animeQ?.data?.streaming.map((stream, i) => (
-                            <div className="flex flex-row gap-x-2 items-center" key={i}>
+                            <div key={i} className="flex flex-row gap-x-2 items-center">
                               {renderIcon(stream.name)}
                               <a className="blue-link" href={stream.url}>
                                 {stream.name}
@@ -386,6 +373,16 @@ export default function AnimePage() {
                     ) : (
                       ""
                     )}
+                    <div id="videos" className="flex justify-center w-full h-fit order-4">
+                      <div className="rounded-lg box-colors w-full ">
+                        <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Videos</div>
+                        <div className="w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 p-2">
+                          {videosQ?.data?.promo?.map((p, i) => (
+                            <Video key={i} data={p} playVideo={playVideo} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
 
                     {animeQ?.data?.flattenedRelations.length ? (
                       <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs order-5">
@@ -602,7 +599,7 @@ export default function AnimePage() {
               <img className="w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y" src={animeQ?.data?.images.jpg.large_image_url} alt={animeQ?.data?.title} />
             </div>
           </div>
-
+          {showVideoModal && videoRef.current && <VideoModal closeModal={closeVideo} link={videoRef.current} />}
           {showModal && (
             <Gallery
               name={animeQ?.data?.name}

@@ -126,9 +126,9 @@ export default function MagazinePage() {
           </div>
           <div className={`w-full text-2xs gap-x-3 gap-y-3 py-3 ${classes.gridClasses[layout]}`}>
             {magazineQ?.data?.data?.map((manga) => (
-              <>
+              <div key={manga.mal_id}>
                 {layout === "grid" ? (
-                  <div key={manga.mal_id} className="w-full flex flex-col capitalize rounded-md theme-bg-colors">
+                  <div className="w-full flex flex-col capitalize rounded-md theme-bg-colors">
                     <div className="flex flex-col grow-0 items-center justify-center text-center py-1.5 border-b magazine-border-colors">
                       <a href={`/${manga.type || "manga"}/${manga.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
                         {manga.title_english || manga.title}
@@ -242,7 +242,7 @@ export default function MagazinePage() {
                     </div>
                   </div>
                 ) : (
-                  <div key={manga.mal_id} className="flex flex-col rounded-md theme-bg-colors">
+                  <div className="flex flex-col rounded-md theme-bg-colors">
                     <div className="flex flex-row grow">
                       <a href={`/${manga.type || "manga"}/${manga.mal_id}`} className="w-1/10 min-w-22 aspect-auto">
                         <img src={manga.images.jpg.image_url} alt={manga.title_english || manga.title} className="w-full h-full object-cover" />
@@ -319,7 +319,7 @@ export default function MagazinePage() {
                     </div>
                   </div>
                 )}
-              </>
+              </div>
             ))}
           </div>
         </div>
