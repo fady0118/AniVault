@@ -39,7 +39,7 @@ export default function News({data}) {
                 }}
                 className="flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20"
               >
-                +{data?.length - 6}
+                +{data?.length - 5}
               </div>
             ) : (
               ""

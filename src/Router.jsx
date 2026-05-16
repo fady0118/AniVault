@@ -19,7 +19,16 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: HomePage },
       { path: "auth", Component: AuthPage },
-      { path: "anime/:id", Component: AnimePage },
+      {
+        path: "anime",
+        children: [
+          {
+            path: ":id",
+            children: [{ index: true, Component: AnimePage }],
+          },
+        ],
+      },
+
       {
         path: "manga",
         children: [

@@ -128,7 +128,7 @@ export default function MagazinePage() {
             {magazineQ?.data?.data?.map((manga) => (
               <div key={manga.mal_id}>
                 {layout === "grid" ? (
-                  <div className="w-full flex flex-col capitalize rounded-md theme-bg-colors">
+                  <div className="w-full h-full flex flex-col capitalize rounded-md theme-bg-colors">
                     <div className="flex flex-col grow-0 items-center justify-center text-center py-1.5 border-b magazine-border-colors">
                       <a href={`/${manga.type || "manga"}/${manga.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
                         {manga.title_english || manga.title}

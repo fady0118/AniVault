@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 import Character from "../../components/CardBox/Box";
 import CardBox from "../../components/CardBox/CardBox";
 import { WindowContext } from "../../App";
-import { ChevronRight, Music4Icon, Star } from "lucide-react";
+import { ChevronRight, Music4Icon, SquareArrowOutUpRight, Star } from "lucide-react";
 import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions, getYouTubeThumbnail } from "../../utility/utils";
 import { useRelations } from "../../utility/useRelations";
 import useGallery from "../../utility/useGallery";
@@ -15,11 +15,12 @@ import { useVideoModal } from "../../utility/useVideoModal";
 import VideoModal from "../../components/videoModal";
 import News from "../../components/anime/News";
 import Reviews from "../../components/anime/Reviews";
+import EpisodesModal from "../../components/anime/EpisodesModal";
 
 export default function AnimePage() {
   let { id } = useParams();
   const { windowWidth } = useContext(WindowContext);
-
+  const [showEpisodesModal, setShowEpisodesModal] = useState(false)
   const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, videosQ, newsQ] = useQueries({
     queries: [
       {
@@ -258,7 +259,17 @@ export default function AnimePage() {
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
                           {renderInfoStr("type", `${animeQ?.data?.type}`)}
-                          {renderInfoStr("episodes", `${animeQ?.data?.episodes ?? "unknown"}`)}
+                          <div className="w-full flex flex-row  gap-x-2 items-center capitalize">
+                            <div className="flex flex-row gap-x-1">
+                              <p className="font-semibold ">episodes:</p>
+                              <p>{animeQ?.data?.episodes || "unknown"}</p>
+                            </div>
+                            {animeQ?.data?.episodes>1?
+                            <div onClick={()=>{setShowEpisodesModal(true)}} className="flex flex-row flex-wrap items-center gap-x-1 blue-link hover:cursor-pointer">
+                              <SquareArrowOutUpRight size={16}/>
+                              <span>Details</span>
+                            </div>:''}
+                          </div>
                           {renderInfoStr("status", `${animeQ?.data?.status}`)}
                           {renderInfoStr("aired", `${animeQ?.data?.aired.string}`)}
                           {renderInfoStr("premiered", `${animeQ?.data?.season || ""} ${animeQ?.data?.year || ""}`)}
@@ -526,6 +537,7 @@ export default function AnimePage() {
               onOpen={(index) => dispatch({ type: "open", newIndex: index })}
             />
           )}
+          {showEpisodesModal && <EpisodesModal setShowEpisodesModal={setShowEpisodesModal}/>}
         </>
       )}
     </>
