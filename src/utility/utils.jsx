@@ -57,7 +57,7 @@ export function renderInfoStr(title, str) {
   return (
     <div className="w-full flex flex-row gap-x-1 items-start capitalize">
       <p className="font-semibold ">{title}:</p>
-      <p>{str.trim()||'?'}</p>
+      <p>{str.trim() || "?"}</p>
     </div>
   );
 }
@@ -135,6 +135,10 @@ export function dateFormatter(date) {
   const d = new Date(date);
   return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
+export function DateTimeFormatter(date) {
+  const d = new Date(date);
+  return `${d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })} ${d.toLocaleTimeString("en-US", {hour:'2-digit', minute:'2-digit'})}`;
+}
 
 // simple delay function useful for delaying api calls to avoid running into rate limit rejections
 export const delay = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -162,11 +166,9 @@ export function renderReactions(reactions) {
   );
 }
 
-
 // get thumnail from yt embed-url
 export function getYouTubeThumbnail(embedUrl, quality = "hqdefault") {
-  console.log({embedUrl})
-  const match = embedUrl.match(/embed\/([^?&/]+)/)
+  const match = embedUrl.match(/embed\/([^?&/]+)/);
   if (!match) {
     return null;
   }

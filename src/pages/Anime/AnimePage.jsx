@@ -4,7 +4,7 @@ import Character from "../../components/CardBox/Box";
 import CardBox from "../../components/CardBox/CardBox";
 import { WindowContext } from "../../App";
 import { ChevronRight, Music4Icon, Star } from "lucide-react";
-import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions, getYouTubeThumbnail } from "../../utility/utils";
+import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions, getYouTubeThumbnail, DateTimeFormatter } from "../../utility/utils";
 import { useRelations } from "../../utility/useRelations";
 import useGallery from "../../utility/useGallery";
 import Pictures from "../../components/character/Pictures";
@@ -18,7 +18,7 @@ export default function AnimePage() {
   let { id } = useParams();
   const { windowWidth } = useContext(WindowContext);
 
-  const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, videosQ] = useQueries({
+  const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, videosQ, newsQ] = useQueries({
     queries: [
       {
         queryKey: ["anime", id],
@@ -89,8 +89,8 @@ export default function AnimePage() {
           // recommendationsDataArr data array
           const recommendationsDataArr = recommendations_Data?.data?.map((recommendation) => ({
             anime: { path: "anime", ...recommendation.entry, name: recommendation.entry.title, votes: recommendation.votes },
-          }));
-          return { recommendations: recommendations_Data.data, recommendationsDataArr };
+          }))||[];
+          return { recommendations: recommendations_Data.data||[], recommendationsDataArr };
         },
       },
       {
@@ -100,6 +100,15 @@ export default function AnimePage() {
           if (!res.ok) throw new Error(res.statusText);
           const videos_Data = await res.json();
           return videos_Data.data;
+        },
+      },
+      {
+        queryKey: ["news", id],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/news`);
+          if (!res.ok) throw new Error(res.statusText);
+          const news_Data = await res.json();
+          return news_Data.data;
         },
       },
     ],
@@ -385,7 +394,7 @@ export default function AnimePage() {
                     </div>
 
                     {animeQ?.data?.flattenedRelations.length ? (
-                      <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs order-5">
+                      <div id="relations" className="flex justify-center w-full h-fit text-xs lg:text-sm order-5">
                         <div className="rounded-lg box-colors w-full ">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
 
@@ -399,7 +408,7 @@ export default function AnimePage() {
                                   <a href={`/${entry.type}/${entry.mal_id}`} className="blue-link">
                                     {entry.name}
                                   </a>
-                                  <p>
+                                  <p className="text-[0.8em]">
                                     {entry.relation} ({entry.type})
                                   </p>
                                 </div>
@@ -585,8 +594,33 @@ export default function AnimePage() {
                   ""
                 )}
 
-                {recommendationsQ?.data?.recommendations.length ? (
-                  <div id="recommendations" className="order-4 rounded-lg box-colors w-full py-1">
+                {newsQ?.data?.length ? (
+                  <div id="news" className="order-4 rounded-lg box-colors w-full py-1">
+                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">news</div>
+                     <div className="w-full flex flex-col gap-y-2 p-2">
+                       {newsQ?.data.map((article,i)=>
+                       <div key={i} className="flex flex-row w-full items-start">
+                        <img className="w-1/12 min-w-14 max-w-20 object-cover aspect-auto" src={article.images.jpg.image_url} alt={article.title} />
+                        <div className="flex flex-col grow gap-y-1 px-2">
+                          <a href={article.url} className="font-semibold text-xs md:text-sm blue-link">{article.title}</a>
+                          <p className="text-[0.8em] font-light">{article.excerpt}</p>
+                          <div className="flex flex-row items-center gap-x-1.5 text-[0.65em] font-extralight">
+                            <p>{DateTimeFormatter(article?.date)}</p>
+                            <p className="">By <a href={article.author_url} className="blue-link font-light">{article.author_username}</a></p>
+                            <p>({article.comments} comments)</p>
+                          </div>
+                        </div>
+                       </div>
+                       )}
+                     </div>
+                  </div>
+                  ) : 
+                ""}
+
+
+
+                {recommendationsQ?.data?.recommendations?.length ? (
+                  <div id="recommendations" className="order-5 rounded-lg box-colors w-full py-1">
                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">recommendations</div>
                     <CardBox dataArr={recommendationsQ?.data?.recommendationsDataArr} num={7} aspect="2/3" />
                   </div>
