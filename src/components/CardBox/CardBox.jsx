@@ -26,7 +26,7 @@ export default function CardBox({ dataArr, num = 6, aspect = "square" }) {
   const image_class = `inline-block w-full aspect-${aspect} object-cover hover:cursor-pointer hover:border-4 hover:border-amethyst-smoke-400/30 duration-100`;
 
   return (
-    <div className="overflow-x-scroll flex mt-2 mx-2 space-x-0.5">
+    <div className="overflow-x-scroll no-scrollbar flex mt-2 mx-2 space-x-0.5">
       {transformedDataArr.slice(0, 10).map((dataEntry, i) => (
         <div key={i} className={`flex flex-col ${widthClass[num]} min-w-18 shrink-0`}>
           <Box dataObj={{ data: dataEntry.data1 }} classes={classes} image_class={image_class} />

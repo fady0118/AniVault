@@ -233,11 +233,11 @@ export default function MagazinePage() {
                       </div>
                       <div className="flex flex-row gap-x-1 py-1.5 w-1/3 justify-center items-center border-r magazine-border-colors">
                         <User size={14} />
-                        <p>{manga.members.toLocaleString() || "?"}</p>
+                        <p>{manga.members?.toLocaleString() || "?"}</p>
                       </div>
                       <div className="flex flex-row gap-x-1 py-1.5 w-1/3 justify-center items-center">
                         <Hash size={14} />
-                        <p>{manga.rank.toLocaleString() || "?"}</p>
+                        <p>{manga.rank?.toLocaleString() || "?"}</p>
                       </div>
                     </div>
                   </div>

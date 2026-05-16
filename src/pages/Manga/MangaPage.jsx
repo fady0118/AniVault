@@ -1,37 +1,33 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { WindowContext } from "../../App";
-import { renderInfoStr, renderInfoArr, renderIcon } from "../../utility/utils";
+import { renderInfoStr, renderInfoArr, renderIcon, DateTimeFormatter, renderReactions, dateFormatter } from "../../utility/utils";
 import useGallery from "../../utility/useGallery";
 import Gallery from "../../components/character/Gallery";
 import Pictures from "../../components/character/Pictures";
 import CardBox from "../../components/CardBox/CardBox";
 import { useRelations } from "../../utility/useRelations";
 import { useQueries } from "@tanstack/react-query";
+import { ChevronRight, Star } from "lucide-react";
+import News from "../../components/anime/News";
+import Reviews from "../../components/anime/Reviews";
 
 export default function MangaPage() {
   let { id } = useParams();
   const { windowWidth } = useContext(WindowContext);
 
-  const [mangaQ, picturesQ, charactersQ] = useQueries({
+  const [mangaQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, newsQ] = useQueries({
     queries: [
       {
-        queryKey: ["managa", id],
+        queryKey: ["manga", id],
         queryFn: async () => {
           const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/full`);
           if (!res.ok) throw new Error(res.statusText);
           const manga_Data = await res.json();
           return { ...manga_Data.data, flattenedRelations: manga_Data.data?.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))) };
         },
-      },
-      {
-        queryKey: ["pictures", id],
-        queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/pictures`);
-          if (!res.ok) throw new Error(res.statusText);
-          const pictures_Data = await res.json();
-          return pictures_Data.data ?? [];
-        },
+        retry: 2,
+        retryDelay: 2000,
       },
       {
         queryKey: ["characters", id],
@@ -43,6 +39,67 @@ export default function MangaPage() {
             character: { path: "character", role, ...character },
           }));
           return { characters: [characters_Data.data], dataArr: charactersDataArr };
+        },
+      },
+      {
+        queryKey: ["reviews", id],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/reviews`);
+          if (!res.ok) throw new Error(res.statusText);
+          const reviews_Data = await res.json();
+          const allReviews = reviews_Data?.data ?? [];
+          const featured = [
+            allReviews?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "recommended")),
+            allReviews?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "mixed feelings")),
+            allReviews?.find((r) => r.tags.some((tag) => tag.toLowerCase() === "not recommended")),
+          ].filter(Boolean);
+          const rest = allReviews?.filter((r) => !featured.map((f) => f.mal_id).includes(r.mal_id));
+          return {
+            ...reviews_Data,
+            featured,
+            rest,
+            stats: {
+              all: allReviews.length,
+              recommended: allReviews.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "recommended") ? c + 1 : c), 0),
+              mixedFeelings: allReviews.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "mixed feelings") ? c + 1 : c), 0),
+              notRecommended: allReviews.reduce((c, r) => (r.tags.some((t) => t.toLowerCase() == "not recommended") ? c + 1 : c), 0),
+              avgScore: allReviews.reduce((c, r) => c + r.score, 0) / reviews_Data.data?.length,
+            },
+          };
+        },
+      },
+      {
+        queryKey: ["pictures", id],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/pictures`);
+          if (!res.ok) throw new Error(res.statusText);
+          const pictures_Data = await res.json();
+          return pictures_Data.data ?? [];
+        },
+        retry: 2,
+        retryDelay: 2000,
+      },
+      {
+        queryKey: ["recommendations", id],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/recommendations`);
+          if (!res.ok) throw new Error(res.statusText);
+          const recommendations_Data = await res.json();
+          // recommendationsDataArr data array
+          const recommendationsDataArr =
+            recommendations_Data?.data?.map((recommendation) => ({
+              anime: { path: "anime", ...recommendation.entry, name: recommendation.entry.title, votes: recommendation.votes },
+            })) || [];
+          return { recommendations: recommendations_Data.data || [], recommendationsDataArr };
+        },
+      },
+      {
+        queryKey: ["news", id],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/news`);
+          if (!res.ok) throw new Error(res.statusText);
+          const news_Data = await res.json();
+          return news_Data.data ?? [];
         },
       },
     ],
@@ -95,33 +152,29 @@ export default function MangaPage() {
                         </div>
 
                         <div className="flex flex-col py-1 gap-y-1">
-                          <div className="grid grid-cols-3 items-start gap-x-2 lg:gap-x-5 capitalize">
-                            <div className="flex flex-col">
+                          <div className="grid grid-cols-[repeat(3,auto)] items-start gap-y-2 gap-x-2 lg:gap-x-6 capitalize ">
+                            <div className="flex flex-col w-fit">
                               <p className="text-[2em]">Ranked</p>
-                              <p className="text-[1.6em]"># {mangaQ?.data?.rank}</p>
+                              <p className="text-[1.6em]"># {mangaQ?.data?.rank || "?"}</p>
                             </div>
-                            <div className="flex flex-col">
+                            <div className="flex flex-col w-fit">
                               <p className="text-[2em]">Popularity</p>
-                              <p className="text-[1.6em]"># {mangaQ?.data?.popularity}</p>
+                              <p className="text-[1.6em]"># {mangaQ?.data?.popularity || "?"}</p>
                             </div>
-                            <div className="flex flex-col">
+                            <div className="flex flex-col w-fit">
                               <p className="text-[2em]">Members</p>
                               <p className="text-[1.6em]">{mangaQ?.data?.members?.toLocaleString()}</p>
                             </div>
-                          </div>
 
-                          <div className="grid grid-cols-3 items-start gap-x-2.5 lg:gap-x-5 divide-x divide-amethyst-smoke-950/40 dark:divide-amethyst-smoke-200/40">
-                            <p className="text-[1.35em]">{mangaQ?.data?.type}</p>
-
-                            <div className="flex flex-row flex-wrap gap-x-0.5 items-center text-[1.35em]">
+                            <p className="text-[1.35em] w-fit">{mangaQ?.data?.type}</p>
+                            <div className="flex flex-row flex-wrap gap-x-0.5 items-center text-[1.35em] w-fit">
                               {mangaQ?.data?.serializations?.map((s, i) => (
                                 <a key={i} className="blue-link" href={`/manga/magazine/${s.mal_id}`}>
                                   {s.name}
                                 </a>
                               ))}
                             </div>
-
-                            <div className="flex flex-row flex-wrap items-center text-[1.35em]">
+                            <div className="flex flex-row flex-wrap items-center text-[1.35em] w-fit">
                               {mangaQ?.data?.authors?.map((s, i, arr) => (
                                 <p key={i}>
                                   <a className="blue-link" href={`/${s.type}/${s.mal_id}`}>
@@ -346,6 +399,18 @@ export default function MangaPage() {
                   )}
                 </div>
               </div>
+
+              <Reviews data={reviewsQ?.data}/>
+
+              {recommendationsQ?.data?.recommendations?.length ? (
+                <div id="recommendations" className="order-4 rounded-lg box-colors w-full py-1">
+                  <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">recommendations</div>
+                  <CardBox dataArr={recommendationsQ?.data?.recommendationsDataArr} num={7} aspect="2/3" />
+                </div>
+              ) : (
+                ""
+              )}
+              <News data={newsQ.data} />
             </div>
 
             <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">

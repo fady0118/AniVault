@@ -4,7 +4,7 @@ import Character from "../../components/CardBox/Box";
 import CardBox from "../../components/CardBox/CardBox";
 import { WindowContext } from "../../App";
 import { ChevronRight, Music4Icon, Star } from "lucide-react";
-import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions, getYouTubeThumbnail, DateTimeFormatter } from "../../utility/utils";
+import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions, getYouTubeThumbnail } from "../../utility/utils";
 import { useRelations } from "../../utility/useRelations";
 import useGallery from "../../utility/useGallery";
 import Pictures from "../../components/character/Pictures";
@@ -13,6 +13,8 @@ import { useQueries } from "@tanstack/react-query";
 import Video from "../../components/anime/Video";
 import { useVideoModal } from "../../utility/useVideoModal";
 import VideoModal from "../../components/videoModal";
+import News from "../../components/anime/News";
+import Reviews from "../../components/anime/Reviews";
 
 export default function AnimePage() {
   let { id } = useParams();
@@ -87,10 +89,11 @@ export default function AnimePage() {
           if (!res.ok) throw new Error(res.statusText);
           const recommendations_Data = await res.json();
           // recommendationsDataArr data array
-          const recommendationsDataArr = recommendations_Data?.data?.map((recommendation) => ({
-            anime: { path: "anime", ...recommendation.entry, name: recommendation.entry.title, votes: recommendation.votes },
-          }))||[];
-          return { recommendations: recommendations_Data.data||[], recommendationsDataArr };
+          const recommendationsDataArr =
+            recommendations_Data?.data?.map((recommendation) => ({
+              anime: { path: "anime", ...recommendation.entry, name: recommendation.entry.title, votes: recommendation.votes },
+            })) || [];
+          return { recommendations: recommendations_Data.data || [], recommendationsDataArr };
         },
       },
       {
@@ -161,7 +164,7 @@ export default function AnimePage() {
                           </div>
 
                           <div className="flex flex-col py-1 gap-y-1">
-                            <div className="grid grid-cols-3 items-start gap-x-2.5 lg:gap-x-5 capitalize">
+                            <div className="grid grid-cols-[repeat(3,auto)] items-start gap-y-2 gap-x-2 lg:gap-x-6 capitalize">
                               <div className="flex flex-col">
                                 <p className="text-[2em]">Ranked</p>
                                 <p className="text-[1.6em]">#{animeQ?.data?.rank}</p>
@@ -174,9 +177,6 @@ export default function AnimePage() {
                                 <p className="text-[2em]">Members</p>
                                 <p className="text-[1.6em]">{animeQ?.data?.members?.toLocaleString()}</p>
                               </div>
-                            </div>
-
-                            <div className="grid grid-cols-3 items-start gap-x-2 lg:gap-x-5 divide-x divide-amethyst-smoke-950/40 dark:divide-amethyst-smoke-200/40">
                               <p className="text-[1.35em]">{animeQ?.data?.type}</p>
 
                               <p className="flex flex-row text-[1.35em]">
@@ -428,7 +428,7 @@ export default function AnimePage() {
                             )}
                             {showAllRelations
                               ? animeQ?.data?.flattenedRelations.slice(6).map((entry, i) => (
-                                  <div key={i} className="flex flex-row w-full">
+                                  <div key={i + 6} className="flex flex-row w-full">
                                     <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={`/${entry.type}/${entry.mal_id}`}>
                                       <img
                                         className="w-full h-full object-cover"
@@ -496,137 +496,18 @@ export default function AnimePage() {
                   </div>
                 </div>
 
-                {reviewsQ?.data?.featured.length ? (
-                  <div id="reviews" className="order-3 rounded-lg box-colors w-full py-1">
-                    <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">reviews</div>
-                    <div className="flex flex-col w-full text-2xs/normal sm:text-xs/normal gap-y-2 py-2 px-3">
-                      <div className="flex flex-row flex-wrap gap-y-1 justify-between bottom-border pb-2">
-                        <div className="flex flex-row items-center gap-x-1 py-1 px-3 bg-amethyst-smoke-700/30 text-2xs">
-                          <p>Avg Score</p>
-                          <p className="">{reviewsQ?.data?.stats.avgScore.toFixed(2)}</p>
-                          <Star size={14} color="yellow" />
-                        </div>
-                        <div className="flex flex-col py-1 px-2 bg-amethyst-smoke-700/30">
-                          <div className="flex flex-row flex-wrap items-center gap-x-3 rounded-sm text-2xs">
-                            <div className="flex flex-row items-center capitalize gap-x-1 blue-link">
-                              <Star size={12} className="stroke-blue-800 dark:stroke-blue-400" />
-                              <p>{reviewsQ?.data?.stats.recommended}</p>
-                              <p>recommended</p>
-                            </div>
-                            <div className="flex flex-row items-center capitalize gap-x-1 gray-link">
-                              <Star size={12} className="stroke-gray-800 dark:stroke-gray-400" />
-                              <p>{reviewsQ?.data?.stats.mixedFeelings}</p>
-                              <p>mixed feelings</p>
-                            </div>
-                            <div className="flex flex-row items-center capitalize gap-x-1 rose-link">
-                              <Star size={12} className="stroke-rose-800 dark:stroke-rose-400" />
-                              <p>{reviewsQ?.data?.stats.notRecommended}</p>
-                              <p>not recommended</p>
-                            </div>
-                          </div>
-                          <div
-                            style={{
-                              backgroundImage: `linear-gradient(90deg, var(--color-blue-400) ${((reviewsQ?.data?.stats.recommended - 1.5) * 100) / reviewsQ?.data?.stats.all}%, var(--color-gray-400) ${((reviewsQ?.data?.stats.recommended + 1.5) * 100) / reviewsQ?.data?.stats.all}%, var(--color-gray-400) ${((reviewsQ?.data?.stats.recommended + reviewsQ?.data?.stats.mixedFeelings - 1.5) * 100) / reviewsQ?.data?.stats.all}%, var(--color-rose-400) ${((reviewsQ?.data?.stats.recommended + reviewsQ?.data?.stats.mixedFeelings + 1.5) * 100) / reviewsQ?.data?.stats.all}%)`,
-                            }}
-                            className="h-1 w-full px-3"
-                          ></div>
-                        </div>
-                        <div className="flex flex-row items-center gap-x-1 text-2xs">
-                          <ChevronRight size={12} />
-                          <p>All reviews ({reviewsQ?.data?.stats.all})</p>
-                        </div>
-                      </div>
-                      {reviewsQ?.data?.featured.map((review) => (
-                        <div key={review.mal_id} className="bottom-border">
-                          <div className="flex flex-col xs:flex-row">
-                            <div className="flex flex-col ml-3 xs:m-0 justify-start w-[5%] min-w-10">
-                              <a href={review.user.url} className="w-full aspect-square">
-                                <img className="w-full h-full object-cover" src={review.user.images.webp.image_url} alt={`${review.user.username}-picture`} />
-                              </a>
-                            </div>
-                            <div className="flex flex-col w-[95%] px-3">
-                              <div className="flex flex-row justify-between items-center">
-                                <a className="blue-link font-semibold" href={review.user.url}>
-                                  {review.user.username}
-                                </a>
-                                <p className="text-2xs/snug font-light">{dateFormatter(review.date)}</p>
-                              </div>
-                              <div className="flex flex-row justify-between items-start gap-x-2.5">
-                                {review.tags.map((t, i) => (
-                                  <div key={i} className="flex flex-row items-center gap-x-1 px-1.5 border border-dark-amethyst-smoke-50/20 dark:border-amethyst-smoke-400/20">
-                                    <Star
-                                      size={14}
-                                      className={`${t === "Recommended" ? "stroke-blue-800 dark:stroke-blue-400" : t === "Not Recommended" ? "stroke-rose-800 dark:stroke-rose-400 " : "stroke-gray-800 dark:stroke-gray-400"}`}
-                                    />
-                                    <p
-                                      className={`${t === "Recommended" ? "text-blue-800 dark:text-blue-400" : t === "Not Recommended" ? "text-rose-800 dark:text-rose-400" : "text-gray-800 dark:text-gray-400"}`}
-                                    >
-                                      {t}
-                                    </p>
-                                  </div>
-                                ))}
-                              </div>
-                              <div className="flex flex-col gap-y-2 w-full py-3">
-                                <div className="peer">
-                                  <input type="checkbox" className="hidden" name={`review-${review.mal_id}`} id={`review-${review.mal_id}`} />
-                                </div>
-                                <p className="w-full whitespace-pre-wrap max-lines-4 cutoff-text">{review.review}</p>
-
-                                <div className="w-[97%] flex flex-row gap-x-2 items-center justify-between">
-                                  <div className="flex flex-row flex-wrap space-x-1 items-center">
-                                    {renderReactions(review.reactions)}
-                                    <p>{review.reactions.overall}</p>
-                                  </div>
-                                  <label
-                                    htmlFor={`review-${review.mal_id}`}
-                                    className="text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
-                                                              before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                                  ></label>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-
-                {newsQ?.data?.length ? (
-                  <div id="news" className="order-4 rounded-lg box-colors w-full py-1">
-                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">news</div>
-                     <div className="w-full flex flex-col gap-y-2 p-2">
-                       {newsQ?.data.map((article,i)=>
-                       <div key={i} className="flex flex-row w-full items-start">
-                        <img className="w-1/12 min-w-14 max-w-20 object-cover aspect-auto" src={article.images.jpg.image_url} alt={article.title} />
-                        <div className="flex flex-col grow gap-y-1 px-2">
-                          <a href={article.url} className="font-semibold text-xs md:text-sm blue-link">{article.title}</a>
-                          <p className="text-[0.8em] font-light">{article.excerpt}</p>
-                          <div className="flex flex-row items-center gap-x-1.5 text-[0.65em] font-extralight">
-                            <p>{DateTimeFormatter(article?.date)}</p>
-                            <p className="">By <a href={article.author_url} className="blue-link font-light">{article.author_username}</a></p>
-                            <p>({article.comments} comments)</p>
-                          </div>
-                        </div>
-                       </div>
-                       )}
-                     </div>
-                  </div>
-                  ) : 
-                ""}
-
-
+                <Reviews data={reviewsQ?.data}/>
 
                 {recommendationsQ?.data?.recommendations?.length ? (
-                  <div id="recommendations" className="order-5 rounded-lg box-colors w-full py-1">
+                  <div id="recommendations" className="order-4 rounded-lg box-colors w-full py-1">
                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">recommendations</div>
                     <CardBox dataArr={recommendationsQ?.data?.recommendationsDataArr} num={7} aspect="2/3" />
                   </div>
                 ) : (
                   ""
                 )}
+
+                <News data={newsQ.data} />
               </div>
             </div>
             <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
