@@ -57,7 +57,7 @@ export function renderInfoStr(title, str) {
   return (
     <div className="w-full flex flex-row gap-x-1 items-start capitalize">
       <p className="font-semibold ">{title}:</p>
-      <p>{str.trim() || "?"}</p>
+      <p className="text-[0.9em]">{str.trim() || "?"}</p>
     </div>
   );
 }

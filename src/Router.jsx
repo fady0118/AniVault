@@ -10,6 +10,7 @@ import MangaRootPage from "./pages/Manga/MangaRootPage";
 import MagazinesRootPage from "./pages/Manga/MagazinesRootPage";
 import MagazinePage from "./pages/Manga/MagazinePage";
 import ProducerPage from "./pages/ProducerPage";
+import UserPage from "./pages/UserPage";
 
 export const router = createBrowserRouter([
   {
@@ -46,6 +47,7 @@ export const router = createBrowserRouter([
       { path: "character/:id", Component: CharacterPage },
       { path: "people/:id", Component: PeoplePage },
       { path: "producer", children: [{ path: ":id", Component: ProducerPage }] },
+      {path: "user", children:[{path:":username", Component: UserPage}]}
     ],
   },
 ]);

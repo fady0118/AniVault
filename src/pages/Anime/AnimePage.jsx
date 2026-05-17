@@ -20,7 +20,7 @@ import EpisodesModal from "../../components/anime/EpisodesModal";
 export default function AnimePage() {
   let { id } = useParams();
   const { windowWidth } = useContext(WindowContext);
-  const [showEpisodesModal, setShowEpisodesModal] = useState(false)
+  const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, videosQ, newsQ] = useQueries({
     queries: [
       {
@@ -264,11 +264,19 @@ export default function AnimePage() {
                               <p className="font-semibold ">episodes:</p>
                               <p>{animeQ?.data?.episodes || "unknown"}</p>
                             </div>
-                            {animeQ?.data?.episodes>1?
-                            <div onClick={()=>{setShowEpisodesModal(true)}} className="flex flex-row flex-wrap items-center gap-x-1 blue-link hover:cursor-pointer">
-                              <SquareArrowOutUpRight size={16}/>
-                              <span>Details</span>
-                            </div>:''}
+                            {animeQ?.data?.episodes > 1 ? (
+                              <div
+                                onClick={() => {
+                                  setShowEpisodesModal(true);
+                                }}
+                                className="flex flex-row flex-wrap items-center gap-x-1 blue-link hover:cursor-pointer"
+                              >
+                                <SquareArrowOutUpRight size={16} />
+                                <span>Details</span>
+                              </div>
+                            ) : (
+                              ""
+                            )}
                           </div>
                           {renderInfoStr("status", `${animeQ?.data?.status}`)}
                           {renderInfoStr("aired", `${animeQ?.data?.aired.string}`)}
@@ -507,7 +515,7 @@ export default function AnimePage() {
                   </div>
                 </div>
 
-                <Reviews data={reviewsQ?.data}/>
+                <Reviews data={reviewsQ?.data} />
 
                 {recommendationsQ?.data?.recommendations?.length ? (
                   <div id="recommendations" className="order-4 rounded-lg box-colors w-full py-1">
@@ -537,7 +545,7 @@ export default function AnimePage() {
               onOpen={(index) => dispatch({ type: "open", newIndex: index })}
             />
           )}
-          {showEpisodesModal && <EpisodesModal setShowEpisodesModal={setShowEpisodesModal}/>}
+          {showEpisodesModal && <EpisodesModal setShowEpisodesModal={setShowEpisodesModal} />}
         </>
       )}
     </>

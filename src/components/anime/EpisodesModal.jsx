@@ -91,19 +91,28 @@ export default function EpisodesModal({ setShowEpisodesModal }) {
             <thead className="sticky top-0 box-colors backdrop-blur-sm bg-neutral-secondary-soft border-b border-dark-amethyst-smoke-500/20 dark:border-amethyst-smoke-500/20">
               <tr>
                 <th className="text-start w-1/20 min-w-8 py-3 font-medium">
-                  <div onClick={() => sorting("mal_id")} className="flex flex-row items-center gap-x-0.5 group hover:cursor-pointer">
-                    # {sortBy === "mal_id" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : null}
+                  <div
+                    onClick={() => sorting("mal_id")}
+                    className="flex flex-row items-center gap-x-0.5 group border-dark-amethyst-smoke-500/50 dark:border-amethyst-smoke-500/50 rounded-sm hover:cursor-pointer hover:border hover:-translate-y-0.5 duration-200"
+                  >
+                    # {sortBy === "mal_id" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : "-"}
                   </div>
                 </th>
                 <th className="text-start py-3 font-medium">Episode Title</th>
                 <th className="text-start w-1/10 min-w-15 py-3 font-medium">
-                  <div onClick={() => sorting("aired")} className="flex flex-row items-center gap-x-0.5 group hover:cursor-pointer">
-                    Aired {sortBy === "aired" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : null}
+                  <div
+                    onClick={() => sorting("aired")}
+                    className="flex flex-row items-center gap-x-0.5 group border-dark-amethyst-smoke-500/50 dark:border-amethyst-smoke-500/50 rounded-sm hover:cursor-pointer hover:border hover:-translate-y-0.5 duration-200"
+                  >
+                    Aired {sortBy === "aired" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : "-"}
                   </div>
                 </th>
                 <th className="text-start w-1/10 min-w-15 py-3 font-medium">
-                  <div onClick={() => sorting("score")} className="flex flex-row items-center gap-x-0.5 group hover:cursor-pointer">
-                    Score {sortBy === "score" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : null}
+                  <div
+                    onClick={() => sorting("score")}
+                    className="flex flex-row items-center gap-x-0.5 group border-dark-amethyst-smoke-500/50 dark:border-amethyst-smoke-500/50 rounded-sm hover:cursor-pointer hover:border hover:-translate-y-0.5 duration-200"
+                  >
+                    Score {sortBy === "score" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : "-"}
                   </div>
                 </th>
                 <th className="text-start w-1/10 min-w-15 py-3 font-medium">type</th>
