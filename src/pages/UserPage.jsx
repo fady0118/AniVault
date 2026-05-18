@@ -2,20 +2,37 @@ import { useQueries } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { DateTimeFormatter, renderInfoStr } from "../utility/utils";
 import { useEffect } from "react";
+import CardBox from "../components/CardBox/CardBox";
 
 const colors = ["bg-emerald-500", "bg-indigo-500", "bg-amber-500", "bg-rose-500", "bg-gray-500"];
 
 export default function UserPage() {
   const { username } = useParams();
-  const [userQ] = useQueries({
+  const [userQ, favoritesQ] = useQueries({
     queries: [
       {
         queryKey: ["user", username],
         queryFn: async () => {
           const res = await fetch(`https://api.jikan.moe/v4/users/${username}/full`);
+          if(!res.ok) throw new Error(res.statusText)
           const user_Data = await res.json();
           return user_Data.data || "";
         },
+      },
+      {
+        queryKey: ["userFav", username],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/users/${username}/favorites`);
+          if(!res.ok) throw new Error(res.statusText)
+          const fav_Data = await res.json();
+          const fav_anime_Arr = fav_Data?.data.anime.map((item) => ({ anime: { path: "anime", name: item.title, ...item } })) || [];
+          const fav_manga_Arr = fav_Data?.data.manga.map((item) => ({ anime: { path: "manga", name: item.title, ...item } })) || [];
+          const fav_character_Arr = fav_Data?.data.characters.map((item) => ({ anime: { path: "characters", ...item } })) || [];
+          const fav_people_Arr = fav_Data?.data.people.map((item) => ({ anime: { path: "people", ...item } })) || [];
+          return { anime:fav_anime_Arr, manga:fav_manga_Arr, characters:fav_character_Arr, people:fav_people_Arr } || "";
+        },
+        retry: 3,
+        retryDelay:2000
       },
     ],
   });
@@ -25,37 +42,56 @@ export default function UserPage() {
     }
   }, [userQ]);
 
-  function renderStats(data, total) {
+  function renderStats(data, total, heading) {
     return (
-      <>
-        <div className="w-full flex flex-row items-center h-4 fill-to-right">
-          {Object.values(data).map((d, i) => (
-            <div style={{ width: `${((100 * d) / total.total_entries).toFixed(1)}%` }} className={`h-full ${colors[i]}`}></div>
+      <div className="flex flex-col py-2 gap-y-2">
+        <div className="w-full flex flex-row justify-between">
+          {Object.entries(heading).map((d, i) => (
+            <div key={i} className="flex flex-row items-center gap-x-2 text-xs capitalize">
+              <p>{d[0]}:</p>
+              <p>{d[1]}</p>
+            </div>
           ))}
         </div>
-        <div className="w-full grid grid-cols-2 p-2">
+        <div className="w-full flex flex-row items-center h-3 fill-to-right rounded-sm overflow-hidden">
+          {Object.values(data).map((d, i) => (
+            <div key={i} style={{ width: `${((100 * d) / total.total_entries).toFixed(1)}%` }} className={`h-full ${colors[i]}`}></div>
+          ))}
+        </div>
+        <div className="w-full grid grid-cols-2 gap-x-5">
           <div className="w-full flex flex-col space-y-2">
             {Object.entries(data).map((d, i) => (
-              <div className="flex flex-row items-center gap-x-2 text-xs capitalize">
-                <p className={`w-2 aspect-square rounded-full ${colors[i]}`}></p>
-                <p>{d[0]}:</p>
+              <div key={i} className="flex flex-row justify-between items-center gap-x-2 text-xs capitalize">
+                <div className="flex flex-row items-center gap-x-2">
+                  <p className={`w-2 aspect-square rounded-full ${colors[i]}`}></p>
+                  <p>{d[0]}:</p>
+                </div>
                 <p>{d[1]}</p>
               </div>
             ))}
           </div>
           <div className="w-full flex flex-col space-y-2">
             {Object.entries(total).map((d, i) => (
-              <div className="flex flex-row items-center gap-x-2 text-xs capitalize">
+              <div key={i} className="flex flex-row justify-between items-center gap-x-2 text-xs capitalize">
                 <p>{d[0]}:</p>
                 <p>{d[1]}</p>
               </div>
             ))}
           </div>
         </div>
-      </>
+      </div>
     );
   }
-
+function renderFavorites (data, title) {
+  if(!data) return;
+  console.log(data)
+  return (
+    <div className="px-1 text-sm">
+      <p className="capitalize px-2">{title} ({data.length})</p>
+      <CardBox dataArr={data} aspect="2/3" />
+    </div>
+  );
+}
   return (
     <>
       {userQ.isPending ? (
@@ -100,9 +136,9 @@ export default function UserPage() {
                   <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">About</div>
                   <div id="aboutText" className="flex flex-col px-3 py-2 text-xs"></div>
                 </div>
-                <div id="statistics" className="w-full rounded-lg overflow-hidden box-colors">
+                <div id="statistics" className="w-full flex flex-col py-2 gap-y-2 rounded-lg overflow-hidden box-colors">
                   <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">statistics</div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-2 px-3 py-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 px-3">
                     <div>
                       <div className="border-b border-amethyst-smoke-200/40 pt-0.5 font-semibold text-sm/relaxed capitalize">ِAnime stats</div>
                       {renderStats(
@@ -118,10 +154,47 @@ export default function UserPage() {
                           rewatched: userQ?.data?.statistics.anime.rewatched,
                           "episodes watched": userQ?.data?.statistics.anime.episodes_watched,
                         },
+                        {
+                          "days watched": userQ?.data?.statistics.anime.days_watched,
+                          "mean score": userQ?.data?.statistics.anime.mean_score,
+                        },
+                      )}
+                    </div>
+                    <div>
+                      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 font-semibold text-sm/relaxed capitalize">Manga stats</div>
+                      {renderStats(
+                        {
+                          reading: userQ?.data?.statistics.manga.reading,
+                          completed: userQ?.data?.statistics.manga.completed,
+                          "on hold": userQ?.data?.statistics.manga.on_hold,
+                          dropped: userQ?.data?.statistics.manga.dropped,
+                          "plan to read": userQ?.data?.statistics.manga.plan_to_read,
+                        },
+                        {
+                          total_entries: userQ?.data?.statistics.manga.total_entries,
+                          reread: userQ?.data?.statistics.manga.reread,
+                          "chapters read": userQ?.data?.statistics.manga.chapters_read,
+                          "volumes read": userQ?.data?.statistics.manga.volumes_read,
+                        },
+                        {
+                          "days read": userQ?.data?.statistics.manga.days_read,
+                          "mean score": userQ?.data?.statistics.manga.mean_score,
+                        },
                       )}
                     </div>
                   </div>
                 </div>
+                {favoritesQ?.data ? (
+                  <div id="favorites" className="w-full flex flex-col py-2 gap-y-2 rounded-lg overflow-hidden box-colors">
+                    <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">favorites</div>
+                    {renderFavorites(favoritesQ?.data.anime, "anime")}
+                    {renderFavorites(favoritesQ?.data.manga, "manga")}
+                    {renderFavorites(favoritesQ?.data.characters, "characters")}
+                    {renderFavorites(favoritesQ?.data.people, "people")}
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           </div>

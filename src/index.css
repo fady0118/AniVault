@@ -59,6 +59,7 @@
     transform: perspective(1000px) translateZ(0) scale(1);
   }
 }
+
 @keyframes fillBar {
   from {
     opacity: 0;
@@ -75,8 +76,21 @@
   .gallery-image-animation {
     animation: imageZoomIn 0.4s ease-out;
   }
-  .fill-to-right{
+
+  .fill-to-right {
     animation: fillBar 2s ease-out;
+  }
+
+  .spoiler input {
+    @apply w-fit rounded-sm px-3 py-1 my-1.5 hover:cursor-pointer duration-200
+  }
+
+  .spoiler .show_button {
+    @apply text-amethyst-smoke-950/65 dark:text-amethyst-smoke-200/65 border border-amethyst-smoke-950/25 dark:border-amethyst-smoke-200/25 dark:hover:bg-amethyst-smoke-200/10 hover:bg-amethyst-smoke-950/10
+  }
+
+  .spoiler .hide_button {
+    @apply text-blue-600 dark:text-blue-300 dark:bg-dark-amethyst-smoke-300
   }
 }
 
@@ -146,23 +160,23 @@
   }
 
   .rose-link {
-    @apply text-rose-700 dark:text-rose-400
+    @apply text-rose-600 dark:text-rose-400
   }
 
   .gray-link {
-    @apply text-gray-700 dark:text-gray-400
+    @apply text-gray-600 dark:text-gray-400
   }
 
   .blue-link {
-    @apply text-blue-700 dark:text-blue-400
+    @apply text-blue-600 dark:text-blue-400
   }
 
   .hover-blue-link {
-    @apply hover:text-blue-700 dark:hover:text-blue-400
+    @apply hover:text-blue-600 dark:hover:text-blue-400
   }
 
   .blue-link-b {
-    @apply text-blue-700 dark:text-blue-400 border-b border-transparent dark:hover:border-blue-400 hover:border-blue-700
+    @apply text-blue-600 dark:text-blue-400 border-b border-transparent dark:hover:border-blue-400 hover:border-blue-600
   }
 
   .bottom-border {
@@ -174,6 +188,6 @@
   }
 
   #userContent a {
-    @apply w-fit text-blue-700 dark:text-blue-400 border-b border-transparent dark:hover:border-blue-400 hover:border-blue-700
+    @apply w-fit text-blue-600 dark:text-blue-400 border-b border-transparent dark:hover:border-blue-400 hover:border-blue-600
   }
 }
