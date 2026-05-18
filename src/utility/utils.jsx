@@ -55,7 +55,7 @@ export function getYear(d) {
 // render function for information section for string data
 export function renderInfoStr(title, str) {
   return (
-    <div className="w-full flex flex-row gap-x-1 items-start capitalize">
+    <div className="w-full flex flex-row flex-wrap gap-x-1 items-start capitalize">
       <p className="font-semibold ">{title}:</p>
       <p className="text-[0.9em]">{str.trim() || "?"}</p>
     </div>

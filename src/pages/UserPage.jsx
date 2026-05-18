@@ -1,38 +1,64 @@
 import { useQueries } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { DateTimeFormatter, renderInfoStr } from "../utility/utils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CardBox from "../components/CardBox/CardBox";
+import FriendsModal from "../components/user/FriendsModal";
 
 const colors = ["bg-emerald-500", "bg-indigo-500", "bg-amber-500", "bg-rose-500", "bg-gray-500"];
 
 export default function UserPage() {
   const { username } = useParams();
-  const [userQ, favoritesQ] = useQueries({
+  const [showFriendsModal, setShowFriendsModal] = useState(false);
+  const [userQ, favoritesQ, friendsQ, recommendationsQ] = useQueries({
     queries: [
       {
         queryKey: ["user", username],
         queryFn: async () => {
           const res = await fetch(`https://api.jikan.moe/v4/users/${username}/full`);
-          if(!res.ok) throw new Error(res.statusText)
+          if (!res.ok) throw new Error(res.statusText);
           const user_Data = await res.json();
           return user_Data.data || "";
         },
+        retry: 3,
+        retryDelay: 2000,
       },
       {
         queryKey: ["userFav", username],
         queryFn: async () => {
           const res = await fetch(`https://api.jikan.moe/v4/users/${username}/favorites`);
-          if(!res.ok) throw new Error(res.statusText)
+          if (!res.ok) throw new Error(res.statusText);
           const fav_Data = await res.json();
           const fav_anime_Arr = fav_Data?.data.anime.map((item) => ({ anime: { path: "anime", name: item.title, ...item } })) || [];
           const fav_manga_Arr = fav_Data?.data.manga.map((item) => ({ anime: { path: "manga", name: item.title, ...item } })) || [];
           const fav_character_Arr = fav_Data?.data.characters.map((item) => ({ anime: { path: "characters", ...item } })) || [];
           const fav_people_Arr = fav_Data?.data.people.map((item) => ({ anime: { path: "people", ...item } })) || [];
-          return { anime:fav_anime_Arr, manga:fav_manga_Arr, characters:fav_character_Arr, people:fav_people_Arr } || "";
+          return { anime: fav_anime_Arr, manga: fav_manga_Arr, characters: fav_character_Arr, people: fav_people_Arr } || "";
         },
         retry: 3,
-        retryDelay:2000
+        retryDelay: 2000,
+      },
+      {
+        queryKey: ["friends", username],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/users/${username}/friends`);
+          if (!res.ok) throw new Error(res.statusText);
+          const friends_Data = await res.json();
+          return friends_Data.data || "";
+        },
+        retry: 3,
+        retryDelay: 2000,
+      },
+      {
+        queryKey: ["recommendations", username],
+        queryFn: async () => {
+          const res = await fetch(`https://api.jikan.moe/v4/users/${username}/recommendations`);
+          if (!res.ok) throw new Error(res.statusText);
+          const recommendations_Data = await res.json();
+          return recommendations_Data;
+        },
+        retry: 3,
+        retryDelay: 2000,
       },
     ],
   });
@@ -82,16 +108,17 @@ export default function UserPage() {
       </div>
     );
   }
-function renderFavorites (data, title) {
-  if(!data) return;
-  console.log(data)
-  return (
-    <div className="px-1 text-sm">
-      <p className="capitalize px-2">{title} ({data.length})</p>
-      <CardBox dataArr={data} aspect="2/3" />
-    </div>
-  );
-}
+  function renderFavorites(data, title) {
+    if (!data) return;
+    return (
+      <div className="px-1 text-sm overflow-clip">
+        <p className="capitalize px-2">
+          {title} ({data.length})
+        </p>
+        <CardBox dataArr={data} aspect="2/3" num={10} />
+      </div>
+    );
+  }
   return (
     <>
       {userQ.isPending ? (
@@ -109,8 +136,8 @@ function renderFavorites (data, title) {
                 />
               </a>
             </div>
-            <div id="userContent" className="order-2 w-full flex flex-col sm:flex-row sm:justify-start gap-3">
-              <div className="flex flex-col gap-y-3 w-1/4 min-w-48 max-w-64 ">
+            <div id="userContent" className="relative order-2 w-full flex flex-col sm:flex-row sm:justify-start gap-3">
+              <div className="sm:sticky sm:top-18 flex flex-col gap-y-3 h-fit w-1/4 min-w-48 max-w-64 ">
                 <div id="image" className="order-1">
                   <img className="w-full aspect-square object-cover rounded-lg overflow-hidden" src={userQ?.data.images.webp.image_url || userQ?.data.images.jpg.image_url} alt="" />
                 </div>
@@ -128,13 +155,51 @@ function renderFavorites (data, title) {
                         </div>
                       </div>
                     </div>
+                    {friendsQ?.data?.length ? (
+                      <div id="friends" className="w-full">
+                        <div className="flex flex-row items-center justify-between border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">
+                          <p>friends</p>
+                          <p
+                            onClick={() => setShowFriendsModal(true)}
+                            className="text-xs font-light hover:cursor-pointer border-b border-transparent hover:border-dark-amethyst-smoke-50 dark:hover:border-amethyst-smoke-300"
+                          >
+                            All ({friendsQ?.data.length})
+                          </p>
+                        </div>
+                        <div className="grid grid-cols-4 p-2 gap-0.5">
+                          {friendsQ?.data.slice(0, 11).map((f, i) => (
+                            <>
+                              <div className="w-full aspect-square hover:">
+                                <a href={`/user/${f?.user?.username}`}>
+                                  <img
+                                    className="w-full h-full object-cover hover:cursor-pointer hover:border-2 hover:border-amethyst-smoke-400/30 duration-100"
+                                    src={f?.user?.images.webp.image_url || f?.user?.images.jpg.image_url}
+                                    alt=""
+                                  />
+                                </a>
+                              </div>
+                            </>
+                          ))}
+                          <div
+                            onClick={() => setShowFriendsModal(true)}
+                            className="w-full aspect-square border-2 border-amethyst-smoke-400/10 hover:bg-amethyst-smoke-400/15 hover:cursor-pointer hover:border-amethyst-smoke-400/30 duration-100 flex justify-center items-center"
+                          >
+                            +{friendsQ?.data?.length - 11}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
               </div>
-              <div className="w-full flex flex-col gap-y-3">
-                <div id="about" className="w-fit h-fit min-h-32 rounded-lg overflow-hidden box-colors">
+              <div className="w-3/4 grow flex flex-col gap-y-3">
+                <div id="about" className="w-fit max-w-full h-fit min-h-32 rounded-lg overflow-hidden box-colors">
                   <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">About</div>
-                  <div id="aboutText" className="flex flex-col px-3 py-2 text-xs"></div>
+                  <div id="aboutText" className="flex flex-col px-3 py-2 text-xs">
+                    About section is left empty by the user
+                  </div>
                 </div>
                 <div id="statistics" className="w-full flex flex-col py-2 gap-y-2 rounded-lg overflow-hidden box-colors">
                   <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">statistics</div>
@@ -184,7 +249,7 @@ function renderFavorites (data, title) {
                     </div>
                   </div>
                 </div>
-                {favoritesQ?.data ? (
+                {favoritesQ?.data?.anime.length || favoritesQ?.data?.manga.length || favoritesQ?.data?.characters.length || favoritesQ?.data?.people.length ? (
                   <div id="favorites" className="w-full flex flex-col py-2 gap-y-2 rounded-lg overflow-hidden box-colors">
                     <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">favorites</div>
                     {renderFavorites(favoritesQ?.data.anime, "anime")}
@@ -200,6 +265,7 @@ function renderFavorites (data, title) {
           </div>
         </>
       )}
+      {showFriendsModal ? <FriendsModal data={friendsQ?.data} setShowFriendsModal={setShowFriendsModal} /> : ""}
     </>
   );
 }

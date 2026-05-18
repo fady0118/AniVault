@@ -21,6 +21,8 @@ export default function CardBox({ dataArr, num = 6, aspect = "square" }) {
     6: "w-1/6",
     7: "w-1/7",
     8: "w-1/8",
+    9: "w-1/9",
+    10: "w-1/10",
   };
 
   const image_class = `inline-block w-full aspect-${aspect} object-cover hover:cursor-pointer hover:border-4 hover:border-amethyst-smoke-400/30 duration-100`;

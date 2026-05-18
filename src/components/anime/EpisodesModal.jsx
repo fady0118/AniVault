@@ -77,7 +77,6 @@ export default function EpisodesModal({ setShowEpisodesModal }) {
           <div className="w-full flex flex-row-reverse">
             <button
               onClick={() => {
-                console.log("esc clicked");
                 setShowEpisodesModal(false);
               }}
               className=" w-fit flex items-center text-xs px-1 rounded-sm border border-amethyst-smoke-800/70 dark:border-amethyst-smoke-500/40  hover:cursor-pointer"
