@@ -25,22 +25,34 @@ export default function UserPage() {
     }
   }, [userQ]);
 
-  function renderStat(title, value, i=null) {
+  function renderStats(data, total) {
     return (
-      <div className="flex flex-row items-center gap-x-2 text-xs capitalize">
-        {i!==null ? <p className={`w-2 aspect-square rounded-full ${colors[i]}`}></p> : ""}
-        <p>{title}:</p>
-        <p>{value}</p>
-      </div>
-    );
-  }
-  function renderBar(data, total) {
-    return (
-      <div className="w-full flex flex-row items-center h-4 fill-to-right">
-        {data.map((d, i) => (
-          <div style={{width:`${(100*d / total).toFixed(1)}%`}} className={`h-full ${colors[i]}`}></div>
-        ))}
-      </div>
+      <>
+        <div className="w-full flex flex-row items-center h-4 fill-to-right">
+          {Object.values(data).map((d, i) => (
+            <div style={{ width: `${((100 * d) / total.total_entries).toFixed(1)}%` }} className={`h-full ${colors[i]}`}></div>
+          ))}
+        </div>
+        <div className="w-full grid grid-cols-2 p-2">
+          <div className="w-full flex flex-col space-y-2">
+            {Object.entries(data).map((d, i) => (
+              <div className="flex flex-row items-center gap-x-2 text-xs capitalize">
+                <p className={`w-2 aspect-square rounded-full ${colors[i]}`}></p>
+                <p>{d[0]}:</p>
+                <p>{d[1]}</p>
+              </div>
+            ))}
+          </div>
+          <div className="w-full flex flex-col space-y-2">
+            {Object.entries(total).map((d, i) => (
+              <div className="flex flex-row items-center gap-x-2 text-xs capitalize">
+                <p>{d[0]}:</p>
+                <p>{d[1]}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
     );
   }
 
@@ -93,30 +105,20 @@ export default function UserPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-2 px-3 py-2">
                     <div>
                       <div className="border-b border-amethyst-smoke-200/40 pt-0.5 font-semibold text-sm/relaxed capitalize">ِAnime stats</div>
-                      {renderBar(
-                        [
-                          userQ?.data?.statistics.anime.watching,
-                          userQ?.data?.statistics.anime.completed,
-                          userQ?.data?.statistics.anime.on_hold,
-                          userQ?.data?.statistics.anime.dropped,
-                          userQ?.data?.statistics.anime.plan_to_watch,
-                        ],
-                        userQ?.data?.statistics.anime.total_entries,
+                      {renderStats(
+                        {
+                          watching: userQ?.data?.statistics.anime.watching,
+                          completed: userQ?.data?.statistics.anime.completed,
+                          "on hold": userQ?.data?.statistics.anime.on_hold,
+                          dropped: userQ?.data?.statistics.anime.dropped,
+                          "plan to watch": userQ?.data?.statistics.anime.plan_to_watch,
+                        },
+                        {
+                          total_entries: userQ?.data?.statistics.anime.total_entries,
+                          rewatched: userQ?.data?.statistics.anime.rewatched,
+                          "episodes watched": userQ?.data?.statistics.anime.episodes_watched,
+                        },
                       )}
-                      <div className="w-full grid grid-cols-2 p-2">
-                        <div className="w-full flex flex-col space-y-2">
-                          {userQ?.data?.statistics.anime.watching ? renderStat("watching", userQ?.data?.statistics.anime.watching, 0) : ""}
-                          {userQ?.data?.statistics.anime.completed ? renderStat("completed", userQ?.data?.statistics.anime.completed, 1) : ""}
-                          {userQ?.data?.statistics.anime.on_hold ? renderStat("on hold", userQ?.data?.statistics.anime.on_hold, 2) : ""}
-                          {userQ?.data?.statistics.anime.dropped ? renderStat("dropped", userQ?.data?.statistics.anime.dropped, 3) : ""}
-                          {userQ?.data?.statistics.anime.plan_to_watch ? renderStat("plan to watch", userQ?.data?.statistics.anime.plan_to_watch, 4) : ""}
-                        </div>
-                        <div className="w-full flex flex-col space-y-2">
-                          {userQ?.data?.statistics.anime.total_entries ? renderStat("total entries", userQ?.data?.statistics.anime.total_entries) : ""}
-                          {userQ?.data?.statistics.anime.rewatched ? renderStat("rewatched", userQ?.data?.statistics.anime.rewatched) : ""}
-                          {userQ?.data?.statistics.anime.episodes_watched ? renderStat("episodes watched", userQ?.data?.statistics.anime.episodes_watched) : ""}
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
