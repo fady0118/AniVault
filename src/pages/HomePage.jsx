@@ -117,25 +117,59 @@ export default function HomePage() {
             </div>
           </div>
           <div className="w-full max-h-[75vh] grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 overflow-y-scroll overflow-x-clip gap-5 py-3">
-            {recentTvQ?.data?.data.map((item, i) => (
-              <div data-mal-id={item.mal_id} key={i} className="wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
-                <a href={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
-                  <img className="w-full h-full" src={item.images?.webp?.large_image_url || item.images?.jpg?.large_image_url || item.images?.webp?.image_url || item.images?.jpg?.image_url} alt="" />
-                </a>
-                <div className="w-full grow text-sm xs:text-xs lg:text-sm">
-                  <a href={`/anime/${item.mal_id}`} className="w-full text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200">
-                    {item.title}
-                  </a>
-                </div>
-                <div
-                  onMouseEnter={(e) => handleInfoShow(e)}
-                  onMouseLeave={(e) => handleInfoHide(e)}
-                  className="target absolute top-1/25 right-1/20 rounded-full p-2 hover:cursor-pointer bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300"
-                >
-                  <Info className="stroke-blue-600 dark:stroke-blue-300 pointer-events-none" size={25} />
-                </div>
-              </div>
-            ))}
+            {recent === "tv" ? (
+              <>
+                {recentTvQ?.data?.data.map((item, i) => (
+                  <div data-mal-id={item.mal_id} key={i} className="wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
+                    <a href={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
+                      <img
+                        className="w-full h-full"
+                        src={item.images?.webp?.large_image_url || item.images?.jpg?.large_image_url || item.images?.webp?.image_url || item.images?.jpg?.image_url}
+                        alt=""
+                      />
+                    </a>
+                    <div className="w-full grow text-sm xs:text-xs lg:text-sm">
+                      <a href={`/anime/${item.mal_id}`} className="w-full text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200">
+                        {item.title}
+                      </a>
+                    </div>
+                    <div
+                      onMouseEnter={(e) => handleInfoShow(e)}
+                      onMouseLeave={(e) => handleInfoHide(e)}
+                      className="target absolute top-1/25 right-1/20 rounded-full p-2 hover:cursor-pointer bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300"
+                    >
+                      <Info className="stroke-blue-600 dark:stroke-blue-300 pointer-events-none" size={25} />
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <>
+                {recentMovieQ?.data?.data.map((item, i) => (
+                  <div data-mal-id={item.mal_id} key={i} className="wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
+                    <a href={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
+                      <img
+                        className="w-full h-full"
+                        src={item.images?.webp?.large_image_url || item.images?.jpg?.large_image_url || item.images?.webp?.image_url || item.images?.jpg?.image_url}
+                        alt=""
+                      />
+                    </a>
+                    <div className="w-full grow text-sm xs:text-xs lg:text-sm">
+                      <a href={`/anime/${item.mal_id}`} className="w-full text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200">
+                        {item.title}
+                      </a>
+                    </div>
+                    <div
+                      onMouseEnter={(e) => handleInfoShow(e)}
+                      onMouseLeave={(e) => handleInfoHide(e)}
+                      className="target absolute top-1/25 right-1/20 rounded-full p-2 hover:cursor-pointer bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300"
+                    >
+                      <Info className="stroke-blue-600 dark:stroke-blue-300 pointer-events-none" size={25} />
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
           <AnimePopup mouseLeave={(e) => handleInfoHide(e)} ref={targetRef} />
         </div>
