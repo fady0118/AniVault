@@ -8,7 +8,7 @@ export default function Slide({ animeData, openModal }) {
       <div className={`relative slide w-full h-full flex justify-end items-center shrink-0 text-6xl `}>
         <div className="w-full h-full absolute top-0 left-0 "></div>
         <div className={`absolute z-20 top-0 left-0 w-full sm:w-4/5 md:w-2/3 h-full flex flex-col justify-end items-start ${gradientStyles}`}>
-          <div className="w-full sm:w-[65%] box-border h-1/2 sm:h-2/3 flex flex-col space-y-3 sm:space-y-6 justify-start px-6">
+          <div className="w-full sm:w-[65%] box-border h-1/2 sm:h-2/3 flex flex-col space-y-3 sm:space-y-6 justify-center px-6">
             <div className="w-full text-xl sm:text-3xl font-extrabold">{animeData.title_english}</div>
             <div className="flex items-center space-x-2 text-xs">
               {animeData.demographics.length ? (

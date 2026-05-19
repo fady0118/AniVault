@@ -85,11 +85,11 @@ export default function EpisodesModal({ setShowEpisodesModal }) {
             </button>
           </div>
         </div>
-        <div className="w-full px-4 box-colors overflow-y-scroll rounded-sm">
-          <table className=" w-full text-start capitalize text-sm border-spacing-3">
+        <div className="w-full box-colors overflow-y-scroll rounded-lg">
+          <table className="w-full text-start capitalize text-sm border-spacing-3">
             <thead className="sticky top-0 box-colors backdrop-blur-sm bg-neutral-secondary-soft border-b border-dark-amethyst-smoke-500/20 dark:border-amethyst-smoke-500/20">
-              <tr>
-                <th className="text-start w-1/20 min-w-8 py-3 font-medium">
+              <tr className="px-5">
+                <th className="text-start w-1/20 min-w-12 py-3 pl-2 font-medium">
                   <div
                     onClick={() => sorting("mal_id")}
                     className="flex flex-row items-center gap-x-0.5 group border-dark-amethyst-smoke-500/50 dark:border-amethyst-smoke-500/50 rounded-sm hover:cursor-pointer hover:border hover:-translate-y-0.5 duration-200"
@@ -97,8 +97,8 @@ export default function EpisodesModal({ setShowEpisodesModal }) {
                     # {sortBy === "mal_id" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : "-"}
                   </div>
                 </th>
-                <th className="text-start py-3 font-medium">Episode Title</th>
-                <th className="text-start w-1/10 min-w-15 py-3 font-medium">
+                <th className="text-start py-3 pl-2 font-medium">Episode Title</th>
+                <th className="text-start w-1/10 min-w-15 py-3 pl-2 font-medium">
                   <div
                     onClick={() => sorting("aired")}
                     className="flex flex-row items-center gap-x-0.5 group border-dark-amethyst-smoke-500/50 dark:border-amethyst-smoke-500/50 rounded-sm hover:cursor-pointer hover:border hover:-translate-y-0.5 duration-200"
@@ -106,7 +106,7 @@ export default function EpisodesModal({ setShowEpisodesModal }) {
                     Aired {sortBy === "aired" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : "-"}
                   </div>
                 </th>
-                <th className="text-start w-1/10 min-w-15 py-3 font-medium">
+                <th className="text-start w-1/10 min-w-15 py-3 pl-2 font-medium">
                   <div
                     onClick={() => sorting("score")}
                     className="flex flex-row items-center gap-x-0.5 group border-dark-amethyst-smoke-500/50 dark:border-amethyst-smoke-500/50 rounded-sm hover:cursor-pointer hover:border hover:-translate-y-0.5 duration-200"
@@ -114,17 +114,17 @@ export default function EpisodesModal({ setShowEpisodesModal }) {
                     Score {sortBy === "score" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : "-"}
                   </div>
                 </th>
-                <th className="text-start w-1/10 min-w-15 py-3 font-medium">type</th>
+                <th className="text-start w-1/10 min-w-15 py-3 pl-2 font-medium">type</th>
               </tr>
             </thead>
             <tbody>
               {sortData?.map((ep, i) => (
                 <tr key={`${ep.mal_id}-${i}`} className="font-light ">
-                  <td className="pt-3">{String(ep.mal_id).padStart(2, "0")}</td>
-                  <td className="px-1 pt-3">{ep.title}</td>
-                  <td className="px-1 pt-3">{dateFormatter(ep.aired)}</td>
-                  <td className="px-1 pt-3">{ep.score || "-"}</td>
-                  <td className="pt-3">
+                  <td className="pl-2 pt-3">{String(ep.mal_id).padStart(2, "0")}</td>
+                  <td className="pl-2 pt-3">{ep.title}</td>
+                  <td className="pl-2 pt-3">{dateFormatter(ep.aired)}</td>
+                  <td className="pl-2 pt-3">{ep.score || "-"}</td>
+                  <td className="pl-2 pt-3">
                     {ep.filler ? (
                       <div className="text-indigo-500 rounded-sm">filler</div>
                     ) : ep.recap ? (

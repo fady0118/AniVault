@@ -197,4 +197,15 @@
   .active-tab{
    @apply border border-blue-600/50 dark:border-blue-300/50 text-blue-600 dark:text-blue-300 bg-amethyst-smoke-200 dark:bg-dark-amethyst-smoke-300
   }
+
+.target {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+}
+
+.wrapper:hover .target {
+  opacity: 1;
+  visibility: visible;
+}
 }

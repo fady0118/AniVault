@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router";
 import { WindowContext } from "../App";
 import { useQueries } from "@tanstack/react-query";
@@ -38,8 +38,8 @@ export default function ProducerPage() {
       {
         queryKey: ["animes", id, currentPage],
         queryFn: async () => {
-            const res = await fetch(`https://api.jikan.moe/v4/anime?producers=${id}&page=${currentPage}`);
-        //   const res = await fetch(`https://api.jikan.moe/v4/anime?producers=${id}`);
+          const res = await fetch(`https://api.jikan.moe/v4/anime?producers=${id}&page=${currentPage}`);
+          //   const res = await fetch(`https://api.jikan.moe/v4/anime?producers=${id}`);
           const animes_Data = await res.json();
           return animes_Data || [];
         },
@@ -49,6 +49,10 @@ export default function ProducerPage() {
       },
     ],
   });
+
+  useEffect(() => {
+    if (currentPage > animesQ?.data?.pagination?.last_visible_page) pageSwap(animesQ?.data?.pagination?.last_visible_page);
+  }, [animesQ]);
 
   function currentPageChange(type) {
     if (type == "increment") {
