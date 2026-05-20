@@ -49,12 +49,12 @@ export default function RecentManga() {
 
   async function handleInfoHide(e) {
     await delay(150);
-
     if (targetRef.current.matches(":hover")) {
       return;
     }
     targetRef.current.style.display = "none";
   }
+
   function handleInfoShow(e) {
     // position
     const rect = e.target.parentElement.getBoundingClientRect();
@@ -76,6 +76,7 @@ export default function RecentManga() {
     // data
     renderPopupData();
   }
+  
   function renderPopupData() {
     // element node ref
     const element = targetRef.current;
@@ -140,7 +141,6 @@ export default function RecentManga() {
       }
     }
   }
-
   return (
     <div id="recent" className="w-full relative flex flex-col gap-y-3 p-3">
       <div className="w-full flex flex-row flex-wrap justify-between items-center text-md/relaxed sm:text-xl/relaxed font-extrabold uppercase">

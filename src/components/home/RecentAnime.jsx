@@ -2,19 +2,21 @@ import { useQueries } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { delay } from "../../utility/utils";
 import AnimePopup from "./AnimePopup";
-import { Info } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 
 export default function RecentAnime() {
   const [recent, setRecent] = useState("tv");
   const targetRef = useRef(null);
   const popupDataRef = useRef(null);
+  const [tvCurrentPage, setTvCurrentPage] = useState(1);
+  const [movieCurrentPage, setMovieCurrentPage] = useState(1);
 
   const [recentTvQ, recentMovieQ] = useQueries({
     queries: [
       {
-        queryKey: ["recentTvData"],
+        queryKey: ["recentTvData", tvCurrentPage],
         queryFn: async () => {
-          const res = await fetch("https://api.jikan.moe/v4/anime?type=tv&sfw=true&genres_exclude=9,12&status=airing&order_by=start_date&sort=desc");
+          const res = await fetch(`https://api.jikan.moe/v4/anime?type=tv&sfw=true&genres_exclude=9,12&status=airing&order_by=start_date&sort=desc&page=${tvCurrentPage || 1}`);
           if (!res.ok) throw new Error(res.statusText);
           const recentTvData = await res.json();
           const uniqueTvData = [...new Set(recentTvData.data.map((elm) => elm.mal_id))].map((id) => recentTvData.data.find((item) => item.mal_id === id));
@@ -22,9 +24,9 @@ export default function RecentAnime() {
         },
       },
       {
-        queryKey: ["recentMovieData"],
+        queryKey: ["recentMovieData", movieCurrentPage],
         queryFn: async () => {
-          const res = await fetch("https://api.jikan.moe/v4/anime?type=movie&sfw=true&genres_exclude=9,12&status=complete&order_by=start_date&sort=desc");
+          const res = await fetch(`https://api.jikan.moe/v4/anime?type=movie&sfw=true&genres_exclude=9,12&status=complete&order_by=start_date&sort=desc&page=${movieCurrentPage || 1}`);
           if (!res.ok) throw new Error(res.statusText);
           const recentMovieData = await res.json();
           const uniqueMovieData = [...new Set(recentMovieData.data.map((elm) => elm.mal_id))].map((id) => recentMovieData.data.find((item) => item.mal_id === id));
@@ -36,12 +38,12 @@ export default function RecentAnime() {
 
   async function handleInfoHide(e) {
     await delay(150);
-
     if (targetRef.current.matches(":hover")) {
       return;
     }
     targetRef.current.style.display = "none";
   }
+
   function handleInfoShow(e) {
     // position
     const rect = e.target.parentElement.getBoundingClientRect();
@@ -61,6 +63,7 @@ export default function RecentAnime() {
     // data
     renderPopupData();
   }
+
   function renderPopupData() {
     // element node ref
     const element = targetRef.current;
@@ -78,35 +81,80 @@ export default function RecentAnime() {
     element.querySelectorAll("#status>p")[1].textContent = popupDataRef?.current?.status;
     // genres
     const genresDiv = element.querySelector("#genres>div");
-    genresDiv.innerHTML = popupDataRef?.current?.genres?.reduce(
-      (c, genre) => c + ` <p class="font-medium text-[0.9em] m-0.5 px-1 rounded-xl border magazine-border-colors">${genre.name}</p>`,
-      "",
-    );
+    genresDiv.innerHTML = popupDataRef?.current?.genres?.reduce((c, genre) => c + ` <p class="font-medium text-[0.9em] m-0.5 px-1 rounded-xl border magazine-border-colors">${genre.name}</p>`, "");
     // hyperlink
     if (popupDataRef?.current?.mal_id) {
       element.querySelector("#details").href = `/anime/${popupDataRef?.current?.mal_id}`;
+    }
+  }
+
+  function swapPage(type) {
+    if (recent === "tv") {
+      if (type === "next") {
+        setTvCurrentPage((s) => (recentTvQ?.data?.pagination?.has_next_page ? s + 1 : s));
+      } else {
+        setTvCurrentPage((s) => (s > 1 ? s - 1 : 1));
+      }
+    } else if (recent === "movie") {
+      if (type === "next") {
+        setMovieCurrentPage((s) => (recentMovieQ?.data?.pagination?.has_next_page ? s + 1 : s));
+      } else {
+        setMovieCurrentPage((s) => (s > 1 ? s - 1 : 1));
+      }
+    }
+  }
+  function checkChevron(dir) {
+    if (dir === "left") {
+      if (recent === "tv") {
+        return tvCurrentPage > 1;
+      } else if (recent === "movie") {
+        return movieCurrentPage > 1;
+      }
+    } else if (dir === "right") {
+      if (recent === "tv") {
+        return recentTvQ?.data?.pagination?.has_next_page;
+      } else if (recent === "movie") {
+        return recentMovieQ?.data?.pagination?.has_next_page;
+      }
     }
   }
   return (
     <div id="recent" className="w-full relative flex flex-col gap-y-3 p-3">
       <div className="w-full flex flex-row flex-wrap justify-between items-center text-md/relaxed sm:text-xl/relaxed font-extrabold uppercase">
         <div className="text-[0.85em]">Recent Anime</div>
-        <div id="recentTabs" className="flex flex-row gap-x-2 items-center text-[0.65em]">
-          <div
-            onClick={() => {
-              setRecent("tv");
-            }}
-            className={`tab ${recent === "tv" ? "active-tab" : ""}`}
-          >
-            tv
+        <div className="flex flex-row items-center gap-x-5">
+          <div id="pagination" className="flex flex-row gap-x-1.5 items-center text-sm">
+            <div onClick={() => swapPage("prev")}>
+              <ChevronLeft
+                className={`${checkChevron("left") ? "stroke-text-light dark:stroke-text-dark hover:cursor-pointer hover:bg-amethyst-smoke-500/15" : "stroke-text-light/50 dark:stroke-text-dark/50"} stroke-3 p-2 box-content rounded-full duration-200`}
+                size={18}
+              />
+            </div>
+            {recent === "tv" ? <div>{tvCurrentPage}</div> : recent === "movie" ? <div>{movieCurrentPage}</div> : ""}
+            <div onClick={() => swapPage("next")}>
+              <ChevronRight
+                className={`${checkChevron("right") ? "stroke-text-light dark:stroke-text-dark hover:cursor-pointer hover:bg-amethyst-smoke-500/15" : "stroke-text-light/50 dark:stroke-text-dark/50"} stroke-3 p-2 box-content rounded-full duration-200`}
+                size={18}
+              />
+            </div>
           </div>
-          <div
-            onClick={() => {
-              setRecent("movie");
-            }}
-            className={`tab ${recent === "movie" ? "active-tab" : ""}`}
-          >
-            movie
+          <div id="recentTabs" className="flex flex-row gap-x-2 items-center text-[0.65em]">
+            <div
+              onClick={() => {
+                setRecent("tv");
+              }}
+              className={`tab ${recent === "tv" ? "active-tab" : ""}`}
+            >
+              tv
+            </div>
+            <div
+              onClick={() => {
+                setRecent("movie");
+              }}
+              className={`tab ${recent === "movie" ? "active-tab" : ""}`}
+            >
+              movie
+            </div>
           </div>
         </div>
       </div>
