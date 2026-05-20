@@ -26,7 +26,7 @@ export default function MangaPage() {
           const manga_Data = await res.json();
           return { ...manga_Data.data, flattenedRelations: manga_Data.data?.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))) };
         },
-        retry: 2,
+        retry: 3,
         retryDelay: 2000,
       },
       {
@@ -272,33 +272,37 @@ export default function MangaPage() {
                       </div>
                     </div>
                   </div>
-                  <div id="external" className="w-full">
-                    <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Available At</div>
-                    <div className="px-3 py-2 text-xs font-light">
-                      <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                        {mangaQ?.data?.external.map((ext, i) => (
-                          <p className="flex flex-row items-center gap-1.5" key={i}>
-                            {renderIcon(ext.name)}
-                            <a className="blue-link" href={ext.url}>
-                              {ext.name}
-                            </a>
-                          </p>
-                        ))}
+                  {mangaQ?.data?.external?.length ? (
+                    <div id="external" className="w-full">
+                      <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Available At</div>
+                      <div className="px-3 py-2 text-xs font-light">
+                        <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
+                          {mangaQ?.data?.external?.map((ext, i) => (
+                            <p className="flex flex-row items-center gap-1.5" key={i}>
+                              {renderIcon(ext.name)}
+                              <a className="blue-link" href={ext.url}>
+                                {ext.name}
+                              </a>
+                            </p>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
 
                 <div className="w-full sm:w-2/3 md:w-3/4 flex flex-col gap-y-2 pt-0.5 ">
                   <div id="titles" className="w-full h-fit rounded-lg box-colors overflow-hidden order-1">
                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">titles</div>
                     <div className="flex flex-col gap-y-1 px-3 py-2 text-xs font-light">
-                      {mangaQ?.data?.titles.map((title, i) => (
+                      {mangaQ?.data?.titles?.length? mangaQ?.data?.titles.map((title, i) => (
                         <div key={i} className="flex flex-row space-x-1 w-full">
                           <p className="font-semibold min-w-16">{title.type}: </p>
                           <p>{title.title}</p>
                         </div>
-                      ))}
+                      )):""}
                     </div>
                   </div>
 
@@ -336,7 +340,7 @@ export default function MangaPage() {
                     ""
                   )}
 
-                  {mangaQ?.data?.flattenedRelations.length ? (
+                  {mangaQ?.data?.flattenedRelations?.length ? (
                     <div id="relations" className="flex justify-center w-full h-fit text-2xs lg:text-xs order-5">
                       <div className="rounded-lg box-colors w-full ">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
@@ -357,7 +361,7 @@ export default function MangaPage() {
                               </div>
                             </div>
                           ))}
-                          {!showAllRelations && mangaQ?.data?.flattenedRelations.length > 6 ? (
+                          {!showAllRelations && mangaQ?.data?.flattenedRelations?.length > 6 ? (
                             <div
                               onClick={() => {
                                 setShowAllRelations(true);
@@ -400,7 +404,7 @@ export default function MangaPage() {
                 </div>
               </div>
 
-              <Reviews data={reviewsQ?.data}/>
+              <Reviews data={reviewsQ?.data} />
 
               {recommendationsQ?.data?.recommendations?.length ? (
                 <div id="recommendations" className="order-4 rounded-lg box-colors w-full py-1">
@@ -414,7 +418,7 @@ export default function MangaPage() {
             </div>
 
             <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
-              <img className="w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y" src={mangaQ?.data.images.jpg.large_image_url} alt={mangaQ?.data.title} />
+              <img className="w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y" src={mangaQ?.data?.images?.jpg?.large_image_url} alt={mangaQ?.data?.title} />
             </div>
           </div>
         </div>

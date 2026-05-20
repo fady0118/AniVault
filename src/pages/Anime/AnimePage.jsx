@@ -160,8 +160,8 @@ export default function AnimePage() {
                         <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
                           <div className="flex flex-col justify-evenly pr-2 items-center border-r border-amethyst-smoke-500/20 ">
                             <p className="text-text-dark text-[1.5em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
-                            <p className="text-[2em]/snug font-semibold">{animeQ?.data?.score}</p>
-                            <p className="font-light text-[1.35em]">{animeQ?.data?.scored_by?.toLocaleString()} users</p>
+                            <p className="text-[2em]/snug font-semibold">{animeQ?.data?.score||'?'}</p>
+                            <p className="font-light text-[1.35em]">{animeQ?.data?.scored_by?.toLocaleString()||'?'} users</p>
                           </div>
 
                           <div className="flex flex-col py-1 gap-y-1">
