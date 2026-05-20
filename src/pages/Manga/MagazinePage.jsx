@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router";
 import { WindowContext } from "../../App";
-import { BookOpen, Calendar, ChevronLeftSquare, ChevronRightSquare, Hash, LucideLayoutGrid, LucideLayoutList, Star, User } from "lucide-react";
+import { BookOpen, Calendar, ChevronLeft, ChevronRight, Hash, LucideLayoutGrid, LucideLayoutList, Star, User } from "lucide-react";
 import { getSeason, getYear } from "../../utility/utils";
 
 const classes = {
@@ -22,7 +22,7 @@ export default function MagazinePage() {
   const letterFilter = searchParams.get("letter") || "";
 
   const pageSwap = (newPage) => {
-    const letter = searchParams.get("letter") || "";;
+    const letter = searchParams.get("letter") || "";
     setSearchParams({ page: newPage, letter });
   };
   const filterByLetter = (letter) => {
@@ -61,16 +61,20 @@ export default function MagazinePage() {
       ) : (
         <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3">
           <div className="w-[95vw] flex flex-col space-y-3">
-            {magazineQ?.data?.data?.length?<div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-row gap-x-1.5 items-center">
-              <span className="text-sm/relaxed sm:text-lg/relaxed font-bold">{magazineQ?.data?.data[0]?.serializations[0]?.name}</span>
-              <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={magazineQ?.data?.data[0]?.serializations[0]?.url} target="_blank">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
-                  alt="MyAnimeList Logo"
-                  className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
-                />
-              </a>
-            </div>:''}
+            {magazineQ?.data?.data?.length ? (
+              <div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-row gap-x-1.5 items-center">
+                <span className="text-sm/relaxed sm:text-lg/relaxed font-bold">{magazineQ?.data?.data[0]?.serializations[0]?.name}</span>
+                <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={magazineQ?.data?.data[0]?.serializations[0]?.url} target="_blank">
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
+                    alt="MyAnimeList Logo"
+                    className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
+                  />
+                </a>
+              </div>
+            ) : (
+              ""
+            )}
 
             <div className="order-2 w-full flex flex-col box-colors rounded-md px-3 py-2">
               <div className="w-full flex flex-row  flex-wrap justify-between items-center bottom-border text-2xs md:text-xs lg:text-sm capitalize">
@@ -95,28 +99,28 @@ export default function MagazinePage() {
                     #
                   </div>
                 </div>
-                <div id="page" className="flex flex-row justify-between flex-wrap w-fit gap-x-5">
+                <div id="page" className="flex flex-row justify-between flex-wrap w-fit gap-x-5 text-md/relaxed">
                   <div className="flex flex-row gap-x-1 items-center">
-                    <ChevronLeftSquare
+                    <ChevronLeft
                       onClick={() => currentPageChange("decrement")}
                       size={18}
-                      className={`${currentPage === 1 ? "stroke-gray-700" : "stroke-yellow-500"} p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30`}
+                      className={`${currentPage === 1 ? "stroke-text-light/50 dark:stroke-text-dark/50" : "stroke-text-light dark:stroke-text-dark hover:cursor-pointer hover:bg-amethyst-smoke-500/15"} stroke-3 p-2 box-content rounded-full duration-200`}
                     />
                     <p>{currentPage}</p>
-                    <ChevronRightSquare
+                    <ChevronRight
                       onClick={() => currentPageChange("increment")}
                       size={18}
-                      className={`${!magazineQ?.data?.pagination?.has_next_page ? "stroke-gray-700" : "stroke-yellow-500"} p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30`}
+                      className={`${!magazineQ?.data?.pagination?.has_next_page ? "stroke-text-light/50 dark:stroke-text-dark/50" : "stroke-text-light dark:stroke-text-dark hover:cursor-pointer hover:bg-amethyst-smoke-500/15"} stroke-3 p-2 box-content rounded-full duration-200`}
                     />
                   </div>
-                  <div className="flex flex-row gap-x-0.5">
+                  <div className="flex flex-row items-center gap-x-0.5">
                     <div>
                       <LucideLayoutGrid
                         onClick={() => {
                           setLayout("grid");
                         }}
                         size={18}
-                        className="p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
+                        className={`layout-icon ${layout === "grid" ? "active-layout-icon" : ""}`}
                       />
                     </div>
                     <div>
@@ -125,7 +129,7 @@ export default function MagazinePage() {
                           setLayout("tiles");
                         }}
                         size={18}
-                        className="p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
+                        className={`layout-icon ${layout === "tiles" ? "active-layout-icon" : ""}`}
                       />
                     </div>
                   </div>
@@ -170,7 +174,7 @@ export default function MagazinePage() {
                         <div className="w-full flex flex-row items-start grow px-1.5">
                           <div id="poster" className="w-1/2 md:w-2/5">
                             <a href={`/${manga.type || "manga"}/${manga.mal_id}`}>
-                              <img className="w-full h-full aspect-auto object-cover" src={`${manga.images.jpg.image_url}`} alt={manga.title_english || manga.title} />
+                              <img className="w-full h-full aspect-auto object-cover hover:brightness-60 duration-200" src={`${manga.images.jpg.image_url}`} alt={manga.title_english || manga.title} />
                             </a>
                           </div>
                           <div className="w-1/2 md:w-3/5 flex flex-col gap-y-2 pl-2 pt-2">
@@ -252,7 +256,7 @@ export default function MagazinePage() {
                       <div className="flex flex-col rounded-md theme-bg-colors">
                         <div className="flex flex-row grow">
                           <a href={`/${manga.type || "manga"}/${manga.mal_id}`} className="w-1/10 min-w-22 aspect-auto">
-                            <img src={manga.images.jpg.image_url} alt={manga.title_english || manga.title} className="w-full h-full object-cover" />
+                            <img src={manga.images.jpg.image_url} alt={manga.title_english || manga.title} className="w-full h-full object-cover  hover:brightness-60 duration-200" />
                           </a>
 
                           <div className="flex-1 flex flex-col gap-1.5 min-w-0">

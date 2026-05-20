@@ -24,7 +24,7 @@ export default function HomePage() {
   return (
     <div className="relative w-screen">
       {seasonQ.isPending ? <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div> : <HomeSlider season={seasonQ?.data?.uniqueSeasonData?.slice(0, 10)} />}
-      <div className="w-full py-3 px-4 flex flex-col">
+      <div className="w-full py-3 px-5 flex flex-col">
         <div className="text-md/relaxed sm:text-xl/relaxed font-extrabold uppercase">Latest Updates</div>
         <RecentAnime />
         <RecentManga />

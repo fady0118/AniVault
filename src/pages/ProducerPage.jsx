@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from "react-router";
 import { WindowContext } from "../App";
 import { useQueries } from "@tanstack/react-query";
 import { dateFormatter, renderIcon } from "../utility/utils";
-import { Baby, Calendar, ChevronLeftSquare, ChevronRightSquare, Grid3x2, Hash, LucideLayoutGrid, LucideLayoutList, Star, User, Videotape } from "lucide-react";
+import { Baby, Calendar, ChevronLeft, ChevronRight, Grid3x2, Hash, LucideLayoutGrid, LucideLayoutList, Star, User, Videotape } from "lucide-react";
 
 const classes = {
   gridClasses: {
@@ -138,28 +138,28 @@ export default function ProducerPage() {
                 <div id="anime" className="flex flex-col w-full md:w-5/6 box-colors rounded-md">
                   <div className="flex flex-row justify-between border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">
                     <span>animeography</span>
-                    <div id="controls" className="flex flex-row">
+                    <div id="controls" className="flex flex-row justify-between flex-wrap w-fit gap-x-5">
                       <div className="flex flex-row gap-x-1 items-center">
-                        <ChevronLeftSquare
+                        <ChevronLeft
                           onClick={() => currentPageChange("decrement")}
                           size={18}
-                          className={`${currentPage === 1 ? "stroke-gray-700" : "stroke-yellow-500"} p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30`}
+                          className={`${currentPage === 1 ? "stroke-text-light/50 dark:stroke-text-dark/50" : "stroke-text-light dark:stroke-text-dark hover:cursor-pointer hover:bg-amethyst-smoke-500/15"} stroke-3 p-2 box-content rounded-full duration-200`}
                         />
                         <p>{currentPage}</p>
-                        <ChevronRightSquare
+                        <ChevronRight
                           onClick={() => currentPageChange("increment")}
                           size={18}
-                          className={`${!animesQ?.data?.pagination?.has_next_page ? "stroke-gray-700" : "stroke-yellow-500"} p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30`}
+                          className={`${!animesQ?.data?.pagination?.has_next_page ? "stroke-text-light/50 dark:stroke-text-dark/50" : "stroke-text-light dark:stroke-text-dark hover:cursor-pointer hover:bg-amethyst-smoke-500/15"} stroke-3 p-2 box-content rounded-full duration-200`}
                         />
                       </div>
-                      <div id="layoutControls" className="flex flex-row gap-x-0.5">
+                      <div id="layoutControls" className="flex flex-row items-center gap-x-0.5">
                         <div>
                           <Grid3x2
                             onClick={() => {
                               setLayout("smallGrid");
                             }}
                             size={18}
-                            className="p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
+                            className={`layout-icon ${layout === "smallGrid" ? "active-layout-icon" : ""}`}
                           />
                         </div>
                         <div>
@@ -168,7 +168,7 @@ export default function ProducerPage() {
                               setLayout("detailedGrid");
                             }}
                             size={18}
-                            className="p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
+                            className={`layout-icon ${layout === "detailedGrid" ? "active-layout-icon" : ""}`}
                           />
                         </div>
 
@@ -178,7 +178,7 @@ export default function ProducerPage() {
                               setLayout("tiles");
                             }}
                             size={18}
-                            className="p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
+                            className={`layout-icon ${layout === "tiles" ? "active-layout-icon" : ""}`}
                           />
                         </div>
                       </div>
@@ -193,7 +193,7 @@ export default function ProducerPage() {
                             <div className="w-full h-fit flex flex-col gap-y-1">
                               <div className="relative w-full h-fit rounded-md overflow-hidden">
                                 <a href={`/anime/${anime.mal_id}`}>
-                                  <img className="w-full aspect-3/4 object-cover" src={`${anime.images.jpg.image_url}`} alt={anime.title_english || anime.title} />
+                                  <img className="w-full aspect-3/4 object-cover hover:brightness-60 duration-200" src={`${anime.images.jpg.image_url}`} alt={anime.title_english || anime.title} />
                                 </a>
                                 <div className="absolute bottom-0 left-0 py-2 px-3 gap-1 flex flex-col w-full text-xs font-light bg-linear-45 from-35% from-amethyst-smoke-400 dark:from-dark-amethyst-smoke-200 to-75% to-transparent">
                                   <div className="flex items-center gap-2">
@@ -249,7 +249,11 @@ export default function ProducerPage() {
                             <div className="w-full flex flex-row items-start grow px-1.5">
                               <div id="poster" className="w-1/2 md:w-2/5">
                                 <a href={`/anime/${anime.mal_id}`}>
-                                  <img className="w-full h-full aspect-auto object-cover" src={`${anime.images.jpg.image_url}`} alt={anime.title_english || anime.title} />
+                                  <img
+                                    className="w-full h-full aspect-auto object-cover hover:brightness-60 duration-200"
+                                    src={`${anime.images.jpg.image_url}`}
+                                    alt={anime.title_english || anime.title}
+                                  />
                                 </a>
                               </div>
                               <div className="w-1/2 md:w-3/5 flex flex-col gap-y-2 pl-2 pt-2">
@@ -335,7 +339,7 @@ export default function ProducerPage() {
                           <div className="theme-bg-colors">
                             <div className="flex flex-row grow">
                               <a href={`/anime/${anime.mal_id}`} className="w-1/10 min-w-22 aspect-auto">
-                                <img src={anime.images.jpg.image_url} alt={anime.title_english || anime.title} className="w-full object-cover" />
+                                <img src={anime.images.jpg.image_url} alt={anime.title_english || anime.title} className="w-full object-cover hover:brightness-60 duration-200" />
                               </a>
 
                               <div className="flex-1 flex flex-col gap-1.5 min-w-0">

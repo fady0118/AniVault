@@ -145,7 +145,7 @@ export default function RecentManga() {
     <div id="recent" className="w-full relative flex flex-col gap-y-3 p-3">
       <div className="w-full flex flex-row flex-wrap justify-between items-center text-md/relaxed sm:text-xl/relaxed font-extrabold uppercase">
         <div className="text-[0.85em]">Recent Manga</div>
-        <div className="flex flex-row items-center gap-x-5">
+        <div className="flex flex-row flex-wrap items-center gap-x-5">
           <div id="pagination" className="flex flex-row gap-x-1.5 items-center text-sm">
             <div onClick={() => swapPage("prev")}>
               <ChevronLeft

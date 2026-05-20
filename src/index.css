@@ -191,21 +191,30 @@
     @apply w-fit text-blue-600 dark:text-blue-400 border-b border-transparent dark:hover:border-blue-400 hover:border-blue-600
   }
 
-  .tab{
-   @apply px-3.5 py-1 rounded-md border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 hover:cursor-pointer hover:bg-amethyst-smoke-700/20 duration-200
-  }
-  .active-tab{
-   @apply border border-blue-600/50 dark:border-blue-300/50 text-blue-600 dark:text-blue-300 bg-amethyst-smoke-200 dark:bg-dark-amethyst-smoke-300
+  .tab {
+    @apply px-3.5 py-1 rounded-md border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 hover:cursor-pointer hover:bg-amethyst-smoke-700/20 duration-200
   }
 
-.target {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s;
-}
+  .active-tab {
+    @apply border border-blue-600/50 dark:border-blue-300/50 text-blue-600 dark:text-blue-300 bg-amethyst-smoke-200 dark:bg-dark-amethyst-smoke-300
+  }
 
-.wrapper:hover .target {
-  opacity: 1;
-  visibility: visible;
-}
+  .layout-icon {
+    @apply p-1 box-content hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30
+  }
+
+  .active-layout-icon {
+    @apply stroke-blue-600
+  }
+
+  .target {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+  }
+
+  .wrapper:hover .target {
+    opacity: 1;
+    visibility: visible;
+  }
 }
