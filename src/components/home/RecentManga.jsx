@@ -76,7 +76,7 @@ export default function RecentManga() {
     // data
     renderPopupData();
   }
-  
+
   function renderPopupData() {
     // element node ref
     const element = targetRef.current;
@@ -196,7 +196,7 @@ export default function RecentManga() {
               <>
                 {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
                   <div className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
-                    <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40">{item}</div>
+                    <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
                   </div>
                 ))}
               </>
@@ -234,7 +234,7 @@ export default function RecentManga() {
               <>
                 {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
                   <div className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
-                    <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40">{item}</div>
+                    <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
                   </div>
                 ))}
               </>
@@ -272,7 +272,7 @@ export default function RecentManga() {
               <>
                 {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
                   <div className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
-                    <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40">{item}</div>
+                    <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
                   </div>
                 ))}
               </>
