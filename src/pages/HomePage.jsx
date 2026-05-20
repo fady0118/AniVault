@@ -20,7 +20,7 @@ export default function HomePage() {
           if (!res.ok) throw new Error(res.statusText);
           const season_Data = await res.json();
           const uniqueSeasonData = [...new Set(season_Data.data.map((elm) => elm.mal_id))].map((id) => season_Data.data.find((item) => item.mal_id === id));
-          return {...season_Data, uniqueSeasonData};
+          return { ...season_Data, uniqueSeasonData };
         },
       },
       {
@@ -40,7 +40,7 @@ export default function HomePage() {
           if (!res.ok) throw new Error(res.statusText);
           const recentMovieData = await res.json();
           const uniqueMovieData = [...new Set(recentMovieData.data.map((elm) => elm.mal_id))].map((id) => recentMovieData.data.find((item) => item.mal_id === id));
-          return uniqueMovieData;
+          return { ...recentMovieData, uniqueMovieData };
         },
       },
     ],
@@ -85,17 +85,25 @@ export default function HomePage() {
     // aired, status
     element.querySelectorAll("#aired>p")[1].textContent = popupDataRef?.current?.aired?.string;
     element.querySelectorAll("#status>p")[1].textContent = popupDataRef?.current?.status;
-    // genres     genres.name
+    // genres
     const genresDiv = element.querySelector("#genres>div");
     genresDiv.innerHTML = popupDataRef?.current?.genres?.reduce(
       (c, genre) => c + ` <p class="font-medium text-[0.9em] px-1 rounded-xl border border-dark-amethyst-smoke-50/20 dark:border-amethyst-smoke-50/20">${genre.name}</p>`,
       "",
     );
+    // details
+    if (popupDataRef?.current?.mal_id) {
+      if (popupDataRef?.current?.type === "manga") {
+        element.querySelector("#details").href = `/manga/${popupDataRef?.current?.mal_id}`;
+      } else {
+        element.querySelector("#details").href = `/anime/${popupDataRef?.current?.mal_id}`;
+      }
+    }
   }
 
   return (
     <div className="relative w-screen">
-      {seasonQ.isPending ? <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div> : <HomeSlider season={seasonQ?.data?.uniqueSeasonData?.slice(0,10)} />}
+      {seasonQ.isPending ? <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div> : <HomeSlider season={seasonQ?.data?.uniqueSeasonData?.slice(0, 10)} />}
       <div className="w-full p-3">
         <div id="recent" className="relative flex flex-col gap-y-3 mt-3 px-3 ">
           <div className="w-full flex flex-row flex-wrap justify-between items-center text-md/relaxed sm:text-xl/relaxed font-extrabold uppercase">
