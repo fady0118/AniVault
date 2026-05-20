@@ -16,7 +16,7 @@ export default function RecentAnime() {
       {
         queryKey: ["recentTvData", tvCurrentPage],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime?type=tv&sfw=true&genres_exclude=9,12&status=airing&order_by=start_date&sort=desc&page=${tvCurrentPage || 1}`);
+          const res = await fetch(`https://api.jikan.moe/v4/anime?type=tv&sfw=true&genres_exclude=9,12,49&status=airing&order_by=start_date&sort=desc&page=${tvCurrentPage || 1}`);
           if (!res.ok) throw new Error(res.statusText);
           const recentTvData = await res.json();
           const uniqueTvData = [...new Set(recentTvData.data.map((elm) => elm.mal_id))].map((id) => recentTvData.data.find((item) => item.mal_id === id));
@@ -26,7 +26,7 @@ export default function RecentAnime() {
       {
         queryKey: ["recentMovieData", movieCurrentPage],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime?type=movie&sfw=true&genres_exclude=9,12&status=complete&order_by=start_date&sort=desc&page=${movieCurrentPage || 1}`);
+          const res = await fetch(`https://api.jikan.moe/v4/anime?type=movie&sfw=true&genres_exclude=9,12,49&status=complete&order_by=start_date&sort=desc&page=${movieCurrentPage || 1}`);
           if (!res.ok) throw new Error(res.statusText);
           const recentMovieData = await res.json();
           const uniqueMovieData = [...new Set(recentMovieData.data.map((elm) => elm.mal_id))].map((id) => recentMovieData.data.find((item) => item.mal_id === id));
@@ -188,9 +188,9 @@ export default function RecentAnime() {
                     <div
                       onMouseEnter={(e) => handleInfoShow(e)}
                       onMouseLeave={(e) => handleInfoHide(e)}
-                      className="target absolute top-1/25 right-1/20 rounded-full p-2 hover:cursor-pointer bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300"
+                      className="target absolute top-1/25 right-1/20 rounded-full p-1 hover:cursor-pointer bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300"
                     >
-                      <Info className="stroke-blue-600 dark:stroke-blue-300 pointer-events-none" size={25} />
+                      <Info className="stroke-pink-600 dark:stroke-pink-400 pointer-events-none" size={20} />
                     </div>
                   </div>
                 ))}
@@ -228,7 +228,7 @@ export default function RecentAnime() {
                       onMouseLeave={(e) => handleInfoHide(e)}
                       className="target absolute top-1/25 right-1/20 rounded-full p-2 hover:cursor-pointer bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300"
                     >
-                      <Info className="stroke-blue-600 dark:stroke-blue-300 pointer-events-none" size={25} />
+                      <Info className="stroke-pink-600 dark:stroke-pink-400 pointer-events-none" size={20} />
                     </div>
                   </div>
                 ))}
