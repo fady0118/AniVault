@@ -10,7 +10,7 @@ export default function AnimePopup({ mouseLeave, ref }) {
             <p className="font-bold text-[1.2em]">title</p>
             <p className="text-[0.9em]">title_japanese</p>
           </div>
-          <div className="text-[0.7em] flex flex-row flex-wrap gap-x-1.5 justify-start items-center">
+          <div className="text-[0.75em] flex flex-row flex-wrap gap-x-1.5 justify-start items-center">
             <div id="rating" className="flex flex-row gap-x-1 items-center px-2 py-1 rounded-xl border magazine-border-colors">
               <Baby size={10} />
               <p>rating</p>
@@ -21,7 +21,7 @@ export default function AnimePopup({ mouseLeave, ref }) {
             </div>
           </div>
           <div id="synopsis">
-            <p className="max-lines-4 cutoff-text-abs">
+            <p className="font-light max-lines-4 cutoff-text-abs">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores quod officia dignissimos earum est illo provident quidem reiciendis hic veniam, autem veritatis ducimus molestiae
               corporis aliquid temporibus voluptatem sint magnam.
             </p>

@@ -16,10 +16,11 @@ export default function HomePage() {
       {
         queryKey: ["seasonListData"],
         queryFn: async () => {
-          const res = await fetch("https://api.jikan.moe/v4/seasons/now?filter=tv&limit=10?filter=tv&limit=10");
+          const res = await fetch("https://api.jikan.moe/v4/seasons/now?filter=tv&limit=10?filter=tv&limit=15");
           if (!res.ok) throw new Error(res.statusText);
           const season_Data = await res.json();
-          return season_Data;
+          const uniqueSeasonData = [...new Set(season_Data.data.map((elm) => elm.mal_id))].map((id) => season_Data.data.find((item) => item.mal_id === id));
+          return {...season_Data, uniqueSeasonData};
         },
       },
       {
@@ -28,7 +29,8 @@ export default function HomePage() {
           const res = await fetch("https://api.jikan.moe/v4/anime?type=tv&status=airing&order_by=start_date&sort=desc");
           if (!res.ok) throw new Error(res.statusText);
           const recentTvData = await res.json();
-          return recentTvData;
+          const uniqueTvData = [...new Set(recentTvData.data.map((elm) => elm.mal_id))].map((id) => recentTvData.data.find((item) => item.mal_id === id));
+          return { ...recentTvData, uniqueTvData };
         },
       },
       {
@@ -36,8 +38,9 @@ export default function HomePage() {
         queryFn: async () => {
           const res = await fetch("https://api.jikan.moe/v4/anime?type=movie&status=complete&order_by=start_date&sort=desc");
           if (!res.ok) throw new Error(res.statusText);
-          const recentTvData = await res.json();
-          return recentTvData;
+          const recentMovieData = await res.json();
+          const uniqueMovieData = [...new Set(recentMovieData.data.map((elm) => elm.mal_id))].map((id) => recentMovieData.data.find((item) => item.mal_id === id));
+          return uniqueMovieData;
         },
       },
     ],
@@ -53,8 +56,8 @@ export default function HomePage() {
   function handleInfoShow(e) {
     const rect = e.target.parentElement.getBoundingClientRect();
     const contRect = e.target.parentElement.parentElement.getBoundingClientRect();
-    if (rect.x + rect.width >= window.innerWidth - 240) rect.x = window.innerWidth - rect.width - 240;
-    if (rect.y >= window.innerHeight - 240) rect.y = window.innerHeight - 240;
+    if (rect.x + rect.width >= window.innerWidth - 240) rect.x = window.innerWidth - rect.width - 260;
+    if (rect.y >= window.innerHeight - 240) rect.y = window.innerHeight - 300;
     targetRef.current.style.position = "absolute";
     targetRef.current.style.left = `${rect.x + rect.width - 20}px`;
     targetRef.current.style.top = `${rect.y - contRect.y + 40}px`;
@@ -92,7 +95,7 @@ export default function HomePage() {
 
   return (
     <div className="relative w-screen">
-      {seasonQ.isPending ? <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div> : <HomeSlider season={seasonQ.data.data} />}
+      {seasonQ.isPending ? <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div> : <HomeSlider season={seasonQ?.data?.uniqueSeasonData?.slice(0,10)} />}
       <div className="w-full p-3">
         <div id="recent" className="relative flex flex-col gap-y-3 mt-3 px-3 ">
           <div className="w-full flex flex-row flex-wrap justify-between items-center text-md/relaxed sm:text-xl/relaxed font-extrabold uppercase">
@@ -119,7 +122,7 @@ export default function HomePage() {
           <div className="w-full max-h-[75vh] grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 overflow-y-scroll overflow-x-clip gap-5 py-3">
             {recent === "tv" ? (
               <>
-                {recentTvQ?.data?.data.map((item, i) => (
+                {recentTvQ?.data?.uniqueTvData?.map((item, i) => (
                   <div data-mal-id={item.mal_id} key={i} className="wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
                     <a href={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
                       <img
@@ -145,7 +148,7 @@ export default function HomePage() {
               </>
             ) : (
               <>
-                {recentMovieQ?.data?.data.map((item, i) => (
+                {recentMovieQ?.data?.uniqueMovieData?.map((item, i) => (
                   <div data-mal-id={item.mal_id} key={i} className="wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
                     <a href={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
                       <img
