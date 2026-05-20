@@ -79,7 +79,7 @@ export default function RecentAnime() {
     // genres
     const genresDiv = element.querySelector("#genres>div");
     genresDiv.innerHTML = popupDataRef?.current?.genres?.reduce(
-      (c, genre) => c + ` <p class="font-medium text-[0.9em] px-1 rounded-xl border border-dark-amethyst-smoke-50/20 dark:border-amethyst-smoke-50/20">${genre.name}</p>`,
+      (c, genre) => c + ` <p class="font-medium text-[0.9em] m-0.5 px-1 rounded-xl border magazine-border-colors">${genre.name}</p>`,
       "",
     );
     // hyperlink

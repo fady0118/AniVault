@@ -4,7 +4,7 @@ import { useEffect } from "react";
 export default function MangaPopup({ mouseLeave, ref }) {
   return (
     <>
-      <div ref={ref} onMouseLeave={mouseLeave} id="info" className="z-50 absolute hidden w-64 h-fit rounded-lg bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-200">
+      <div ref={ref} onMouseLeave={mouseLeave} id="info" className="z-50 absolute hidden w-64 h-fit rounded-lg bg-amethyst-smoke-200 dark:bg-dark-amethyst-smoke-200">
         <div className="w-full h-full p-3 flex flex-col gap-y-2 text-xs text-dark-amethyst-smoke-400 dark:text-amethyst-smoke-400">
           <div id="titles" className="flex flex-col gap-y-1 grow-0 items-start justify-center pb-1 capitalize">
             <p className="font-bold text-[1.2em]">title</p>
@@ -35,17 +35,17 @@ export default function MangaPopup({ mouseLeave, ref }) {
               <p className="font-light">status:</p>
               <p className="font-medium">airing</p>
             </div>
-            <div id="genres" className="flex flex-row gap-x-1 items-center">
+            <div id="genres" className="flex flex-row gap-1 items-center">
               <p className="font-light">genres:</p>
-              <div className="flex flex-row items-start flex-wrap gap-x-1.5"></div>
+              <div className="flex flex-row items-start flex-wrap"></div>
             </div>
           </div>
           <a id="details" href="" target="_blank">
-            <div className="w-full px-3 py-1.5 mt-1 flex flex-row items-center justify-between rounded-3xl bg-indigo-500/70 dark:bg-indigo-400/70 group hover:cursor-pointer">
-              <p className="font-extrabold text-[1.35em] dark:group-hover:text-dark-amethyst-smoke-200 group-hover:text-amethyst-smoke-300">More Details</p>
+            <div className="w-full px-3 py-1.5 mt-1 flex flex-row items-center justify-between rounded-3xl text-dark-amethyst-smoke-300 dark:text-amethyst-smoke-300 bg-indigo-500/70 dark:bg-indigo-400/70 group hover:cursor-pointer">
+              <p className="font-extrabold text-[1.35em] dark:group-hover:text-dark-amethyst-smoke-200 group-hover:text-amethyst-smoke-200">More Details</p>
               <Play
                 size={18}
-                className="fill-text-light dark:fill-text-dark stroke-0 group-hover:fill-amethyst-smoke-300 dark:group-hover:fill-dark-amethyst-smoke-200 group-hover:-translate-x-5 duration-300"
+                className="fill-text-light dark:fill-text-dark stroke-0 group-hover:fill-amethyst-smoke-200 dark:group-hover:fill-dark-amethyst-smoke-200 group-hover:-translate-x-5 duration-300"
               />
             </div>
           </a>
