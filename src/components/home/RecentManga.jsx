@@ -219,9 +219,9 @@ export default function RecentManga() {
                     <div
                       onMouseEnter={(e) => handleInfoShow(e)}
                       onMouseLeave={(e) => handleInfoHide(e)}
-                      className="target absolute top-1/25 right-1/20 rounded-full p-2 hover:cursor-pointer bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300"
+                      className="target absolute top-1/25 right-1/20 rounded-full p-1.5 hover:cursor-pointer bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300"
                     >
-                      <Info className="stroke-pink-600 dark:stroke-pink-400 pointer-events-none" size={20} />
+                      <Info className="stroke-indigo-500 dark:stroke-indigo-400 pointer-events-none" size={20} />
                     </div>
                   </div>
                 ))}

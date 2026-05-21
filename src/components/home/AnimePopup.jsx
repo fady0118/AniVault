@@ -41,7 +41,8 @@ export default function AnimePopup({ mouseLeave, ref }) {
             </div>
           </div>
           <a id="details" href="" target="_blank">
-            <div className="w-full px-3 py-1.5 mt-1 flex flex-row items-center justify-between rounded-3xl text-dark-amethyst-smoke-300 dark:text-amethyst-smoke-300 bg-indigo-500/70 dark:bg-indigo-400/70 group hover:cursor-pointer">
+            {/* bg-indigo-500/70 dark:bg-indigo-400/70 */}
+            <div className="w-full px-3 py-1.5 mt-1 flex flex-row items-center justify-between rounded-3xl text-dark-amethyst-smoke-300 dark:text-amethyst-smoke-300 bg-pink-400 dark:bg-pink-500 group hover:cursor-pointer">
               <p className="font-extrabold text-[1.35em] dark:group-hover:text-dark-amethyst-smoke-200 group-hover:text-amethyst-smoke-200">More Details</p>
               <Play
                 size={18}

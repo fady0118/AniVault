@@ -5,23 +5,29 @@ import VideoModal from "../VideoModal";
 import { useVideoModal } from "../../utility/useVideoModal";
 
 export default function HomeSlider({ season }) {
-  if (!season.length) return;
+  if (!season?.length) return;
   const [indexState, setIndexState] = useState(1);
   const sliderRef = useRef(null);
   const indexRef = useRef(0);
   const intervalRef = useRef(null);
 
   function scrollIntoView(index) {
-    const slideNode = sliderRef.current.querySelectorAll("div.slide")[index];
-    const offsetLeft = slideNode.offsetLeft;
-    sliderRef.current.scrollTo({ left: offsetLeft, behavior: index === 0 ? "auto" : "smooth", block: "nearest", inline: "center" });
+    const container = sliderRef.current;
+    if (!container) return;
+    const slideNodes = container.querySelectorAll("div.slide");
+    const slideNode = slideNodes[index];
+    if (!slideNode) return;
+    const containerRect = container.getBoundingClientRect();
+    const nodeRect = slideNode.getBoundingClientRect();
+    const left = container.scrollLeft + (nodeRect.left - containerRect.left) - container.clientWidth / 2 + nodeRect.width / 2;
+    container.scrollTo({ left, behavior: "smooth" });
     setIndexState(index + 1);
   }
   const startInterval = useCallback(() => {
     intervalRef.current = setInterval(() => {
       indexRef.current = (indexRef.current + 1) % season.length;
       scrollIntoView(indexRef.current);
-    }, 5000);
+    }, 4000);
   }, []);
 
   useEffect(() => {
@@ -66,7 +72,7 @@ export default function HomeSlider({ season }) {
             <Slide key={i} animeData={animeData} openModal={openModal} />
           ))}
         </div>
-          <div className="hidden sm:block absolute z-50 w-screen h-[90vh] top-0 bg-[linear-gradient(0deg,#e7e6ee_0%,transparent_5%)] dark:bg-[linear-gradient(0deg,#1b1e1f_0%,transparent_5%)] pointer-events-none"></div>
+        <div className="hidden sm:block absolute z-40 w-screen h-[90vh] top-0 bg-[linear-gradient(0deg,#e7e6ee_0%,transparent_5%)] dark:bg-[linear-gradient(0deg,#1b1e1f_0%,transparent_5%)] pointer-events-none"></div>
       </div>
       <div
         id="manualControls"

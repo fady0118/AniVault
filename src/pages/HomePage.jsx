@@ -24,15 +24,21 @@ export default function HomePage() {
 
   return (
     <div className="relative w-screen">
-      {seasonQ.isPending ? <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div> : <HomeSlider season={seasonQ?.data?.uniqueSeasonData?.slice(0, 10)} />}
-      <div className="flex flex-col md:flex-row gap-x-5 px-5">
-        <div className="w-full md:w-2/3 lg:w-3/4 shrink-0 py-3 flex flex-col">
-          <div className="text-md/relaxed sm:text-xl/relaxed font-extrabold uppercase">Latest Updates</div>
-          <RecentAnime />
-          <RecentManga />
-        </div>
-        <HomeSidePanel/>
-      </div>
+      {seasonQ.isPending ? (
+        <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
+      ) : (
+        <>
+          <HomeSlider season={seasonQ?.data?.uniqueSeasonData?.slice(0, 10)} />
+          <div className="flex flex-col md:flex-row gap-x-5 px-5">
+            <div className="w-full md:w-2/3 lg:w-3/4 shrink-0 py-3 gap-y-2 flex flex-col">
+              <div className="text-md/relaxed sm:text-xl/relaxed font-extrabold uppercase">Latest Updates</div>
+              <RecentAnime />
+              <RecentManga />
+            </div>
+            <HomeSidePanel />
+          </div>
+        </>
+      )}
     </div>
   );
 }
