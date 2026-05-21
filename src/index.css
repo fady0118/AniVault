@@ -162,6 +162,10 @@
     @apply bg-amethyst-smoke-400/75 dark:bg-dark-amethyst-smoke-200/75
   }
 
+  .box-colors-lighter {
+    @apply bg-amethyst-smoke-400/45 dark:bg-dark-amethyst-smoke-200/45
+  }
+
   .rose-link {
     @apply text-rose-600 dark:text-rose-400
   }

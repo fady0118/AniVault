@@ -1,8 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, Trophy } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const dayClass = "day py-1 px-2 rounded-md hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200";
+const classes = {
+  dayClass: "day py-1 px-2 rounded-md hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200",
+  schedualClass: "w-full group text-[0.75em] flex flex-row px-3 py-1.5 gap-x-1.5 hover:saturation-125 hover:bg-blue-600/5 dark:hover:bg-blue-300/5 duration-200",
+};
+
 export default function Schedual() {
   const baseDays = [
     { long: "sunday", short: "SUN" },
@@ -57,7 +61,7 @@ export default function Schedual() {
     scrollIntoView(currentIndex);
   }, [currentIndex]);
   return (
-    <div id="schedual" className="w-1/2 md:w-full flex flex-col items-center rounded-lg box-colors py-1 gap-y-1.5 h-fit min-h-64">
+    <div id="schedual" className="w-1/2 md:w-full flex flex-col items-center rounded-lg box-colors-lighter py-1 gap-y-1.5 h-fit min-h-64">
       <div id="schedualHeader" className="w-full flex flex-row items-center justify-evenly py-1">
         <ChevronLeft
           className="p-1 box-content rounded-full hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200"
@@ -71,7 +75,7 @@ export default function Schedual() {
               onClick={(e) => {
                 setCurrentIndex(Number(e.target.dataset.index));
               }}
-              className={`${dayClass} ${i === currentIndex ? "active-tab" : ""}`}
+              className={`${classes.dayClass} ${i === currentIndex ? "active-tab" : ""}`}
               data-index={i}
               key={i}
             >
@@ -88,20 +92,40 @@ export default function Schedual() {
       </div>
       <div>
         {schedual?.isPending ? (
-          <div>Loading...</div>
+          <div className="text-[0.8em] text-text-light-50 dark:text-text-dark-50 capitalize">Loading...</div>
         ) : (
           <div className="flex flex-col">
-            {schedual?.data?.map((item) => (
-              <a
-                href={`/anime/${item.mal_id}`}
-                key={item?.mal_id}
-                className="w-full group text-[0.75em] flex flex-row px-3 py-1.5 gap-x-1.5 hover:saturation-125 hover:bg-blue-600/5 dark:hover:bg-blue-300/5 duration-200"
-              >
+            <input type="checkbox" name="schedual-checkbox" id="schedual-checkbox" className="peer hidden" />
+            {schedual?.data?.slice(0, 10).map((item) => (
+              <a href={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass}`}>
                 <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
                 <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
               </a>
             ))}
-            {schedual?.data?.length?<p className="px-3 pt-0.5 text-[0.6em] text-text-light-50 dark:text-text-dark-50">Timezone: {schedual?.data[0].broadcast.timezone}</p>:""}
+            {schedual?.data?.slice(10).map((item) => (
+              <a href={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass} hidden peer-checked:flex`}>
+                <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
+                <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
+              </a>
+            ))}
+            {schedual?.data?.length ? (
+              <>
+                <p className="px-3 text-[0.6em] text-text-light-50 dark:text-text-dark-50 capitalize">Timezone: {schedual?.data[0].broadcast.timezone}</p>
+                {schedual?.data?.length > 10 ? (
+                  <label
+                    htmlFor="schedual-checkbox"
+                    className="group flex flex-row w-full items-center justify-end px-3 gap-x-0.5 hover:cursor-pointer text-[0.6em] text-text-light-50 dark:text-text-dark-50 capitalize"
+                  >
+                    <p className="group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200 before:content-['see_more'] group-[.peer:checked_~_&]:before:content-['see_less']"></p>
+                    <ChevronDown className="group-hover:stroke-blue-600 dark:group-hover:stroke-blue-300 duration-200 group-[.peer:checked_~_&]:rotate-180" size={12} />
+                  </label>
+                ) : (
+                  ""
+                )}
+              </>
+            ) : (
+              ""
+            )}
           </div>
         )}
       </div>
