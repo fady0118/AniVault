@@ -44,6 +44,9 @@
   --color-text-light: #383342;
   --color-text-dark: #f8f8fa;
 
+  --color-text-light-50:hsla(260, 13%, 23%, 0.5);
+  --color-text-dark-50:hsla(240, 20%, 98%, 0.5);
+
   --color-mal-blue: #2c51a7;
 
 }

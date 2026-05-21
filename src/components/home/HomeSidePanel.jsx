@@ -18,11 +18,11 @@ export default function HomeSidePanel() {
     ],
   });
   return (
-    <div className="w-full md:w-1/3 lg:w-1/4 min-w-0 h-fit">
-      <div id="Trending" className="w-full flex flex-col rounded-lg box-colors py-2 gap-y-3 mt-3 h-fit text-[1.1em]">
+    <div className="w-full md:w-1/3 lg:w-1/4 min-w-0 h-fit flex flex-row md:flex-col mt-3 gap-4">
+      <div id="Trending" className="w-1/2 md:w-full flex flex-col rounded-lg box-colors py-2 gap-y-3 h-fit text-[1.1em]">
         <div className="flex flex-row gap-x-2 items-center px-3">
-          <Trophy className="stroke-3" size={20} />
-          <p className="uppercase font-bold text-sm/relaxed sm:text-lg/relaxed">Trending</p>
+          <Trophy size={20} />
+          <p className="uppercase font-extrabold text-sm/loose sm:text-lg/loose">Trending</p>
         </div>
         <div className="flex flex-col text-[0.65em]">
           {TrendingAnimeQ.isPending ? (

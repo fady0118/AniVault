@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const dayClass = "day p-1 rounded-md hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200";
+const dayClass = "day py-1 px-2 rounded-md hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200";
 export default function Schedual() {
   const baseDays = [
     { long: "sunday", short: "SUN" },
@@ -17,7 +17,6 @@ export default function Schedual() {
   const OFFSET = 7;
   const date = new Date();
   const sliderRef = useRef(null);
-  //   const indexRef = useRef(Number(date.getDay()) + OFFSET);
   const [currentIndex, setCurrentIndex] = useState(Number(date.getDay()) + OFFSET);
   const schedual = useQuery({
     queryKey: ["schedual", currentIndex],
@@ -58,8 +57,8 @@ export default function Schedual() {
     scrollIntoView(currentIndex);
   }, [currentIndex]);
   return (
-    <div id="schedual" className="w-full flex flex-col items-center rounded-lg box-colors py-2 gap-y-3 mt-3 h-fit">
-      <div id="schedualHeader" className="w-full flex flex-row items-center justify-evenly">
+    <div id="schedual" className="w-1/2 md:w-full flex flex-col items-center rounded-lg box-colors py-1 gap-y-1.5 h-fit min-h-64">
+      <div id="schedualHeader" className="w-full flex flex-row items-center justify-evenly py-1">
         <ChevronLeft
           className="p-1 box-content rounded-full hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200"
           onClick={() => {
@@ -91,12 +90,18 @@ export default function Schedual() {
         {schedual?.isPending ? (
           <div>Loading...</div>
         ) : (
-          <div className="flex flex-col gap-y-1.5 px-3 py-1">
+          <div className="flex flex-col">
             {schedual?.data?.map((item) => (
-              <div key={item?.mal_id} className="w-full">
-                <p className="w-full text-[0.75em]">{item?.title}</p>
-              </div>
+              <a
+                href={`/anime/${item.mal_id}`}
+                key={item?.mal_id}
+                className="w-full group text-[0.75em] flex flex-row px-3 py-1.5 gap-x-1.5 hover:saturation-125 hover:bg-blue-600/5 dark:hover:bg-blue-300/5 duration-200"
+              >
+                <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
+                <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
+              </a>
             ))}
+            {schedual?.data?.length?<p className="px-3 pt-0.5 text-[0.6em] text-text-light-50 dark:text-text-dark-50">Timezone: {schedual?.data[0].broadcast.timezone}</p>:""}
           </div>
         )}
       </div>
