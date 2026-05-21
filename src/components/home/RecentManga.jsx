@@ -161,7 +161,7 @@ export default function RecentManga() {
               />
             </div>
           </div>
-          <div id="recentTabs" className="flex flex-row gap-x-2 items-center text-[0.65em]">
+          <div id="recentTabs" className="flex flex-row gap-x-2 items-center text-[0.55em] sm:text-[0.65em]">
             <div
               onClick={() => {
                 setRecent("manga");

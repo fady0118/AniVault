@@ -138,7 +138,7 @@ export default function RecentAnime() {
               />
             </div>
           </div>
-          <div id="recentTabs" className="flex flex-row gap-x-2 items-center text-[0.65em]">
+          <div id="recentTabs" className="flex flex-row gap-x-2 items-center text-[0.55em] sm:text-[0.65em]">
             <div
               onClick={() => {
                 setRecent("tv");
@@ -164,7 +164,7 @@ export default function RecentAnime() {
             {recentTvQ.isPending ? (
               <>
                 {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
-                  <div className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
+                  <div className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 rounded-lg">
                     <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
                   </div>
                 ))}

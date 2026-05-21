@@ -60,14 +60,17 @@ export default function HomeSlider({ season }) {
 
   return (
     <>
-      <div id="slider" className="relative w-full rounded-xl left-1/2 -translate-x-1/2 h-screen flex overflow-y-hidden overflow-x-scroll no-scrollbar" ref={sliderRef}>
-        {season.map((animeData, i) => (
-          <Slide key={i} animeData={animeData} openModal={openModal} />
-        ))}
+      <div className="w-fit h-fit">
+        <div id="slider" className="relative w-full rounded-xl left-1/2 -translate-x-1/2 h-[90vh] flex overflow-y-hidden overflow-x-scroll no-scrollbar" ref={sliderRef}>
+          {season.map((animeData, i) => (
+            <Slide key={i} animeData={animeData} openModal={openModal} />
+          ))}
+        </div>
+          <div className="hidden sm:block absolute z-50 w-screen h-[90vh] top-0 bg-[linear-gradient(0deg,#e7e6ee_0%,transparent_5%)] dark:bg-[linear-gradient(0deg,#1b1e1f_0%,transparent_5%)] pointer-events-none"></div>
       </div>
       <div
         id="manualControls"
-        className="w-20 xs:w-26 sm:w-30 md:w-38 lg:w-48 absolute top-[40vh] sm:top-[80vh] right-[7vw] flex justify-between items-center p-0 md:py-1.5 md:px-2.5 text-text-light dark:text-text-dark text-shadow-2xs text-shadow-amethyst-smoke-300/50 dark:text-shadow-dark-amethyst-smoke-50/50 rounded-xl bg-amethyst-smoke-400/60 dark:bg-dark-amethyst-smoke-400/60"
+        className="w-20 xs:w-26 sm:w-30 md:w-38 lg:w-48 absolute top-[40vh] sm:top-[60vh] right-[7vw] flex justify-between items-center p-0 md:py-1.5 md:px-2.5 text-text-light dark:text-text-dark text-shadow-2xs text-shadow-amethyst-smoke-300/50 dark:text-shadow-dark-amethyst-smoke-50/50 rounded-xl bg-amethyst-smoke-400/60 dark:bg-dark-amethyst-smoke-400/60"
       >
         <ChevronLeft
           size={30}
@@ -101,7 +104,6 @@ export default function HomeSlider({ season }) {
           className="p-1 box-content rounded-full hover:bg-amethyst-smoke-700/30 hover:cursor-pointer"
         />
       </div>
-      <div className="hidden sm:block absolute z-50 w-screen h-screen top-0 bg-[linear-gradient(0deg,#e7e6ee_0%,transparent_5%)] dark:bg-[linear-gradient(0deg,#1b1e1f_0%,transparent_5%)] pointer-events-none"></div>
       {showVideoModal && videoRef.current && <VideoModal closeModal={closeModal} link={videoRef.current} />}
     </>
   );

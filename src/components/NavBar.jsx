@@ -56,12 +56,13 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
               <Menu size={16} onClick={() => setShowNav(!showNav)} />
             </div>
           )}
-          <div
-            className="group w-fit flex justify-start items-center space-x-0.5 text-sm hover:bg-amethyst-smoke-500/70 dark:hover:bg-dark-amethyst-smoke-600/40"
-            onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.theme)}
-          >
+          <div className="group w-fit flex justify-start items-center space-x-0.5 text-sm" onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.theme)}>
             <button id="themeTogglerBtn" className="group-hover:cursor-pointer" data-theme={theme === "light" ? "dark" : "light"}>
-              {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+              {theme === "light" ? (
+                <Moon className="group-hover:stroke-blue-600 dark:group-hover:stroke-blue-300 duration-200" size={16} />
+              ) : (
+                <Sun className="group-hover:stroke-blue-600 dark:group-hover:stroke-blue-300 duration-200" size={16} />
+              )}
             </button>
           </div>
         </div>
