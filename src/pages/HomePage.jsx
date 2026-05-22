@@ -5,6 +5,7 @@ import Recent from "../components/home/RecentAnime";
 import RecentAnime from "../components/home/RecentAnime";
 import RecentManga from "../components/home/RecentManga";
 import HomeSidePanel from "../components/home/HomeSidePanel";
+import AnimeCollections from "../components/home/AnimeCollections";
 
 export default function HomePage() {
   const [seasonQ] = useQueries({
@@ -37,6 +38,7 @@ export default function HomePage() {
             </div>
             <HomeSidePanel />
           </div>
+          <AnimeCollections />
         </>
       )}
     </div>

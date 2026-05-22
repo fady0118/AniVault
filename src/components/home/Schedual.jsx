@@ -61,7 +61,7 @@ export default function Schedual() {
     scrollIntoView(currentIndex);
   }, [currentIndex]);
   return (
-    <div id="schedual" className="w-1/2 md:w-full flex flex-col items-center rounded-lg box-colors-lighter py-1 gap-y-1.5 h-fit min-h-64">
+    <div id="schedual" className="w-full xs:w-1/2 md:w-full flex flex-col items-center rounded-lg box-colors-lighter py-1 gap-y-1.5 h-fit min-h-64">
       <div id="schedualHeader" className="w-full flex flex-row items-center justify-evenly py-1">
         <ChevronLeft
           className="p-1 box-content rounded-full hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200"
@@ -69,7 +69,7 @@ export default function Schedual() {
             shift(-1);
           }}
         />
-        <div ref={sliderRef} className="w-2/3 flex flex-row items-center gap-x-5 overflow-x-scroll no-scrollbar text-[0.85em]">
+        <div ref={sliderRef} className="w-2/3 flex flex-row items-center gap-x-5 overflow-x-scroll no-scrollbar text-[0.7em] md:text-[0.85em]">
           {days.map((day, i) => (
             <div
               onClick={(e) => {
