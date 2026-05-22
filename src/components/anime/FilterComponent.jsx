@@ -1,9 +1,22 @@
 import { ChevronDown } from "lucide-react";
 import FilterItem from "./FilterItem";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function FilterComponent({ keyName, data, handleSearchParam, searchParams }) {
   const [heading, setHeading] = useState(keyName);
+
+const checkboxRef = useRef(null);
+
+// uncheck the checkbox if the user clicks anywhere outside the div wrapping the checkbox
+useEffect(() => {
+  const handleClickOutside = (e) => {
+    if (checkboxRef.current && !checkboxRef.current.closest('div').contains(e.target)) {
+      checkboxRef.current.checked = false;
+    }
+  };
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => document.removeEventListener('mousedown', handleClickOutside);
+}, []);
 
   function filterComponentTitle() {
     let heading = keyName;
@@ -20,7 +33,7 @@ export default function FilterComponent({ keyName, data, handleSearchParam, sear
   return (
     <div id={keyName} className="group relative w-36">
       <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
-        <input type="checkbox" className="hidden" />
+        <input ref={checkboxRef} type="checkbox" className="hidden" />
         <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">{heading}</p>
         <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200" />
       </label>
