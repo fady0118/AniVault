@@ -214,6 +214,15 @@
     @apply stroke-blue-600
   }
 
+  .letter-filter-hover {
+    @apply hover:text-blue-600
+    /* @apply hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30 */
+  }
+
+  .active-letter-filter {
+    @apply rounded-sm bg-blue-600 pointer-events-none
+  }
+
   .target {
     opacity: 0;
     visibility: hidden;

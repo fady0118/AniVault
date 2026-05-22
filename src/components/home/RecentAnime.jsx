@@ -181,7 +181,7 @@ export default function RecentAnime() {
                       />
                     </a>
                     <div className="w-full grow text-sm xs:text-xs lg:text-sm">
-                      <a href={`/anime/${item.mal_id}`} className="w-full text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200">
+                      <a href={`/anime/${item.mal_id}`} className="w-full cutoff-text-abs max-lines-2 text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200">
                         {item.title}
                       </a>
                     </div>
@@ -219,7 +219,7 @@ export default function RecentAnime() {
                       />
                     </a>
                     <div className="w-full grow text-sm xs:text-xs lg:text-sm">
-                      <a href={`/anime/${item.mal_id}`} className="w-full text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200">
+                      <a href={`/anime/${item.mal_id}`} className="w-full cutoff-text-abs max-lines-2 text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200">
                         {item.title}
                       </a>
                     </div>

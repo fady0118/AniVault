@@ -85,7 +85,7 @@ export default function MagazinePage() {
                         filterByLetter(l);
                       }}
                       key={l}
-                      className="px-1 hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
+                      className={`px-1 duration-200 hover:cursor-pointer letter-filter-hover ${letterFilter===l?"active-letter-filter":""}`}
                     >
                       {l}
                     </div>
@@ -94,7 +94,7 @@ export default function MagazinePage() {
                     onClick={() => {
                       filterByLetter("");
                     }}
-                    className="px-1 hover:cursor-pointer hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30"
+                    className={`px-1 duration-200 hover:cursor-pointer letter-filter-hover ${letterFilter===""?"active-letter-filter":""}`}
                   >
                     #
                   </div>

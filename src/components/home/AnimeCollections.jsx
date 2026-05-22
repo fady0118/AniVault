@@ -43,7 +43,7 @@ export default function AnimeCollections() {
   });
   return (
     <>
-      <div className="mt-5 grid grid-cols-1 xs:grid-cols-2 gap-x-6 px-5 w-full lg:w-9/10 capitalize text-sm sm:text-md md:text-lg">
+      <div className="mt-5 grid grid-cols-1 xs:grid-cols-2 gap-x-6 px-5 w-full lg:w-4/5 capitalize text-sm sm:text-md md:text-lg">
         <div id="top" className="w-full flex flex-col py-1 gap-y-1">
           <p className="uppercase font-extrabold">top anime</p>
           <div className={`${classes.collectionClass}`}>
