@@ -239,4 +239,8 @@
     opacity: 1;
     visibility: visible;
   }
+
+  .header-box{
+    @apply rounded-md flex flex-row items-center justify-between px-2 py-1 hover:brightness-110 duration-200
+  }
 }

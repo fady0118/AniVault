@@ -19,7 +19,7 @@ export default function FilterComponent({ keyName, data, handleSearchParam, sear
   }, [searchParams]);
   return (
     <div id={keyName} className="group relative w-36">
-      <label className="group peer rounded-md box-colors-stronger flex flex-row items-center justify-between px-2 py-1 w-full hover:cursor-pointer hover:brightness-110 duration-200">
+      <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
         <input type="checkbox" className="hidden" />
         <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">{heading}</p>
         <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200" />
