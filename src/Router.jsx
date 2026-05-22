@@ -11,6 +11,7 @@ import MagazinesRootPage from "./pages/Manga/MagazinesRootPage";
 import MagazinePage from "./pages/Manga/MagazinePage";
 import ProducerPage from "./pages/ProducerPage";
 import UserPage from "./pages/UserPage";
+import AnimeRootPage from "./pages/Anime/AnimeRootPage";
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
       {
         path: "anime",
         children: [
+          { index: true, Component: AnimeRootPage },
           {
             path: ":id",
             children: [{ index: true, Component: AnimePage }],
@@ -47,7 +49,7 @@ export const router = createBrowserRouter([
       { path: "character/:id", Component: CharacterPage },
       { path: "people/:id", Component: PeoplePage },
       { path: "producer", children: [{ path: ":id", Component: ProducerPage }] },
-      {path: "user", children:[{path:":username", Component: UserPage}]}
+      { path: "user", children: [{ path: ":username", Component: UserPage }] },
     ],
   },
 ]);
