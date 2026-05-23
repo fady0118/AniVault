@@ -22,6 +22,8 @@ export default function RecentAnime() {
           const uniqueTvData = [...new Set(recentTvData.data.map((elm) => elm.mal_id))].map((id) => recentTvData.data.find((item) => item.mal_id === id));
           return { ...recentTvData, uniqueTvData };
         },
+        retry: 3,
+        retryDelay: 2000,
       },
       {
         queryKey: ["recentMovieData", movieCurrentPage],
@@ -32,6 +34,8 @@ export default function RecentAnime() {
           const uniqueMovieData = [...new Set(recentMovieData.data.map((elm) => elm.mal_id))].map((id) => recentMovieData.data.find((item) => item.mal_id === id));
           return { ...recentMovieData, uniqueMovieData };
         },
+        retry: 3,
+        retryDelay: 2000,
       },
     ],
   });

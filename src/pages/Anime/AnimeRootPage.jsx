@@ -1,47 +1,21 @@
 import { ChevronDown, Plus, Square, SquarePlus } from "lucide-react";
 import { useSearchParams } from "react-router";
 import FilterComponent from "../../components/anime/FilterComponent";
-import { useEffect, useState } from "react";
-import SearchBar from "../../components/anime/SearchBar";
+import { useEffect, useRef, useState } from "react";
+import GenresFilter from "../../components/anime/GenresFilter";
+import KeywordFilter from "../../components/anime/KeywordFilter";
 
 export default function AnimeRootPage() {
   const headerData = { type: ["tv", "movie", "ova", "ona", "special", "tv_special"], status: ["airing", "complete", "upcoming"] };
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchParamStore, setSearchParamsStore] = useState(searchParams);
+  const collectorStore = useRef({});
 
-  // update search parameters in the searchParamsStore state
-  function handleSearchParam(newParam) {
-    setSearchParamsStore((prevParams) => {
-      const updatedParams = new URLSearchParams(prevParams);
-      Object.keys(newParam).forEach((key) => {
-        const newValue = newParam[key];
-        const exisitingValues = updatedParams.has(key) ? updatedParams.get(key).split(",") : [];
-        if (key === "q") {
-          updatedParams.set(key, newValue.trim());
-        } else {
-          if (exisitingValues.includes(newValue)) {
-            const filtered = exisitingValues.filter((item) => item !== newValue);
-            if (filtered.length) {
-              updatedParams.set(key, filtered.join(","));
-            } else {
-              updatedParams.delete(key);
-            }
-          } else {
-            updatedParams.set(key, [...exisitingValues, newValue].join(","));
-          }
-        }
-      });
-      return updatedParams;
-    });
-  }
+  function handleApplyFilter() {
+    const type = collectorStore.current.type();
+    const status = collectorStore.current.status();
+    const keyword = collectorStore.current.keyword();
 
-  // seperate update searchParam function exclusively for the searchBar
-  function handleKeywordSearchParam(newParam) {
-    setSearchParams((prevParams) => {
-      const updatedParams = new URLSearchParams(prevParams);
-      updatedParams.set("q", newParam.q);
-      return updatedParams;
-    });
+    setSearchParams({ type, status, q: keyword });
   }
 
   return (
@@ -52,21 +26,16 @@ export default function AnimeRootPage() {
         </div>
         <div className="order-1 mt-5 px-3 py-1">
           <div id="header" className="w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
-            <SearchBar handleKeywordSearchParam={handleKeywordSearchParam} searchParams={searchParamStore} setSearchParamsStore={setSearchParamsStore} />
+            <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
 
             {Object.keys(headerData).map((key, i) => (
-              <FilterComponent key={i} keyName={key} data={headerData[key]} handleSearchParam={handleSearchParam} searchParams={searchParamStore} />
+              <FilterComponent key={i} keyName={key} data={headerData[key]} registerCollector={(fn) => (collectorStore.current[key] = fn)} />
             ))}
 
-            <div id="genre"></div>
+            <GenresFilter />
             <div id="sort"></div>
-            <div
-              id="filterBtn"
-              onClick={() => {
-                // update the searchParams
-                setSearchParams(searchParamStore);
-              }}
-            >
+
+            <div id="filterBtn" onClick={handleApplyFilter}>
               filter
             </div>
           </div>

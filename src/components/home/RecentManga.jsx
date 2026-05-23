@@ -23,6 +23,8 @@ export default function RecentManga() {
           const uniqueMangaData = [...new Set(recentMangaData.data.map((elm) => elm.mal_id))].map((id) => recentMangaData.data.find((item) => item.mal_id === id));
           return { ...recentMangaData, uniqueMangaData };
         },
+        retry: 3,
+        retryDelay: 2000,
       },
       {
         queryKey: ["recentNovelData", novelCurrentPage],
@@ -33,6 +35,8 @@ export default function RecentManga() {
           const uniqueNovelData = [...new Set(recentNovelData.data.map((elm) => elm.mal_id))].map((id) => recentNovelData.data.find((item) => item.mal_id === id));
           return { ...recentNovelData, uniqueNovelData };
         },
+        retry: 3,
+        retryDelay: 2000,
       },
       {
         queryKey: ["recentManhwaData", manhwaCurrentPage],
@@ -43,6 +47,8 @@ export default function RecentManga() {
           const uniqueManhwaData = [...new Set(recentManhwaData.data.map((elm) => elm.mal_id))].map((id) => recentManhwaData.data.find((item) => item.mal_id === id));
           return { ...recentManhwaData, uniqueManhwaData };
         },
+        retry: 3,
+        retryDelay: 2000,
       },
     ],
   });
