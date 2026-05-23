@@ -46,6 +46,7 @@ export default function Schedual() {
     const left = container.scrollLeft + (nodeRect.left - containerRect.left) - container.clientWidth / 2 + nodeRect.width / 2;
     container.scrollTo({ left, behavior: animate ? "smooth" : "instant" });
   }
+  
   function shift(dir) {
     setCurrentIndex((s) => s + dir);
     // after scrolling into a clone move back
@@ -102,12 +103,16 @@ export default function Schedual() {
                 <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
               </a>
             ))}
-            {schedual?.data?.slice(10).map((item) => (
-              <a href={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass} hidden peer-checked:flex`}>
-                <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
-                <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
-              </a>
-            ))}
+            <div className="grid grid-rows-[0fr] peer-checked:grid-rows-[1fr] transition-[grid-template-rows] duration-300">
+              <div className="overflow-hidden">
+                {schedual?.data?.slice(10).map((item) => (
+                  <a href={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass} `}>
+                    <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
+                    <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
+                  </a>
+                ))}
+              </div>
+            </div>
             {schedual?.data?.length ? (
               <>
                 <p className="px-3 text-[0.6em] text-text-light-50 dark:text-text-dark-50 capitalize">Timezone: {schedual?.data[0].broadcast.timezone}</p>
