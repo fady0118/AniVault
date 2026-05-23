@@ -73,7 +73,7 @@ export default function AnimeRootPage() {
         </div>
       </div>
       <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
-        <img src="/photo-bg.png" alt="" className="w-full h-full object-cover bg-no-repeat opacity-35 contrast-125" />
+        <img src="/photo-bg.png" alt="" className="w-full h-full object-cover bg-no-repeat opacity-30  contrast-125" />
       </div>
     </div>
   );

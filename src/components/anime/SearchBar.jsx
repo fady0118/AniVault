@@ -26,7 +26,7 @@ export default function SearchBar({ handleKeywordSearchParam, searchParams, setS
         type="search"
         name="searchBar"
         id="searchBar"
-        placeholder="search..."
+        placeholder="Search..."
         onKeyDown={(e) => {
           if (e.key === "Enter" && searchValue) {
             handleKeywordSearchParam({ q: searchValue });

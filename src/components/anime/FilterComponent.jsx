@@ -5,18 +5,18 @@ import { useEffect, useRef, useState } from "react";
 export default function FilterComponent({ keyName, data, handleSearchParam, searchParams }) {
   const [heading, setHeading] = useState(keyName);
 
-const checkboxRef = useRef(null);
+  const checkboxRef = useRef(null);
 
-// uncheck the checkbox if the user clicks anywhere outside the div wrapping the checkbox
-useEffect(() => {
-  const handleClickOutside = (e) => {
-    if (checkboxRef.current && !checkboxRef.current.closest('div').contains(e.target)) {
-      checkboxRef.current.checked = false;
-    }
-  };
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => document.removeEventListener('mousedown', handleClickOutside);
-}, []);
+  // uncheck the checkbox if the user clicks anywhere outside the div wrapping the checkbox
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (checkboxRef.current && !checkboxRef.current.closest("div").contains(e.target)) {
+        checkboxRef.current.checked = false;
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   function filterComponentTitle() {
     let heading = keyName;

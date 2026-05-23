@@ -22,6 +22,17 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
     setTheme(theme);
   }
 
+  useEffect(() => {
+    function handleKeyPresses(e) {
+      if (e.ctrlKey && e.key === "k") {
+        e.preventDefault();
+        setShowSearchModal(true)
+      }
+    }
+    document.addEventListener("keydown", handleKeyPresses);
+    return () => document.removeEventListener("keydown", handleKeyPresses);
+  }, []);
+
   return (
     <>
       <nav className="z-50 w-[95vw] flex justify-between items-center px-5 sm:px-7 lg:px-9 xl:px-12 h-12 capitalize fixed top-3 left-1/2 -translate-x-1/2 rounded-lg bg-amethyst-smoke-400/80 dark:bg-dark-amethyst-smoke-100 backdrop-blur-3xl">
@@ -44,7 +55,7 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
                 <span>Ctrl+K</span>
               </div>
               <div className="flex justify-evenly space-x-6">
-                <div className={classes.navListLinkText}>link1</div>
+                <a href="/anime" className={classes.navListLinkText}>anime</a>
                 <div className={classes.navListLinkText}>link2</div>
                 <div className={classes.navListLinkText}>link3</div>
               </div>
