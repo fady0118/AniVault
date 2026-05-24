@@ -31,7 +31,6 @@ export default function FilterComponent({ keyName, data, registerCollector }) {
   }, []);
 
   function handleChange(val) {
-    // needs rework
     setLocalState((prevState) => {
       let prevStateItems = prevState ? prevState.split(",") : [];
       if (prevStateItems.includes(val)) {

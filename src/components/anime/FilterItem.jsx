@@ -7,7 +7,7 @@ export default function FilterItem({ keyName, item, localState, handleChange }) 
       onClick={() => {
         handleChange(item);
       }}
-      className={`w-full flex flex-row items-center justify-between px-1 rounded-xs hover:cursor-pointer ${localState.split(",").includes(item) ? "bg-emerald-500/50" : "hover:bg-amethyst-smoke-500/50 dark:hover:bg-dark-amethyst-smoke-50/75"}`}
+      className={`w-full flex flex-row items-center justify-between px-1 rounded-xs hover:cursor-pointer ${localState.split(",").includes(item) ? "bg-emerald-500/50 hover:bg-emerald-400/75" : "hover:bg-amethyst-smoke-500/50 dark:hover:bg-dark-amethyst-smoke-50/75"}`}
     >
       <div className="flex flex-row items-center gap-x-0.5">
         <>
@@ -22,3 +22,5 @@ export default function FilterItem({ keyName, item, localState, handleChange }) 
     </div>
   );
 }
+
+

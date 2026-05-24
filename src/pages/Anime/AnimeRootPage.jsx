@@ -4,9 +4,12 @@ import FilterComponent from "../../components/anime/FilterComponent";
 import { useEffect, useRef, useState } from "react";
 import GenresFilter from "../../components/anime/GenresFilter";
 import KeywordFilter from "../../components/anime/KeywordFilter";
+import data from "../../utility/data.json";
+
+const filterData = { type: ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"], status: ["airing", "complete", "upcoming"] };
+const genresData = [...data.genres, ...data.themes];
 
 export default function AnimeRootPage() {
-  const headerData = { type: ["tv", "movie", "ova", "ona", "special", "tv_special"], status: ["airing", "complete", "upcoming"] };
   const [searchParams, setSearchParams] = useSearchParams();
   const collectorStore = useRef({});
 
@@ -14,8 +17,9 @@ export default function AnimeRootPage() {
     const type = collectorStore.current.type();
     const status = collectorStore.current.status();
     const keyword = collectorStore.current.keyword();
+    const genres = collectorStore.current.genres()
 
-    setSearchParams({ type, status, q: keyword });
+    setSearchParams({ type, status, q: keyword, genres:genres.genres.join(','), genres_exclude: genres.genres_exclude.join(',')});
   }
 
   return (
@@ -28,11 +32,11 @@ export default function AnimeRootPage() {
           <div id="header" className="w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
             <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
 
-            {Object.keys(headerData).map((key, i) => (
-              <FilterComponent key={i} keyName={key} data={headerData[key]} registerCollector={(fn) => (collectorStore.current[key] = fn)} />
+            {Object.keys(filterData).map((key, i) => (
+              <FilterComponent key={i} keyName={key} data={filterData[key]} registerCollector={(fn) => (collectorStore.current[key] = fn)} />
             ))}
 
-            <GenresFilter />
+            <GenresFilter data={genresData} registerCollector={(fn) => (collectorStore.current.genres = fn)} />
             <div id="sort"></div>
 
             <div id="filterBtn" onClick={handleApplyFilter}>
