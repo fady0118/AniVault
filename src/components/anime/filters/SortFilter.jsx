@@ -5,7 +5,7 @@ import SortItem from "./SortItem";
 
 export default function SortFilter({ registerCollector, data }) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [localState, setLocalState] = useState({ order_by: searchParams.get("order_by") || "", sort: searchParams.get("sort") || "" });
+  const [localState, setLocalState] = useState({ order_by: searchParams.get("order_by") || "start_date", sort: searchParams.get("sort") || "desc" });
   const sortRef = useRef(null);
   const checkboxRef = useRef(null);
   useEffect(() => {

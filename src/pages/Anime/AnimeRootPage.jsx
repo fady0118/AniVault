@@ -20,10 +20,22 @@ export default function AnimeRootPage() {
     const type = collectorStore.current.type();
     const status = collectorStore.current.status();
     const keyword = collectorStore.current.keyword();
-    const genres = collectorStore.current.genres()
-    const sort = collectorStore.current.sort()
+    const genres = collectorStore.current.genres();
+    const sort = collectorStore.current.sort();
     const score = collectorStore.current.score();
-    setSearchParams({ type, status, q: keyword, genres:genres.genres.join(','), genres_exclude: genres.genres_exclude.join(','), order_by:sort.order_by, sort:sort.sort, min_score: score.min_score, max_score:score.max_score});
+    const rating = collectorStore.current.rating();
+    setSearchParams({
+      type,
+      status,
+      q: keyword,
+      genres: genres.genres.join(","),
+      genres_exclude: genres.genres_exclude.join(","),
+      order_by: sort.order_by,
+      sort: sort.sort,
+      min_score: score.min_score,
+      max_score: score.max_score,
+      rating,
+    });
   }
 
   return (
@@ -41,10 +53,10 @@ export default function AnimeRootPage() {
             ))}
 
             <GenresFilter data={genresData} registerCollector={(fn) => (collectorStore.current.genres = fn)} />
-            
+
             <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
 
-            <ExtraFilters registerCollectors={{scoreCollector:(fn) => (collectorStore.current.score = fn)}} />
+            <ExtraFilters registerCollectors={{ scoreCollector: (fn) => (collectorStore.current.score = fn), ratingCollector: (fn) => (collectorStore.current.rating = fn) }} />
             <div id="filterBtn" className=" header-box box-colors-stronger hover:cursor-pointer" onClick={handleApplyFilter}>
               <p className="px-2">filter</p>
             </div>
