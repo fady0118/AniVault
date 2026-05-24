@@ -69,7 +69,7 @@ export default function FilterComponent({ keyName, data, registerCollector }) {
       </label>
       <div className="absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-full p-2 text-2xs/loose">
         {data.map((item, i) => (
-          <FilterItem key={i} keyName={keyName} item={item} localState={localState} handleChange={handleChange} />
+          <FilterItem key={i} item={item} localState={localState} handleChange={handleChange} />
         ))}
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { Square, SquarePlus } from "lucide-react";
 
-export default function FilterItem({ keyName, item, localState, handleChange }) {
+export default function FilterItem({ item, localState, handleChange }) {
   return (
     <div
       id={item}

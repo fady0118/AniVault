@@ -1,13 +1,15 @@
 import { ChevronDown, Plus, Square, SquarePlus } from "lucide-react";
 import { useSearchParams } from "react-router";
-import FilterComponent from "../../components/anime/FilterComponent";
+import FilterComponent from "../../components/anime/filters/FilterComponent";
 import { useEffect, useRef, useState } from "react";
-import GenresFilter from "../../components/anime/GenresFilter";
-import KeywordFilter from "../../components/anime/KeywordFilter";
+import GenresFilter from "../../components/anime/filters/GenresFilter";
+import KeywordFilter from "../../components/anime/filters/KeywordFilter";
 import data from "../../utility/data.json";
+import SortFilter from "../../components/anime/filters/SortFilter";
 
 const filterData = { type: ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"], status: ["airing", "complete", "upcoming"] };
 const genresData = [...data.genres, ...data.themes];
+const sortData = ["mal_id", "title", "start_date", "end_date", "episodes", "score", "scored_by", "rank", "popularity", "members", "favorites"];
 
 export default function AnimeRootPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -18,8 +20,9 @@ export default function AnimeRootPage() {
     const status = collectorStore.current.status();
     const keyword = collectorStore.current.keyword();
     const genres = collectorStore.current.genres()
+    const sort = collectorStore.current.sort()
 
-    setSearchParams({ type, status, q: keyword, genres:genres.genres.join(','), genres_exclude: genres.genres_exclude.join(',')});
+    setSearchParams({ type, status, q: keyword, genres:genres.genres.join(','), genres_exclude: genres.genres_exclude.join(','), order_by:sort.order_by, sort:sort.sort});
   }
 
   return (
@@ -37,7 +40,8 @@ export default function AnimeRootPage() {
             ))}
 
             <GenresFilter data={genresData} registerCollector={(fn) => (collectorStore.current.genres = fn)} />
-            <div id="sort"></div>
+            
+            <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
 
             <div id="filterBtn" onClick={handleApplyFilter}>
               filter
