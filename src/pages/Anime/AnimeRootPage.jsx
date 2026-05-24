@@ -6,6 +6,7 @@ import GenresFilter from "../../components/anime/filters/GenresFilter";
 import KeywordFilter from "../../components/anime/filters/KeywordFilter";
 import data from "../../utility/data.json";
 import SortFilter from "../../components/anime/filters/SortFilter";
+import ExtraFilters from "../../components/anime/filters/ExtraFilters/ExtraFilters";
 
 const filterData = { type: ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"], status: ["airing", "complete", "upcoming"] };
 const genresData = [...data.genres, ...data.themes];
@@ -32,7 +33,7 @@ export default function AnimeRootPage() {
           Browser
         </div>
         <div className="order-1 mt-5 px-3 py-1">
-          <div id="header" className="w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
+          <div id="header" className="relative w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
             <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
 
             {Object.keys(filterData).map((key, i) => (
@@ -43,8 +44,9 @@ export default function AnimeRootPage() {
             
             <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
 
-            <div id="filterBtn" onClick={handleApplyFilter}>
-              filter
+            <ExtraFilters />
+            <div id="filterBtn" className=" header-box box-colors-stronger hover:cursor-pointer" onClick={handleApplyFilter}>
+              <p className="px-2">filter</p>
             </div>
           </div>
         </div>

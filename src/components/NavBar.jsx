@@ -67,8 +67,8 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
               <Menu size={16} onClick={() => setShowNav(!showNav)} />
             </div>
           )}
-          <div className="group w-fit flex justify-start items-center space-x-0.5 text-sm" onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.theme)}>
-            <button id="themeTogglerBtn" className="group-hover:cursor-pointer" data-theme={theme === "light" ? "dark" : "light"}>
+          <div className="group w-fit flex justify-start items-center space-x-0.5 text-sm" onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}>
+            <button id="themeTogglerBtn" className="group-hover:cursor-pointer" data-next-theme={theme === "light" ? "dark" : "light"}>
               {theme === "light" ? (
                 <Moon className="group-hover:stroke-blue-600 dark:group-hover:stroke-blue-300 duration-200" size={16} />
               ) : (
