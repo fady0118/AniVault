@@ -22,8 +22,8 @@ export default function AnimeRootPage() {
     const keyword = collectorStore.current.keyword();
     const genres = collectorStore.current.genres()
     const sort = collectorStore.current.sort()
-
-    setSearchParams({ type, status, q: keyword, genres:genres.genres.join(','), genres_exclude: genres.genres_exclude.join(','), order_by:sort.order_by, sort:sort.sort});
+    const score = collectorStore.current.score();
+    setSearchParams({ type, status, q: keyword, genres:genres.genres.join(','), genres_exclude: genres.genres_exclude.join(','), order_by:sort.order_by, sort:sort.sort, min_score: score.min_score, max_score:score.max_score});
   }
 
   return (
@@ -44,7 +44,7 @@ export default function AnimeRootPage() {
             
             <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
 
-            <ExtraFilters />
+            <ExtraFilters registerCollectors={{scoreCollector:(fn) => (collectorStore.current.score = fn)}} />
             <div id="filterBtn" className=" header-box box-colors-stronger hover:cursor-pointer" onClick={handleApplyFilter}>
               <p className="px-2">filter</p>
             </div>

@@ -2,7 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 
-export default function ScoreFilter() {
+export default function ScoreFilter({ registerCollector }) {
   const [searchParams] = useSearchParams();
   // localState for values capturing and local use
   const [localState, setLocalState] = useState({ min_score: searchParams.get("min_score") ?? "0", max_score: searchParams.get("max_score") ?? "10" });
@@ -12,16 +12,21 @@ export default function ScoreFilter() {
   const checkboxRef = useRef(null);
 
   useEffect(() => {
+    registerCollector(() => localRef.current);
     // uncheck the checkbox if the user clicks anywhere outside the div wrapping the checkbox
     const handleClickOutside = (e) => {
       if (checkboxRef.current && !checkboxRef.current.closest("div").contains(e.target)) {
         checkboxRef.current.checked = false;
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // update ref
+  useEffect(() => {
+    localRef.current = localState;
+  }, [localState]);
 
   function changeMinRadio(e) {
     const val = Number(e.target.value);
