@@ -31,7 +31,6 @@ export default function ExtraFilters({ registerCollectors }) {
           <ScoreFilter registerCollector={registerCollectors.scoreCollector} />
           <RatingFilter data={ratingData} registerCollector={registerCollectors.ratingCollector} />
           <DateFilter data={dateTypesData} registerCollector={registerCollectors.dateCollector}/>
-          {/* <DateFilter type="end_date" registerCollector={registerCollectors.endDateCollector}/> */}
         </div>
       </div>
     </>

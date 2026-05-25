@@ -1,4 +1,4 @@
-import { ChevronDown, Plus, Square, SquarePlus } from "lucide-react";
+import { ChevronDown, Info, Plus, Square, SquarePlus } from "lucide-react";
 import { useSearchParams } from "react-router";
 import FilterComponent from "../../components/anime/filters/FilterComponent";
 import { useEffect, useRef, useState } from "react";
@@ -44,11 +44,22 @@ export default function AnimeRootPage() {
 
   return (
     <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3">
-      <div className="w-[95vw] flex flex-col space-y-3">
+      <div className="w-[95vw] flex flex-col ">
         <div id="title" className="order-1 mt-5 px-5 py-1 uppercase font-bold text-xl">
           Browser
         </div>
-        <div className="order-1 mt-5 px-3 py-1">
+        <div className="order-1 px-3 py-1">
+          <div id="disclaimer" className="w-full mb-2 flex flex-row items-center gap-x-2 py-1.5 px-2.5 box-colors border border-indigo-600/60 rounded-r-md text-2xs">
+            <Info size={15} />
+            <p className="flex flex-row items-center gap-x-1.5">
+              <span className="font-medium">Jikan API uses AND logic for genre filters.</span>
+              <span className="">Included genres are capped at</span>
+              <span className="inline-flex items-center badge badge-outline badge-primary text-[1em] px-1.5 py-0.5 h-fit rounded-full">max 3 (1 recommended)</span>
+              <span>-</span>
+              <span>excluded genres have no cap.</span>
+            </p>
+          </div>
+
           <div id="header" className="relative w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
             <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
 
