@@ -2,9 +2,10 @@ import { Settings2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import ScoreFilter from "./ScoreFilter";
 import RatingFilter from "./RatingFilter";
+import DateFilter from "./DateFilter";
 
 const ratingData = ["g", "pg", "pg13", "r17", "r", "rx"];
-
+const dateTypesData = ["start_date", "end_date"]
 export default function ExtraFilters({ registerCollectors }) {
   const checkboxRef = useRef(null);
 
@@ -29,8 +30,8 @@ export default function ExtraFilters({ registerCollectors }) {
         <div className="absolute top-6 right-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-4 gap-1 p-2">
           <ScoreFilter registerCollector={registerCollectors.scoreCollector} />
           <RatingFilter data={ratingData} registerCollector={registerCollectors.ratingCollector} />
-          <p>start date</p>
-          <p>end date</p>
+          <DateFilter data={dateTypesData} registerCollector={registerCollectors.dateCollector}/>
+          {/* <DateFilter type="end_date" registerCollector={registerCollectors.endDateCollector}/> */}
         </div>
       </div>
     </>

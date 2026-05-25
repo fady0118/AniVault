@@ -24,6 +24,8 @@ export default function AnimeRootPage() {
     const sort = collectorStore.current.sort();
     const score = collectorStore.current.score();
     const rating = collectorStore.current.rating();
+    const date = collectorStore.current.date();
+
     setSearchParams({
       type,
       status,
@@ -35,6 +37,8 @@ export default function AnimeRootPage() {
       min_score: score.min_score,
       max_score: score.max_score,
       rating,
+      start_date: date.start_date,
+      end_date: date.end_date,
     });
   }
 
@@ -56,7 +60,13 @@ export default function AnimeRootPage() {
 
             <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
 
-            <ExtraFilters registerCollectors={{ scoreCollector: (fn) => (collectorStore.current.score = fn), ratingCollector: (fn) => (collectorStore.current.rating = fn) }} />
+            <ExtraFilters
+              registerCollectors={{
+                scoreCollector: (fn) => (collectorStore.current.score = fn),
+                ratingCollector: (fn) => (collectorStore.current.rating = fn),
+                dateCollector: (fn) => (collectorStore.current.date = fn),
+              }}
+            />
             <div id="filterBtn" className=" header-box box-colors-stronger hover:cursor-pointer" onClick={handleApplyFilter}>
               <p className="px-2">filter</p>
             </div>

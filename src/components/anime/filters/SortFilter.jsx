@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronsUpDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronsUpDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import SortItem from "./SortItem";
@@ -53,7 +53,7 @@ export default function SortFilter({ registerCollector, data }) {
       <div id="sort" onClick={handleSortChange} className="box-colors rounded-md px-0.5 py-1 hover:brightness-110 hover:cursor-pointer duration-200">
         {localState.sort === "asc" ? (
           <>
-            <ChevronUp size={14} />
+            <ChevronDown className="rotate-180" size={14} />
           </>
         ) : localState.sort === "desc" ? (
           <>
