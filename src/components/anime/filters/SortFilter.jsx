@@ -20,6 +20,11 @@ export default function SortFilter({ registerCollector, data }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    setLocalState({ order_by: searchParams.get("order_by") || "start_date", sort: searchParams.get("sort") || "desc" });
+  }, [searchParams]);
+
   useEffect(() => {
     sortRef.current = localState;
   }, [localState]);

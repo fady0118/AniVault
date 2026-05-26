@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { jikanFetch } from "../../utility/jikanApi";
 
 export default function AnimeContainer({ searchParams }) {
+  const [currentPage, setCurrentPage] = useState(1)
   // type & status are enums in the api so we need to seperate them from the other params and fetch in parallel
   const types = useMemo(() => searchParams.get("type"), [searchParams]);
   const statuses = useMemo(() => searchParams.get("status"), [searchParams]);
@@ -29,9 +30,9 @@ export default function AnimeContainer({ searchParams }) {
   const queries = useQueries({
     queries: typeList.flatMap((type) =>
       statusList.map((status) => ({
-        queryKey: ["animeData", rest.toString(), type, status],
+        queryKey: ["animeData", rest.toString(), type, status, currentPage],
         queryFn: async () => {
-          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?${rest}&type=${type}&status=${status}`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?${rest}&type=${type}&status=${status}&page=${currentPage}`);
           if (!res.ok) throw new Error(res.statusText);
           return await res.json();
         },

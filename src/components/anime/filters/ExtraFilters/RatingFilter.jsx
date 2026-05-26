@@ -25,6 +25,10 @@ export default function RatingFilter({ data, registerCollector }) {
   }, []);
 
   useEffect(() => {
+    setLocalState(searchParams.get("rating") || "");
+  }, [searchParams]);
+
+  useEffect(() => {
     // update ref
     localRef.current = localState;
     // update heading

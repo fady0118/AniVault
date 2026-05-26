@@ -14,6 +14,10 @@ export default function KeywordFilter({ registerCollector }) {
     registerCollector(() => localRef.current);
   }, []);
 
+  useEffect(() => {
+    setLocalState(searchParams.get("q") ?? "");
+  }, [searchParams]);
+
   // refresh ref on localState change
   useEffect(() => {
     localRef.current = localState;

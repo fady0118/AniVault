@@ -23,6 +23,10 @@ export default function ScoreFilter({ registerCollector }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    setLocalState({ min_score: searchParams.get("min_score") ?? "0", max_score: searchParams.get("max_score") ?? "10" });
+  }, [searchParams]);
+
   // update ref
   useEffect(() => {
     localRef.current = localState;

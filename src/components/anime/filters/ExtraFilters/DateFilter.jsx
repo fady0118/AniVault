@@ -14,6 +14,10 @@ export default function DateFilter({ data, registerCollector }) {
     registerCollector(() => localRef.current);
   }, []);
 
+  useEffect(() => {
+    setLocalState({ start_date: searchParams.get(data[0]) || "", end_date: searchParams.get(data[1]) || "" });
+  }, [searchParams]);
+
   // update ref
   useEffect(() => {
     localRef.current = localState;

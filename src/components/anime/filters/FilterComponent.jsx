@@ -30,6 +30,10 @@ export default function FilterComponent({ keyName, data, registerCollector }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    setLocalState(searchParams.get(keyName) ?? "");
+  }, [searchParams]);
+
   function handleChange(val) {
     setLocalState((prevState) => {
       let prevStateItems = prevState ? prevState.split(",") : [];
