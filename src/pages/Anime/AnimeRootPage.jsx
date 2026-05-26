@@ -7,6 +7,7 @@ import KeywordFilter from "../../components/anime/filters/KeywordFilter";
 import data from "../../utility/data.json";
 import SortFilter from "../../components/anime/filters/SortFilter";
 import ExtraFilters from "../../components/anime/filters/ExtraFilters/ExtraFilters";
+import AnimeContainer from "../../components/anime/AnimeContainer";
 
 const filterData = { type: ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"], status: ["airing", "complete", "upcoming"] };
 const genresData = [...data.genres, ...data.themes];
@@ -48,7 +49,7 @@ export default function AnimeRootPage() {
         <div id="title" className="order-1 mt-5 px-5 py-1 uppercase font-bold text-xl">
           Browser
         </div>
-        <div className="order-1 px-3 py-1">
+        <div className="order-2 px-3 py-1">
           <div id="disclaimer" className="w-full mb-2 flex flex-row items-center gap-x-2 py-1.5 px-2.5 box-colors border border-indigo-600/60 rounded-r-md text-2xs">
             <Info size={15} />
             <p className="flex flex-row items-center gap-x-1.5">
@@ -60,7 +61,7 @@ export default function AnimeRootPage() {
             </p>
           </div>
 
-          <div id="header" className="relative w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
+          <div id="header" className="z-30 relative w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
             <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
 
             {Object.keys(filterData).map((key, i) => (
@@ -83,6 +84,7 @@ export default function AnimeRootPage() {
             </div>
           </div>
         </div>
+        <AnimeContainer  searchParams={searchParams}/>
       </div>
       <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
         <img src="/photo-bg.png" alt="" className="w-full h-full object-cover bg-no-repeat opacity-30  contrast-125" />

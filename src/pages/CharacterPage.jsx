@@ -4,6 +4,7 @@ import Pictures from "../components/character/Pictures";
 import Gallery from "../components/character/Gallery";
 import useGallery from "../utility/useGallery";
 import { useQueries, useQuery } from "@tanstack/react-query";
+import { jikanFetch } from "../utility/jikanApi";
 
 export default function CharacterPage() {
   const { id } = useParams();
@@ -12,7 +13,7 @@ export default function CharacterPage() {
       {
         queryKey: ["character", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/characters/${id}/full`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/characters/${id}/full`);
           if (!res.ok) throw new Error(res.statusText);
           const character_Data = await res.json();
           return character_Data.data||[];
@@ -21,7 +22,7 @@ export default function CharacterPage() {
       {
         queryKey: ["pictures", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/characters/${id}/pictures`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/characters/${id}/pictures`);
           if (!res.ok) throw new Error(res.statusText);
           const pictures_Data = await res.json();
           return pictures_Data.data||[];

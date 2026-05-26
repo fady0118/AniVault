@@ -11,6 +11,7 @@ import { useQueries } from "@tanstack/react-query";
 import { ChevronRight, Star } from "lucide-react";
 import News from "../../components/anime/News";
 import Reviews from "../../components/anime/Reviews";
+import { jikanFetch } from "../../utility/jikanApi";
 
 export default function MangaPage() {
   let { id } = useParams();
@@ -21,18 +22,16 @@ export default function MangaPage() {
       {
         queryKey: ["manga", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/full`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/manga/${id}/full`);
           if (!res.ok) throw new Error(res.statusText);
           const manga_Data = await res.json();
           return { ...manga_Data.data, flattenedRelations: manga_Data.data?.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))) };
-        },
-        retry: 3,
-        retryDelay: 2000,
+        }
       },
       {
         queryKey: ["characters", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/characters`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/manga/${id}/characters`);
           if (!res.ok) throw new Error(res.statusText);
           const characters_Data = await res.json();
           const charactersDataArr = characters_Data?.data?.map(({ role, character }) => ({
@@ -44,7 +43,7 @@ export default function MangaPage() {
       {
         queryKey: ["reviews", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/reviews`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/manga/${id}/reviews`);
           if (!res.ok) throw new Error(res.statusText);
           const reviews_Data = await res.json();
           const allReviews = reviews_Data?.data ?? [];
@@ -71,18 +70,16 @@ export default function MangaPage() {
       {
         queryKey: ["pictures", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/pictures`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/manga/${id}/pictures`);
           if (!res.ok) throw new Error(res.statusText);
           const pictures_Data = await res.json();
           return pictures_Data.data ?? [];
-        },
-        retry: 2,
-        retryDelay: 2000,
+        }
       },
       {
         queryKey: ["recommendations", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/recommendations`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/manga/${id}/recommendations`);
           if (!res.ok) throw new Error(res.statusText);
           const recommendations_Data = await res.json();
           // recommendationsDataArr data array
@@ -96,7 +93,7 @@ export default function MangaPage() {
       {
         queryKey: ["news", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/manga/${id}/news`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/manga/${id}/news`);
           if (!res.ok) throw new Error(res.statusText);
           const news_Data = await res.json();
           return news_Data.data ?? [];

@@ -1,6 +1,7 @@
 import { useQueries } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { delay } from "../../utility/utils";
+import { jikanFetch } from "../../utility/jikanApi";
 import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 import MangaPopup from "./mangaPopup";
 
@@ -17,38 +18,32 @@ export default function RecentManga() {
       {
         queryKey: ["recentMangaData", mangaCurrentPage],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/manga?type=manga&sfw=true&genres_exclude=9,12,49&status=publishing&order_by=start_date&sort=desc&page=${mangaCurrentPage || 1}`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/manga?type=manga&sfw=true&genres_exclude=9,12,49&status=publishing&order_by=start_date&sort=desc&page=${mangaCurrentPage || 1}`);
           if (!res.ok) throw new Error(res.statusText);
           const recentMangaData = await res.json();
-          const uniqueMangaData = [...new Set(recentMangaData.data.map((elm) => elm.mal_id))].map((id) => recentMangaData.data.find((item) => item.mal_id === id));
+          const uniqueMangaData = [...new Map(recentMangaData.data.map((item) => [item.mal_id, item])).values()];
           return { ...recentMangaData, uniqueMangaData };
         },
-        retry: 3,
-        retryDelay: 2000,
       },
       {
         queryKey: ["recentNovelData", novelCurrentPage],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/manga?type=novel&sfw=true&genres_exclude=9,12,49&status=publishing&order_by=start_date&sort=desc&page=${novelCurrentPage || 1}`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/manga?type=novel&sfw=true&genres_exclude=9,12,49&status=publishing&order_by=start_date&sort=desc&page=${novelCurrentPage || 1}`);
           if (!res.ok) throw new Error(res.statusText);
           const recentNovelData = await res.json();
-          const uniqueNovelData = [...new Set(recentNovelData.data.map((elm) => elm.mal_id))].map((id) => recentNovelData.data.find((item) => item.mal_id === id));
+          const uniqueNovelData = [...new Map(recentNovelData.data.map((item) => [item.mal_id, item])).values()];
           return { ...recentNovelData, uniqueNovelData };
         },
-        retry: 3,
-        retryDelay: 2000,
       },
       {
         queryKey: ["recentManhwaData", manhwaCurrentPage],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/manga?type=manhwa&sfw=true&genres_exclude=9,12,49&status=publishing&order_by=start_date&sort=desc&page=${manhwaCurrentPage || 1}`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/manga?type=manhwa&sfw=true&genres_exclude=9,12,49&status=publishing&order_by=start_date&sort=desc&page=${manhwaCurrentPage || 1}`);
           if (!res.ok) throw new Error(res.statusText);
           const recentManhwaData = await res.json();
-          const uniqueManhwaData = [...new Set(recentManhwaData.data.map((elm) => elm.mal_id))].map((id) => recentManhwaData.data.find((item) => item.mal_id === id));
+          const uniqueManhwaData = [...new Map(recentManhwaData.data.map((item) => [item.mal_id, item])).values()];
           return { ...recentManhwaData, uniqueManhwaData };
         },
-        retry: 3,
-        retryDelay: 2000,
       },
     ],
   });
@@ -201,7 +196,7 @@ export default function RecentManga() {
             {recentMangaQ.isPending ? (
               <>
                 {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
-                  <div className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
+                  <div key={i} className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
                     <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
                   </div>
                 ))}
@@ -239,7 +234,7 @@ export default function RecentManga() {
             {recentNovelQ.isPending ? (
               <>
                 {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
-                  <div className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
+                  <div key={i} className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
                     <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
                   </div>
                 ))}
@@ -277,7 +272,7 @@ export default function RecentManga() {
             {recentManhwaQ.isPending ? (
               <>
                 {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
-                  <div className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
+                  <div key={i} className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
                     <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
                   </div>
                 ))}

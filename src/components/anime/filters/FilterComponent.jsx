@@ -36,7 +36,10 @@ export default function FilterComponent({ keyName, data, registerCollector }) {
       if (prevStateItems.includes(val)) {
         prevStateItems = prevStateItems.filter((item) => item !== val);
       } else {
-        prevStateItems.push(val);
+        if(prevStateItems.length<3){
+          // cap filter to 3 items for api limitations
+          prevStateItems.push(val);
+        }
       }
       return prevStateItems.join(",");
     });

@@ -16,6 +16,7 @@ import VideoModal from "../../components/videoModal";
 import News from "../../components/anime/News";
 import Reviews from "../../components/anime/Reviews";
 import EpisodesModal from "../../components/anime/EpisodesModal";
+import { jikanFetch } from "../../utility/jikanApi";
 
 export default function AnimePage() {
   let { id } = useParams();
@@ -26,7 +27,7 @@ export default function AnimePage() {
       {
         queryKey: ["anime", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/full`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/full`);
           if (!res.ok) throw new Error(res.statusText);
           const anime_Data = await res.json();
           const flattenedRelations = anime_Data.data?.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))) ?? [];
@@ -36,7 +37,7 @@ export default function AnimePage() {
       {
         queryKey: ["characters", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/characters`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/characters`);
           if (!res.ok) throw new Error(res.statusText);
           const characters_Data = await res.json();
           // charactersCardBox data array
@@ -50,7 +51,7 @@ export default function AnimePage() {
       {
         queryKey: ["reviews", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/reviews`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/reviews`);
           if (!res.ok) throw new Error(res.statusText);
           const reviews_Data = await res.json();
           const allReviews = reviews_Data?.data ?? [];
@@ -77,7 +78,7 @@ export default function AnimePage() {
       {
         queryKey: ["pictures", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/pictures`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/pictures`);
           if (!res.ok) throw new Error(res.statusText);
           const pictures_Data = await res.json();
           return pictures_Data.data || [];
@@ -86,7 +87,7 @@ export default function AnimePage() {
       {
         queryKey: ["recommendations", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/recommendations`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/recommendations`);
           if (!res.ok) throw new Error(res.statusText);
           const recommendations_Data = await res.json();
           // recommendationsDataArr data array
@@ -100,19 +101,19 @@ export default function AnimePage() {
       {
         queryKey: ["videos", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/videos`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/videos`);
           if (!res.ok) throw new Error(res.statusText);
           const videos_Data = await res.json();
-          return videos_Data.data;
+          return videos_Data.data||[];
         },
       },
       {
         queryKey: ["news", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/news`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/news`);
           if (!res.ok) throw new Error(res.statusText);
           const news_Data = await res.json();
-          return news_Data.data;
+          return news_Data.data||[];
         },
       },
     ],

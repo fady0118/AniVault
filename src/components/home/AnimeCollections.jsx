@@ -1,5 +1,6 @@
 import { useQueries } from "@tanstack/react-query";
 import { ExternalLink } from "lucide-react";
+import { jikanFetch } from "../../utility/jikanApi";
 const classes = {
   collectionClass: "w-full flex flex-col rounded-lg overflow-hidden bg-linear-0 from-0% from-amethyst-smoke-300/15 dark:from-dark-amethyst-smoke-50/15 to-100% to-indigo-600/5",
   gradient: [
@@ -20,26 +21,22 @@ export default function AnimeCollections() {
       {
         queryKey: ["topAnime"],
         queryFn: async () => {
-          const res = await fetch("https://api.jikan.moe/v4/anime?type=tv&status=complete&order_by=score&sort=desc&limit=13");
+          const res = await jikanFetch("https://api.jikan.moe/v4/anime?type=tv&status=complete&order_by=score&sort=desc&limit=13");
           if (!res.ok) throw new Error(res.statusText);
           const topAnimeData = await res.json();
-          const uniqueTopAnimeData = [...new Set(topAnimeData.data.map((elm) => elm.mal_id))].slice(0, 7).map((id) => topAnimeData.data.find((item) => item.mal_id === id));
+          const uniqueTopAnimeData = [...new Map(topAnimeData.data.map((item) => [item.mal_id, item])).values()].slice(0, 7);
           return uniqueTopAnimeData;
         },
-        retry: 3,
-        retryDelay: 3000,
       },
       {
         queryKey: ["upcomingAnime"],
         queryFn: async () => {
-          const res = await fetch("https://api.jikan.moe/v4/anime?type=tv&status=upcoming&order_by=popularity&sort=asc&limit=13");
+          const res = await jikanFetch("https://api.jikan.moe/v4/anime?type=tv&status=upcoming&order_by=popularity&sort=asc&limit=13");
           if (!res.ok) throw new Error(res.statusText);
           const upcomingAnimeData = await res.json();
-          const uniqueUpcomingAnimeData = [...new Set(upcomingAnimeData.data.map((elm) => elm.mal_id))].slice(0, 7).map((id) => upcomingAnimeData.data.find((item) => item.mal_id === id));
+          const uniqueUpcomingAnimeData = [...new Map(upcomingAnimeData.data.map((item) => [item.mal_id, item])).values()].slice(0, 7);
           return uniqueUpcomingAnimeData;
         },
-        retry: 3,
-        retryDelay: 2000,
       },
     ],
   });

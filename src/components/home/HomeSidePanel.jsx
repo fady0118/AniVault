@@ -1,6 +1,7 @@
 import { useQueries } from "@tanstack/react-query";
 import { Trophy } from "lucide-react";
 import Schedual from "./Schedual";
+import { jikanFetch } from "../../utility/jikanApi";
 
 export default function HomeSidePanel() {
   const [TrendingAnimeQ] = useQueries({
@@ -8,10 +9,10 @@ export default function HomeSidePanel() {
       {
         queryKey: ["recentMangaData"],
         queryFn: async () => {
-          const res = await fetch("https://api.jikan.moe/v4/anime?type=tv&sfw=true&status=airing&order_by=popularity&sort=asc&limit=15");
+          const res = await jikanFetch("https://api.jikan.moe/v4/anime?type=tv&sfw=true&status=airing&order_by=popularity&sort=asc&limit=15");
           if (!res.ok) throw new Error(res.statusText);
           const trendingAnimeData = await res.json();
-          const uniqueTrendingAnimeData = [...new Set(trendingAnimeData.data.map((elm) => elm.mal_id))].map((id) => trendingAnimeData.data.find((item) => item.mal_id === id));
+          const uniqueTrendingAnimeData = [...new Map(trendingAnimeData.data.map((item) => [item.mal_id, item])).values()];
           return uniqueTrendingAnimeData;
         },
       },

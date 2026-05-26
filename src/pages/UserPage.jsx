@@ -4,6 +4,7 @@ import { DateTimeFormatter, renderInfoStr } from "../utility/utils";
 import { useEffect, useState } from "react";
 import CardBox from "../components/CardBox/CardBox";
 import FriendsModal from "../components/user/FriendsModal";
+import { jikanFetch } from "../utility/jikanApi";
 
 const colors = ["bg-emerald-500", "bg-indigo-500", "bg-amber-500", "bg-rose-500", "bg-gray-500"];
 
@@ -15,18 +16,16 @@ export default function UserPage() {
       {
         queryKey: ["user", username],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/users/${username}/full`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/users/${username}/full`);
           if (!res.ok) throw new Error(res.statusText);
           const user_Data = await res.json();
           return user_Data.data || "";
         },
-        retry: 3,
-        retryDelay: 2000,
       },
       {
         queryKey: ["userFav", username],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/users/${username}/favorites`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/users/${username}/favorites`);
           if (!res.ok) throw new Error(res.statusText);
           const fav_Data = await res.json();
           const fav_anime_Arr = fav_Data?.data.anime.map((item) => ({ anime: { path: "anime", name: item.title, ...item } })) || [];
@@ -35,30 +34,24 @@ export default function UserPage() {
           const fav_people_Arr = fav_Data?.data.people.map((item) => ({ anime: { path: "people", ...item } })) || [];
           return { anime: fav_anime_Arr, manga: fav_manga_Arr, characters: fav_character_Arr, people: fav_people_Arr } || "";
         },
-        retry: 3,
-        retryDelay: 2000,
       },
       {
         queryKey: ["friends", username],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/users/${username}/friends`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/users/${username}/friends`);
           if (!res.ok) throw new Error(res.statusText);
           const friends_Data = await res.json();
           return friends_Data.data || "";
         },
-        retry: 3,
-        retryDelay: 2000,
       },
       {
         queryKey: ["recommendations", username],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/users/${username}/recommendations`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/users/${username}/recommendations`);
           if (!res.ok) throw new Error(res.statusText);
           const recommendations_Data = await res.json();
           return recommendations_Data;
         },
-        retry: 3,
-        retryDelay: 2000,
       },
     ],
   });

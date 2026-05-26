@@ -1,11 +1,11 @@
 import HomeSlider from "../components/home/HomeSlider";
 import { useQueries } from "@tanstack/react-query";
 import { data } from "react-router";
-import Recent from "../components/home/RecentAnime";
 import RecentAnime from "../components/home/RecentAnime";
 import RecentManga from "../components/home/RecentManga";
 import HomeSidePanel from "../components/home/HomeSidePanel";
 import AnimeCollections from "../components/home/AnimeCollections";
+import { jikanFetch } from "../utility/jikanApi";
 
 export default function HomePage() {
   const [seasonQ] = useQueries({
@@ -13,10 +13,11 @@ export default function HomePage() {
       {
         queryKey: ["seasonListData"],
         queryFn: async () => {
-          const res = await fetch("https://api.jikan.moe/v4/seasons/now?filter=tv&limit=15");
+          const res = await jikanFetch("https://api.jikan.moe/v4/seasons/now?filter=tv&limit=15");
           if (!res.ok) throw new Error(res.statusText);
           const season_Data = await res.json();
-          const uniqueSeasonData = [...new Set(season_Data.data.map((elm) => elm.mal_id))].map((id) => season_Data.data.find((item) => item.mal_id === id));
+          const uniqueSeasonData = [...new Map(season_Data.data.map((item) => [item.mal_id, item])).values()];
+      
           return { ...season_Data, uniqueSeasonData };
         },
       },

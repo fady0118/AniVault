@@ -5,7 +5,17 @@ import { getCurrentTheme, themeToggler } from "./utility/utils";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 export const WindowContext = createContext(null);
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      retryDelay: (i) => Math.min(1000 * 2 ** i, 8000),
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 10,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   const [theme, setTheme] = useState(getCurrentTheme());

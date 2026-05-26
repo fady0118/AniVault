@@ -9,6 +9,7 @@ import Pictures from "../components/character/Pictures";
 import Gallery from "../components/character/Gallery";
 import { useQueries } from "@tanstack/react-query";
 import { dateFormatter } from "../utility/utils";
+import { jikanFetch } from "../utility/jikanApi";
 
 export default function PeoplePage() {
   const { id } = useParams();
@@ -19,7 +20,7 @@ export default function PeoplePage() {
       {
         queryKey: ["person", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/people/${id}/full`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/people/${id}/full`);
           if (!res.ok) throw new Error(res.statusText);
           const person_Data = await res.json();
 
@@ -34,7 +35,7 @@ export default function PeoplePage() {
       {
         queryKey: ["picture", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/people/${id}/pictures`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/people/${id}/pictures`);
           if (!res.ok) throw new Error(res.statusText);
           const pictures_Data = await res.json();
           return pictures_Data.data ?? [];

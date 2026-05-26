@@ -25,7 +25,7 @@ export default function DateFilter({ data, registerCollector }) {
       const startDateValidationElm = document.getElementById("start_date-val_error");
       const endDateValidationElm = document.getElementById("end_date-val_error");
       if (type === "start_date") {
-        if (new Date(newState.end_date) > new Date(val) || !newState.end_date) {
+        if (new Date(newState.end_date) > new Date(val) || !newState.end_date || val=="") {
           newState.start_date = val;
           startDateValidationElm.classList.add("hidden");
           endDateValidationElm.classList.add("hidden");
@@ -33,7 +33,7 @@ export default function DateFilter({ data, registerCollector }) {
           startDateValidationElm.classList.remove("hidden");
         }
       } else if (type === "end_date") {
-        if (new Date(newState.start_date) < new Date(val) || !newState.start_date) {
+        if (new Date(newState.start_date) < new Date(val) || !newState.start_date || val=="") {
           newState.end_date = val;
           startDateValidationElm.classList.add("hidden");
           endDateValidationElm.classList.add("hidden");

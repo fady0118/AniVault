@@ -4,6 +4,7 @@ import { WindowContext } from "../App";
 import { useQueries } from "@tanstack/react-query";
 import { dateFormatter, renderIcon } from "../utility/utils";
 import { Baby, Calendar, ChevronLeft, ChevronRight, Grid3x2, Hash, LucideLayoutGrid, LucideLayoutList, Star, User, Videotape } from "lucide-react";
+import { jikanFetch } from "../utility/jikanApi";
 
 const classes = {
   gridClasses: {
@@ -30,7 +31,7 @@ export default function ProducerPage() {
       {
         queryKey: ["producer", id],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/producers/${id}/full`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/producers/${id}/full`);
           const producer_Data = await res.json();
           return producer_Data.data || [];
         },
@@ -38,14 +39,10 @@ export default function ProducerPage() {
       {
         queryKey: ["animes", id, currentPage],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime?producers=${id}&page=${currentPage}`);
-          //   const res = await fetch(`https://api.jikan.moe/v4/anime?producers=${id}`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?producers=${id}&page=${currentPage}`);
           const animes_Data = await res.json();
           return animes_Data || [];
         },
-        retry: 3,
-        retryDelay: 2000,
-        staleTime: Infinity,
       },
     ],
   });

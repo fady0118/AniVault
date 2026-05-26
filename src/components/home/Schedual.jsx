@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, ChevronLeft, ChevronRight, Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { jikanFetch } from "../../utility/jikanApi";
 
 const classes = {
   dayClass: "day py-1 px-2 rounded-md hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200",
@@ -22,13 +23,14 @@ export default function Schedual() {
   const date = new Date();
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(Number(date.getDay()) + OFFSET);
+  
   const schedual = useQuery({
     queryKey: ["schedual", currentIndex],
     queryFn: async () => {
-      const res = await fetch(`https://api.jikan.moe/v4/schedules?filter=${days[currentIndex]?.long || ""}`);
+      const res = await jikanFetch(`https://api.jikan.moe/v4/schedules?filter=${days[currentIndex]?.long || ""}`);
       if (!res.ok) throw new Error(res.statusText);
       const schedual_Data = await res.json();
-      const uniqueSchedualData = [...new Set(schedual_Data.data.map((elm) => elm.mal_id))].map((id) => schedual_Data.data.find((item) => item.mal_id === id));
+      const uniqueSchedualData = [...new Map(schedual_Data.data.map((item) => [item.mal_id, item])).values()];
       return uniqueSchedualData;
     },
   });

@@ -1,6 +1,7 @@
 import { useQueries } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { delay } from "../../utility/utils";
+import { jikanFetch } from "../../utility/jikanApi";
 import AnimePopup from "./AnimePopup";
 import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 
@@ -16,26 +17,22 @@ export default function RecentAnime() {
       {
         queryKey: ["recentTvData", tvCurrentPage],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime?type=tv&sfw=true&genres_exclude=9,12,49&status=airing&order_by=start_date&sort=desc&page=${tvCurrentPage || 1}`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?type=tv&sfw=true&genres_exclude=9,12,49&status=airing&order_by=start_date&sort=desc&page=${tvCurrentPage || 1}`);
           if (!res.ok) throw new Error(res.statusText);
           const recentTvData = await res.json();
-          const uniqueTvData = [...new Set(recentTvData.data.map((elm) => elm.mal_id))].map((id) => recentTvData.data.find((item) => item.mal_id === id));
+          const uniqueTvData = [...new Map(recentTvData.data.map((item) => [item.mal_id, item])).values()];
           return { ...recentTvData, uniqueTvData };
         },
-        retry: 3,
-        retryDelay: 2000,
       },
       {
         queryKey: ["recentMovieData", movieCurrentPage],
         queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime?type=movie&sfw=true&genres_exclude=9,12,49&status=complete&order_by=start_date&sort=desc&page=${movieCurrentPage || 1}`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?type=movie&sfw=true&genres_exclude=9,12,49&status=complete&order_by=start_date&sort=desc&page=${movieCurrentPage || 1}`);
           if (!res.ok) throw new Error(res.statusText);
           const recentMovieData = await res.json();
-          const uniqueMovieData = [...new Set(recentMovieData.data.map((elm) => elm.mal_id))].map((id) => recentMovieData.data.find((item) => item.mal_id === id));
+          const uniqueMovieData = [...new Map(recentMovieData.data.map((item) => [item.mal_id, item])).values()];
           return { ...recentMovieData, uniqueMovieData };
         },
-        retry: 3,
-        retryDelay: 2000,
       },
     ],
   });
@@ -168,7 +165,7 @@ export default function RecentAnime() {
             {recentTvQ.isPending ? (
               <>
                 {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
-                  <div className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 rounded-lg">
+                  <div key={i} className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 rounded-lg">
                     <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
                   </div>
                 ))}
@@ -206,7 +203,7 @@ export default function RecentAnime() {
             {recentMovieQ.isPending ? (
               <>
                 {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
-                  <div className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
+                  <div key={i} className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
                     <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
                   </div>
                 ))}

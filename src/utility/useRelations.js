@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { delay } from "./utils";
 import { useQueries } from "@tanstack/react-query";
+import { jikanFetch } from "./jikanApi";
 
 // fetch single image
 const getImage = async ({ mal_id, type }) => {
-  const res = await fetch(`https://api.jikan.moe/v4/${type}/${mal_id}/full`);
+  const res = await jikanFetch(`https://api.jikan.moe/v4/${type}/${mal_id}/full`);
   const { data } = await res.json();
   const image = data?.images.jpg.large_image_url;
   if (!image) throw new Error("No image returned");
@@ -28,10 +29,6 @@ export function useRelations(data) {
         const image = await getImage(rel);
         return { ...rel, ...image };
       },
-      enabled: !!data,
-      retry: 10,
-      retryDelay: 2000,
-      staleTime: Infinity,
     })),
   });
   const relationsImgs = relationsQ?.filter((q) => q.status === "success").map((r) => r.data);
