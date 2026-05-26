@@ -12,16 +12,16 @@ export default function AnimeContainer({ searchParams }) {
   const rest = useMemo(
     () =>
       new URLSearchParams({
-        genres: searchParams.get("genres"),
-        genres_exclude: searchParams.get("genres_exclude"),
-        q: searchParams.get("q"),
-        order_by: searchParams.get("order_by"),
-        sort: searchParams.get("sort"),
-        min_score: searchParams.get("min_score"),
-        max_score: searchParams.get("max_score"),
-        rating: searchParams.get("rating"),
-        start_date: searchParams.get("start_date"),
-        end_date: searchParams.get("end_date"),
+        genres: searchParams.get("genres")||"",
+        genres_exclude: searchParams.get("genres_exclude")||"",
+        q: searchParams.get("q")||"",
+        order_by: searchParams.get("order_by")||"",
+        sort: searchParams.get("sort")||"",
+        min_score: searchParams.get("min_score")||"",
+        max_score: searchParams.get("max_score")||"",
+        rating: searchParams.get("rating")||"",
+        start_date: searchParams.get("start_date")||"",
+        end_date: searchParams.get("end_date")||"",
       }),
     [searchParams],
   );
@@ -51,11 +51,11 @@ export default function AnimeContainer({ searchParams }) {
         <>
           <div className="p-2 grid grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-3 md:gap-4">
             {uniqueData?.map((item) => (
-              <div key={item.mal_id} className="group relative w-full aspect-2/3 rounded-md overflow-hidden flex-col hover:scale-105 hover:cursor-pointer duration-200">
+              <div key={item.mal_id} className="group relative w-full aspect-2/3 rounded-md overflow-hidden  flex-col hover:scale-105 hover:cursor-pointer duration-200">
                 <a href={`anime/${item.mal_id}`}>
-                  <img src={item.images.webp.image_url || item.images.jpg.image_url} alt={item.title} className="w-full h-full object-cover text-2xs group-hover:brightness-65 duration-200" />
+                  <img src={ item.images.webp.large_image_url || item.images.webp.image_url || item.images.jpg.image_url} alt={item.title} className="w-full h-full object-cover text-2xs group-hover:brightness-65 duration-200" />
                 </a>
-                <div className="absolute bottom-0 left-0 w-full min-h-15 box-colors-medium translate-y-full group-hover:translate-y-0 duration-200">
+                <div className="absolute bottom-0 left-0 w-full min-h-15 box-colors-medium translate-y-full group-hover:translate-y-0.5 duration-200">
                   <div className="w-full h-full flex flex-col p-1.5 gap-y-1 text-3xs">
                     <p className="text-[1.3em] font-bold">{item.title_english || item.title}</p>
                     <div className="flex flex-row items-center flex-wrap">

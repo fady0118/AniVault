@@ -37,7 +37,7 @@ export default function AnimeRootPage() {
       sort: sort.sort,
       min_score: score.min_score,
       max_score: score.max_score,
-      rating,
+      rating:rating,
       start_date: date.start_date,
       end_date: date.end_date,
     });
