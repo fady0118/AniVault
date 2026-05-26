@@ -43,6 +43,25 @@ export default function AnimeRootPage() {
     });
   }
 
+  useEffect(() => {
+    if (searchParams.size === 0) {
+      setSearchParams({
+        type: "tv",
+        status: "complete",
+        q:"",
+        genres: "",
+        genres_exclude: "",
+        order_by: "start_date",
+        sort: "desc",
+        min_score: 0,
+        max_score: 10,
+        rating: "",
+        start_date: new Date(new Date().getFullYear(), 0, 1).toLocaleDateString("en-CA"),
+        end_date: "",
+      });
+    }
+  }, []);
+
   return (
     <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3">
       <div className="w-[95vw] flex flex-col ">
@@ -84,10 +103,10 @@ export default function AnimeRootPage() {
             </div>
           </div>
         </div>
-        <AnimeContainer  searchParams={searchParams}/>
+        <AnimeContainer searchParams={searchParams} />
       </div>
       <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
-        <img src="/photo-bg.png" alt="" className="w-full h-full object-cover bg-no-repeat opacity-30  contrast-125" />
+        <img src="/photo-bg.png" alt="" className="w-full h-full object-cover bg-no-repeat opacity-30 contrast-125" />
       </div>
     </div>
   );

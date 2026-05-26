@@ -169,26 +169,38 @@
     @apply bg-amethyst-smoke-400/45 dark:bg-dark-amethyst-smoke-200/45
   }
 
+  .box-colors-medium {
+    @apply bg-amethyst-smoke-300/90 dark:bg-dark-amethyst-smoke-200/90
+  }
   .box-colors-stronger {
     @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-200
+  }
+  .box-colors-accent {
+    @apply dark:bg-amethyst-smoke-500/30 bg-amethyst-smoke-50/30
   }
 
   .rose-link {
     @apply text-rose-600 dark:text-rose-400
   }
-
+  
   .gray-link {
     @apply text-gray-600 dark:text-gray-400
   }
-
+  
   .blue-link {
     @apply text-blue-600 dark:text-blue-400
   }
-
+  
   .hover-blue-link {
     @apply hover:text-blue-600 dark:hover:text-blue-400
   }
-
+  .hover-rose-link {
+    @apply hover:text-rose-600 dark:hover:text-rose-400
+  }
+  .hover-indigo-link {
+    @apply hover:text-indigo-600 dark:hover:text-indigo-300
+  }
+  
   .blue-link-b {
     @apply text-blue-600 dark:text-blue-400 border-b border-transparent dark:hover:border-blue-400 hover:border-blue-600
   }

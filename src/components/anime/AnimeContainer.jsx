@@ -49,9 +49,40 @@ export default function AnimeContainer({ searchParams }) {
         </>
       ) : (
         <>
-          {uniqueData?.map((item) => (
-            <div key={item.mal_id}>{item.title}</div>
-          ))}
+          <div className="p-2 grid grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-3 md:gap-4">
+            {uniqueData?.map((item) => (
+              <div key={item.mal_id} className="group relative w-full aspect-2/3 rounded-md overflow-hidden flex-col hover:scale-105 hover:cursor-pointer duration-200">
+                <a href={`anime/${item.mal_id}`}>
+                  <img src={item.images.webp.image_url || item.images.jpg.image_url} alt={item.title} className="w-full h-full object-cover text-2xs group-hover:brightness-65 duration-200" />
+                </a>
+                <div className="absolute bottom-0 left-0 w-full min-h-15 box-colors-medium translate-y-full group-hover:translate-y-0 duration-200">
+                  <div className="w-full h-full flex flex-col p-1.5 gap-y-1 text-3xs">
+                    <p className="text-[1.3em] font-bold">{item.title_english || item.title}</p>
+                    <div className="flex flex-row items-center flex-wrap">
+                      <p className="">{item.status}</p>
+                      {item.status.toLowerCase() === "not yet aired" ? <p>&nbsp;-&nbsp;{item.aired.string}</p> : <>{item.score ? <p className="">&nbsp;-&nbsp;{item.score}</p> : ""}</>}
+                    </div>
+                    {item.themes.length ? (
+                      <div className="flex flex-row flex-wrap gap-x-1">
+                        {item.genres.map((genres, i) => (
+                          <a
+                            target="_blank"
+                            href={genres.url}
+                            key={i}
+                            className="font-light rounded-full px-0.5 m-0.5 box-colors-accent hover:cursor-pointer hover-indigo-link duration-200"
+                          >
+                            {genres.name}
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </>
       )}
     </div>
