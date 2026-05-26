@@ -32,7 +32,8 @@ function enqueue(request) {
 }
 
 async function executeFetch(input, init, retries = 2) {
-  const res = await fetch(input, init);
+  const timeoutSignal = AbortSignal.timeout(5000);
+  const res = await fetch(input, { ...init, signal: timeoutSignal });
   if (res.status === 429 && retries > 0) {
     const retryAfter = parseInt(res.headers.get("Retry-After") || "0", 10);
     const waitMs = retryAfter > 0 ? retryAfter * 1000 : 1000;

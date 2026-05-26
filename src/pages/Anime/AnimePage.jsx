@@ -136,8 +136,8 @@ export default function AnimePage() {
               <div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-col">
                 <div className="text-sm/relaxed sm:text-lg/relaxed font-bold">{animeQ?.data?.title}</div>
                 <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
-                  {animeQ?.data.title_english ? <span>{animeQ?.data.title_english}</span> : ""}
-                  {animeQ?.data.title_japanese ? <span>{animeQ?.data.title_japanese}</span> : ""}
+                  {animeQ?.data?.title_english ? <span>{animeQ?.data.title_english}</span> : ""}
+                  {animeQ?.data?.title_japanese ? <span>{animeQ?.data.title_japanese}</span> : ""}
                   <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={animeQ?.data?.url} target="_blank">
                     <img
                       src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
@@ -527,7 +527,7 @@ export default function AnimePage() {
                   ""
                 )}
 
-                <News data={newsQ.data} />
+                <News data={newsQ?.data} />
               </div>
             </div>
             <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
