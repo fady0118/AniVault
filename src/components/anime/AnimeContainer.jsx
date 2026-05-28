@@ -30,12 +30,13 @@ export default function AnimeContainer({ searchParams }) {
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageStateRef = useRef({ queries: {} });
+  const [queriesHaveNext, setqueriesHaveNext] = useState(null);
 
   useEffect(() => {
     pageStateRef.current = { queries: {} };
     setCurrentPage(1);
+    setqueriesHaveNext(null);
   }, [rest, types, statuses]);
-
 
   typeList.forEach((type) => {
     statusList.forEach((status) => {
@@ -80,6 +81,7 @@ export default function AnimeContainer({ searchParams }) {
         pageStateRef.current.queries[key] = { hasNext: false };
       }
     });
+    setqueriesHaveNext(checkNext());
   }, [queries, currentPage]);
 
   function pageSwap(dir) {
@@ -92,6 +94,7 @@ export default function AnimeContainer({ searchParams }) {
           prevState.queries[key] = { hasNext: null };
         }
       });
+      setqueriesHaveNext(null);
       pageStateRef.current = prevState;
       setCurrentPage((s) => s - 1);
     } else if (dir === "next") {
@@ -101,9 +104,10 @@ export default function AnimeContainer({ searchParams }) {
           prevState.queries[key] = { hasNext: null };
         }
       });
-      ((pageStateRef.current = prevState), setCurrentPage((s) => s + 1));
+      setqueriesHaveNext(null);
+      pageStateRef.current = prevState;
+      setCurrentPage((s) => s + 1);
     } else return;
-
     queryClient.invalidateQueries({ queryKey: ["animeData", rest.toString()] });
   }
 
@@ -131,7 +135,7 @@ export default function AnimeContainer({ searchParams }) {
               <ChevronLeft
                 onClick={() => pageSwap("next")}
                 size={20}
-                className={`rotate-180 ${classes.chevron} ${checkNext() ? "hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20" : "stroke-text-dark/25"}`}
+                className={`rotate-180 ${classes.chevron} ${queriesHaveNext ? "hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20" : "stroke-text-dark/25"}`}
               />
             </div>
           </div>
