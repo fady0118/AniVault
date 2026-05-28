@@ -72,7 +72,7 @@ export default function ProducerPage() {
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
             <div id="title" className="mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex items-center space-x-2">
               <div className="flex flex-row gap-x-2 text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">
-                <p>{producerQ?.data.titles.find((t) => t.type.toLowerCase() === "default").title}</p>
+                <p>{producerQ?.data?.titles?.find((t) => t.type.toLowerCase() === "default")?.title}</p>
               </div>
               <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={producerQ?.data.url} target="_blank">
                 <img
