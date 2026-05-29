@@ -5,8 +5,8 @@ import RatingFilter from "./RatingFilter";
 import DateFilter from "./DateFilter";
 
 const ratingData = ["g", "pg", "pg13", "r17", "r", "rx"];
-const dateTypesData = ["start_date", "end_date"]
-export default function ExtraFilters({ registerCollectors }) {
+const dateTypesData = ["start_date", "end_date"];
+export default function ExtraFilters({ registerCollectors, view }) {
   const checkboxRef = useRef(null);
 
   useEffect(() => {
@@ -22,17 +22,33 @@ export default function ExtraFilters({ registerCollectors }) {
   }, []);
   return (
     <>
-      <div id="Filters" className="">
-        <label className="group peer w-full p-1 flex flex-row items-center justify-between rounded-md box-colors-stronger hover:cursor-pointer hover:brightness-110 duration-200">
-          <input ref={checkboxRef} type="checkbox" className="hidden" />
-          <Settings2 size={16} className="stroke-text-light-70 dark:stroke-text-dark-70 group-hover:stroke-text-light dark:group-hover:stroke-text-dark" />
-        </label>
-        <div className="absolute top-6 right-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-4 gap-1 p-2">
-          <ScoreFilter registerCollector={registerCollectors.scoreCollector} />
-          <RatingFilter data={ratingData} registerCollector={registerCollectors.ratingCollector} />
-          <DateFilter data={dateTypesData} registerCollector={registerCollectors.dateCollector}/>
+      {!view ? (
+        <div id="Filters" className="">
+          <label className="group peer w-full p-1 flex flex-row items-center justify-between rounded-md box-colors-stronger hover:cursor-pointer hover:brightness-110 duration-200">
+            <input ref={checkboxRef} type="checkbox" className="hidden" />
+            <Settings2 size={16} className="stroke-text-light-70 dark:stroke-text-dark-70 group-hover:stroke-text-light dark:group-hover:stroke-text-dark" />
+          </label>
+          <div className="absolute top-6 right-0 -translate-x-1/2 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-4 gap-1 p-2">
+            <ScoreFilter registerCollector={registerCollectors.scoreCollector} />
+            <RatingFilter data={ratingData} registerCollector={registerCollectors.ratingCollector} />
+            <DateFilter data={dateTypesData} registerCollector={registerCollectors.dateCollector} />
+          </div>
         </div>
-      </div>
+      ) : (
+        <>
+          <div id="Filters" className="w-full">
+          <label className="group peer w-fit p-1 flex flex-row items-center justify-between rounded-md  smallHeaderBox-colors hover:cursor-pointer hover:brightness-110 duration-200">
+            <input type="checkbox" className="hidden" />
+            <Settings2 size={16} className="stroke-text-light-70 dark:stroke-text-dark-70 group-hover:stroke-text-light dark:group-hover:stroke-text-dark" />
+          </label>
+          <div className="mt-1 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 p-2">
+            <ScoreFilter registerCollector={registerCollectors.scoreCollector} view="mobile"/>
+            <RatingFilter data={ratingData} registerCollector={registerCollectors.ratingCollector} view="mobile"/>
+            <DateFilter data={dateTypesData} registerCollector={registerCollectors.dateCollector} view="mobile"/>
+          </div>
+        </div>
+        </>
+      )}
     </>
   );
 }

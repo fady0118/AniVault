@@ -2,7 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 
-export default function ScoreFilter({ registerCollector }) {
+export default function ScoreFilter({ registerCollector, view }) {
   const [searchParams] = useSearchParams();
   // localState for values capturing and local use
   const [localState, setLocalState] = useState({ min_score: searchParams.get("min_score") ?? "0", max_score: searchParams.get("max_score") ?? "10" });
@@ -42,22 +42,44 @@ export default function ScoreFilter({ registerCollector }) {
   }
 
   return (
-    <div id="score" className=" relative w-24">
-      <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
-        <input ref={checkboxRef} type="checkbox" className="hidden" />
-        <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">Score</p>
-        <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200" />
-      </label>
-      <div className="absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-full p-2 text-2xs/loose">
-        <label htmlFor="max-score-input">
-          max score
-          <input onChange={changeMaxRadio} type="range" min="0" max="10" value={localState.max_score} className="range range-xs w-[166%] origin-left scale-60 range-primary" />
-        </label>
-        <label htmlFor="min-score-input">
-          min score
-          <input onChange={changeMinRadio} type="range" min="0" max="10" value={localState.min_score} className="range range-xs w-[166%] origin-left scale-60 range-primary" />
-        </label>
-      </div>
-    </div>
+    <>
+      {!view ? (
+        <div id="score" className=" relative w-24">
+          <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
+            <input ref={checkboxRef} type="checkbox" className="hidden" />
+            <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">Score</p>
+            <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200" />
+          </label>
+          <div className="absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-full p-2 text-2xs/loose">
+            <label htmlFor="max-score-input">
+              max score
+              <input onChange={changeMaxRadio} type="range" min="0" max="10" value={localState.max_score} className="range range-xs w-[166%] origin-left scale-60 range-primary" />
+            </label>
+            <label htmlFor="min-score-input">
+              min score
+              <input onChange={changeMinRadio} type="range" min="0" max="10" value={localState.min_score} className="range range-xs w-[166%] origin-left scale-60 range-primary" />
+            </label>
+          </div>
+        </div>
+      ) : (
+        <div id="score" className="relative w-full text-2xs/loose">
+          <label className="group peer w-full small-header-box smallHeaderBox-colors hover:cursor-pointer">
+            <input ref={checkboxRef} type="checkbox" className="hidden" />
+            <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">Score</p>
+            <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200" />
+          </label>
+          <div className="z-30 absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-full p-2">
+            <label htmlFor="max-score-input">
+              max score
+              <input onChange={changeMaxRadio} type="range" min="0" max="10" value={localState.max_score} className="range range-xs w-[166%] origin-left scale-60 range-primary" />
+            </label>
+            <label htmlFor="min-score-input">
+              min score
+              <input onChange={changeMinRadio} type="range" min="0" max="10" value={localState.min_score} className="range range-xs w-[166%] origin-left scale-60 range-primary" />
+            </label>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

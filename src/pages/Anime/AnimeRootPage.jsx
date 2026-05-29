@@ -104,7 +104,6 @@ export default function AnimeRootPage() {
                 </span>
                 <span className="">Included genres are capped at</span>
                 <span className="inline-flex items-center badge badge-outline badge-primary text-[1em] px-1.5 py-0.5 h-fit rounded-full">max 3 (1 recommended)</span>
-                <span>-</span>
                 <span>excluded genres have no cap.</span>
               </p>
             </div>
@@ -155,8 +154,8 @@ export default function AnimeRootPage() {
       </div>
       {showFiltersSideHeader && windowWidth <= 600 ? (
         <>
-          <div ref={sidePanelRef} className="z-50 fixed top-0 left-0 w-2/3 box-colors backdrop-blur-2xl slide-in-from-left">
-            <div className="h-screen w-full overflow-y-scroll flex flex-col gap-y-2.5 px-2 mt-4">
+          <div ref={sidePanelRef} className="z-50 fixed top-0 left-0 w-3/4 3xs:w-2/3 box-colors backdrop-blur-2xl slide-in-from-left">
+            <div className="h-screen w-full overflow-y-scroll flex flex-col gap-y-2.5 px-2 mt-3 pb-5">
               <div className="flex flex-row justify-between">
                 <p className="text-xl capitalize font-bold">Filters</p>
                 <X size={20} className="hover:cursor-pointer hover:scale-105 hover:bg-amethyst-smoke-500/30 box-content p-1 rounded-md duration-200" onClick={closeSidePanel} />
@@ -166,6 +165,18 @@ export default function AnimeRootPage() {
                 <FilterComponent key={i} keyName={key} data={filterData[key]} registerCollector={(fn) => (collectorStore.current[key] = fn)} view="mobile" />
               ))}
               <GenresFilter data={genresData} registerCollector={(fn) => (collectorStore.current.genres = fn)} view="mobile" />
+              <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} view="mobile" />
+              <ExtraFilters
+                registerCollectors={{
+                  scoreCollector: (fn) => (collectorStore.current.score = fn),
+                  ratingCollector: (fn) => (collectorStore.current.rating = fn),
+                  dateCollector: (fn) => (collectorStore.current.date = fn),
+                }}
+                view="mobile"
+              />
+              <div id="filterBtn" className="text-xs capitalize small-header-box smallHeaderBox-colors w-fit hover:cursor-pointer" onClick={handleApplyFilter}>
+                <p className="px-2">filter</p>
+              </div>
             </div>
           </div>
         </>
