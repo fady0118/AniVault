@@ -104,7 +104,7 @@ export default function GenresFilter({ data, registerCollector, view = null }) {
         // smaller screens
         <>
           <div id="genre" className="group relative w-full">
-            <label className="min-w-28 max-w-full w-fit group peer text-xs small-header-box smallHeaderBox-colors hover:cursor-pointer">
+            <label className="min-w-28 max-w-full w-fit group peer small-header-box smallHeaderBox-colors hover:cursor-pointer">
               <input type="checkbox" className="hidden" />
               <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark duration-200">{heading}</p>
               <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200 ml-1" />

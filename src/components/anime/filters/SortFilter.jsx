@@ -76,9 +76,9 @@ export default function SortFilter({ registerCollector, data, view = null }) {
       ) : (
         <div className="flex flex-row items-start gap-x-2">
           <div id="orderBy" className="group relative max-w-28">
-            <label className="group peer text-xs w-full small-header-box smallHeaderBox-colors hover:cursor-pointer">
+            <label className="group peer w-full small-header-box smallHeaderBox-colors hover:cursor-pointer">
               <input type="checkbox" className="hidden" />
-              <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">{localState.order_by.split("_").join(" ") || "order by"}</p>
+              <p className="capitalize text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">{localState.order_by.split("_").join(" ") || "order by"}</p>
               <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200 ml-1" />
             </label>
             <div className="mt-1 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-28 p-2 text-2xs/loose">
@@ -87,18 +87,18 @@ export default function SortFilter({ registerCollector, data, view = null }) {
               ))}
             </div>
           </div>
-          <div id="sort" onClick={handleSortChange} className="smallHeaderBox-colors rounded-md px-0.5 py-1 hover:brightness-110 hover:cursor-pointer duration-200">
+          <div id="sort" onClick={handleSortChange} className="smallHeaderBox-colors rounded-md w-6 aspect-square flex justify-center items-center hover:brightness-110 hover:cursor-pointer duration-200">
             {localState.sort === "asc" ? (
               <>
-                <ChevronDown className="rotate-180" size={14} />
+                <ChevronDown className="rotate-180" size={16} />
               </>
             ) : localState.sort === "desc" ? (
               <>
-                <ChevronDown size={14} />
+                <ChevronDown size={16} />
               </>
             ) : (
               <>
-                <ChevronsUpDown size={14} />
+                <ChevronsUpDown size={16} />
               </>
             )}
           </div>

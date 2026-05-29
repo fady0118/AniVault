@@ -77,7 +77,7 @@ export default function AnimeRootPage() {
       setSearchParams(Object.fromEntries(defaultSearchParams.entries()));
     }
     const handleClicksOutside = (e) => {
-      if (filterSideBarStateRef.current && !sidePanelRef.current.contains(e.target)) {
+      if (filterSideBarStateRef.current && !sidePanelRef?.current?.contains(e.target)) {
         closeSidePanel();
       }
     };
@@ -155,7 +155,7 @@ export default function AnimeRootPage() {
       </div>
       {showFiltersSideHeader && windowWidth <= 600 ? (
         <>
-          <div ref={sidePanelRef} className="z-50 fixed top-0 left-0 w-3/4 3xs:w-2/3 box-colors backdrop-blur-2xl slide-in-from-left">
+          <div ref={sidePanelRef} className="z-50 fixed top-0 left-0 w-3/4 3xs:w-2/3 box-colors backdrop-blur-2xl slide-in-from-left text-sm">
             <div className="h-screen w-full overflow-y-scroll flex flex-col gap-y-2.5 px-2 mt-3 pb-5">
               <div className="flex flex-row justify-between">
                 <p className="text-xl capitalize font-bold">Filters</p>

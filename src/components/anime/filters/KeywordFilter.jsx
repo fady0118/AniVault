@@ -32,9 +32,9 @@ export default function KeywordFilter({ registerCollector, view = null }) {
   }
 
   return (
-    <div id="search" className={`header-box ${!view ? "box-colors-stronger" : "smallHeaderBox-colors"}`}>
+    <div id="search" className={` max-w-48 header-box ${!view ? "box-colors-stronger" : "smallHeaderBox-colors"}`}>
       <input
-        className={`outline-none ${!view ? " w-18 md:w-auto" : "w-full text-xs"}`}
+        className={`outline-none ${!view ? " w-18 md:w-auto" : "w-full"}`}
         value={localState}
         onChange={(e) => {
           setLocalState(e.target.value);

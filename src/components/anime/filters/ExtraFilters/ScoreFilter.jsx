@@ -44,7 +44,7 @@ export default function ScoreFilter({ registerCollector, view }) {
   return (
     <>
       {!view ? (
-        <div id="score" className=" relative w-24">
+        <div id="score" className=" relative">
           <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
             <input ref={checkboxRef} type="checkbox" className="hidden" />
             <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">Score</p>

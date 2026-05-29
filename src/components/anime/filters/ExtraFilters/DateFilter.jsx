@@ -51,7 +51,7 @@ export default function DateFilter({ data, registerCollector }) {
   return (
     <>
       {data.map((type, i) => (
-        <div key={i} className="flex flex-col w-fite h-fit text-3xs">
+        <div key={i} className="flex flex-col h-fit text-3xs">
           <label className=" text-text-light-70 dark:text-text-dark-70 px-0.5" htmlFor={type}>
             {type.split("_").join(" ")}
           </label>
