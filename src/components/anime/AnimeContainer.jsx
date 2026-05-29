@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { jikanFetch } from "../../utility/jikanApi";
 import { ChevronLeft } from "lucide-react";
 
-const classes = { chevron: "p-1 rounded-full box-content duration-200" };
+const classes = { chevron: "p-0.5 rounded-md box-content duration-200" };
 export default function AnimeContainer({ searchParams }) {
   // type & status are enums in the api so we need to seperate them from the other params and fetch in parallel
   const types = useMemo(() => searchParams.get("type"), [searchParams]);
@@ -29,6 +29,7 @@ export default function AnimeContainer({ searchParams }) {
   );
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [lastPageIndex, setLastIndexPage] = useState(null);
   const pageStateRef = useRef({ queries: {} });
   const [queriesHaveNext, setqueriesHaveNext] = useState(null);
 
@@ -69,30 +70,30 @@ export default function AnimeContainer({ searchParams }) {
 
   const queryClient = useQueryClient();
   useEffect(() => {
+    let last_visible_page = null;
     queries.forEach((q, i) => {
       if (!q.isSuccess || !q.data) return;
       const type = typeList[Math.floor(i / statusList.length)];
       const status = statusList[i % statusList.length];
       const key = `${type}|${status}`;
       const hasNext = q.data.pagination?.has_next_page ?? false;
+      if (!last_visible_page || last_visible_page < q.data.pagination?.last_visible_page) last_visible_page = q.data.pagination.last_visible_page;
       if (hasNext) {
         pageStateRef.current.queries[key] = { hasNext: true };
       } else {
         pageStateRef.current.queries[key] = { hasNext: false };
       }
     });
+    setLastIndexPage(last_visible_page);
     setqueriesHaveNext(checkNext());
   }, [queries, currentPage]);
 
   function pageSwap(dir) {
     const prevState = pageStateRef.current;
-
     if (dir === "prev") {
       if (currentPage === 1) return;
       Object.keys(prevState.queries).forEach((key) => {
-        if (prevState.queries[key].hasNext === true) {
-          prevState.queries[key] = { hasNext: null };
-        }
+        prevState.queries[key] = { hasNext: null };
       });
       setqueriesHaveNext(null);
       pageStateRef.current = prevState;
@@ -124,21 +125,33 @@ export default function AnimeContainer({ searchParams }) {
         </>
       ) : (
         <>
-          <div className="w-full flex flex-row items-center gap-x-1.5 py-1">
-            <div>page: {currentPage}</div>
-            <div className="flex flex-row items-center">
+          <div className="w-fit flex flex-row items-center gap-x-1 py-0.5 px-2 text-xs box-colors rounded-lg">
+            <p className="px-2 py-0.5 rounded-md hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20 duration-200" onClick={() => setCurrentPage(1)}>
+              1
+            </p>
+            <div className="flex flex-row items-center gap-x-2">
               <ChevronLeft
                 onClick={() => pageSwap("prev")}
                 size={20}
-                className={`${classes.chevron} ${currentPage > 1 ? "hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20" : "stroke-text-dark/25"}`}
+                className={`${classes.chevron} ${currentPage > 1 ? "hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20" : "stroke-text-light/25 dark:stroke-text-dark/25"}`}
               />
+              {currentPage}
               <ChevronLeft
                 onClick={() => pageSwap("next")}
                 size={20}
-                className={`rotate-180 ${classes.chevron} ${queriesHaveNext ? "hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20" : "stroke-text-dark/25"}`}
+                className={`rotate-180 ${classes.chevron} ${queriesHaveNext ? "hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20" : "stroke-text-light/25 dark:stroke-text-dark/25"}`}
               />
             </div>
+            <p
+              className="px-2 py-0.5 rounded-md hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20 duration-200"
+              onClick={() => {
+                setCurrentPage(lastPageIndex);
+              }}
+            >
+              {lastPageIndex || "?"}
+            </p>
           </div>
+
           <div className="py-2 grid grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-3 md:gap-4">
             {uniqueData?.map((item) => (
               <div key={item.mal_id} className="group relative w-full aspect-2/3 rounded-md overflow-hidden  flex-col hover:scale-105 hover:cursor-pointer duration-200">

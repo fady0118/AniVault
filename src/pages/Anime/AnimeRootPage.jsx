@@ -109,7 +109,7 @@ export default function AnimeRootPage() {
                     <span>excluded genres have no cap.</span>
                   </p>
                 </div>
-                <div id="header" className="z-30 relative w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
+                <div id="header" className="z-30 relative w-full flex flex-row items-center justify-start gap-x-4 capitalize text-2xs font-light">
                   <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
 
                   {Object.keys(filterData).map((key, i) => (
