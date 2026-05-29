@@ -97,40 +97,41 @@ export default function AnimeRootPage() {
             Browser
           </div>
           <div className="order-2 px-3 py-1">
-            <div id="disclaimer" className="w-full mb-2 flex flex-row items-center gap-x-2 py-1.5 px-2.5 box-colors border border-indigo-600/60 rounded-r-md text-3xs xs:text-2xs">
-              <p className="flex flex-row flex-wrap items-center gap-1.5">
-                <span className="font-medium flex flex-row items-center gap-x-1.5">
-                  <Info size={14} /> Jikan API uses AND logic for genre filters.
-                </span>
-                <span className="">Included genres are capped at</span>
-                <span className="inline-flex items-center badge badge-outline badge-primary text-[1em] px-1.5 py-0.5 h-fit rounded-full">max 3 (1 recommended)</span>
-                <span>excluded genres have no cap.</span>
-              </p>
-            </div>
-
             {windowWidth > 600 ? (
-              <div id="header" className="z-30 relative w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
-                <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
-
-                {Object.keys(filterData).map((key, i) => (
-                  <FilterComponent key={i} keyName={key} data={filterData[key]} registerCollector={(fn) => (collectorStore.current[key] = fn)} />
-                ))}
-
-                <GenresFilter data={genresData} registerCollector={(fn) => (collectorStore.current.genres = fn)} />
-
-                <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
-
-                <ExtraFilters
-                  registerCollectors={{
-                    scoreCollector: (fn) => (collectorStore.current.score = fn),
-                    ratingCollector: (fn) => (collectorStore.current.rating = fn),
-                    dateCollector: (fn) => (collectorStore.current.date = fn),
-                  }}
-                />
-                <div id="filterBtn" className=" header-box box-colors-stronger hover:cursor-pointer" onClick={handleApplyFilter}>
-                  <p className="px-2">filter</p>
+              <>
+                <div id="disclaimer" className="w-full mb-2 flex flex-row items-center gap-x-2 py-1.5 px-2.5 box-colors border border-indigo-600/60 rounded-r-md text-3xs xs:text-2xs">
+                  <p className="flex flex-row flex-wrap items-center gap-1.5">
+                    <span className="font-medium flex flex-row items-center gap-x-1.5">
+                      <Info size={14} /> Jikan API uses AND logic for genre filters.
+                    </span>
+                    <span className="">Included genres are capped at</span>
+                    <span className="inline-flex items-center badge badge-outline badge-primary text-[1em] px-1.5 py-0.5 h-fit rounded-full">max 3 (1 recommended)</span>
+                    <span>excluded genres have no cap.</span>
+                  </p>
                 </div>
-              </div>
+                <div id="header" className="z-30 relative w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
+                  <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
+
+                  {Object.keys(filterData).map((key, i) => (
+                    <FilterComponent key={i} keyName={key} data={filterData[key]} registerCollector={(fn) => (collectorStore.current[key] = fn)} />
+                  ))}
+
+                  <GenresFilter data={genresData} registerCollector={(fn) => (collectorStore.current.genres = fn)} />
+
+                  <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
+
+                  <ExtraFilters
+                    registerCollectors={{
+                      scoreCollector: (fn) => (collectorStore.current.score = fn),
+                      ratingCollector: (fn) => (collectorStore.current.rating = fn),
+                      dateCollector: (fn) => (collectorStore.current.date = fn),
+                    }}
+                  />
+                  <div id="filterBtn" className=" header-box box-colors-stronger hover:cursor-pointer" onClick={handleApplyFilter}>
+                    <p className="px-2">filter</p>
+                  </div>
+                </div>
+              </>
             ) : (
               <>
                 <div
@@ -159,6 +160,16 @@ export default function AnimeRootPage() {
               <div className="flex flex-row justify-between">
                 <p className="text-xl capitalize font-bold">Filters</p>
                 <X size={20} className="hover:cursor-pointer hover:scale-105 hover:bg-amethyst-smoke-500/30 box-content p-1 rounded-md duration-200" onClick={closeSidePanel} />
+              </div>
+              <div id="disclaimer" className="w-full mb-2 flex flex-row items-center py-1.5 px-1.5 box-colors border border-indigo-600/60 rounded-r-md text-3xs">
+                <p className="flex flex-row flex-wrap items-center gap-0.5">
+                  <span className="font-medium flex flex-row items-center gap-x-1.5">
+                    <Info size={12} /> Jikan API uses AND logic for genre filters.
+                  </span>
+                  <span className="">Included genres are capped at</span>
+                  <span className="inline-flex items-center badge badge-outline badge-primary text-[0.9em] px-1.5 py-0.5 h-fit rounded-full">max 3 (1 recommended)</span>
+                  <span>excluded genres have no cap.</span>
+                </p>
               </div>
               <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} view="mobile" />
               {Object.keys(filterData).map((key, i) => (
