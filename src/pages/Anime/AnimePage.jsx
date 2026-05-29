@@ -104,7 +104,7 @@ export default function AnimePage() {
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/videos`);
           if (!res.ok) throw new Error(res.statusText);
           const videos_Data = await res.json();
-          return videos_Data.data||[];
+          return videos_Data.data || [];
         },
       },
       {
@@ -113,7 +113,7 @@ export default function AnimePage() {
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/news`);
           if (!res.ok) throw new Error(res.statusText);
           const news_Data = await res.json();
-          return news_Data.data||[];
+          return news_Data.data || [];
         },
       },
     ],
@@ -125,6 +125,35 @@ export default function AnimePage() {
   const { relationsImgs, showAllRelations, setShowAllRelations } = useRelations(animeQ?.data);
   // Videos hook
   const { showVideoModal, videoRef, playVideo, closeVideo } = useVideoModal();
+
+  function getAnimeStatus(status) {
+    if (!status) return "";
+    switch (status.toLowerCase().trim()) {
+      case "finished airing":
+        return "complete";
+      case "currently airing":
+        return "airing";
+      case "not yet aired":
+        return "upcoming";
+    }
+  }
+  function getAnimeRating(rating) {
+    if (!rating) return "";
+    switch (rating.toLowerCase().trim()) {
+      case ("G - All Ages").toLowerCase().trim():
+        return "g";
+      case ("PG - Children").toLowerCase().trim():
+        return "pg";
+      case ("PG-13 - Teens 13 or older").toLowerCase().trim():
+        return "pg13";
+      case ("R - 17+ (violence & profanity)").toLowerCase().trim():
+        return "r17";
+      case ("R+ - Mild Nudity").toLowerCase().trim():
+        return "r";
+      case ("Rx - Hentai").toLowerCase().trim():
+        return "rx";
+    }
+  }
   return (
     <>
       {animeQ.isPending ? (
@@ -161,8 +190,8 @@ export default function AnimePage() {
                         <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
                           <div className="flex flex-col justify-evenly pr-2 items-center border-r border-amethyst-smoke-500/20 ">
                             <p className="text-text-dark text-[1.5em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
-                            <p className="text-[2em]/snug font-semibold">{animeQ?.data?.score||'?'}</p>
-                            <p className="font-light text-[1.35em]">{animeQ?.data?.scored_by?.toLocaleString()||'?'} users</p>
+                            <p className="text-[2em]/snug font-semibold">{animeQ?.data?.score || "?"}</p>
+                            <p className="font-light text-[1.35em]">{animeQ?.data?.scored_by?.toLocaleString() || "?"} users</p>
                           </div>
 
                           <div className="flex flex-col py-1 gap-y-1">
@@ -179,7 +208,9 @@ export default function AnimePage() {
                                 <p className="text-[2em]">Members</p>
                                 <p className="text-[1.6em]">{animeQ?.data?.members?.toLocaleString()}</p>
                               </div>
-                              <p className="text-[1.35em]">{animeQ?.data?.type}</p>
+                              <a href={`/anime?type=${animeQ?.data?.type.toLowerCase()}`} className="text-[1.35em] blue-link">
+                                {animeQ?.data?.type}
+                              </a>
 
                               <p className="flex flex-row text-[1.35em]">
                                 {animeQ?.data?.season} {animeQ?.data?.year}
@@ -259,7 +290,7 @@ export default function AnimePage() {
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                          {renderInfoStr("type", `${animeQ?.data?.type}`)}
+                          {renderInfoStr("type", `${animeQ?.data?.type}`, `/anime?type=${animeQ?.data?.type.toLowerCase()}`)}
                           <div className="w-full flex flex-row  gap-x-2 items-center capitalize">
                             <div className="flex flex-row gap-x-1">
                               <p className="font-semibold ">episodes:</p>
@@ -279,7 +310,7 @@ export default function AnimePage() {
                               ""
                             )}
                           </div>
-                          {renderInfoStr("status", `${animeQ?.data?.status}`)}
+                          {renderInfoStr("status", `${animeQ?.data?.status}`, `/anime?status=${getAnimeStatus(animeQ?.data?.status)}`)}
                           {renderInfoStr("aired", `${animeQ?.data?.aired.string}`)}
                           {renderInfoStr("premiered", `${animeQ?.data?.season || ""} ${animeQ?.data?.year || ""}`)}
                           {renderInfoStr("broadcast", `${animeQ?.data?.broadcast.string || ""}`)}
@@ -287,11 +318,11 @@ export default function AnimePage() {
                           {renderInfoArr("licensors", animeQ?.data?.licensors)}
                           {renderInfoArr("studios", animeQ?.data?.studios, "/producer")}
                           {renderInfoStr("source", `${animeQ?.data?.source}`)}
-                          {renderInfoArr("genres", animeQ?.data?.genres)}
-                          {renderInfoArr("themes", animeQ?.data?.themes)}
+                          {renderInfoArr("genres", animeQ?.data?.genres, "/anime")}
+                          {renderInfoArr("themes", animeQ?.data?.themes, "/anime")}
                           {renderInfoArr("demographics", animeQ?.data?.demographics)}
                           {renderInfoStr("duration", `${animeQ?.data?.duration}`)}
-                          {renderInfoStr("rating", `${animeQ?.data?.rating}`)}
+                          {renderInfoStr("rating", `${animeQ?.data?.rating}`, `/anime?rating=${getAnimeRating(animeQ?.data?.rating)}`)}
                         </div>
                       </div>
                     </div>

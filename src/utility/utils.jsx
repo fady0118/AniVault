@@ -41,7 +41,7 @@ export function getSeason(d) {
     return "Summer";
   }
   if ((month === 9 && day >= 21) || month === 10 || month === 11 || (month === 12 && day < 21)) {
-    return "Autumn";
+    return "Fall";
   }
   return "Winter";
 }
@@ -53,11 +53,11 @@ export function getYear(d) {
 }
 
 // render function for information section for string data
-export function renderInfoStr(title, str) {
+export function renderInfoStr(title, str, link=null) {
   return (
-    <div className="w-full flex flex-row flex-wrap gap-x-1 items-start capitalize">
+    <div className="w-full flex flex-row flex-wrap gap-x-1 items-end capitalize">
       <p className="font-semibold ">{title}:</p>
-      <p className="text-[0.9em]">{str.trim() || "?"}</p>
+      {link?<a href={link} className="text-[0.9em] blue-link">{str.trim() || "?"}</a>:<p className="text-[0.9em]">{str.trim() || "?"}</p>}
     </div>
   );
 }
@@ -77,7 +77,12 @@ export function renderInfoArr(title, arr, path = null) {
                     {item.name}
                     {i !== arr.length - 1 ? ", " : ""}
                   </p>
-                ) : (
+                ) : path==='/anime'?<>
+                <a className="blue-link whitespace-pre-wrap" href={`${path}?genres=${item.mal_id}`}>
+                    {item.name}
+                    {i !== arr.length - 1 ? ", " : ""}
+                  </a></>
+                  :(
                   <a className="blue-link whitespace-pre-wrap" href={`${path}/${item.mal_id}`}>
                     {item.name}
                     {i !== arr.length - 1 ? ", " : ""}
