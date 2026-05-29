@@ -1,13 +1,14 @@
-import { ChevronDown, Info, Plus, Square, SquarePlus } from "lucide-react";
+import { ChevronDown, Info, Plus, Settings2, Square, SquarePlus } from "lucide-react";
 import { useSearchParams } from "react-router";
 import FilterComponent from "../../components/anime/filters/FilterComponent";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import GenresFilter from "../../components/anime/filters/GenresFilter";
 import KeywordFilter from "../../components/anime/filters/KeywordFilter";
 import data from "../../utility/data.json";
 import SortFilter from "../../components/anime/filters/SortFilter";
 import ExtraFilters from "../../components/anime/filters/ExtraFilters/ExtraFilters";
 import AnimeContainer from "../../components/anime/AnimeContainer";
+import { WindowContext } from "../../App";
 
 const filterData = { type: ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"], status: ["airing", "complete", "upcoming"] };
 const genresData = [...data.genres, ...data.themes];
@@ -15,6 +16,8 @@ const sortData = ["mal_id", "title", "start_date", "end_date", "episodes", "scor
 
 export default function AnimeRootPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showFiltersSideHeader, setShowFiltersSideHeader] = useState(false);
+  const { windowWidth } = useContext(WindowContext);
   const collectorStore = useRef({});
 
   const defaultSearchParams = new URLSearchParams({
@@ -28,7 +31,7 @@ export default function AnimeRootPage() {
     min_score: 0,
     max_score: 10,
     rating: "",
-    start_date: new Date(new Date().getFullYear(), 0, 1).toLocaleDateString("en-CA"),
+    start_date: "",
     end_date: "",
   });
 
@@ -54,7 +57,7 @@ export default function AnimeRootPage() {
       sort: sort.sort,
       min_score: score.min_score,
       max_score: score.max_score,
-      rating:rating,
+      rating: rating,
       start_date: date.start_date,
       end_date: date.end_date,
     });
@@ -69,14 +72,15 @@ export default function AnimeRootPage() {
   return (
     <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3">
       <div className="w-[95vw] flex flex-col ">
-        <div id="title" className="order-1 mt-5 px-5 py-1 uppercase font-bold text-xl">
+        <div id="title" className="order-1 mt-5 px-3 py-1 uppercase font-bold text-xl">
           Browser
         </div>
         <div className="order-2 px-3 py-1">
-          <div id="disclaimer" className="w-full mb-2 flex flex-row items-center gap-x-2 py-1.5 px-2.5 box-colors border border-indigo-600/60 rounded-r-md text-2xs">
-            <Info size={15} />
-            <p className="flex flex-row items-center gap-x-1.5">
-              <span className="font-medium">Jikan API uses AND logic for genre filters.</span>
+          <div id="disclaimer" className="w-full mb-2 flex flex-row items-center gap-x-2 py-1.5 px-2.5 box-colors border border-indigo-600/60 rounded-r-md text-3xs xs:text-2xs">
+            <p className="flex flex-row flex-wrap items-center gap-1.5">
+              <span className="font-medium flex flex-row items-center gap-x-1.5">
+                <Info size={14} /> Jikan API uses AND logic for genre filters.
+              </span>
               <span className="">Included genres are capped at</span>
               <span className="inline-flex items-center badge badge-outline badge-primary text-[1em] px-1.5 py-0.5 h-fit rounded-full">max 3 (1 recommended)</span>
               <span>-</span>
@@ -84,28 +88,37 @@ export default function AnimeRootPage() {
             </p>
           </div>
 
-          <div id="header" className="z-30 relative w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
-            <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
+          {windowWidth > 600 ? (
+            <div id="header" className="z-30 relative w-full flex flex-row items-center justify-center gap-x-4 capitalize text-2xs font-light">
+              <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
 
-            {Object.keys(filterData).map((key, i) => (
-              <FilterComponent key={i} keyName={key} data={filterData[key]} registerCollector={(fn) => (collectorStore.current[key] = fn)} />
-            ))}
+              {Object.keys(filterData).map((key, i) => (
+                <FilterComponent key={i} keyName={key} data={filterData[key]} registerCollector={(fn) => (collectorStore.current[key] = fn)} />
+              ))}
 
-            <GenresFilter data={genresData} registerCollector={(fn) => (collectorStore.current.genres = fn)} />
+              <GenresFilter data={genresData} registerCollector={(fn) => (collectorStore.current.genres = fn)} />
 
-            <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
+              <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
 
-            <ExtraFilters
-              registerCollectors={{
-                scoreCollector: (fn) => (collectorStore.current.score = fn),
-                ratingCollector: (fn) => (collectorStore.current.rating = fn),
-                dateCollector: (fn) => (collectorStore.current.date = fn),
-              }}
-            />
-            <div id="filterBtn" className=" header-box box-colors-stronger hover:cursor-pointer" onClick={handleApplyFilter}>
-              <p className="px-2">filter</p>
+              <ExtraFilters
+                registerCollectors={{
+                  scoreCollector: (fn) => (collectorStore.current.score = fn),
+                  ratingCollector: (fn) => (collectorStore.current.rating = fn),
+                  dateCollector: (fn) => (collectorStore.current.date = fn),
+                }}
+              />
+              <div id="filterBtn" className=" header-box box-colors-stronger hover:cursor-pointer" onClick={handleApplyFilter}>
+                <p className="px-2">filter</p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="flex flex-row gap-x-1 items-center text-[0.8em]">
+                <Settings2 size={14} />
+                <span>Filters</span>
+              </div>
+            </>
+          )}
         </div>
         <AnimeContainer searchParams={effectiveSearchParams} />
       </div>

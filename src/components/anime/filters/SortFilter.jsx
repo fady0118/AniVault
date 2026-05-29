@@ -43,13 +43,13 @@ export default function SortFilter({ registerCollector, data }) {
   }
   return (
     <div className="flex flex-row items-center gap-x-2">
-      <div id="orderBy" className="group relative w-36">
+      <div id="orderBy" className="group relative max-w-28">
         <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
           <input ref={checkboxRef} type="checkbox" className="hidden" />
           <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">{localState.order_by.split("_").join(" ") || "order by"}</p>
-          <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200" />
+          <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200 ml-1" />
         </label>
-        <div className="absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-full p-2 text-2xs/loose">
+        <div className="absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-28 p-2 text-2xs/loose">
           {data.map((item, i) => (
             <SortItem key={i} item={item} localState={localState} handleChange={handleOrderChange} />
           ))}

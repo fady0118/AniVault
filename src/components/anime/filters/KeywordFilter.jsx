@@ -42,6 +42,7 @@ export default function KeywordFilter({ registerCollector }) {
         type="search"
         name="searchBar"
         id="searchBar"
+        className="w-18 md:w-auto"
         placeholder="Search..."
         onKeyDown={(e) => {
           if (e.key === "Enter") {

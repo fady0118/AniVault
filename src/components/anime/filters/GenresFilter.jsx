@@ -76,11 +76,11 @@ export default function GenresFilter({ data, registerCollector }) {
 
   return (
     <>
-      <div id="genre" className="group relative w-36">
+      <div id="genre" className="group relative max-w-26">
         <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
           <input ref={checkboxRef} type="checkbox" className="hidden" />
           <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark duration-200">{heading}</p>
-          <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200" />
+          <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200 ml-1" />
         </label>
         <div className="wrapper absolute top-6 right-0 hidden peer-has-checked:flex flex-col rounded-md box-colors-stronger w-md p-1.5 text-3xs/relaxed">
           <div className="w-full grid grid-cols-4 gap-1">

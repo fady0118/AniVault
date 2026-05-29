@@ -117,14 +117,14 @@ export default function AnimeContainer({ searchParams }) {
   }
 
   return (
-    <div className="relative order-3 px-5 py-1 min-h-32">
+    <div className="relative order-3 px-3 py-1 min-h-32">
       {isLoading ? (
         <>
           <div className="absolute top-full left-1/2 -translate-1/2">Loading...</div>
         </>
       ) : (
         <>
-          <div className="w-full flex flex-row items-center gap-x-1.5 p-1">
+          <div className="w-full flex flex-row items-center gap-x-1.5 py-1">
             <div>page: {currentPage}</div>
             <div className="flex flex-row items-center">
               <ChevronLeft
@@ -139,7 +139,7 @@ export default function AnimeContainer({ searchParams }) {
               />
             </div>
           </div>
-          <div className="p-2 grid grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-3 md:gap-4">
+          <div className="py-2 grid grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-3 md:gap-4">
             {uniqueData?.map((item) => (
               <div key={item.mal_id} className="group relative w-full aspect-2/3 rounded-md overflow-hidden  flex-col hover:scale-105 hover:cursor-pointer duration-200">
                 <a href={`anime/${item.mal_id}`}>
@@ -159,7 +159,7 @@ export default function AnimeContainer({ searchParams }) {
                     {item.themes.length ? (
                       <div className="flex flex-row flex-wrap gap-x-1">
                         {item.genres.map((genres, i) => (
-                          <a target="_blank" href={genres.url} key={i} className="font-light rounded-full px-0.5 m-0.5 box-colors-accent hover:cursor-pointer hover-indigo-link duration-200">
+                          <a target="_blank" href={genres.url} key={i} className="font-light rounded-full px-1 m-0.5 box-colors-accent hover:cursor-pointer hover-indigo-link duration-200">
                             {genres.name}
                           </a>
                         ))}
