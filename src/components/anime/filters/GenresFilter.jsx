@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router";
 import GenreItem from "./GenreItem";
 import { ChevronDown, Info, RotateCcw } from "lucide-react";
 
-export default function GenresFilter({ data, registerCollector }) {
+export default function GenresFilter({ data, registerCollector, view = null }) {
   const [searchParams] = useSearchParams();
   const [heading, setHeading] = useState("genres");
 
@@ -54,7 +54,6 @@ export default function GenresFilter({ data, registerCollector }) {
       const current = prevState[mal_id];
       const next = current === 0 ? 1 : current === 1 ? -1 : 0;
       if (next === 1 && localRef.current.genres?.length >= 3) {
-        console.log("genres=3");
         return { ...prevState, [mal_id]: -1 };
       }
       return { ...prevState, [mal_id]: next };
@@ -68,34 +67,64 @@ export default function GenresFilter({ data, registerCollector }) {
     });
   }
   function resetGenres() {
-    setLocalState(prevState=>{
-      const newState=Object.fromEntries(Object.entries(prevState).map(([key,value])=>[key, 0]))
-      return newState
-    })
+    setLocalState((prevState) => {
+      const newState = Object.fromEntries(Object.entries(prevState).map(([key, value]) => [key, 0]));
+      return newState;
+    });
   }
 
   return (
     <>
-      <div id="genre" className="group relative max-w-26">
-        <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
-          <input ref={checkboxRef} type="checkbox" className="hidden" />
-          <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark duration-200">{heading}</p>
-          <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200 ml-1" />
-        </label>
-        <div className="wrapper absolute top-6 right-0 hidden peer-has-checked:flex flex-col rounded-md box-colors-stronger w-md p-1.5 text-3xs/relaxed">
-          <div className="w-full grid grid-cols-4 gap-1">
-            {data.map((item, i) => (
-              <GenreItem key={i} mal_id={item.mal_id} name={item.name} localState={localState} handleClick={handleClick} />
-            ))}
-          </div>
-          <div id="resetGenres" className="text-[1.2em] capitalize w-full flex flex-row justify-end items-center px-1">
-            <div onClick={resetGenres} className="flex flex-row items-center gap-x-1 w-fit rounded-md box-colors-stronger px-1 hover:contrast-105 hover:brightness-90 hover:cursor-pointer duration-200">
-              <p>reset</p>
-              <RotateCcw size={10} />
+      {!view ? (
+        // large screens
+        <div id="genre" className="group relative max-w-26">
+          <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
+            <input ref={checkboxRef} type="checkbox" className="hidden" />
+            <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark duration-200">{heading}</p>
+            <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200 ml-1" />
+          </label>
+          <div className="absolute top-6 right-0 translate-x-1/2 hidden peer-has-checked:flex flex-col rounded-md box-colors-stronger w-md p-1.5 text-3xs/relaxed">
+            <div className="w-full grid grid-cols-4 gap-1">
+              {data.map((item, i) => (
+                <GenreItem key={i} mal_id={item.mal_id} name={item.name} localState={localState} handleClick={handleClick} />
+              ))}
+            </div>
+            <div id="resetGenres" className="text-[1.2em] capitalize w-full flex flex-row justify-end items-center px-1">
+              <div
+                onClick={resetGenres}
+                className="flex flex-row items-center gap-x-1 w-fit rounded-md box-colors-stronger px-1 hover:contrast-105 hover:brightness-90 hover:cursor-pointer duration-200"
+              >
+                <p>reset</p>
+                <RotateCcw id="rotateIcon" size={10} />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        // smaller screens
+        <>
+          <div id="genre" className="group relative w-full">
+            <label className="min-w-28 max-w-full w-fit group peer text-[0.85em] small-header-box smallHeaderBox-colors hover:cursor-pointer">
+              <input type="checkbox" className="hidden" />
+              <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark duration-200">{heading}</p>
+              <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200 ml-1" />
+            </label>
+            <div className="mt-1 hidden peer-has-checked:flex flex-col rounded-md box-colors-stronger w-full p-1.5 pb-5 text-2xs/relaxed">
+              <div className="w-full grid grid-cols-1 2xs:grid-cols-2 xs:grid-cols-3 gap-1">
+                {data.slice(0, 17).map((item, i) => (
+                  <GenreItem key={i} mal_id={item.mal_id} name={item.name} localState={localState} handleClick={handleClick} />
+                ))}
+              </div>
+              <div id="resetGenres" className="absolute bottom-1 right-0 text-[1.2em] capitalize w-fit flex flex-row justify-end items-center px-1">
+                <div onClick={resetGenres} className="flex flex-row items-center gap-x-1 w-fit rounded-md box-colors px-1 hover:contrast-105 hover:brightness-90 hover:cursor-pointer duration-200">
+                  <p>reset</p>
+                  <RotateCcw id="rotateIcon" size={10} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }

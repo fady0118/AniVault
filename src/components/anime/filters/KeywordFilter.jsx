@@ -2,7 +2,7 @@ import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 
-export default function KeywordFilter({ registerCollector }) {
+export default function KeywordFilter({ registerCollector, view = null }) {
   const [searchParams, setSearchParams] = useSearchParams();
   // keyword local state
   const [localState, setLocalState] = useState(() => searchParams.get("q") ?? "");
@@ -32,9 +32,9 @@ export default function KeywordFilter({ registerCollector }) {
   }
 
   return (
-    <div id="search" className="header-box box-colors-stronger">
+    <div id="search" className={`header-box ${!view ? "box-colors-stronger" : "smallHeaderBox-colors"}`}>
       <input
-        className="outline-none"
+        className={`outline-none ${!view ? " w-18 md:w-auto" : "w-full text-sm"}`}
         value={localState}
         onChange={(e) => {
           setLocalState(e.target.value);
@@ -42,7 +42,6 @@ export default function KeywordFilter({ registerCollector }) {
         type="search"
         name="searchBar"
         id="searchBar"
-        className="w-18 md:w-auto"
         placeholder="Search..."
         onKeyDown={(e) => {
           if (e.key === "Enter") {

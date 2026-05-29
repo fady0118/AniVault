@@ -78,6 +78,16 @@
   }
 }
 
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
 @layer components {
   .gallery-image-animation {
     animation: imageZoomIn 0.4s ease-out;
@@ -85,6 +95,10 @@
 
   .fill-to-right {
     animation: fillBar 2s ease-out;
+  }
+
+  .slide-in-from-left {
+    animation: slideInFromLeft 0.25s ease;
   }
 
   .spoiler input {
@@ -172,35 +186,43 @@
   .box-colors-medium {
     @apply bg-amethyst-smoke-300/90 dark:bg-dark-amethyst-smoke-200/90
   }
+
   .box-colors-stronger {
     @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-200
   }
+
   .box-colors-accent {
     @apply dark:bg-amethyst-smoke-500/30 bg-amethyst-smoke-50/30
+  }
+
+  .smallHeaderBox-colors {
+    @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300
   }
 
   .rose-link {
     @apply text-rose-600 dark:text-rose-400
   }
-  
+
   .gray-link {
     @apply text-gray-600 dark:text-gray-400
   }
-  
+
   .blue-link {
     @apply text-blue-600 dark:text-blue-400
   }
-  
+
   .hover-blue-link {
     @apply hover:text-blue-600 dark:hover:text-blue-400
   }
+
   .hover-rose-link {
     @apply hover:text-rose-600 dark:hover:text-rose-400
   }
+
   .hover-indigo-link {
     @apply hover:text-indigo-600 dark:hover:text-indigo-300
   }
-  
+
   .blue-link-b {
     @apply text-blue-600 dark:text-blue-400 border-b border-transparent dark:hover:border-blue-400 hover:border-blue-600
   }
@@ -253,7 +275,11 @@
     visibility: visible;
   }
 
-  .header-box{
+  .header-box {
     @apply rounded-md flex flex-row items-center justify-between px-2 py-1 hover:brightness-110 duration-200
+  }
+
+  .small-header-box {
+    @apply rounded-md flex flex-row items-center justify-between px-1.5 py-0.5 hover:brightness-110 duration-200
   }
 }
