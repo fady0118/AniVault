@@ -142,7 +142,7 @@ export default function AnimeSeasonPage() {
                   {seasonQ?.data?.data.map((item) => (
                     <>
                       <div key={item.mal_id} className="group relative w-full aspect-2/3 rounded-md overflow-hidden  flex-col hover:scale-105 hover:cursor-pointer duration-200">
-                        <a href={`anime/${item.mal_id}`}>
+                        <a href={`/anime/${item.mal_id}`}>
                           <img
                             src={item.images.webp.large_image_url || item.images.webp.image_url || item.images.jpg.image_url}
                             alt={item.title}

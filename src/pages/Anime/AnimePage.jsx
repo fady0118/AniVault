@@ -208,17 +208,17 @@ export default function AnimePage() {
                                 <p className="text-[2em]">Members</p>
                                 <p className="text-[1.6em]">{animeQ?.data?.members?.toLocaleString()}</p>
                               </div>
-                              <a href={`/anime?type=${animeQ?.data?.type.toLowerCase()}`} className="text-[1.35em] blue-link">
+                              <a href={`/anime?type=${animeQ?.data?.type.toLowerCase()}`} className="text-[1.35em] blue-link duration-200">
                                 {animeQ?.data?.type}
                               </a>
 
-                              <p className="flex flex-row text-[1.35em]">
+                              <a href={`/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`} className="flex flex-row text-[1.35em] blue-link duration-200">
                                 {animeQ?.data?.season} {animeQ?.data?.year}
-                              </p>
+                              </a>
 
                               <div className="flex flex-row space-x-1.5 flex-wrap text-[1.35em]">
                                 {animeQ?.data?.studios.map((studio, i) => (
-                                  <a key={i} href={`/producer/${studio.mal_id}`} className="blue-link">
+                                  <a key={i} href={`/producer/${studio.mal_id}`} className="blue-link duration-200">
                                     {studio.name}
                                   </a>
                                 ))}
@@ -312,7 +312,7 @@ export default function AnimePage() {
                           </div>
                           {renderInfoStr("status", `${animeQ?.data?.status}`, `/anime?status=${getAnimeStatus(animeQ?.data?.status)}`)}
                           {renderInfoStr("aired", `${animeQ?.data?.aired.string}`)}
-                          {renderInfoStr("premiered", `${animeQ?.data?.season || ""} ${animeQ?.data?.year || ""}`)}
+                          {renderInfoStr("premiered", `${animeQ?.data?.season || ""} ${animeQ?.data?.year || ""}`, `/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`)}
                           {renderInfoStr("broadcast", `${animeQ?.data?.broadcast.string || ""}`)}
                           {renderInfoArr("producers", animeQ?.data?.producers, "/producer")}
                           {renderInfoArr("licensors", animeQ?.data?.licensors)}
