@@ -12,6 +12,7 @@ import MagazinePage from "./pages/Manga/MagazinePage";
 import ProducerPage from "./pages/ProducerPage";
 import UserPage from "./pages/UserPage";
 import AnimeRootPage from "./pages/Anime/AnimeRootPage";
+import AnimeSeasonPage from "./pages/Anime/AnimeSeasonPage";
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
           {
             path: ":id",
             children: [{ index: true, Component: AnimePage }],
+          },
+          {
+            path: "seasons",
+            children:[{path:":year/:season", Component: AnimeSeasonPage,}]
           },
         ],
       },

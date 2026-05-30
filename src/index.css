@@ -211,7 +211,7 @@
   }
 
   .blue-link {
-    @apply text-blue-700 dark:text-blue-400 hover:brightness-125
+    @apply text-blue-700 dark:text-blue-400 hover:brightness-110
   }
 
   .hover-blue-link {
