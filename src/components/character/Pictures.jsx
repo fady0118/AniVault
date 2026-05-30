@@ -11,7 +11,7 @@ export default function Pictures({ pictures, openGallery, cols }) {
   };
   return (
     <>
-      <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Pictures</div>
+      <div className="border-b border-amethyst-smoke-200/40 pt-1 px-3 font-semibold text-md/relaxed capitalize">Pictures</div>
       {!pictures?.length ? (
         <p className="p-3 text-xs font-light">No pictures found.</p>
       ) : (

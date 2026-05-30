@@ -1,5 +1,5 @@
 import { useQueries } from "@tanstack/react-query";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { DateTimeFormatter, renderInfoStr } from "../utility/utils";
 import { useEffect, useState } from "react";
 import CardBox from "../components/CardBox/CardBox";
@@ -121,21 +121,21 @@ export default function UserPage() {
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
             <div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex items-center space-x-2">
               <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">{userQ?.data.username}'s Profile</div>
-              <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={userQ?.data.url} target="_blank">
+              <Link className="w-7 sm:w-9 rounded-sm overflow-hidden" to={userQ?.data.url} target="_blank">
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
                   alt="MyAnimeList Logo"
                   className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
                 />
-              </a>
+              </Link>
             </div>
             <div id="userContent" className="relative order-2 w-full flex flex-col sm:flex-row sm:justify-start gap-3">
               <div className="sm:sticky sm:top-18 flex flex-col gap-y-3 h-fit w-1/4 min-w-48 max-w-64 ">
                 <div id="image" className="order-1">
-                  <img className="w-full aspect-square object-cover rounded-lg overflow-hidden" src={userQ?.data.images.webp.image_url || userQ?.data.images.jpg.image_url} alt="" />
+                  <img className="w-full aspect-square object-cover rounded-lg overflow-hidden" src={userQ?.data?.images?.webp?.image_url || userQ?.data?.images?.jpg?.image_url} alt="" />
                 </div>
                 <div className="order-2 w-full flex flex-col md:flex-row gap-3">
-                  <div className="w-full flex flex-col justify-between h-fit gap-y-2 md:gap-y-8 rounded-lg box-colors">
+                  <div className="w-full flex flex-col h-fit gap-y-2 rounded-lg box-colors">
                     <div id="information" className="w-full">
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
                       <div className="px-3 py-2 text-xs font-light">
@@ -161,17 +161,15 @@ export default function UserPage() {
                         </div>
                         <div className="grid grid-cols-4 p-2 gap-0.5">
                           {friendsQ?.data.slice(0, 11).map((f, i) => (
-                            <>
-                              <div className="w-full aspect-square hover:">
-                                <a href={`/user/${f?.user?.username}`}>
+                              <div key={i} className="w-full aspect-square hover:">
+                                <Link to={`/user/${f?.user?.username}`}>
                                   <img
                                     className="w-full h-full object-cover hover:cursor-pointer hover:border-2 hover:border-amethyst-smoke-400/30 duration-100"
                                     src={f?.user?.images.webp.image_url || f?.user?.images.jpg.image_url}
                                     alt=""
                                   />
-                                </a>
+                                </Link>
                               </div>
-                            </>
                           ))}
                           <div
                             onClick={() => setShowFriendsModal(true)}
@@ -201,20 +199,20 @@ export default function UserPage() {
                       <div className="border-b border-amethyst-smoke-200/40 pt-0.5 font-semibold text-sm/relaxed capitalize">ِAnime stats</div>
                       {renderStats(
                         {
-                          watching: userQ?.data?.statistics.anime.watching,
-                          completed: userQ?.data?.statistics.anime.completed,
-                          "on hold": userQ?.data?.statistics.anime.on_hold,
-                          dropped: userQ?.data?.statistics.anime.dropped,
-                          "plan to watch": userQ?.data?.statistics.anime.plan_to_watch,
+                          watching: userQ?.data?.statistics?.anime.watching,
+                          completed: userQ?.data?.statistics?.anime.completed,
+                          "on hold": userQ?.data?.statistics?.anime.on_hold,
+                          dropped: userQ?.data?.statistics?.anime.dropped,
+                          "plan to watch": userQ?.data?.statistics?.anime.plan_to_watch,
                         },
                         {
-                          total_entries: userQ?.data?.statistics.anime.total_entries,
-                          rewatched: userQ?.data?.statistics.anime.rewatched,
-                          "episodes watched": userQ?.data?.statistics.anime.episodes_watched,
+                          total_entries: userQ?.data?.statistics?.anime.total_entries,
+                          rewatched: userQ?.data?.statistics?.anime.rewatched,
+                          "episodes watched": userQ?.data?.statistics?.anime.episodes_watched,
                         },
                         {
-                          "days watched": userQ?.data?.statistics.anime.days_watched,
-                          "mean score": userQ?.data?.statistics.anime.mean_score,
+                          "days watched": userQ?.data?.statistics?.anime.days_watched,
+                          "mean score": userQ?.data?.statistics?.anime.mean_score,
                         },
                       )}
                     </div>
@@ -222,21 +220,21 @@ export default function UserPage() {
                       <div className="border-b border-amethyst-smoke-200/40 pt-0.5 font-semibold text-sm/relaxed capitalize">Manga stats</div>
                       {renderStats(
                         {
-                          reading: userQ?.data?.statistics.manga.reading,
-                          completed: userQ?.data?.statistics.manga.completed,
-                          "on hold": userQ?.data?.statistics.manga.on_hold,
-                          dropped: userQ?.data?.statistics.manga.dropped,
-                          "plan to read": userQ?.data?.statistics.manga.plan_to_read,
+                          reading: userQ?.data?.statistics?.manga.reading,
+                          completed: userQ?.data?.statistics?.manga.completed,
+                          "on hold": userQ?.data?.statistics?.manga.on_hold,
+                          dropped: userQ?.data?.statistics?.manga.dropped,
+                          "plan to read": userQ?.data?.statistics?.manga.plan_to_read,
                         },
                         {
-                          total_entries: userQ?.data?.statistics.manga.total_entries,
-                          reread: userQ?.data?.statistics.manga.reread,
-                          "chapters read": userQ?.data?.statistics.manga.chapters_read,
-                          "volumes read": userQ?.data?.statistics.manga.volumes_read,
+                          total_entries: userQ?.data?.statistics?.manga.total_entries,
+                          reread: userQ?.data?.statistics?.manga.reread,
+                          "chapters read": userQ?.data?.statistics?.manga.chapters_read,
+                          "volumes read": userQ?.data?.statistics?.manga.volumes_read,
                         },
                         {
-                          "days read": userQ?.data?.statistics.manga.days_read,
-                          "mean score": userQ?.data?.statistics.manga.mean_score,
+                          "days read": userQ?.data?.statistics?.manga.days_read,
+                          "mean score": userQ?.data?.statistics?.manga.mean_score,
                         },
                       )}
                     </div>

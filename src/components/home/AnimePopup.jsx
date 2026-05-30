@@ -1,5 +1,6 @@
 import { Baby, Play, Star } from "lucide-react";
 import { useEffect } from "react";
+import { Link } from "react-router";
 
 export default function AnimePopup({ mouseLeave, ref }) {
   return (
@@ -40,8 +41,7 @@ export default function AnimePopup({ mouseLeave, ref }) {
               <div className="flex flex-row items-start flex-wrap"></div>
             </div>
           </div>
-          <a id="details" href="" target="_blank">
-            {/* bg-indigo-500/70 dark:bg-indigo-400/70 */}
+          <Link id="details" to="">
             <div className="w-full px-3 py-1.5 mt-1 flex flex-row items-center justify-between rounded-3xl text-dark-amethyst-smoke-300 dark:text-amethyst-smoke-300 bg-pink-400 dark:bg-pink-500 group hover:cursor-pointer">
               <p className="font-extrabold text-[1.35em] dark:group-hover:text-dark-amethyst-smoke-200 group-hover:text-amethyst-smoke-200">More Details</p>
               <Play
@@ -49,7 +49,7 @@ export default function AnimePopup({ mouseLeave, ref }) {
                 className="fill-text-light dark:fill-text-dark stroke-0 group-hover:fill-amethyst-smoke-200 dark:group-hover:fill-dark-amethyst-smoke-200 group-hover:-translate-x-5 duration-300"
               />
             </div>
-          </a>
+          </Link>
         </div>
       </div>
     </>

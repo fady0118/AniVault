@@ -1,8 +1,9 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams, useSearchParams } from "react-router";
+import { useNavigate, useParams, useSearchParams, Link } from "react-router";
 import { jikanFetch } from "../../utility/jikanApi";
 import { ChevronLeft, Leaf, Rose, Snowflake, Sun, SunSnow } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { RootContext } from "../../App";
 
 const seasons = [
   { name: "winter", icon: <Sun size={12} /> },
@@ -12,6 +13,8 @@ const seasons = [
 ];
 const types = ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"];
 export default function AnimeSeasonPage() {
+  //SFW filter
+  const {SFW} = useContext(RootContext)
   // seasons nav checkbox
   const [seasonsCheckBoxValue, setSeasonsCheckBoxValue] = useState(false);
   // destructure current season/year from url
@@ -29,7 +32,7 @@ export default function AnimeSeasonPage() {
   // data fetch
   const queryClient = useQueryClient();
   const seasonQ = useQuery({
-    queryKey: ["season", season, year, typesFilter, currentPage],
+    queryKey: ["season", season, year, typesFilter, currentPage, SFW],
     queryFn: async () => {
       const res = await jikanFetch(`https://api.jikan.moe/v4/seasons/${year}/${season}?filter=${typesFilter}&page=${currentPage}`);
       const { pagination, data } = await res.json();
@@ -140,15 +143,14 @@ export default function AnimeSeasonPage() {
               {seasonQ?.data?.data?.length ? (
                 <div id="animeContainer" className="order-last py-2 grid grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-3 md:gap-4">
                   {seasonQ?.data?.data.map((item) => (
-                    <>
                       <div key={item.mal_id} className="group relative w-full aspect-2/3 rounded-md overflow-hidden  flex-col hover:scale-105 hover:cursor-pointer duration-200">
-                        <a href={`/anime/${item.mal_id}`}>
+                        <Link to={`/anime/${item.mal_id}`}>
                           <img
                             src={item.images.webp.large_image_url || item.images.webp.image_url || item.images.jpg.image_url}
                             alt={item.title}
                             className="w-full h-full object-cover text-2xs group-hover:brightness-65 duration-200"
                           />
-                        </a>
+                        </Link>
                         <div className="absolute bottom-0 left-0 w-full max-h-2/3 box-colors-medium translate-y-full group-hover:translate-y-0.5 duration-200">
                           <div className="w-full h-full flex flex-col p-1.5 gap-y-1 text-3xs">
                             <p className="text-[1.3em] font-bold">{item.title_english || item.title}</p>
@@ -159,9 +161,9 @@ export default function AnimeSeasonPage() {
                             {item.themes.length ? (
                               <div className="flex flex-row flex-wrap gap-x-1">
                                 {item.genres.map((genres, i) => (
-                                  <a target="_blank" href={genres.url} key={i} className="font-light rounded-full px-1 m-0.5 box-colors-accent hover:cursor-pointer hover-indigo-link duration-200">
+                                  <Link target="_blank" to={genres.url} key={i} className="font-light rounded-full px-1 m-0.5 box-colors-accent hover:cursor-pointer hover-indigo-link duration-200">
                                     {genres.name}
-                                  </a>
+                                  </Link>
                                 ))}
                               </div>
                             ) : (
@@ -170,7 +172,6 @@ export default function AnimeSeasonPage() {
                           </div>
                         </div>
                       </div>
-                    </>
                   ))}
                 </div>
               ) : (

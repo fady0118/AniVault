@@ -1,7 +1,8 @@
 import { Menu, MonitorCog, Moon, Search, Sun } from "lucide-react";
-import { useNavigate } from "react-router";
-import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router";
+import { useState, useEffect, useContext } from "react";
 import SearchModal from "./SearchModal";
+import { RootContext } from "../App";
 
 const classes = {
   navListLinkBg:
@@ -9,11 +10,11 @@ const classes = {
   navListLinkText: "text-text-light dark:text-text-dark hover:cursor-pointer hover:text-dark-amethyst-smoke-700 hover:dark:text-amethyst-smoke-500 duration-300",
 };
 
-export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
+export default function NavBar({ themeSelect, theme, setTheme }) {
   const [showNav, setShowNav] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   let navigate = useNavigate();
-
+  const { windowWidth, SFW, setSFW } = useContext(RootContext);
   useEffect(() => {
     themeSelect(theme);
   }, [theme]);
@@ -26,7 +27,7 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
     function handleKeyPresses(e) {
       if (e.ctrlKey && e.key === "k") {
         e.preventDefault();
-        setShowSearchModal(true)
+        setShowSearchModal(true);
       }
     }
     document.addEventListener("keydown", handleKeyPresses);
@@ -36,9 +37,9 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
   return (
     <>
       <nav className="z-40 w-[95vw] flex justify-between items-center px-5 sm:px-7 lg:px-9 xl:px-12 h-12 capitalize fixed top-3 left-1/2 -translate-x-1/2 rounded-lg bg-amethyst-smoke-400/80 dark:bg-dark-amethyst-smoke-100 backdrop-blur-3xl">
-        <a href="/" className="inline-block h-1/4 xs:h-1/3 ">
+        <Link to="/" className="inline-block h-1/4 xs:h-1/3 ">
           <img className="w-full h-full grayscale brightness-25 hover:brightness-75 dark:brightness-150 dark:hover:brightness-200 duration-300 hover:cursor-pointer" src="/logo.png" alt="logo" />
-        </a>
+        </Link>
         <div className="flex items-center space-x-3 md:space-x-6 ">
           {windowWidth <= 640 ? (
             <div id="searchTab" onClick={() => setShowSearchModal(true)} className="group hover:cursor-pointer text-text-light dark:text-text-dark">
@@ -55,18 +56,23 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
                 <span>Ctrl+K</span>
               </div>
               <div className="flex justify-evenly space-x-6">
-                <a href="/anime" className={classes.navListLinkText}>anime</a>
+                <Link to="/anime" className={classes.navListLinkText}>
+                  anime
+                </Link>
                 <div className={classes.navListLinkText}>link2</div>
                 <div className={classes.navListLinkText}>link3</div>
               </div>
             </>
           )}
-
-          {windowWidth <= 640 && (
-            <div className="hover:bg-amethyst-smoke-500/70 dark:hover:bg-dark-amethyst-smoke-600/40 hover:cursor-pointer">
-              <Menu size={16} onClick={() => setShowNav(!showNav)} />
-            </div>
-          )}
+          {/* sfw filter */}
+          <div
+            onClick={() => {
+              setSFW((s) => !s);
+            }}
+            className="text-xs hover:cursor-pointer hover-blue-link duration-200"
+          >
+            {SFW ? "SFW" : "NSFW"}
+          </div>
           <div className="group w-fit flex justify-start items-center space-x-0.5 text-sm" onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}>
             <button id="themeTogglerBtn" className="group-hover:cursor-pointer" data-next-theme={theme === "light" ? "dark" : "light"}>
               {theme === "light" ? (
@@ -76,11 +82,18 @@ export default function NavBar({ themeSelect, theme, setTheme, windowWidth }) {
               )}
             </button>
           </div>
+          {windowWidth <= 640 && (
+            <div className="hover:bg-amethyst-smoke-500/70 dark:hover:bg-dark-amethyst-smoke-600/40 hover:cursor-pointer">
+              <Menu size={16} onClick={() => setShowNav(!showNav)} />
+            </div>
+          )}
         </div>
       </nav>
       {windowWidth <= 640 && showNav && (
         <div className="w-[96vw] flex flex-col fixed top-15 left-1/2 -translate-x-1/2 text-sm xs:text-md z-50 rounded-md overflow-hidden">
-          <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link1</div>
+          <Link to="/anime" className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>
+            anime
+          </Link>
           <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link2</div>
           <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link3</div>
         </div>

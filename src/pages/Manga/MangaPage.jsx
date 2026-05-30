@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { WindowContext } from "../../App";
+import { Link, useParams } from "react-router";
+import { RootContext } from "../../App";
 import { renderInfoStr, renderInfoArr, renderIcon, DateTimeFormatter, renderReactions, dateFormatter } from "../../utility/utils";
 import useGallery from "../../utility/useGallery";
 import Gallery from "../../components/character/Gallery";
@@ -15,7 +15,7 @@ import { jikanFetch } from "../../utility/jikanApi";
 
 export default function MangaPage() {
   let { id } = useParams();
-  const { windowWidth } = useContext(WindowContext);
+  const { windowWidth } = useContext(RootContext);
 
   const [mangaQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, newsQ] = useQueries({
     queries: [
@@ -26,7 +26,7 @@ export default function MangaPage() {
           if (!res.ok) throw new Error(res.statusText);
           const manga_Data = await res.json();
           return { ...manga_Data.data, flattenedRelations: manga_Data.data?.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))) };
-        }
+        },
       },
       {
         queryKey: ["characters", id],
@@ -74,7 +74,7 @@ export default function MangaPage() {
           if (!res.ok) throw new Error(res.statusText);
           const pictures_Data = await res.json();
           return pictures_Data.data ?? [];
-        }
+        },
       },
       {
         queryKey: ["recommendations", id],
@@ -120,13 +120,13 @@ export default function MangaPage() {
               <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
                 <span>{mangaQ?.data?.title_english}</span>
                 <span>{mangaQ?.data?.title_japanese}</span>
-                <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={mangaQ?.data?.url} target="_blank">
+                <Link className="w-7 sm:w-9 rounded-sm overflow-hidden" to={mangaQ?.data?.url} target="_blank">
                   <img
                     src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
                     alt="MyAnimeList Logo"
                     className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
                   />
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -166,17 +166,17 @@ export default function MangaPage() {
                             <p className="text-[1.35em] w-fit">{mangaQ?.data?.type}</p>
                             <div className="flex flex-row flex-wrap gap-x-0.5 items-center text-[1.35em] w-fit">
                               {mangaQ?.data?.serializations?.map((s, i) => (
-                                <a key={i} className="blue-link" href={`/manga/magazine/${s.mal_id}`}>
+                                <Link key={i} className="blue-link" to={`/manga/magazine/${s.mal_id}`}>
                                   {s.name}
-                                </a>
+                                </Link>
                               ))}
                             </div>
                             <div className="flex flex-row flex-wrap items-center text-[1.35em] w-fit">
                               {mangaQ?.data?.authors?.map((s, i, arr) => (
                                 <p key={i}>
-                                  <a className="blue-link" href={`/${s.type}/${s.mal_id}`}>
+                                  <Link className="blue-link" to={`/${s.type}/${s.mal_id}`}>
                                     {s.name}
-                                  </a>
+                                  </Link>
                                   <span className="mr-1.5">{i < arr.length - 1 ? "," : ""}</span>
                                 </p>
                               ))}
@@ -277,9 +277,9 @@ export default function MangaPage() {
                           {mangaQ?.data?.external?.map((ext, i) => (
                             <p className="flex flex-row items-center gap-1.5" key={i}>
                               {renderIcon(ext.name)}
-                              <a className="blue-link" href={ext.url}>
+                              <Link target="_blank" className="blue-link" to={ext.url}>
                                 {ext.name}
-                              </a>
+                              </Link>
                             </p>
                           ))}
                         </div>
@@ -294,12 +294,14 @@ export default function MangaPage() {
                   <div id="titles" className="w-full h-fit rounded-lg box-colors overflow-hidden order-1">
                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">titles</div>
                     <div className="flex flex-col gap-y-1 px-3 py-2 text-xs font-light">
-                      {mangaQ?.data?.titles?.length? mangaQ?.data?.titles.map((title, i) => (
-                        <div key={i} className="flex flex-row space-x-1 w-full">
-                          <p className="font-semibold min-w-16">{title.type}: </p>
-                          <p>{title.title}</p>
-                        </div>
-                      )):""}
+                      {mangaQ?.data?.titles?.length
+                        ? mangaQ?.data?.titles.map((title, i) => (
+                            <div key={i} className="flex flex-row space-x-1 w-full">
+                              <p className="font-semibold min-w-16">{title.type}: </p>
+                              <p>{title.title}</p>
+                            </div>
+                          ))
+                        : ""}
                     </div>
                   </div>
 
@@ -345,13 +347,13 @@ export default function MangaPage() {
                         <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2">
                           {mangaQ?.data?.flattenedRelations.slice(0, 6).map((entry, i) => (
                             <div key={i} className="flex flex-row w-full">
-                              <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={`/${entry.type}/${entry.mal_id}`}>
+                              <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
                                 <img data-mal-id={entry.mal_id} className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
-                              </a>
+                              </Link>
                               <div className="w-3/4 flex flex-col gap-y-1 px-2">
-                                <a href={`/${entry.type}/${entry.mal_id}`} className="blue-link">
+                                <Link to={`/${entry.type}/${entry.mal_id}`} className="blue-link">
                                   {entry.name}
-                                </a>
+                                </Link>
                                 <p>
                                   {entry.relation} ({entry.type})
                                 </p>
@@ -373,18 +375,18 @@ export default function MangaPage() {
                           {showAllRelations
                             ? mangaQ?.data?.flattenedRelations.slice(6).map((entry, i) => (
                                 <div key={i} className="flex flex-row w-full">
-                                  <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={`/${entry.type}/${entry.mal_id}`}>
+                                  <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
                                     <img
                                       className="w-full h-full object-cover"
                                       data-mal-id={entry.mal_id}
                                       src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null}
                                       alt={entry.name}
                                     />
-                                  </a>
+                                  </Link>
                                   <div className="w-3/4 flex flex-col gap-y-1 px-2">
-                                    <a href={`/${entry.type}/${entry.mal_id}`} className="blue-link">
+                                    <Link to={`/${entry.type}/${entry.mal_id}`} className="blue-link">
                                       {entry.name}
-                                    </a>
+                                    </Link>
                                     <p>
                                       {entry.relation} ({entry.type})
                                     </p>

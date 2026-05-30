@@ -4,6 +4,7 @@ import { delay } from "../../utility/utils";
 import { jikanFetch } from "../../utility/jikanApi";
 import AnimePopup from "./AnimePopup";
 import { ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { Link } from "react-router";
 
 export default function RecentAnime() {
   const [recent, setRecent] = useState("tv");
@@ -174,17 +175,17 @@ export default function RecentAnime() {
               <>
                 {recentTvQ?.data?.uniqueTvData?.map((item, i) => (
                   <div data-mal-id={item.mal_id} key={i} className="wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
-                    <a href={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
+                    <Link to={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
                       <img
                         className="w-full h-full object-cover"
                         src={item.images?.webp?.large_image_url || item.images?.jpg?.large_image_url || item.images?.webp?.image_url || item.images?.jpg?.image_url}
                         alt=""
                       />
-                    </a>
+                    </Link>
                     <div className="w-full grow text-sm xs:text-xs lg:text-sm">
-                      <a href={`/anime/${item.mal_id}`} className="w-full cutoff-text-abs max-lines-2 text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200">
+                      <Link to={`/anime/${item.mal_id}`} className="w-full cutoff-text-abs max-lines-2 text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200">
                         {item.title}
-                      </a>
+                      </Link>
                     </div>
                     <div
                       onMouseEnter={(e) => handleInfoShow(e)}
@@ -212,17 +213,17 @@ export default function RecentAnime() {
               <>
                 {recentMovieQ?.data?.uniqueMovieData?.map((item, i) => (
                   <div data-mal-id={item.mal_id} key={i} className="wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
-                    <a href={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
+                    <Link to={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duratito-200">
                       <img
                         className="w-full h-full"
                         src={item.images?.webp?.large_image_url || item.images?.jpg?.large_image_url || item.images?.webp?.image_url || item.images?.jpg?.image_url}
                         alt=""
                       />
-                    </a>
+                    </Link>
                     <div className="w-full grow text-sm xs:text-xs lg:text-sm">
-                      <a href={`/anime/${item.mal_id}`} className="w-full cutoff-text-abs max-lines-2 text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200">
+                      <Link on={`/anime/${item.mal_id}`} className="w-full cutoff-text-abs max-lines-2 text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200">
                         {item.title}
-                      </a>
+                      </Link>
                     </div>
                     <div
                       onMouseEnter={(e) => handleInfoShow(e)}

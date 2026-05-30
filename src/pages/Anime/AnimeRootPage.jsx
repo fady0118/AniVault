@@ -8,7 +8,7 @@ import data from "../../utility/data.json";
 import SortFilter from "../../components/anime/filters/SortFilter";
 import ExtraFilters from "../../components/anime/filters/ExtraFilters/ExtraFilters";
 import AnimeContainer from "../../components/anime/AnimeContainer";
-import { WindowContext } from "../../App";
+import { RootContext } from "../../App";
 import { delay } from "../../utility/utils";
 
 const filterData = { type: ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"], status: ["airing", "complete", "upcoming"] };
@@ -20,7 +20,7 @@ export default function AnimeRootPage() {
   const [showFiltersSideHeader, setShowFiltersSideHeader] = useState(false);
   const filterSideBarStateRef = useRef(false);
   const sidePanelRef = useRef(null);
-  const { windowWidth } = useContext(WindowContext);
+  const { windowWidth } = useContext(RootContext);
   const collectorStore = useRef({});
 
   const defaultSearchParams = new URLSearchParams({

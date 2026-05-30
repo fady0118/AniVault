@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight, CircleX } from "lucide-react";
 import { useContext, useEffect } from "react";
-import { WindowContext } from "../../App";
+import { RootContext } from "../../App";
 
 const classes = {
   imageHoverAnimation: "hover:cursor-pointer hover:scale-105 hover:border-4 hover:border-amethyst-smoke-400/30 transition-transform duration-300",
@@ -11,7 +11,7 @@ const classes = {
 
 export default function Gallery({ pictures, name, activeIndex, closeGallery, onNext, onPrev, onOpen }) {
   if (!pictures.length) return;
-  const { windowWidth } = useContext(WindowContext);
+  const { windowWidth } = useContext(RootContext);
   // arrow navigation
   function handleGalleryActions(e) {
     if (e.key === "ArrowLeft") {

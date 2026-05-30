@@ -1,10 +1,11 @@
-import { createContext, useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { Outlet } from "react-router";
 import NavBar from "./components/NavBar";
 import { getCurrentTheme, themeToggler } from "./utility/utils";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { setSFWValue } from "./utility/jikanApi";
 
-export const WindowContext = createContext(null);
+export const RootContext = createContext(null);
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -13,7 +14,6 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 10,
       refetchOnWindowFocus: false,
-      
     },
   },
 });
@@ -21,6 +21,7 @@ const queryClient = new QueryClient({
 function App() {
   const [theme, setTheme] = useState(getCurrentTheme());
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [SFW, setSFW] = useState(true);
 
   const themeSelect = useCallback((themeValue) => {
     // update theme value in localStorage
@@ -50,17 +51,21 @@ function App() {
       });
   }, []);
 
+  useLayoutEffect(() => {
+    setSFWValue(SFW);
+  }, [SFW]);
+
   return (
-    <WindowContext value={{ windowWidth }}>
+    <RootContext value={{ windowWidth, SFW, setSFW }}>
       <QueryClientProvider client={queryClient}>
         <div className="font-inter ">
-          <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} windowWidth={windowWidth} />
+          <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} />
           <div>
             <Outlet />
           </div>
         </div>
       </QueryClientProvider>
-    </WindowContext>
+    </RootContext>
   );
 }
 

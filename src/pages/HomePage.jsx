@@ -5,7 +5,7 @@ import RecentAnime from "../components/home/RecentAnime";
 import RecentManga from "../components/home/RecentManga";
 import HomeSidePanel from "../components/home/HomeSidePanel";
 import AnimeCollections from "../components/home/AnimeCollections";
-import { jikanFetch } from "../utility/jikanApi";
+import { jikanFetch } from "../utility/jikanApi"; 
 
 export default function HomePage() {
   const [seasonQ] = useQueries({

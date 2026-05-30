@@ -1,6 +1,7 @@
 import { useQueries } from "@tanstack/react-query";
 import { ExternalLink } from "lucide-react";
 import { jikanFetch } from "../../utility/jikanApi";
+import { Link } from "react-router";
 const classes = {
   collectionClass: "w-full flex flex-col rounded-lg overflow-hidden bg-linear-0 from-0% from-amethyst-smoke-300/15 dark:from-dark-amethyst-smoke-50/15 to-100% to-indigo-600/5",
   gradient: [
@@ -46,9 +47,9 @@ export default function AnimeCollections() {
         <div id="top" className="w-full flex flex-col py-1 gap-y-1">
           <div className="uppercase font-extrabold flex flex-row items-center gap-x-3">
             <p>top anime</p>
-            <a href='/anime?type=tv&order_by=score&sort=desc'target="_blank" >
+            <Link to='/anime?type=tv&order_by=score&sort=desc'>
               <ExternalLink className="stroke-2 hover:cursor-pointer hover:stroke-blue-600/80 dark:hover:stroke-blue-300/80 duration-200" size={20} />
-            </a>
+            </Link>
           </div>
           <div className={`${classes.collectionClass}`}>
             {topAnimeQ.isPending ? (
@@ -56,14 +57,14 @@ export default function AnimeCollections() {
             ) : (
               <>
                 {topAnimeQ?.data?.map((anime, i) => (
-                  <a
-                    href={`/anime/${anime.mal_id}`}
+                  <Link
+                    to={`/anime/${anime.mal_id}`}
                     key={i}
                     className={`group w-full px-3 py-2.5 flex flex-row items-center justify-start gap-x-3 text-[0.85em] hover:bg-indigo-300/10 duration-200 ${classes.gradient[i] || classes.gradient[classes.gradient.length - 1]}`}
                   >
                     <img className="rounded-full aspect-square object-cover w-1/9 max-w-17 min-w-12" src={anime?.images?.webp?.image_url || anime?.images?.jpg?.image_url || ""} alt={anime?.title} />
                     <p className="group-hover:text-blue-600/80 dark:group-hover:text-blue-300/80 duration-200">{anime?.title}</p>
-                  </a>
+                  </Link>
                 ))}
               </>
             )}
@@ -72,9 +73,9 @@ export default function AnimeCollections() {
         <div id="upcoming" className="w-full flex flex-col py-1 gap-y-1">
           <div className="uppercase font-extrabold flex flex-row items-center gap-x-3">
             <p>upcoming anime</p>
-            <a href='/anime?type=tv&status=upcoming&order_by=popularity&sort=asc'target="_blank" >
+            <Link to='/anime?type=tv&status=upcoming&order_by=popularity&sort=asc'>
               <ExternalLink className="stroke-2 hover:cursor-pointer hover:stroke-blue-600/80 dark:hover:stroke-blue-300/80 duration-200" size={20} />
-            </a>
+            </Link>
           </div>
           <div className={`${classes.collectionClass}`}>
             {topAnimeQ.isPending ? (
@@ -82,14 +83,14 @@ export default function AnimeCollections() {
             ) : (
               <>
                 {upcomingAnimeQ?.data?.map((anime, i) => (
-                  <a
-                    href={`/anime/${anime.mal_id}`}
+                  <Link
+                    to={`/anime/${anime.mal_id}`}
                     key={i}
                     className={`group w-full px-3 py-2.5 flex flex-row items-center justify-start gap-x-3 text-[0.85em] hover:bg-indigo-300/10 duration-200 ${classes.gradient[i] || classes.gradient[classes.gradient.length - 1]}`}
                   >
                     <img className="rounded-full aspect-square object-cover w-1/9 max-w-17 min-w-12" src={anime?.images?.webp?.image_url || anime?.images?.jpg?.image_url || ""} alt={anime?.title} />
                     <p className="group-hover:text-blue-600/80 dark:group-hover:text-blue-300/80 duration-200">{anime?.title}</p>
-                  </a>
+                  </Link>
                 ))}
               </>
             )}

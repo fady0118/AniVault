@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import Voice from "../components/person/Voice";
-import { WindowContext } from "../App";
+import { RootContext } from "../App";
 import CardBox from "../components/CardBox/CardBox";
 import VoicesGrid from "../components/person/VoicesGrid";
 import useGallery from "../utility/useGallery";
@@ -13,7 +13,7 @@ import { jikanFetch } from "../utility/jikanApi";
 
 export default function PeoplePage() {
   const { id } = useParams();
-  const { windowWidth } = useContext(WindowContext);
+  const { windowWidth } = useContext(RootContext);
 
   const [personQ, picturesQ] = useQueries({
     queries: [
@@ -55,17 +55,17 @@ export default function PeoplePage() {
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
             <div id="title" className="mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex items-center space-x-2">
               <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">{personQ?.data.name}</div>
-              <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={personQ?.data.url} target="_blank">
+              <Link className="w-7 sm:w-9 rounded-sm overflow-hidden" to={personQ?.data.url} target="_blank">
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
                   alt="MyAnimeList Logo"
                   className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
                 />
-              </a>
+              </Link>
             </div>
             <div className="w-full order-2 flex flex-col sm:flex-row sm:justify-start gap-3">
               <div id="image" className="w-1/5 min-w-24 max-w-48 ">
-                <img className="w-full aspect-2/3 object-cover order-1 rounded-lg overflow-hidden" src={personQ?.data.images.jpg.image_url} alt="" />
+                <img className="w-full aspect-2/3 object-cover order-1 rounded-lg overflow-hidden" src={personQ?.data?.images?.jpg?.image_url} alt="" />
               </div>
 
               <div id="about" className="w-full pt-0.5 rounded-lg overflow-hidden box-colors">
@@ -81,28 +81,20 @@ export default function PeoplePage() {
             <div id="Pictures" className="order-3 box-colors rounded-md pt-0.5">
               <Pictures pictures={picturesQ?.data} openGallery={openGallery} cols={3} />
             </div>
-            {personQ?.data?.voices.length ? (
-              <div id="vaRoles" className="order-4 pt-1 rounded-lg overflow-hidden box-colors">
-                <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Voice Acting Roles</div>
-                {windowWidth >= 480 ? <VoicesGrid voices={personQ?.data?.voices} /> : <CardBox dataArr={personQ?.data?.dataArr} />}
-              </div>
-            ) : (
-              ""
-            )}
-            <div className="w-full order-3 flex flex-col md:flex-row gap-3">
-              {personQ?.data.manga.length ? (
+            <div className="w-full order-4 flex flex-col md:flex-row gap-3">
+              {personQ?.data?.manga?.length ? (
                 <div id="manga" className="order-last pt-1 w-full md:w-1/2 rounded-lg overflow-hidden box-colors">
                   <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Mangaography</div>
                   <div className="pt-2 space-y-2 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 auto-rows-fr">
                     {personQ?.data.manga.map((manga) => (
                       <div key={manga.manga.mal_id} className="flex w-full px-2 space-x-2 border-b border-amethyst-smoke-400/20">
-                        <a className="w-1/4" href={`/manga/${manga.manga.mal_id}`}>
+                        <Link className="w-1/4" to={`/manga/${manga.manga.mal_id}`}>
                           <img className="w-full h-full aspect-3/4 object-cover" src={manga.manga.images.webp.image_url} alt={manga.manga.title} />
-                        </a>
+                        </Link>
                         <div className="flex flex-col w-3/4 space-y-1">
-                          <a href={`/manga/${manga.manga.mal_id}`}>
+                          <Link to={`/manga/${manga.manga.mal_id}`}>
                             <p className="text-xs blue-link">{manga.manga.title}</p>
-                          </a>
+                          </Link>
                           <p className="text-2xs">{manga.position}</p>
                         </div>
                       </div>
@@ -112,19 +104,19 @@ export default function PeoplePage() {
               ) : (
                 ""
               )}
-              {personQ?.data.anime.length ? (
+              {personQ?.data?.anime?.length ? (
                 <div id="anime" className="order-last pt-1 w-full md:w-1/2 rounded-lg overflow-hidden box-colors">
                   <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Animeography</div>
                   <div className="pt-2 space-y-2 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 auto-rows-fr">
                     {personQ?.data.anime.map((anime) => (
                       <div key={anime.anime.mal_id} className="flex w-full px-2 space-x-2 border-b border-amethyst-smoke-400/20">
-                        <a className="w-1/4" href={`/anime/${anime.anime.mal_id}`}>
+                        <Link className="w-1/4" to={`/anime/${anime.anime.mal_id}`}>
                           <img className="w-full h-full aspect-3/4 object-cover" src={anime.anime.images.webp.image_url} alt={anime.anime.title} />
-                        </a>
+                        </Link>
                         <div className="flex flex-col w-3/4 space-y-1">
-                          <a href={`/anime/${anime.anime.mal_id}`}>
+                          <Link to={`/anime/${anime.anime.mal_id}`}>
                             <p className="text-xs blue-link">{anime.anime.title}</p>
-                          </a>
+                          </Link>
                           <p className="text-2xs">{anime.position.split("add ")[1] || anime.position}</p>
                         </div>
                       </div>
@@ -135,6 +127,14 @@ export default function PeoplePage() {
                 ""
               )}
             </div>
+            {personQ?.data?.voices?.length ? (
+              <div id="vaRoles" className="order-5 pt-1 rounded-lg overflow-hidden box-colors">
+                <div className="border-b border-amethyst-smoke-200/40 px-3 font-semibold text-md/relaxed capitalize">Voice Acting Roles</div>
+                {windowWidth >= 480 ? <VoicesGrid voices={personQ?.data?.voices} /> : <CardBox dataArr={personQ?.data?.dataArr} />}
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           {showModal && (
             <Gallery

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router";
-import { WindowContext } from "../App";
+import { useParams, useSearchParams, Link } from "react-router";
+import { RootContext } from "../App";
 import { useQueries } from "@tanstack/react-query";
 import { dateFormatter, renderIcon } from "../utility/utils";
 import { Baby, Calendar, ChevronLeft, ChevronRight, Grid3x2, Hash, LucideLayoutGrid, LucideLayoutList, Star, User, Videotape } from "lucide-react";
@@ -16,7 +16,7 @@ const classes = {
 
 export default function ProducerPage() {
   const { id } = useParams();
-  const { windowWidth } = useContext(WindowContext);
+  const { windowWidth } = useContext(RootContext);
   const [layout, setLayout] = useState("detailedGrid"); // smallGrid, detailedGrid, tiles
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -74,18 +74,18 @@ export default function ProducerPage() {
               <div className="flex flex-row gap-x-2 text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">
                 <p>{producerQ?.data?.titles?.find((t) => t.type.toLowerCase() === "default")?.title}</p>
               </div>
-              <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={producerQ?.data.url} target="_blank">
+              <Link className="w-7 sm:w-9 rounded-sm overflow-hidden" to={producerQ?.data.url} target="_blank">
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
                   alt="MyAnimeList Logo"
                   className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
                 />
-              </a>
+              </Link>
             </div>
             <div className="w-full order-2 flex flex-col sm:justify-start gap-3">
               <div className="w-full flex flex-col xs:flex-row gap-3">
                 <div id="image" className="w-1/5 min-w-24 max-w-48 ">
-                  <img className="w-full aspect-square object-cover order-1 rounded-lg overflow-hidden" src={producerQ?.data.images.jpg.image_url} alt="" />
+                  <img className="w-full aspect-square object-cover order-1 rounded-lg overflow-hidden" src={producerQ?.data?.images?.jpg?.image_url} alt="" />
                 </div>
                 <div id="info" className="flex flex-col grow rounded-md box-colors h-fit">
                   <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">About</div>
@@ -120,9 +120,9 @@ export default function ProducerPage() {
                         {producerQ?.data.external.map((ext, i) => (
                           <p className="flex flex-row items-center gap-1.5" key={i}>
                             {renderIcon(ext.name)}
-                            <a className="blue-link" href={ext.url}>
+                            <Link className="blue-link" target="_blank" to={ext.url}>
                               {ext.name}
-                            </a>
+                            </Link>
                           </p>
                         ))}
                       </div>
@@ -189,9 +189,13 @@ export default function ProducerPage() {
                           <>
                             <div className="w-full h-fit flex flex-col gap-y-1">
                               <div className="relative w-full h-fit rounded-md overflow-hidden">
-                                <a href={`/anime/${anime.mal_id}`}>
-                                  <img className="w-full aspect-3/4 object-cover hover:brightness-60 duration-200" src={`${anime.images.jpg.image_url}`} alt={anime.title_english || anime.title} />
-                                </a>
+                                <Link to={`/anime/${anime.mal_id}`}>
+                                  <img
+                                    className="w-full aspect-3/4 object-cover hover:brightness-60 duration-200"
+                                    src={`${anime?.images?.webp?.large_image_url || anime?.images?.jpg?.large_image_url}`}
+                                    alt={anime.title_english || anime.title}
+                                  />
+                                </Link>
                                 <div className="absolute bottom-0 left-0 py-2 px-3 gap-1 flex flex-col w-full text-xs font-light bg-linear-45 from-35% from-amethyst-smoke-400 dark:from-dark-amethyst-smoke-200 to-75% to-transparent">
                                   <div className="flex items-center gap-2">
                                     <Star size={15} />
@@ -207,17 +211,17 @@ export default function ProducerPage() {
                                   </div>
                                 </div>
                               </div>
-                              <a href={`/anime/${anime.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer cutoff-text-abs max-lines-1">
+                              <Link to={`/anime/${anime.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer cutoff-text-abs max-lines-1">
                                 {anime.title_english || anime.title}
-                              </a>
+                              </Link>
                             </div>
                           </>
                         ) : layout === "detailedGrid" ? (
                           <div className="w-full h-full flex flex-col theme-bg-colors">
                             <div className="flex flex-col grow-0 items-center justify-center text-center py-1.5 border-b magazine-border-colors">
-                              <a href={`/anime/${anime.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
+                              <Link to={`/anime/${anime.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
                                 {anime.title_english || anime.title}
-                              </a>
+                              </Link>
                               <p className="text-[0.9em] font-light">{anime.title_japanese}</p>
                             </div>
                             <div className="flex flex-row flex-wrap text-center justify-center w-full items-center capitalize border-b magazine-border-colors">
@@ -238,20 +242,20 @@ export default function ProducerPage() {
                             </div>
                             <div className="flex flex-row justify-evenly items-center py-1.5">
                               {anime.genres.slice(0, 4).map((genre, i) => (
-                                <a key={i} href={genre.url} className="hover-blue-link duration-150">
+                                <Link key={i} to={genre.url} className="hover-blue-link duration-150">
                                   {genre.name}
-                                </a>
+                                </Link>
                               ))}
                             </div>
                             <div className="w-full flex flex-row items-start grow px-1.5">
                               <div id="poster" className="w-1/2 md:w-2/5">
-                                <a href={`/anime/${anime.mal_id}`}>
+                                <Link to={`/anime/${anime.mal_id}`}>
                                   <img
                                     className="w-full h-full aspect-auto object-cover hover:brightness-60 duration-200"
-                                    src={`${anime.images.jpg.image_url}`}
+                                    src={`${anime?.images?.webp?.large_image_url || anime?.images?.jpg?.large_image_url}`}
                                     alt={anime.title_english || anime.title}
                                   />
-                                </a>
+                                </Link>
                               </div>
                               <div className="w-1/2 md:w-3/5 flex flex-col gap-y-2 pl-2 pt-2">
                                 <div className="w-full flex flex-col order-1 gap-y-0.5">
@@ -260,9 +264,9 @@ export default function ProducerPage() {
                                     <div className="flex flex-row flex-wrap gap-x-0 5">
                                       {anime.studios.map((studio, i, arr) => (
                                         <p key={i}>
-                                          <a className="blue-link" href={`/producer/${studio.mal_id}`}>
+                                          <Link className="blue-link" to={`/producer/${studio.mal_id}`}>
                                             {studio.name}
-                                          </a>
+                                          </Link>
                                           <span className="mr-1.5">{i < arr.length - 1 ? "," : ""}</span>
                                         </p>
                                       ))}
@@ -273,13 +277,13 @@ export default function ProducerPage() {
                                     <div className="flex flex-row flex-wrap gap-x-1">
                                       {anime.themes.length
                                         ? anime.themes.map((theme, i) => (
-                                            <a
-                                              href={theme.url}
+                                            <Link
+                                              to={theme.url}
                                               key={i}
                                               className="font-light rounded-full px-1.5 py-0.5 border magazine-border-colors hover-blue-link hover:cursor-pointer duration-200"
                                             >
                                               {theme.name}
-                                            </a>
+                                            </Link>
                                           ))
                                         : "-"}
                                     </div>
@@ -335,15 +339,19 @@ export default function ProducerPage() {
                         ) : (
                           <div className="theme-bg-colors">
                             <div className="flex flex-row grow">
-                              <a href={`/anime/${anime.mal_id}`} className="w-1/10 min-w-22 aspect-auto">
-                                <img src={anime.images.jpg.image_url} alt={anime.title_english || anime.title} className="w-full object-cover hover:brightness-60 duration-200" />
-                              </a>
+                              <Link to={`/anime/${anime.mal_id}`} className="w-1/10 min-w-22 aspect-auto">
+                                <img
+                                  src={anime?.images?.webp?.image_url || anime?.images?.jpg?.image_url}
+                                  alt={anime.title_english || anime.title}
+                                  className="w-full object-cover hover:brightness-60 duration-200"
+                                />
+                              </Link>
 
                               <div className="flex-1 flex flex-col gap-1.5 min-w-0">
                                 <div className="flex flex-wrap items-center px-3 py-1.5 gap-x-2.5 gap-y-0.5 border-b magazine-border-colors">
-                                  <a href={`/anime/${anime.mal_id}`} className="text-[15px] font-medium blue-link hover:underline leading-snug truncate">
+                                  <Link to={`/anime/${anime.mal_id}`} className="text-[15px] font-medium blue-link hover:underline leading-snug truncate">
                                     {anime.title_english || anime.title}
-                                  </a>
+                                  </Link>
                                   <span className="text-xs font-normal whitespace-pre-wrap">{anime.title_japanese}</span>
                                 </div>
 
@@ -366,9 +374,9 @@ export default function ProducerPage() {
                                 </div>
                                 <div className="flex flex-wrap gap-1 mt-0.5 px-3">
                                   {anime.genres.slice(0, 4).map((genre, i) => (
-                                    <a key={i} href={genre.url} className="font-light rounded-full px-1.5 py-0.5 border magazine-border-colors hover-blue-link hover:cursor-pointer duration-200">
+                                    <Link key={i} to={genre.url} className="font-light rounded-full px-1.5 py-0.5 border magazine-border-colors hover-blue-link hover:cursor-pointer duration-200">
                                       {genre.name}
-                                    </a>
+                                    </Link>
                                   ))}
                                 </div>
                               </div>

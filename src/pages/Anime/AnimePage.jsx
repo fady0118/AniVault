@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import Character from "../../components/CardBox/Box";
 import CardBox from "../../components/CardBox/CardBox";
-import { WindowContext } from "../../App";
+import { RootContext } from "../../App";
 import { ChevronRight, Music4Icon, SquareArrowOutUpRight, Star } from "lucide-react";
 import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions, getYouTubeThumbnail } from "../../utility/utils";
 import { useRelations } from "../../utility/useRelations";
@@ -17,10 +17,11 @@ import News from "../../components/anime/News";
 import Reviews from "../../components/anime/Reviews";
 import EpisodesModal from "../../components/anime/EpisodesModal";
 import { jikanFetch } from "../../utility/jikanApi";
+import { Link } from "react-router";
 
 export default function AnimePage() {
   let { id } = useParams();
-  const { windowWidth } = useContext(WindowContext);
+  const { windowWidth } = useContext(RootContext);
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, videosQ, newsQ] = useQueries({
     queries: [
@@ -167,13 +168,13 @@ export default function AnimePage() {
                 <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
                   {animeQ?.data?.title_english ? <span>{animeQ?.data.title_english}</span> : ""}
                   {animeQ?.data?.title_japanese ? <span>{animeQ?.data.title_japanese}</span> : ""}
-                  <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={animeQ?.data?.url} target="_blank">
+                  <Link className="w-7 sm:w-9 rounded-sm overflow-hidden" to={animeQ?.data?.url} target="_blank">
                     <img
                       src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
                       alt="MyAnimeList Logo"
                       className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
                     />
-                  </a>
+                  </Link>
                 </div>
               </div>
               <div className="order-2 flex flex-col w-full gap-y-3">
@@ -208,19 +209,19 @@ export default function AnimePage() {
                                 <p className="text-[2em]">Members</p>
                                 <p className="text-[1.6em]">{animeQ?.data?.members?.toLocaleString()}</p>
                               </div>
-                              <a href={`/anime?type=${animeQ?.data?.type.toLowerCase()}`} className="text-[1.35em] blue-link duration-200">
+                              <Link to={`/anime?type=${animeQ?.data?.type.toLowerCase()}`} className="text-[1.35em] blue-link duration-200">
                                 {animeQ?.data?.type}
-                              </a>
+                              </Link>
 
-                              <a href={`/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`} className="flex flex-row text-[1.35em] blue-link duration-200">
+                              <Link to={`/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`} className="flex flex-row text-[1.35em] blue-link duration-200">
                                 {animeQ?.data?.season} {animeQ?.data?.year}
-                              </a>
+                              </Link>
 
                               <div className="flex flex-row space-x-1.5 flex-wrap text-[1.35em]">
                                 {animeQ?.data?.studios.map((studio, i) => (
-                                  <a key={i} href={`/producer/${studio.mal_id}`} className="blue-link duration-200">
+                                  <Link key={i} to={`/producer/${studio.mal_id}`} className="blue-link duration-200">
                                     {studio.name}
-                                  </a>
+                                  </Link>
                                 ))}
                               </div>
                             </div>
@@ -312,7 +313,7 @@ export default function AnimePage() {
                           </div>
                           {renderInfoStr("status", `${animeQ?.data?.status}`, `/anime?status=${getAnimeStatus(animeQ?.data?.status)}`)}
                           {renderInfoStr("aired", `${animeQ?.data?.aired.string}`)}
-                          {renderInfoStr("premiered", `${animeQ?.data?.season || ""} ${animeQ?.data?.year || ""}`, `/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`)}
+                          {animeQ?.data?.season ? (<>{renderInfoStr("premiered", `${animeQ?.data?.season || ""} ${animeQ?.data?.year || ""}`, `/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`)}</>) : (  "")}
                           {renderInfoStr("broadcast", `${animeQ?.data?.broadcast.string || ""}`)}
                           {renderInfoArr("producers", animeQ?.data?.producers, "/producer")}
                           {renderInfoArr("licensors", animeQ?.data?.licensors)}
@@ -345,9 +346,9 @@ export default function AnimePage() {
                           {animeQ?.data?.external.map((ext, i) => (
                             <p key={i} className="flex flex-row items-center gap-1.5">
                               {renderIcon(ext.name)}
-                              <a className="blue-link" href={ext.url}>
+                              <Link className="blue-link" to={ext.url}>
                                 {ext.name}
-                              </a>
+                              </Link>
                             </p>
                           ))}
                         </div>
@@ -360,9 +361,9 @@ export default function AnimePage() {
                           {animeQ?.data?.streaming.map((stream, i) => (
                             <div key={i} className="flex flex-row gap-x-2 items-center">
                               {renderIcon(stream.name)}
-                              <a className="blue-link" href={stream.url}>
+                              <Link className="blue-link" to={stream.url}>
                                 {stream.name}
-                              </a>
+                              </Link>
                             </div>
                           ))}
                         </div>
@@ -423,7 +424,7 @@ export default function AnimePage() {
                       <Pictures pictures={picturesQ?.data} openGallery={openGallery} cols={2} />
                     </div>
 
-                    {charactersQ?.data?.dataArr.length ? (
+                    {charactersQ?.data?.dataArr?.length ? (
                       <div id="characters" className="flex justify-center w-full h-fit order-4">
                         <div className="rounded-lg box-colors w-full ">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
@@ -452,13 +453,13 @@ export default function AnimePage() {
                           <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2">
                             {animeQ?.data?.flattenedRelations.slice(0, 6).map((entry, i) => (
                               <div key={i} className="flex flex-row w-full">
-                                <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={`/${entry.type}/${entry.mal_id}`}>
+                                <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
                                   <img data-mal-id={entry.mal_id} className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
-                                </a>
+                                </Link>
                                 <div className="w-3/4 flex flex-col gap-y-1 px-2">
-                                  <a href={`/${entry.type}/${entry.mal_id}`} className="blue-link">
+                                  <Link to={`/${entry.type}/${entry.mal_id}`} className="blue-link">
                                     {entry.name}
-                                  </a>
+                                  </Link>
                                   <p className="text-[0.8em]">
                                     {entry.relation} ({entry.type})
                                   </p>
@@ -480,18 +481,18 @@ export default function AnimePage() {
                             {showAllRelations
                               ? animeQ?.data?.flattenedRelations.slice(6).map((entry, i) => (
                                   <div key={i + 6} className="flex flex-row w-full">
-                                    <a className="w-1/4 max-w-14 h-full aspect-2/3 " href={`/${entry.type}/${entry.mal_id}`}>
+                                    <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
                                       <img
                                         className="w-full h-full object-cover"
                                         data-mal-id={entry.mal_id}
                                         src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null}
                                         alt={entry.name}
                                       />
-                                    </a>
+                                    </Link>
                                     <div className="w-3/4 flex flex-col gap-y-1 px-2">
-                                      <a href={`/${entry.type}/${entry.mal_id}`} className="blue-link">
+                                      <Link to={`/${entry.type}/${entry.mal_id}`} className="blue-link">
                                         {entry.name}
-                                      </a>
+                                      </Link>
                                       <p>
                                         {entry.relation} ({entry.type})
                                       </p>

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Link } from "react-router";
 
 export default function FriendsModal({ data, setShowFriendsModal }) {
   useEffect(() => {
@@ -28,19 +29,19 @@ export default function FriendsModal({ data, setShowFriendsModal }) {
         </div>
         <div className="w-full p-4 bg-amethyst-smoke-400 dark:bg-dark-amethyst-smoke-200 overflow-y-scroll rounded-sm min-h-2/3">
           <div className="grid grid-cols-1 gap-y-4 overflow-y-scroll">
-            {data.map((f, i) => (
+            {data?.map((f, i) => (
               <div key={i} className="flex justify-start items-center p-3 gap-x-5 rounded-xl bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-50/30">
-                <a className="w-1/10 min-w-20" href={`/user/${f?.user?.username}`} target="_blank">
+                <Link className="w-1/10 min-w-20" to={`/user/${f?.user?.username}`} target="_blank">
                   <img
                     src={f?.user?.images.webp.image_url || f?.user?.images.jpg.image_url}
                     alt={f.user.username}
                     className="w-full aspect-square rounded-full object-cover"
                   />
-                </a>
+                </Link>
                 <div className="flex flex-col h-full justify-start py-2.5 gap-y-2">
-                  <a target="_blank" href={`/user/${f?.user?.username}`} className="w-fit text-sm font-medium hover:text-blue-500 truncate block duration-100">
+                  <Link to={`/user/${f?.user?.username}`} className="w-fit text-sm font-medium hover:text-blue-500 truncate block duration-100">
                     {f.user.username}
-                  </a>
+                  </Link>
                   <p className="text-xs dark:text-amethyst-smoke-200/50 text-dark-amethyst-smoke-50/50">
                     Friends since {new Date(f.friends_since).toLocaleDateString()} · Last online {new Date(f.last_online).toLocaleDateString()}
                   </p>

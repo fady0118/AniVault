@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router";
-import { WindowContext } from "../../App";
+import { Link, useParams, useSearchParams } from "react-router";
+import { RootContext } from "../../App";
 import { BookOpen, Calendar, ChevronLeft, ChevronRight, Hash, LucideLayoutGrid, LucideLayoutList, Star, User } from "lucide-react";
 import { getSeason, getYear } from "../../utility/utils";
 
@@ -14,7 +14,7 @@ const classes = {
 
 export default function MagazinePage() {
   let { id } = useParams();
-  const { windowWidth } = useContext(WindowContext);
+  const { windowWidth } = useContext(RootContext);
   const [searchParams, setSearchParams] = useSearchParams();
   const [layout, setLayout] = useState("grid"); // grid, tiles
 
@@ -64,13 +64,13 @@ export default function MagazinePage() {
             {magazineQ?.data?.data?.length ? (
               <div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-row gap-x-1.5 items-center">
                 <span className="text-sm/relaxed sm:text-lg/relaxed font-bold">{magazineQ?.data?.data[0]?.serializations[0]?.name}</span>
-                <a className="w-7 sm:w-9 rounded-sm overflow-hidden" href={magazineQ?.data?.data[0]?.serializations[0]?.url} target="_blank">
+                <Link className="w-7 sm:w-9 rounded-sm overflow-hidden" to={magazineQ?.data?.data[0]?.serializations[0]?.url} target="_blank">
                   <img
                     src="https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
                     alt="MyAnimeList Logo"
                     className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
                   />
-                </a>
+                </Link>
               </div>
             ) : (
               ""
@@ -141,9 +141,9 @@ export default function MagazinePage() {
                     {layout === "grid" ? (
                       <div className="w-full h-full flex flex-col capitalize rounded-md theme-bg-colors">
                         <div className="flex flex-col grow-0 items-center justify-center text-center py-1.5 border-b magazine-border-colors">
-                          <a href={`/${manga.type || "manga"}/${manga.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
+                          <Link to={`/${manga.type || "manga"}/${manga.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
                             {manga.title_english || manga.title}
-                          </a>
+                          </Link>
                           <p className="text-[0.9em] font-light">{manga.title_japanese}</p>
                         </div>
                         <div className="flex flex-row flex-wrap justify-center w-full items-center capitalize border-b magazine-border-colors">
@@ -166,16 +166,16 @@ export default function MagazinePage() {
                         </div>
                         <div className="flex flex-row justify-evenly items-center py-1.5">
                           {manga.genres.slice(0, 4).map((genre, i) => (
-                            <a key={i} href={genre.url} className="hover-blue-link duration-150">
+                            <Link target="_blank" key={i} to={genre.url} className="hover-blue-link duration-150">
                               {genre.name}
-                            </a>
+                            </Link>
                           ))}
                         </div>
                         <div className="w-full flex flex-row items-start grow px-1.5">
                           <div id="poster" className="w-1/2 md:w-2/5">
-                            <a href={`/${manga.type || "manga"}/${manga.mal_id}`}>
+                            <Link to={`/${manga.type || "manga"}/${manga.mal_id}`}>
                               <img className="w-full h-full aspect-auto object-cover hover:brightness-60 duration-200" src={`${manga.images.jpg.image_url}`} alt={manga.title_english || manga.title} />
-                            </a>
+                            </Link>
                           </div>
                           <div className="w-1/2 md:w-3/5 flex flex-col gap-y-2 pl-2 pt-2">
                             <div className="w-full flex flex-col order-1 gap-y-0.5">
@@ -184,9 +184,9 @@ export default function MagazinePage() {
                                 <div className="flex flex-row flex-wrap gap-x-0 5">
                                   {manga.authors.map((author, i, arr) => (
                                     <p key={i}>
-                                      <a className="blue-link" href={`/${author.type}/${author.mal_id}`}>
+                                      <Link className="blue-link" to={`/${author.type}/${author.mal_id}`}>
                                         {author.name}
-                                      </a>
+                                      </Link>
                                       <span className="mr-1.5">{i < arr.length - 1 ? "," : ""}</span>
                                     </p>
                                   ))}
@@ -197,9 +197,9 @@ export default function MagazinePage() {
                                 <div className="flex flex-row flex-wrap gap-x-1">
                                   {manga.themes.length
                                     ? manga.themes.map((theme, i) => (
-                                        <a href={theme.url} key={i} className="font-light rounded-full px-1.5 py-0.5 border magazine-border-colors hover-blue-link hover:cursor-pointer duration-200">
+                                        <Link target="_blank" to={theme.url} key={i} className="font-light rounded-full px-1.5 py-0.5 border magazine-border-colors hover-blue-link hover:cursor-pointer duration-200">
                                           {theme.name}
-                                        </a>
+                                        </Link>
                                       ))
                                     : "-"}
                                 </div>
@@ -255,15 +255,15 @@ export default function MagazinePage() {
                     ) : (
                       <div className="flex flex-col rounded-md theme-bg-colors">
                         <div className="flex flex-row grow">
-                          <a href={`/${manga.type || "manga"}/${manga.mal_id}`} className="w-1/10 min-w-22 aspect-auto">
+                          <Link to={`/${manga.type || "manga"}/${manga.mal_id}`} className="w-1/10 min-w-22 aspect-auto">
                             <img src={manga.images.jpg.image_url} alt={manga.title_english || manga.title} className="w-full h-full object-cover  hover:brightness-60 duration-200" />
-                          </a>
+                          </Link>
 
                           <div className="flex-1 flex flex-col gap-1.5 min-w-0">
                             <div className="flex flex-wrap items-center px-3 py-1.5 gap-x-2.5 gap-y-0.5 border-b magazine-border-colors">
-                              <a href={`/${manga.type || "manga"}/${manga.mal_id}`} className="text-[15px] font-medium blue-link hover:underline leading-snug truncate">
+                              <Link to={`/${manga.type || "manga"}/${manga.mal_id}`} className="text-[15px] font-medium blue-link hover:underline leading-snug truncate">
                                 {manga.title_english || manga.title}
-                              </a>
+                              </Link>
                               <span className="text-xs font-normal whitespace-pre-wrap">{manga.title_japanese}</span>
                             </div>
 
@@ -286,9 +286,9 @@ export default function MagazinePage() {
                             </div>
                             <div className="flex flex-wrap gap-1 mt-0.5 px-3">
                               {manga.genres.slice(0, 4).map((genre, i) => (
-                                <a key={i} href={genre.url} className="font-light rounded-full px-1.5 py-0.5 border magazine-border-colors hover-blue-link hover:cursor-pointer duration-200">
+                                <Link target="_blank" key={i} to={genre.url} className="font-light rounded-full px-1.5 py-0.5 border magazine-border-colors hover-blue-link hover:cursor-pointer duration-200">
                                   {genre.name}
-                                </a>
+                                </Link>
                               ))}
                             </div>
                           </div>

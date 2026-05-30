@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, ChevronLeft, ChevronRight, Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { jikanFetch } from "../../utility/jikanApi";
+import { Link } from "react-router";
 
 const classes = {
   dayClass: "day py-1 px-2 rounded-md hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200",
@@ -100,18 +101,18 @@ export default function Schedual() {
           <div className="flex flex-col">
             <input type="checkbox" name="schedual-checkbox" id="schedual-checkbox" className="peer hidden" />
             {schedual?.data?.slice(0, 10).map((item) => (
-              <a href={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass}`}>
+              <Link to={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass}`}>
                 <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
                 <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
-              </a>
+              </Link>
             ))}
             <div className="grid grid-rows-[0fr] peer-checked:grid-rows-[1fr] transition-[grid-template-rows] duration-300">
               <div className="overflow-hidden">
                 {schedual?.data?.slice(10).map((item) => (
-                  <a href={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass} `}>
+                  <Link to={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass} `}>
                     <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
                     <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>

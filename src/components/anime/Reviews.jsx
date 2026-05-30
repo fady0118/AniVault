@@ -1,5 +1,6 @@
 import { ChevronRight, Star } from "lucide-react";
 import { dateFormatter, renderReactions } from "../../utility/utils";
+import { Link } from "react-router";
 
 export default function Reviews({ data }) {
   return (
@@ -48,15 +49,16 @@ export default function Reviews({ data }) {
               <div key={review.mal_id} className="bottom-border">
                 <div className="flex flex-col xs:flex-row">
                   <div className="flex flex-col ml-3 xs:m-0 justify-start w-[5%] min-w-10">
-                    <a href={review.user.url} className="w-full aspect-square">
+                    <Link to={`/user/${review.user.username}`} className="w-full aspect-square">
                       <img className="w-full h-full object-cover" src={review.user.images.webp.image_url} alt={`${review.user.username}-picture`} />
-                    </a>
+                    </Link>
+                    
                   </div>
                   <div className="flex flex-col w-[95%] px-3">
                     <div className="flex flex-row justify-between items-center">
-                      <a className="blue-link font-semibold" href={review.user.url}>
+                      <Link to={`/user/${review.user.username}`} className="blue-link font-semibold">
                         {review.user.username}
-                      </a>
+                      </Link>
                       <p className="text-2xs/snug font-light">{dateFormatter(review.date)}</p>
                     </div>
                     <div className="flex flex-row justify-between items-start gap-x-2.5">

@@ -1,5 +1,6 @@
 import { Play } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router";
 const gradientStyles = `bg-[linear-gradient(0deg,#e7e6ee_20%,#e7e6eea8_50%,transparent_65%)] dark:bg-[linear-gradient(0deg,#1b1e1f_20%,#1b1e1fab_50%,transparent_65%)] sm:bg-[linear-gradient(90deg,#e7e6ee_50%,#e7e6eea8_65%,transparent_100%)] sm:dark:bg-[linear-gradient(90deg,#1b1e1f_50%,#1b1e1fab_65%,transparent_100%)]`;
 
 export default function Slide({ animeData, openModal }) {
@@ -29,13 +30,13 @@ export default function Slide({ animeData, openModal }) {
                 <div id="genres" className="flex">
                   {animeData.genres.map(({ name }) => name).join(", ")}
                 </div>
-                <a className="w-8 sm:w-10 rounded-sm overflow-hidden" href={animeData.url} target="_blank">
+                <Link className="w-8 sm:w-10 rounded-sm overflow-hidden" to={animeData.url} target="_blank">
                   <img
                     src="https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
                     alt="MyAnimeList Logo"
                     className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
                   />
-                </a>
+                </Link>
               </div>
               {animeData?.synopsis? (
                 <div id="synopsis" className="flex text-xs font-light max-h-1/6 max-lines-4 cutoff-text-abs">

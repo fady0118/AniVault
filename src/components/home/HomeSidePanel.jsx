@@ -2,6 +2,7 @@ import { useQueries } from "@tanstack/react-query";
 import { Trophy } from "lucide-react";
 import Schedual from "./Schedual";
 import { jikanFetch } from "../../utility/jikanApi";
+import { Link } from "react-router";
 
 export default function HomeSidePanel() {
   const [TrendingAnimeQ] = useQueries({
@@ -33,7 +34,7 @@ export default function HomeSidePanel() {
           ) : (
             <>
               {TrendingAnimeQ?.data?.slice(0, 10).map((item, i) => (
-                <a key={item?.mal_id || i} href={`/anime/${item?.mal_id}`}>
+                <Link key={item?.mal_id || i} to={`/anime/${item?.mal_id}`}>
                   <div className="group flex flex-row gap-x-1.5 items-center px-3 py-1 hover:bg-blue-600/5 dark:hover:bg-blue-300/5 duration-200">
                     <img
                       className="shrink-0 w-1/9 max-w-10 min-w-5 aspect-square object-cover rounded-full"
@@ -42,7 +43,7 @@ export default function HomeSidePanel() {
                     />
                     <p className="group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
                   </div>
-                </a>
+                </Link>
               ))}
             </>
           )}
