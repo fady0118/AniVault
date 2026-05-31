@@ -7,9 +7,9 @@ import KeywordFilter from "../../components/anime/filters/KeywordFilter";
 import data from "../../utility/data.json";
 import SortFilter from "../../components/anime/filters/SortFilter";
 import ExtraFilters from "../../components/anime/filters/ExtraFilters/ExtraFilters";
-import AnimeContainer from "../../components/anime/AnimeContainer";
 import { RootContext } from "../../App";
 import { delay } from "../../utility/utils";
+import AnimeMangaContainer from "../../components/anime/AnimeMangaContainer";
 
 const filterData = { type: ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"], status: ["airing", "complete", "upcoming"] };
 const genresData = [...data.anime.genres, ...data.anime.themes];
@@ -146,7 +146,7 @@ export default function AnimeRootPage() {
               </>
             )}
           </div>
-          <AnimeContainer searchParams={effectiveSearchParams} />
+          <AnimeMangaContainer searchParams={effectiveSearchParams} itemType="anime"/>
         </div>
 
         <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">

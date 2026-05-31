@@ -9,6 +9,7 @@ import SortFilter from "../../components/anime/filters/SortFilter";
 import ExtraFilters from "../../components/anime/filters/ExtraFilters/ExtraFilters";
 import { Info, Settings2, X } from "lucide-react";
 import { delay } from "../../utility/utils";
+import AnimeMangaContainer from "../../components/anime/AnimeMangaContainer";
 
 const filterData = { type: ["manga", "novel", "lightnovel", "oneshot", "doujin", "manhwa", "manhua"], status: ["publishing", "complete", "hiatus", "discontinued", "upcoming"] };
 const genresData = [...data.manga.genres, ...data.manga.themes];
@@ -61,7 +62,7 @@ export default function MangaRootPage() {
     start_date: "",
     end_date: "",
   });
-  const effectiveSearchParam = searchParams.size === 0 ? defaultSearchParams : searchParams;
+  const effectiveSearchParams = searchParams.size === 0 ? defaultSearchParams : searchParams;
 
   async function closeSidePanel() {
     sidePanelRef.current.classList.add("-translate-x-full", "duration-300");
@@ -143,7 +144,7 @@ export default function MangaRootPage() {
               </>
             )}
           </div>
-          {/* mangacontainer */}
+            <AnimeMangaContainer searchParams={effectiveSearchParams} itemType="manga" />
         </div>
         <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
           <img src="/photo-bg.png" alt="" className="w-full h-full object-cover bg-no-repeat opacity-30 contrast-125" />

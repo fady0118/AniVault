@@ -6,14 +6,14 @@ import { RootContext } from "../../App";
 import { Link } from "react-router";
 
 const classes = { chevron: "p-0.5 rounded-md box-content duration-200" };
-export default function AnimeContainer({ searchParams }) {
+export default function AnimeMangaContainer({ searchParams, itemType }) {
   // type & status are enums in the api so we need to seperate them from the other params and fetch in parallel
   const types = useMemo(() => searchParams.get("type"), [searchParams]);
   const statuses = useMemo(() => searchParams.get("status"), [searchParams]);
 
   const typeList = useMemo(() => (types ? types?.split(",") : [""]), [types]);
   const statusList = useMemo(() => (statuses ? statuses?.split(",") : [""]), [statuses]);
-  const {SFW} = useContext(RootContext)
+  const { SFW } = useContext(RootContext);
   const rest = useMemo(
     () =>
       new URLSearchParams({
@@ -57,9 +57,9 @@ export default function AnimeContainer({ searchParams }) {
         const key = `${type}|${status}`;
         const state = pageStateRef.current.queries[key];
         return {
-          queryKey: ["animeData", rest.toString(), type, status, currentPage, SFW],
+          queryKey: ["itemTypeData", rest.toString(), type, status, currentPage, SFW],
           queryFn: async () => {
-            const res = await jikanFetch(`https://api.jikan.moe/v4/anime?${rest}&type=${type}&status=${status}&page=${currentPage}`);
+            const res = await jikanFetch(`https://api.jikan.moe/v4/${itemType}?${rest}&type=${type}&status=${status}&page=${currentPage}`);
             if (!res.ok) throw new Error(res.statusText);
             return await res.json();
           },
@@ -112,7 +112,7 @@ export default function AnimeContainer({ searchParams }) {
       pageStateRef.current = prevState;
       setCurrentPage((s) => s + 1);
     } else return;
-    queryClient.invalidateQueries({ queryKey: ["animeData", rest.toString(), SFW] });
+    queryClient.invalidateQueries({ queryKey: ["itemTypeData", rest.toString(), SFW] });
   }
 
   function checkNext() {
@@ -158,7 +158,7 @@ export default function AnimeContainer({ searchParams }) {
           <div className="py-2 grid grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-3 md:gap-4">
             {uniqueData?.map((item) => (
               <div key={item.mal_id} className="group relative w-full aspect-2/3 rounded-md overflow-hidden  flex-col hover:scale-105 hover:cursor-pointer duration-200">
-                <Link to={`/anime/${item.mal_id}`}>
+                <Link to={`/${itemType}/${item.mal_id}`}>
                   <img
                     src={item.images.webp.large_image_url || item.images.webp.image_url || item.images.jpg.image_url}
                     alt={item.title}
@@ -175,7 +175,11 @@ export default function AnimeContainer({ searchParams }) {
                     {item.themes.length ? (
                       <div className="flex flex-row flex-wrap gap-x-1">
                         {item.genres.map((genres, i) => (
-                          <Link key={i} to={`/anime?genres=${genres.mal_id}`} className="font-light rounded-full px-1 m-0.5 box-colors-accent hover:cursor-pointer hover-indigo-link duration-200">
+                          <Link
+                            key={i}
+                            to={`/${itemType}?genres=${genres.mal_id}`}
+                            className="font-light rounded-full px-1 m-0.5 box-colors-accent hover:cursor-pointer hover-indigo-link duration-200"
+                          >
                             {genres.name}
                           </Link>
                         ))}
