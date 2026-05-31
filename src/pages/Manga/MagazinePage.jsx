@@ -141,7 +141,7 @@ export default function MagazinePage() {
                     {layout === "grid" ? (
                       <div className="w-full h-full flex flex-col capitalize rounded-md overflow-hidden theme-bg-colors">
                         <div className="flex flex-col grow-0 items-center justify-center text-center py-1.5 border-b magazine-border-colors">
-                          <Link to={`/${manga.type || "manga"}/${manga.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
+                          <Link to={`/manga/${manga.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
                             {manga.title_english || manga.title}
                           </Link>
                           <p className="text-[0.9em] font-light">{manga.title_japanese}</p>
@@ -173,7 +173,7 @@ export default function MagazinePage() {
                         </div>
                         <div className="w-full flex flex-row items-start grow px-1.5">
                           <div id="poster" className="w-1/2 md:w-2/5">
-                            <Link to={`/${manga.type || "manga"}/${manga.mal_id}`}>
+                            <Link to={`/manga/${manga.mal_id}`}>
                               <img className="w-full h-full aspect-auto object-cover hover:brightness-60 duration-200" src={`${manga.images.jpg.image_url}`} alt={manga.title_english || manga.title} />
                             </Link>
                           </div>
@@ -255,13 +255,13 @@ export default function MagazinePage() {
                     ) : (
                       <div className="flex flex-col rounded-md overflow-hidden theme-bg-colors">
                         <div className="flex flex-row grow">
-                          <Link to={`/${manga.type || "manga"}/${manga.mal_id}`} className="w-1/8 min-w-20 max-w-36 aspect-auto">
+                          <Link to={`/manga/${manga.mal_id}`} className="w-1/8 min-w-20 max-w-36 aspect-auto">
                             <img src={manga.images.jpg.image_url} alt={manga.title_english || manga.title} className="w-full object-cover  hover:brightness-60 duration-200" />
                           </Link>
 
                           <div className="flex-1 flex flex-col gap-1.5 min-w-0">
                             <div className="flex flex-wrap items-center px-3 py-1.5 gap-x-2.5 gap-y-0.5 border-b magazine-border-colors">
-                              <Link to={`/${manga.type || "manga"}/${manga.mal_id}`} className="text-[1.25em] font-medium blue-link hover:underline leading-snug truncate">
+                              <Link to={`/manga/${manga.mal_id}`} className="text-[1.25em] font-medium blue-link hover:underline leading-snug truncate">
                                 {manga.title_english || manga.title}
                               </Link>
                               <span className="text-[1em] text-text-light-50 dark:text-text-dark-50 font-normal whitespace-pre-wrap">{manga.title_japanese}</span>
