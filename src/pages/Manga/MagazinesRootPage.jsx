@@ -68,7 +68,7 @@ export default function MagazinesRootPage() {
                   <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
 
                   <SortFilter data={["mal_id", "count"]} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
-
+                  
                   <div id="filterBtn" className=" header-box box-colors-stronger hover:cursor-pointer" onClick={handleApplyFilter}>
                     <p className="px-2">filter</p>
                   </div>

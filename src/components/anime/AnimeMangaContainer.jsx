@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { RootContext } from "../../App";
 import { Link } from "react-router";
 
-const classes = { chevron: "p-0.5 rounded-md box-content duration-200" };
+const classes = { chevron: "p-0.5 rounded-md box-content duration-200 scale-80 md:scale-100" };
 export default function AnimeMangaContainer({ searchParams, itemType }) {
   // type & status are enums in the api so we need to seperate them from the other params and fetch in parallel
   const types = useMemo(() => searchParams.get("type"), [searchParams]);
@@ -121,14 +121,14 @@ export default function AnimeMangaContainer({ searchParams, itemType }) {
   }
 
   return (
-    <div className="relative order-3 px-3 py-1 min-h-32">
+    <div className="relative order-3 px-3 py-1 min-h-32 text-xs">
       {isLoading ? (
         <>
           <div className="absolute top-full left-1/2 -translate-1/2">Loading...</div>
         </>
       ) : (
         <>
-          <div className="w-fit flex flex-row items-center py-0.5 px-2 text-xs box-colors rounded-lg">
+          <div className="w-fit flex flex-row items-center py-0.5 px-2 text-[0.8em] md:text-[1em] box-colors rounded-lg">
             <p className="px-2 py-0.5 rounded-md hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20 duration-200" onClick={() => setCurrentPage(1)}>
               1
             </p>
