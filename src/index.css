@@ -189,7 +189,7 @@
   }
 
   .box-colors-stronger {
-    @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-200
+    @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300
   }
 
   .box-colors-accent {
@@ -204,6 +204,9 @@
   }
   .rose-link {
     @apply text-rose-700 dark:text-rose-400
+  }
+  .indigo-link {
+    @apply text-indigo-700 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300
   }
 
   .gray-link {
@@ -220,10 +223,6 @@
 
   .hover-rose-link {
     @apply hover:text-rose-700 dark:hover:text-rose-400
-  }
-
-  .hover-indigo-link {
-    @apply hover:text-indigo-700 dark:hover:text-indigo-300
   }
 
   .blue-link-b {

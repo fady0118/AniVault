@@ -57,7 +57,7 @@ export default function SortFilter({ registerCollector, data, view = null }) {
               ))}
             </div>
           </div>
-          <div id="sort" onClick={handleSortChange} className="box-colors rounded-md px-0.5 py-1 hover:brightness-110 hover:cursor-pointer duration-200">
+          <div id="sort" onClick={handleSortChange} className="box-colors-stronger rounded-md px-0.5 py-1 hover:brightness-110 hover:cursor-pointer duration-200">
             {localState.sort === "asc" ? (
               <>
                 <ChevronDown className="rotate-180" size={14} />

@@ -139,7 +139,7 @@ export default function MagazinePage() {
                 {magazineQ?.data?.data?.map((manga) => (
                   <div key={manga.mal_id}>
                     {layout === "grid" ? (
-                      <div className="w-full h-full flex flex-col capitalize rounded-md theme-bg-colors">
+                      <div className="w-full h-full flex flex-col capitalize rounded-md overflow-hidden theme-bg-colors">
                         <div className="flex flex-col grow-0 items-center justify-center text-center py-1.5 border-b magazine-border-colors">
                           <Link to={`/${manga.type || "manga"}/${manga.mal_id}`} className="font-bold text-[1.25em] blue-link hover:cursor-pointer">
                             {manga.title_english || manga.title}
@@ -223,11 +223,11 @@ export default function MagazinePage() {
                                 <div className="peer">
                                   <input className="hidden" type="checkbox" name={`synopsisCheckbox-${manga.mal_id}`} id={`synopsisCheckbox-${manga.mal_id}`} />
                                 </div>
-                                <p className="w-full h-full text-xs font-light max-lines-4 cutoff-text">{manga.synopsis || "synopsis missing.."}</p>
+                                <p className="w-full h-fullfont-light max-lines-4 cutoff-text">{manga.synopsis || "synopsis missing.."}</p>
                                 {manga.synopsis ? (
                                   <label
                                     htmlFor={`synopsisCheckbox-${manga.mal_id}`}
-                                    className="text-xs capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
+                                    className="capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
                             before:content-['see_more'] peer-has-checked:before:content-['see_less']"
                                   ></label>
                                 ) : (
@@ -253,30 +253,30 @@ export default function MagazinePage() {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex flex-col rounded-md theme-bg-colors">
+                      <div className="flex flex-col rounded-md overflow-hidden theme-bg-colors">
                         <div className="flex flex-row grow">
-                          <Link to={`/${manga.type || "manga"}/${manga.mal_id}`} className="w-1/10 min-w-22 aspect-auto">
-                            <img src={manga.images.jpg.image_url} alt={manga.title_english || manga.title} className="w-full h-full object-cover  hover:brightness-60 duration-200" />
+                          <Link to={`/${manga.type || "manga"}/${manga.mal_id}`} className="w-1/8 min-w-20 max-w-36 aspect-auto">
+                            <img src={manga.images.jpg.image_url} alt={manga.title_english || manga.title} className="w-full object-cover  hover:brightness-60 duration-200" />
                           </Link>
 
                           <div className="flex-1 flex flex-col gap-1.5 min-w-0">
                             <div className="flex flex-wrap items-center px-3 py-1.5 gap-x-2.5 gap-y-0.5 border-b magazine-border-colors">
-                              <Link to={`/${manga.type || "manga"}/${manga.mal_id}`} className="text-[15px] font-medium blue-link hover:underline leading-snug truncate">
+                              <Link to={`/${manga.type || "manga"}/${manga.mal_id}`} className="text-[1.25em] font-medium blue-link hover:underline leading-snug truncate">
                                 {manga.title_english || manga.title}
                               </Link>
-                              <span className="text-xs font-normal whitespace-pre-wrap">{manga.title_japanese}</span>
+                              <span className="text-[1em] text-text-light-50 dark:text-text-dark-50 font-normal whitespace-pre-wrap">{manga.title_japanese}</span>
                             </div>
 
-                            <div className="px-3 overflow-y-scroll grow w-full max-h-25">
+                            <div className="px-3 overflow-y-scroll w-full max-h-25">
                               <div className="flex flex-col gap-y-1.5 items-end">
                                 <div className="peer">
                                   <input className="hidden" type="checkbox" name={`synopsisCheckbox-${manga.mal_id}`} id={`synopsisCheckbox-${manga.mal_id}`} />
                                 </div>
-                                <p className="w-full h-full text-xs font-light max-lines-4 cutoff-text">{manga.synopsis || "synopsis missing.."}</p>
+                                <p className="w-full h-full text-[1em] font-light max-lines-4 cutoff-text">{manga.synopsis || "synopsis missing.."}</p>
                                 {manga.synopsis ? (
                                   <label
                                     htmlFor={`synopsisCheckbox-${manga.mal_id}`}
-                                    className="text-xs capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
+                                    className="text-[1em] capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
                             before:content-['see_more'] peer-has-checked:before:content-['see_less']"
                                   ></label>
                                 ) : (
@@ -284,7 +284,7 @@ export default function MagazinePage() {
                                 )}
                               </div>
                             </div>
-                            <div className="flex flex-wrap gap-1 mt-0.5 px-3">
+                            <div className="flex flex-wrap gap-1 my-0.5 px-3 text-[0.75em] sm:text-[1em]">
                               {manga.genres.slice(0, 4).map((genre, i) => (
                                 <Link target="_blank" key={i} to={genre.url} className="font-light rounded-full px-1.5 py-0.5 border magazine-border-colors hover-blue-link hover:cursor-pointer duration-200">
                                   {genre.name}
@@ -294,9 +294,9 @@ export default function MagazinePage() {
                           </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center border-t magazine-border-colors text-[1.1em]">
+                        <div className="flex flex-wrap items-center border-t magazine-border-colors text-[0.75em] sm:text-[1em]">
                           <div className="flex flex-row flex-wrap gap-x-1 px-3.5 justify-center items-center h-full border-r magazine-border-colors">
-                            <Calendar size={13} />
+                            <Calendar className="scale-75 sm:scale-100" size={13} />
                             <p>{getSeason(manga.published.from)},</p>
                             <p>{getYear(manga.published.from)}</p>
                           </div>
@@ -307,7 +307,7 @@ export default function MagazinePage() {
                           </div>
 
                           <div className="flex items-center gap-1 px-3.5 py-1.5 border-r magazine-border-colors shrink-0">
-                            <BookOpen size={13} />
+                            <BookOpen className="scale-75 sm:scale-100" size={13} />
                             <span>
                               {manga.volumes ?? "?"} vols · {manga.chapters ?? "?"} chs
                             </span>
@@ -315,15 +315,15 @@ export default function MagazinePage() {
 
                           <div className="flex items-center gap-3.5 px-3.5 py-1.5 ml-auto shrink-0">
                             <div className="flex items-center gap-1">
-                              <Star size={13} />
+                              <Star className="scale-75 sm:scale-100" size={13} />
                               <span className="font-medium">{manga.score}</span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <User size={13} />
+                              <User className="scale-75 sm:scale-100" size={13} />
                               <span>{manga.members.toLocaleString()}</span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <Hash size={13} className="" />
+                              <Hash className="scale-75 sm:scale-100" size={13} className="" />
                               <span>{manga.rank.toLocaleString()}</span>
                             </div>
                           </div>
