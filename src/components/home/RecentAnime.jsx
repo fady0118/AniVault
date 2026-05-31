@@ -140,12 +140,12 @@ export default function RecentAnime() {
               />
             </div>
           </div>
-          <div id="recentTabs" className="flex flex-row gap-x-2 items-center text-[0.55em] sm:text-[0.65em]">
+          <div id="recentTabs" className="flex flex-row gap-x-2 items-center text-[0.55em] md:text-[0.65em]">
             <div
               onClick={() => {
                 setRecent("tv");
               }}
-              className={`tab ${recent === "tv" ? "active-tab" : ""}`}
+              className={`recentTab ${recent === "tv" ? "active-tab" : ""}`}
             >
               tv
             </div>
@@ -153,7 +153,7 @@ export default function RecentAnime() {
               onClick={() => {
                 setRecent("movie");
               }}
-              className={`tab ${recent === "movie" ? "active-tab" : ""}`}
+              className={`recentTab ${recent === "movie" ? "active-tab" : ""}`}
             >
               movie
             </div>

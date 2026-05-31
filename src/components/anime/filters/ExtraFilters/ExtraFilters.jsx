@@ -50,7 +50,10 @@ export default function ExtraFilters({ registerCollectors, view }) {
             <input ref={checkboxRef} type="checkbox" className="hidden" />
             <Settings2 onClick={calcDim} ref={extraFiltersBtnRef} size={16} className="stroke-text-light-70 dark:stroke-text-dark-70 group-hover:stroke-text-light dark:group-hover:stroke-text-dark" />
           </label>
-          <div ref={extraFiltersRef} className={`absolute hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-4 gap-1 p-2 `}>
+          <div
+            ref={extraFiltersRef}
+            className={`absolute hidden peer-has-checked:grid rounded-md box-colors-stronger ${registerCollectors?.ratingCollector ? "grid-cols-4" : "grid-cols-3"} gap-1 p-2 `}
+          >
             <ScoreFilter registerCollector={registerCollectors.scoreCollector} />
             {registerCollectors?.ratingCollector ? <RatingFilter data={ratingData} registerCollector={registerCollectors.ratingCollector} /> : ""}
             <DateFilter data={dateTypesData} registerCollector={registerCollectors.dateCollector} />

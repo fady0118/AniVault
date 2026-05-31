@@ -241,7 +241,7 @@
     @apply w-fit text-blue-700 dark:text-blue-400 border-b border-transparent dark:hover:border-blue-400 hover:border-blue-700
   }
 
-  .tab {
+  .recentTab {
     @apply px-3.5 py-1 rounded-md border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 hover:cursor-pointer hover:bg-amethyst-smoke-700/20 duration-200
   }
 

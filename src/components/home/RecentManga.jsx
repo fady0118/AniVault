@@ -163,12 +163,12 @@ export default function RecentManga() {
               />
             </div>
           </div>
-          <div id="recentTabs" className="flex flex-row gap-x-2 items-center text-[0.55em] sm:text-[0.65em]">
+          <div id="recentTabs" className="flex flex-row gap-x-2 items-center text-[0.55em] md:text-[0.65em]">
             <div
               onClick={() => {
                 setRecent("manga");
               }}
-              className={`tab ${recent === "manga" ? "active-tab" : ""}`}
+              className={`recentTab ${recent === "manga" ? "active-tab" : ""}`}
             >
               manga
             </div>
@@ -176,7 +176,7 @@ export default function RecentManga() {
               onClick={() => {
                 setRecent("novel");
               }}
-              className={`tab ${recent === "novel" ? "active-tab" : ""}`}
+              className={`recentTab ${recent === "novel" ? "active-tab" : ""}`}
             >
               novel
             </div>
@@ -184,7 +184,7 @@ export default function RecentManga() {
               onClick={() => {
                 setRecent("manhwa");
               }}
-              className={`tab ${recent === "manhwa" ? "active-tab" : ""}`}
+              className={`recentTab ${recent === "manhwa" ? "active-tab" : ""}`}
             >
               manhwa
             </div>
