@@ -23,9 +23,12 @@ export default function ExtraFilters({ registerCollectors, view }) {
     if (width + btnRect.left <= contRect.right) {
       extraFiltersRef.current.style.left = `${Math.max(0, left)}px`;
       extraFiltersRef.current.style.right = "";
+      extraFiltersRef.current.style.top = `${contRect.bottom-contRect.top+2}px`;
+      
     } else {
       extraFiltersRef.current.style.left = "";
       extraFiltersRef.current.style.right = "0px";
+      extraFiltersRef.current.style.top = `${contRect.bottom-contRect.top+2}px`;
     }
   }
 
@@ -48,7 +51,7 @@ export default function ExtraFilters({ registerCollectors, view }) {
             <input ref={checkboxRef} type="checkbox" className="hidden" />
             <Settings2 onClick={calcDim} ref={extraFiltersBtnRef} size={16} className="stroke-text-light-70 dark:stroke-text-dark-70 group-hover:stroke-text-light dark:group-hover:stroke-text-dark" />
           </label>
-          <div ref={extraFiltersRef} className={`top-6 absolute hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-4 gap-1 p-2 `}>
+          <div ref={extraFiltersRef} className={`absolute hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-4 gap-1 p-2 `}>
             <ScoreFilter registerCollector={registerCollectors.scoreCollector} />
             <RatingFilter data={ratingData} registerCollector={registerCollectors.ratingCollector} />
             <DateFilter data={dateTypesData} registerCollector={registerCollectors.dateCollector} />

@@ -44,14 +44,14 @@ export default function ScoreFilter({ registerCollector, view }) {
   return (
     <>
       {!view ? (
-        <div id="score" className=" relative">
+        <div id="score" className="relative">
           <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
             <input ref={checkboxRef} type="checkbox" className="hidden" />
             <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">Score</p>
             <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200" />
           </label>
-          <div className="absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-full p-2 text-2xs/loose">
-            <label htmlFor="max-score-input">
+          <div className="w-fit absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 p-2 text-2xs/loose">
+            <label htmlFor="max-score-input" className="">
               max score
               <input onChange={changeMaxRadio} type="range" min="0" max="10" value={localState.max_score} className="range range-xs w-[166%] origin-left scale-60 range-primary" />
             </label>

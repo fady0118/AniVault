@@ -12,7 +12,7 @@ import { RootContext } from "../../App";
 import { delay } from "../../utility/utils";
 
 const filterData = { type: ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"], status: ["airing", "complete", "upcoming"] };
-const genresData = [...data.genres, ...data.themes];
+const genresData = [...data.anime.genres, ...data.anime.themes];
 const sortData = ["mal_id", "title", "start_date", "end_date", "episodes", "score", "scored_by", "rank", "popularity", "members", "favorites"];
 
 export default function AnimeRootPage() {
@@ -24,8 +24,8 @@ export default function AnimeRootPage() {
   const collectorStore = useRef({});
 
   const defaultSearchParams = new URLSearchParams({
-    type: "tv",
-    status: "complete",
+    type: "",
+    status: "",
     q: "",
     genres: "",
     genres_exclude: "",
