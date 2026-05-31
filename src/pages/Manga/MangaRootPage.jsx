@@ -30,7 +30,6 @@ export default function MangaRootPage() {
     const genres = collectorStore.current.genres();
     const sort = collectorStore.current.sort();
     const score = collectorStore.current.score();
-    const rating = collectorStore.current.rating();
     const date = collectorStore.current.date();
 
     setSearchParams({
@@ -43,7 +42,6 @@ export default function MangaRootPage() {
       sort: sort.sort,
       min_score: score.min_score,
       max_score: score.max_score,
-      rating: rating,
       start_date: date.start_date,
       end_date: date.end_date,
     });
@@ -58,7 +56,6 @@ export default function MangaRootPage() {
     sort: "desc",
     min_score: 0,
     max_score: 10,
-    rating: "",
     start_date: "",
     end_date: "",
   });
@@ -121,7 +118,6 @@ export default function MangaRootPage() {
                   <ExtraFilters
                     registerCollectors={{
                       scoreCollector: (fn) => (collectorStore.current.score = fn),
-                      ratingCollector: (fn) => (collectorStore.current.rating = fn),
                       dateCollector: (fn) => (collectorStore.current.date = fn),
                     }}
                   />
@@ -177,7 +173,6 @@ export default function MangaRootPage() {
               <ExtraFilters
                 registerCollectors={{
                   scoreCollector: (fn) => (collectorStore.current.score = fn),
-                  ratingCollector: (fn) => (collectorStore.current.rating = fn),
                   dateCollector: (fn) => (collectorStore.current.date = fn),
                 }}
                 view="mobile"

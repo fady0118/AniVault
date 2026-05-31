@@ -315,12 +315,12 @@ export default function AnimePage() {
                           {renderInfoStr("aired", `${animeQ?.data?.aired.string}`)}
                           {animeQ?.data?.season ? (<>{renderInfoStr("premiered", `${animeQ?.data?.season || ""} ${animeQ?.data?.year || ""}`, `/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`)}</>) : (  "")}
                           {renderInfoStr("broadcast", `${animeQ?.data?.broadcast.string || ""}`)}
-                          {renderInfoArr("producers", animeQ?.data?.producers, "/producer")}
+                          {renderInfoArr("producers", animeQ?.data?.producers, "/producer/")}
                           {renderInfoArr("licensors", animeQ?.data?.licensors)}
-                          {renderInfoArr("studios", animeQ?.data?.studios, "/producer")}
+                          {renderInfoArr("studios", animeQ?.data?.studios, "/producer/")}
                           {renderInfoStr("source", `${animeQ?.data?.source}`)}
-                          {renderInfoArr("genres", animeQ?.data?.genres, "/anime")}
-                          {renderInfoArr("themes", animeQ?.data?.themes, "/anime")}
+                          {renderInfoArr("genres", animeQ?.data?.genres, "/anime?genres=")}
+                          {renderInfoArr("themes", animeQ?.data?.themes, "/anime?genres=")}
                           {renderInfoArr("demographics", animeQ?.data?.demographics)}
                           {renderInfoStr("duration", `${animeQ?.data?.duration}`)}
                           {renderInfoStr("rating", `${animeQ?.data?.rating}`, `/anime?rating=${getAnimeRating(animeQ?.data?.rating)}`)}

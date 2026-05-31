@@ -108,6 +108,21 @@ export default function MangaPage() {
   // Relations section
   const { relationsImgs, showAllRelations, setShowAllRelations } = useRelations(mangaQ.data);
 
+  function getMangaStatus(status) {
+    if (!status) return "";
+    switch (status.toLowerCase().trim()) {
+      case "publishing":
+        return "publishing";
+      case "finished":
+        return "complete";
+      case "on hiatus":
+        return "hiatus";
+      case "discontinued":
+        return "discontinued";
+      default:
+        return "upcoming";
+    }
+  }
   return (
     <>
       {mangaQ.isLoading ? (
@@ -163,7 +178,9 @@ export default function MangaPage() {
                               <p className="text-[1.6em]">{mangaQ?.data?.members?.toLocaleString()}</p>
                             </div>
 
-                            <p className="text-[1.35em] w-fit">{mangaQ?.data?.type}</p>
+                            <Link to={`/manga?type=${mangaQ?.data?.type.toLowerCase()}`} className="text-[1.35em] blue-link duration-200 w-fit">
+                              {mangaQ?.data?.type}
+                            </Link>
                             <div className="flex flex-row flex-wrap gap-x-0.5 items-center text-[1.35em] w-fit">
                               {mangaQ?.data?.serializations?.map((s, i) => (
                                 <Link key={i} className="blue-link" to={`/manga/magazine/${s.mal_id}`}>
@@ -244,16 +261,16 @@ export default function MangaPage() {
                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
                     <div className="px-3 py-2 text-xs font-light">
                       <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                        {renderInfoStr("type", `${mangaQ?.data?.type}`)}
+                        {renderInfoStr("type", `${mangaQ?.data?.type}`, `/manga?type=${mangaQ?.data?.type}`)}
                         {renderInfoStr("volumes", `${mangaQ?.data?.volumes ?? "?"}`)}
                         {renderInfoStr("chapters", `${mangaQ?.data?.chapters ?? "?"}`)}
-                        {renderInfoStr("status", `${mangaQ?.data?.status}`)}
+                        {renderInfoStr("status", `${mangaQ?.data?.status}`, `/manga?status=${getMangaStatus(mangaQ?.data?.status)}`)}
                         {renderInfoStr("published", `${mangaQ?.data?.published?.string}`)}
-                        {renderInfoArr("genres", mangaQ?.data?.genres)}
-                        {renderInfoArr("themes", mangaQ?.data?.themes)}
+                        {renderInfoArr("genres", mangaQ?.data?.genres, "/manga?genres=")}
+                        {renderInfoArr("themes", mangaQ?.data?.themes, "/manga?genres=")}
                         {renderInfoArr("demographics", mangaQ?.data?.demographics)}
-                        {renderInfoArr("serializations", mangaQ?.data?.serializations, "/manga/magazine")}
-                        {renderInfoArr("authors", mangaQ?.data?.authors, "/people")}
+                        {renderInfoArr("serializations", mangaQ?.data?.serializations, "/manga/magazine/")}
+                        {renderInfoArr("authors", mangaQ?.data?.authors, "/people/")}
                       </div>
                     </div>
                   </div>

@@ -54,11 +54,17 @@ export function getYear(d) {
 }
 
 // render function for information section for string data
-export function renderInfoStr(title, str, link=null) {
+export function renderInfoStr(title, str, link = null) {
   return (
     <div className="w-full flex flex-row flex-wrap gap-x-1 items-end capitalize">
       <p className="font-semibold ">{title}:</p>
-      {link?<Link to={link} className="text-[0.9em] blue-link">{str.trim() || "?"}</Link>:<p className="text-[0.9em]">{str.trim() || "?"}</p>}
+      {link ? (
+        <Link to={link} className="text-[0.9em] blue-link">
+          {str.trim() || "?"}
+        </Link>
+      ) : (
+        <p className="text-[0.9em]">{str.trim() || "?"}</p>
+      )}
     </div>
   );
 }
@@ -78,13 +84,8 @@ export function renderInfoArr(title, arr, path = null) {
                     {item.name}
                     {i !== arr.length - 1 ? ", " : ""}
                   </p>
-                ) : path==='/anime'?<>
-                <Link className="blue-link whitespace-pre-wrap" to={`${path}?genres=${item.mal_id}`}>
-                    {item.name}
-                    {i !== arr.length - 1 ? ", " : ""}
-                  </Link></>
-                  :(
-                  <Link className="blue-link whitespace-pre-wrap" to={`${path}/${item.mal_id}`}>
+                ) : (
+                  <Link className="blue-link whitespace-pre-wrap" to={`${path}${item.mal_id}`}>
                     {item.name}
                     {i !== arr.length - 1 ? ", " : ""}
                   </Link>
@@ -143,7 +144,7 @@ export function dateFormatter(date) {
 }
 export function DateTimeFormatter(date) {
   const d = new Date(date);
-  return `${d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })} ${d.toLocaleTimeString("en-US", {hour:'2-digit', minute:'2-digit'})}`;
+  return `${d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })} ${d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`;
 }
 
 // simple delay function useful for delaying api calls to avoid running into rate limit rejections
