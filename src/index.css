@@ -219,6 +219,7 @@
   .box-colors-stronger {
     @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300
   }
+
   .box-colors-darker {
     @apply bg-amethyst-smoke-400 dark:bg-dark-amethyst-smoke-100
   }
@@ -269,6 +270,10 @@
 
   .navLink-colors {
     @apply border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 group-hover:border-pink-600/50 group-hover:bg-pink-400/10
+  }
+
+  .small-navLink-colors {
+    @apply hover:bg-indigo-600/10 dark:hover:bg-indigo-400/10 border-transparent dark:hover:border-indigo-400 hover:border-indigo-600
   }
 
   .magazine-border-colors {

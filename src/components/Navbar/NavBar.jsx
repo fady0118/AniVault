@@ -5,10 +5,10 @@ import SearchModal from "../SearchModal";
 import { RootContext } from "../../App";
 import data from "../../utility/data.json";
 import NavLink from "./NavLink";
+import SmallNavLink from "./SmallNavLink";
 const classes = {
-  navListLinkBg:
-    "w-full h-10 xs:h-12 flex items-center px-4 bg-linear-180 from-amethyst-smoke-300/70 to-amethyst-smoke-400/60 dark:from-dark-amethyst-smoke-400/60 dark:to-dark-amethyst-smoke-950/60 hover:hue-rotate-45  border-b border-amethyst-smoke-400 dark:border-dark-amethyst-smoke-300 backdrop-blur-2xl",
   navListLinkText: "relative wrapper inline-block overflow-hidden font-bold text-text-light dark:text-text-dark px-2.5 py-0.5 rounded-md border navLink-colors hover:cursor-pointer duration-200",
+  smallNavLink: "py-3 px-5 border-b small-navLink-colors hover:cursor-pointer duration-200",
 };
 
 export default function NavBar({ themeSelect, theme, setTheme }) {
@@ -58,8 +58,8 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
                 <span>Ctrl+K</span>
               </div>
               <div className="flex flex-row items-center gap-x-2">
-                <NavLink classes={classes} LinkTitle="anime" data={data.anime} />
-                <NavLink classes={classes} LinkTitle="manga" data={data.manga} />
+                <NavLink classes={classes} LinkTitle="anime" data={data.anime.genres} />
+                <NavLink classes={classes} LinkTitle="manga" data={data.manga.genres} />
                 <div className="group flex flex-row items-center">
                   <Link to="/manga/magazine" className={` ${classes.navListLinkText}`}>
                     Magazine
@@ -97,12 +97,12 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
         </div>
       </nav>
       {windowWidth <= 640 && showNav && (
-        <div className="w-[95vw] flex flex-col fixed top-15 left-1/2 -translate-x-1/2 text-sm xs:text-md z-30 rounded-md overflow-hidden slide-in-from-top">
-          <Link to="/anime" className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>
-            anime
-          </Link>
-          <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link2</div>
-          <div className={`${classes.navListLinkBg} ${classes.navListLinkText}`}>link3</div>
+        <div className="z-30 w-[95vw] flex flex-col fixed top-15 left-1/2 -translate-x-1/2 overflow-y-scroll text-sm xs:text-md font-bold capitalize box-colors-darker border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10  rounded-md slide-in-from-top">
+          <SmallNavLink classes={classes.smallNavLink} LinkTitle="anime" data={data.anime.genres} />
+          <SmallNavLink classes={classes.smallNavLink} LinkTitle="manga" data={data.manga.genres} />
+          {/* <div>
+            <p className={`text-[0.9em] ${classes.smallNavLink}`}>magazine</p>
+          </div> */}
         </div>
       )}
       {showSearchModal && <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} />}
