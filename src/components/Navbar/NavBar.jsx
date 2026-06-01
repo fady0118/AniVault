@@ -44,7 +44,7 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
         <div className="flex items-center gap-x-3 lg:gap-x-5">
           {windowWidth <= 640 ? (
             <div id="searchTab" onClick={() => setShowSearchModal(true)} className="group hover:cursor-pointer text-text-light dark:text-text-dark">
-              <Search size={14} />
+              <Search size={14} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
             </div>
           ) : (
             // large screens
@@ -54,7 +54,7 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
                 onClick={() => setShowSearchModal(true)}
                 className="group hover:cursor-pointer hover:bg-dark-amethyst-smoke-700/20 duration-300 flex items-center justify-center px-1.5 py-0.5 space-x-1 font-extralight text-[0.75em] rounded-full bg-dark-amethyst-smoke-600/5 text-text-light dark:bg-amethyst-smoke-50/10 dark:text-text-dark "
               >
-                <Search size={12} />
+                <Search size={12} className="group-hover:stroke-indigo-600 dark:group-hover:stroke-indigo-300 duration-200" />
                 <span>Ctrl+K</span>
               </div>
               <div className="flex flex-row items-center gap-x-2">
@@ -74,24 +74,44 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
             onClick={() => {
               setSFW((s) => !s);
             }}
-            className="text-[0.75em] hover:cursor-pointer hover-blue-link duration-200"
+            className="text-[0.75em] hover:cursor-pointer hover-indigo-link duration-200"
           >
-            {SFW ? "SFW" : "NSFW"}
+            {SFW ? (
+              <div className="w-12 h-fit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
+                  <rect x="0" y="0" rx="8" fill="none" stroke="currentColor" stroke-width="1.5" />
+                  <text x="52" y="26" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="22" font-weight="500" fill="currentColor" letter-spacing="2">
+                    NSFW
+                  </text>
+                  <line x1="18" y1="37" x2="87" y2="15" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                </svg>
+              </div>
+            ) : (
+              <div className="w-12 h-fit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
+                  <rect x="0" y="0" rx="8" fill="none" stroke="currentColor" stroke-width="1.5" />
+                  <text x="52" y="26" text-anchor="middle" adominant-baseline="central" font-family="sans-serif" font-size="22" font-weight="500" fill="currentColor" letter-spacing="2">
+                    NSFW
+                  </text>
+                  <line x1="15" y1="40" x2="88" y2="15" stroke="transparent" stroke-width="3" stroke-linecap="round" />
+                </svg>
+              </div>
+            )}
           </div>
 
           <div className="group w-fit flex justify-start items-center space-x-0.5 text-[1.2em]" onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}>
             <button id="themeTogglerBtn" className="group-hover:cursor-pointer" data-next-theme={theme === "light" ? "dark" : "light"}>
               {theme === "light" ? (
-                <Moon className="group-hover:stroke-blue-600 dark:group-hover:stroke-blue-300 duration-200" size={16} />
+                <Moon className="group-hover:stroke-indigo-600 dark:group-hover:stroke-indigo-300 duration-200" size={16} />
               ) : (
-                <Sun className="group-hover:stroke-blue-600 dark:group-hover:stroke-blue-300 duration-200" size={16} />
+                <Sun className="group-hover:stroke-indigo-600 dark:group-hover:stroke-indigo-300 duration-200" size={16} />
               )}
             </button>
           </div>
 
           {windowWidth <= 640 && (
-            <div className="hover:bg-amethyst-smoke-500/70 dark:hover:bg-dark-amethyst-smoke-600/40 hover:cursor-pointer">
-              <Menu size={16} onClick={() => setShowNav(!showNav)} />
+            <div className="hover:cursor-pointer">
+              <Menu size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
             </div>
           )}
         </div>
@@ -100,9 +120,6 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
         <div className="z-30 w-[95vw] flex flex-col fixed top-15 left-1/2 -translate-x-1/2 overflow-y-scroll text-sm xs:text-md font-bold capitalize box-colors-darker border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10  rounded-md slide-in-from-top">
           <SmallNavLink classes={classes.smallNavLink} LinkTitle="anime" data={data.anime.genres} />
           <SmallNavLink classes={classes.smallNavLink} LinkTitle="manga" data={data.manga.genres} />
-          {/* <div>
-            <p className={`text-[0.9em] ${classes.smallNavLink}`}>magazine</p>
-          </div> */}
         </div>
       )}
       {showSearchModal && <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} />}

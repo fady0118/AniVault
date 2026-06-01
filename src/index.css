@@ -52,7 +52,6 @@
   --color-text-dark-70: hsla(240, 20%, 98%, 0.7);
 
   --color-mal-blue: #2c51a7;
-
 }
 
 @keyframes imageZoomIn {
@@ -258,6 +257,10 @@
 
   .hover-rose-link {
     @apply hover:text-rose-700 dark:hover:text-rose-400
+  }
+
+  .hover-indigo-link {
+    @apply hover:text-indigo-700 dark:hover:text-indigo-400
   }
 
   .blue-link-b {

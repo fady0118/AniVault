@@ -9,7 +9,7 @@ export default function NavLink({ classes, LinkTitle, data }) {
       </Link>
       <div className="w-70 absolute top-[72%] right-0 box-colors-darker border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 rounded-md linkTarget">
         <div className="w-full h-full p-2 flex flex-col">
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-row items-center justify-between">
             <Link
               to={`/${LinkTitle}?order_by=score&sort=desc`}
               className="w-full font-bold capitalize p-1 rounded-sm hover:bg-amethyst-smoke-100/25 dark:hover:bg-dark-amethyst-smoke-300/25 hover:text-pink-500/75 dark:hover:text-pink-400/75 duration-200"
@@ -34,6 +34,7 @@ export default function NavLink({ classes, LinkTitle, data }) {
             <div className="w-full grid grid-cols-3 gap-1 py-1 text-[0.65em]">
               {data.map((item) => (
                 <Link
+                  key={item.mal_id}
                   to={`/${LinkTitle}?genres=${item?.mal_id}`}
                   className="w-full font-bold capitalize p-1 rounded-sm hover:bg-amethyst-smoke-100/25 dark:hover:bg-dark-amethyst-smoke-300/25 hover:text-pink-500/75 dark:hover:text-pink-400/75 duration-200"
                 >

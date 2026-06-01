@@ -16,7 +16,6 @@ const classes = {
   ],
 };
 export default function AnimeCollections() {
-
   const [topAnimeQ, upcomingAnimeQ] = useQueries({
     queries: [
       {
@@ -47,7 +46,7 @@ export default function AnimeCollections() {
         <div id="top" className="w-full flex flex-col py-1 gap-y-1">
           <div className="uppercase font-extrabold flex flex-row items-center gap-x-3">
             <p>top anime</p>
-            <Link to='/anime?type=tv&order_by=score&sort=desc'>
+            <Link to="/anime?type=tv&order_by=score&sort=desc" target="_blank">
               <ExternalLink className="stroke-2 hover:cursor-pointer hover:stroke-blue-600/80 dark:hover:stroke-blue-300/80 duration-200" size={20} />
             </Link>
           </div>
@@ -73,7 +72,7 @@ export default function AnimeCollections() {
         <div id="upcoming" className="w-full flex flex-col py-1 gap-y-1">
           <div className="uppercase font-extrabold flex flex-row items-center gap-x-3">
             <p>upcoming anime</p>
-            <Link to='/anime?type=tv&status=upcoming&order_by=popularity&sort=asc'>
+            <Link to="/anime?type=tv&status=upcoming&order_by=popularity&sort=asc" target="_blank">
               <ExternalLink className="stroke-2 hover:cursor-pointer hover:stroke-blue-600/80 dark:hover:stroke-blue-300/80 duration-200" size={20} />
             </Link>
           </div>
