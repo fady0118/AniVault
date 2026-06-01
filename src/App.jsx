@@ -21,7 +21,7 @@ const queryClient = new QueryClient({
 function App() {
   const [theme, setTheme] = useState(getCurrentTheme());
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [SFW, setSFW] = useState(true);
+  const [SFW, setSFW] = useState(JSON.parse(localStorage.getItem("SFW")) ?? true);
 
   const themeSelect = useCallback((themeValue) => {
     // update theme value in localStorage
@@ -51,14 +51,20 @@ function App() {
       });
   }, []);
 
+  useEffect(() => {
+    // update SFW in localStorage
+    localStorage.setItem("SFW", JSON.stringify(SFW));
+  }, [SFW]);
+
   useLayoutEffect(() => {
+    // update sfw value in jikanFetch
     setSFWValue(SFW);
   }, [SFW]);
 
   return (
     <RootContext value={{ windowWidth, SFW, setSFW }}>
       <QueryClientProvider client={queryClient}>
-        <div className="font-inter ">
+        <div className="font-inter">
           <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} />
           <div>
             <Outlet />

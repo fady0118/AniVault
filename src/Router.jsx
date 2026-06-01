@@ -32,7 +32,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "seasons",
-            children:[{path:":year/:season", Component: AnimeSeasonPage,}]
+            children: [{ path: ":year/:season", Component: AnimeSeasonPage }],
           },
         ],
       },

@@ -1,10 +1,10 @@
 import { Link } from "react-router";
 
-export default function NavLink({classes, LinkTitle, data}) {
+export default function NavLink({ classes, LinkTitle, data }) {
   return (
     <div className="group wrapperLink flex flex-row items-center">
       <Link to={`/${LinkTitle}`} className={classes.navListLinkText}>
-        {LinkTitle} 
+        {LinkTitle}
         <div className="w-full h-0.5 absolute bottom-0 left-1/2 -translate-x-1/2 bg-pink-500/50 targetBar"></div>
       </Link>
       <div className="w-70 absolute top-[72%] right-0 box-colors-darker border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 rounded-md linkTarget">
@@ -17,7 +17,7 @@ export default function NavLink({classes, LinkTitle, data}) {
               top
             </Link>
             <Link
-              to={`/${LinkTitle}?status=${LinkTitle==="anime"?"airing":"publishing"}&order_by=start_date&sort=desc`}
+              to={`/${LinkTitle}?status=${LinkTitle === "anime" ? "airing" : "publishing"}&order_by=start_date&sort=desc`}
               className="w-full font-bold capitalize p-1 rounded-sm hover:bg-amethyst-smoke-100/25 dark:hover:bg-dark-amethyst-smoke-300/25 hover:text-pink-500/75 dark:hover:text-pink-400/75 duration-200"
             >
               recent

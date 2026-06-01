@@ -68,7 +68,7 @@ export default function MagazinesRootPage() {
                   <KeywordFilter registerCollector={(fn) => (collectorStore.current.keyword = fn)} />
 
                   <SortFilter data={["mal_id", "count"]} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
-                  
+
                   <div id="filterBtn" className=" header-box box-colors-stronger hover:cursor-pointer" onClick={handleApplyFilter}>
                     <p className="px-2">filter</p>
                   </div>
@@ -88,7 +88,7 @@ export default function MagazinesRootPage() {
               </>
             )}
           </div>
-          <MagazineContainer searchParams={effectiveSearchParams}/>
+          <MagazineContainer searchParams={effectiveSearchParams} />
         </div>
         <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
           <img src="/photo-bg.png" alt="" className="w-full h-full object-cover bg-no-repeat opacity-30 contrast-125" />

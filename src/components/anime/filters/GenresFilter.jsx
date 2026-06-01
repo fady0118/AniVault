@@ -43,7 +43,7 @@ export default function GenresFilter({ data, registerCollector, view = null }) {
       : (heading = data.find((item) => item.mal_id == selectedGenresArr[0]).name);
     setHeading(heading);
   }
-  
+
   useEffect(() => {
     setLocalState(() => {
       const genresParams = searchParams.get("genres")?.split(",") || [];
