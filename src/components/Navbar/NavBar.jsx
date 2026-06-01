@@ -71,34 +71,13 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
             </>
           )}
           {/* sfw filter */}
-          <div
-            onClick={() => {
-              setSFW((s) => !s);
-            }}
-            className="text-[0.75em] hover:cursor-pointer hover-indigo-link duration-200"
+          <button
+            type="button"
+            onClick={() => setSFW((s) => !s)}
+            className="inline-flex items-center justify-center w-10 text-[0.75em] font-semibold hover:cursor-pointer hover:text-indigo-500 transition duration-200"
           >
-            {SFW ? (
-              <div className="w-12 h-fit">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
-                  <rect x="0" y="0" rx="8" fill="none" stroke="currentColor" stroke-width="1.5" />
-                  <text x="52" y="26" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="22" font-weight="500" fill="currentColor" letter-spacing="2">
-                    NSFW
-                  </text>
-                  <line x1="18" y1="37" x2="87" y2="15" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
-                </svg>
-              </div>
-            ) : (
-              <div className="w-12 h-fit">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
-                  <rect x="0" y="0" rx="8" fill="none" stroke="currentColor" stroke-width="1.5" />
-                  <text x="52" y="26" text-anchor="middle" adominant-baseline="central" font-family="sans-serif" font-size="22" font-weight="500" fill="currentColor" letter-spacing="2">
-                    NSFW
-                  </text>
-                  <line x1="15" y1="40" x2="88" y2="15" stroke="transparent" stroke-width="3" stroke-linecap="round" />
-                </svg>
-              </div>
-            )}
-          </div>
+            {SFW ? "SFW" : "NSFW"}
+          </button>
 
           <div className="group w-fit flex justify-start items-center space-x-0.5 text-[1.2em]" onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}>
             <button id="themeTogglerBtn" className="group-hover:cursor-pointer" data-next-theme={theme === "light" ? "dark" : "light"}>
