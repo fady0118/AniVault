@@ -1,4 +1,5 @@
 import RootComponent from "../../components/RootComponent";
+import data from "../../utility/data.json"
 
 const filterData = { type: ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"], status: ["airing", "complete", "upcoming"] };
 const genresData = [...data.anime.genres, ...data.anime.themes];

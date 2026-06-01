@@ -105,7 +105,7 @@ export default function RootComponent({ Root, filterData, genresData, sortData }
       <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3">
         <div className="w-[95vw] flex flex-col ">
           <div id="title" className="order-1 mt-5 px-3 py-1 uppercase font-bold text-xl">
-            Browser
+            Browse {Root}
           </div>
 
           <div className="order-2 px-3 py-1">
@@ -131,13 +131,22 @@ export default function RootComponent({ Root, filterData, genresData, sortData }
                   <GenresFilter data={genresData} registerCollector={(fn) => (collectorStore.current.genres = fn)} />
 
                   <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} />
-
-                  <ExtraFilters
-                    registerCollectors={{
-                      scoreCollector: (fn) => (collectorStore.current.score = fn),
-                      dateCollector: (fn) => (collectorStore.current.date = fn),
-                    }}
-                  />
+                  {Root === "anime" ? (
+                    <ExtraFilters
+                      registerCollectors={{
+                        scoreCollector: (fn) => (collectorStore.current.score = fn),
+                        dateCollector: (fn) => (collectorStore.current.date = fn),
+                        ratingCollector: (fn) => (collectorStore.current.rating = fn),
+                      }}
+                    />
+                  ) : (
+                    <ExtraFilters
+                      registerCollectors={{
+                        scoreCollector: (fn) => (collectorStore.current.score = fn),
+                        dateCollector: (fn) => (collectorStore.current.date = fn),
+                      }}
+                    />
+                  )}
                   <div id="filterBtn" className=" header-box box-colors-stronger hover:cursor-pointer" onClick={handleApplyFilter}>
                     <p className="px-2">filter</p>
                   </div>

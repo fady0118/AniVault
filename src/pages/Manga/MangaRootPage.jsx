@@ -1,4 +1,5 @@
 import RootComponent from "../../components/RootComponent";
+import data from "../../utility/data.json"
 
 const filterData = { type: ["manga", "novel", "lightnovel", "oneshot", "doujin", "manhwa", "manhua"], status: ["publishing", "complete", "hiatus", "discontinued", "upcoming"] };
 const genresData = [...data.manga.genres, ...data.manga.themes];
