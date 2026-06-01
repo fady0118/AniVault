@@ -1,6 +1,8 @@
+
 import { Link } from "react-router";
 
 export default function SmallNavLink({ classes, LinkTitle, data }) {
+
   return (
     <label htmlFor={`small-navLink-${LinkTitle}`} className="group text-[0.9em]">
       <input className="hidden" type="checkbox" name={`small-navLink-${LinkTitle}`} id={`small-navLink-${LinkTitle}`} />

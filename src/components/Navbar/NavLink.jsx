@@ -1,13 +1,29 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router";
 
-export default function NavLink({ classes, LinkTitle, data }) {
+export default function NavLink({ classes, LinkTitle, data, ref }) {
+  const navLinkBoxRef = useRef(null);
+  function calcPos(e) {
+    const navBarRect = ref.current.getBoundingClientRect();
+    const navLinkRect = e.target.getBoundingClientRect();
+    const navLinkBoxRect = navLinkBoxRef.current.getBoundingClientRect();
+    if (navLinkRect.left + navLinkBoxRect.width > navBarRect.right) {
+      navLinkBoxRef.current.style.right = `0px`;
+      navLinkBoxRef.current.style.left = "";
+    } else {
+      navLinkBoxRef.current.style.left = `${navLinkRect.left - navBarRect.left}px`;
+      navLinkBoxRef.current.style.right = "";
+    }
+    navLinkBoxRef.current.style.top = `${navLinkRect.bottom - navBarRect.top}px`;
+  }
+
   return (
-    <div className="group wrapperLink flex flex-row items-center">
-      <Link to={`/${LinkTitle}`} className={classes.navListLinkText}>
+    <div className=" group wrapperLink flex flex-row items-center">
+      <Link onMouseEnter={(e) => calcPos(e)} to={`/${LinkTitle}`} className={classes.navListLinkText}>
         {LinkTitle}
         <div className="w-full h-0.5 absolute bottom-0 left-1/2 -translate-x-1/2 bg-pink-500/50 targetBar"></div>
       </Link>
-      <div className="w-70 absolute top-[72%] right-0 box-colors-darker border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 rounded-md linkTarget">
+      <div ref={navLinkBoxRef} className="w-70 absolute box-colors-darker border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 rounded-md linkTarget">
         <div className="w-full h-full p-2 flex flex-col">
           <div className="flex flex-row items-center justify-between">
             <Link
