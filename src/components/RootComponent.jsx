@@ -71,7 +71,6 @@ export default function RootComponent({ Root, filterData, genresData, sortData }
             sort: sort.sort,
             min_score: score.min_score,
             max_score: score.max_score,
-
             start_date: date.start_date,
             end_date: date.end_date,
           },
@@ -196,13 +195,25 @@ export default function RootComponent({ Root, filterData, genresData, sortData }
               ))}
               <GenresFilter data={genresData} registerCollector={(fn) => (collectorStore.current.genres = fn)} view="mobile" />
               <SortFilter data={sortData} registerCollector={(fn) => (collectorStore.current.sort = fn)} view="mobile" />
-              <ExtraFilters
-                registerCollectors={{
-                  scoreCollector: (fn) => (collectorStore.current.score = fn),
-                  dateCollector: (fn) => (collectorStore.current.date = fn),
-                }}
-                view="mobile"
-              />
+
+              {Root === "anime" ? (
+                <ExtraFilters
+                  registerCollectors={{
+                    scoreCollector: (fn) => (collectorStore.current.score = fn),
+                    dateCollector: (fn) => (collectorStore.current.date = fn),
+                    ratingCollector: (fn) => (collectorStore.current.rating = fn),
+                  }}
+                  view="mobile"
+                />
+              ) : (
+                <ExtraFilters
+                  registerCollectors={{
+                    scoreCollector: (fn) => (collectorStore.current.score = fn),
+                    dateCollector: (fn) => (collectorStore.current.date = fn),
+                  }}
+                  view="mobile"
+                />
+              )}
               <div id="filterBtn" className="text-xs capitalize small-header-box smallHeaderBox-colors w-fit hover:cursor-pointer" onClick={handleApplyFilter}>
                 <p className="px-2">filter</p>
               </div>
