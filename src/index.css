@@ -89,6 +89,16 @@
   }
 }
 
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
 @layer components {
   .gallery-image-animation {
     animation: imageZoomIn 0.4s ease-out;
@@ -101,7 +111,9 @@
   .slide-in-from-left {
     animation: slideInFromLeft 0.25s ease;
   }
-
+  .slide-in-from-top {
+    animation: slideInFromTop 0.25s ease;
+  }
   .spoiler input {
     @apply w-fit rounded-sm px-3 py-1 my-1.5 hover:cursor-pointer duration-200
   }
