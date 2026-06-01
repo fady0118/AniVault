@@ -31,11 +31,16 @@ export default function AnimeMangaContainer({ searchParams, itemType }) {
     [searchParams],
   );
 
+  // currentPage state for query pagination
   const [currentPage, setCurrentPage] = useState(1);
+  // pagination last available Page
   const [lastPageIndex, setLastIndexPage] = useState(null);
+  // queries ref for holding hasNext value
   const pageStateRef = useRef({ queries: {} });
+  // state derived from pageStateRef used for pagination swap to next page
   const [queriesHaveNext, setqueriesHaveNext] = useState(null);
 
+  // reset states & ref if searchParams change
   useEffect(() => {
     pageStateRef.current = { queries: {} };
     setCurrentPage(1);
@@ -51,18 +56,20 @@ export default function AnimeMangaContainer({ searchParams, itemType }) {
     });
   });
 
+  // fetch data
   const queries = useQueries({
     queries: typeList.flatMap((type) =>
       statusList.map((status) => {
         const key = `${type}|${status}`;
         const state = pageStateRef.current.queries[key];
         return {
-          queryKey: ["itemTypeData", rest.toString(), type, status, currentPage, SFW],
+          queryKey: ["itemTypeData", rest.toString(), itemType, type, status, currentPage, SFW],
           queryFn: async () => {
             const res = await jikanFetch(`https://api.jikan.moe/v4/${itemType}?${rest}&type=${type}&status=${status}&page=${currentPage}`);
             if (!res.ok) throw new Error(res.statusText);
             return await res.json();
           },
+          // query enable condition depends on prev fetch hasNext value
           enabled: state.hasNext !== false,
         };
       }),
@@ -72,25 +79,33 @@ export default function AnimeMangaContainer({ searchParams, itemType }) {
   const uniqueData = [...new Map(queries.flatMap((q) => q.data?.data ?? []).map((item) => [item.mal_id, item])).values()];
 
   const queryClient = useQueryClient();
+
+  // pagination details update, updates on query or currentPage change
   useEffect(() => {
     let last_visible_page = null;
     queries.forEach((q, i) => {
+      // retrun if query failed
       if (!q.isSuccess || !q.data) return;
+      // get query key
       const type = typeList[Math.floor(i / statusList.length)];
       const status = statusList[i % statusList.length];
       const key = `${type}|${status}`;
+      // update pageStateRef hasNext values
       const hasNext = q.data.pagination?.has_next_page ?? false;
-      if (!last_visible_page || last_visible_page < q.data.pagination?.last_visible_page) last_visible_page = q.data.pagination.last_visible_page;
       if (hasNext) {
         pageStateRef.current.queries[key] = { hasNext: true };
       } else {
         pageStateRef.current.queries[key] = { hasNext: false };
       }
+      // update last_visible_page value
+      if (!last_visible_page || last_visible_page < q.data.pagination?.last_visible_page) last_visible_page = q.data.pagination.last_visible_page;
     });
+    // update states
     setLastIndexPage(last_visible_page);
     setqueriesHaveNext(checkNext());
   }, [queries, currentPage]);
 
+  // navigate between pages
   function pageSwap(dir) {
     const prevState = pageStateRef.current;
     if (dir === "prev") {
@@ -112,9 +127,11 @@ export default function AnimeMangaContainer({ searchParams, itemType }) {
       pageStateRef.current = prevState;
       setCurrentPage((s) => s + 1);
     } else return;
+    // trigger refetching
     queryClient.invalidateQueries({ queryKey: ["itemTypeData", rest.toString(), SFW] });
   }
 
+  // a function to determine if one of the queries in pageStateRef has a next page
   function checkNext() {
     const hasNext = Object.values(pageStateRef.current.queries).some((q) => q.hasNext === true);
     return hasNext;

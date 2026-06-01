@@ -67,6 +67,16 @@
   }
 }
 
+@keyframes opacity {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes fillBar {
   from {
     opacity: 0;
@@ -111,9 +121,15 @@
   .slide-in-from-left {
     animation: slideInFromLeft 0.25s ease;
   }
+
   .slide-in-from-top {
     animation: slideInFromTop 0.25s ease;
   }
+
+  .animate-opacity {
+    animation: opacity 0.35s ease;
+  }
+
   .spoiler input {
     @apply w-fit rounded-sm px-3 py-1 my-1.5 hover:cursor-pointer duration-200
   }
@@ -203,6 +219,9 @@
   .box-colors-stronger {
     @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300
   }
+  .box-colors-darker {
+    @apply bg-amethyst-smoke-400 dark:bg-dark-amethyst-smoke-100
+  }
 
   .box-colors-accent {
     @apply dark:bg-amethyst-smoke-500/30 bg-amethyst-smoke-50/30
@@ -211,12 +230,15 @@
   .smallHeaderBox-colors {
     @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300
   }
-  .link{
+
+  .link {
     @apply hover:brightness-150
   }
+
   .rose-link {
     @apply text-rose-700 dark:text-rose-400
   }
+
   .indigo-link {
     @apply text-indigo-700 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300
   }
@@ -243,6 +265,10 @@
 
   .bottom-border {
     @apply border-b border-amethyst-smoke-950/40 dark:border-amethyst-smoke-200/40
+  }
+
+  .navLink-colors {
+    @apply border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 group-hover:border-pink-600/50 group-hover:bg-pink-400/10
   }
 
   .magazine-border-colors {
@@ -284,9 +310,33 @@
     transition: opacity 0.3s;
   }
 
+  .targetBar {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+  }
+
+  .linkTarget {
+    opacity: 0;
+    visibility: hidden;
+    transition: animate-opacity 0.3s;
+  }
+
   .wrapper:hover .target {
     opacity: 1;
     visibility: visible;
+  }
+
+  .wrapper:hover .targetBar {
+    opacity: 1;
+    visibility: visible;
+    animation: fillBar 0.3s ease;
+  }
+
+  .wrapperLink:hover .linkTarget {
+    opacity: 1;
+    visibility: visible;
+    animation: opacity 0.3s ease;
   }
 
   .header-box {

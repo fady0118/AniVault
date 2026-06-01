@@ -18,7 +18,7 @@ export default function RecentAnime() {
       {
         queryKey: ["recentTvData", tvCurrentPage],
         queryFn: async () => {
-          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?type=tv&sfw=true&genres_exclude=9,12,49&status=airing&order_by=start_date&sort=desc&page=${tvCurrentPage || 1}`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?type=tv&status=airing&order_by=start_date&sort=desc&page=${tvCurrentPage || 1}`);
           if (!res.ok) throw new Error(res.statusText);
           const recentTvData = await res.json();
           const uniqueTvData = [...new Map(recentTvData.data.map((item) => [item.mal_id, item])).values()];
@@ -28,7 +28,7 @@ export default function RecentAnime() {
       {
         queryKey: ["recentMovieData", movieCurrentPage],
         queryFn: async () => {
-          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?type=movie&sfw=true&genres_exclude=9,12,49&status=complete&order_by=start_date&sort=desc&page=${movieCurrentPage || 1}`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?type=movie&status=complete&order_by=start_date&sort=desc&page=${movieCurrentPage || 1}`);
           if (!res.ok) throw new Error(res.statusText);
           const recentMovieData = await res.json();
           const uniqueMovieData = [...new Map(recentMovieData.data.map((item) => [item.mal_id, item])).values()];

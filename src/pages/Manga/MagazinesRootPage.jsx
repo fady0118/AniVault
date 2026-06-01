@@ -26,7 +26,7 @@ export default function MagazinesRootPage() {
   }
   const defaultSearchParams = new URLSearchParams({
     q: "",
-    order_by: "start_date",
+    order_by: "mal_id",
     sort: "desc",
   });
   const effectiveSearchParams = searchParams.size === 0 ? defaultSearchParams : searchParams;
@@ -80,7 +80,7 @@ export default function MagazinesRootPage() {
                   onClick={() => {
                     setShowFiltersSideHeader(true);
                   }}
-                  className="flex flex-row gap-x-1 py-0.5 px-1.5 items-center text-[0.75em] box-colors rounded-sm w-fit hover:cursor-pointer hover:brightness-115 dark:hover:brightness-125 duration-200"
+                  className="flex flex-row gap-x-1 py-0.5 px-1.5 items-center text-[0.75em] box-colors-stronger rounded-sm w-fit hover:cursor-pointer hover:brightness-115 dark:hover:brightness-125 duration-200"
                 >
                   <Settings2 size={14} />
                   <span>Filters</span>

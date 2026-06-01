@@ -1,7 +1,6 @@
 import { ChevronDown, Info, Plus, Settings2, Square, SquarePlus, X } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
-import { RootContext } from "../App";
 import { delay } from "../utility/utils";
 import FilterComponent from "../components/anime/filters/FilterComponent";
 import GenresFilter from "../components/anime/filters/GenresFilter";
@@ -10,6 +9,7 @@ import data from "../utility/data.json";
 import SortFilter from "../components/anime/filters/SortFilter";
 import ExtraFilters from "../components/anime/filters/ExtraFilters/ExtraFilters";
 import AnimeMangaContainer from "../components/anime/AnimeMangaContainer";
+import { RootContext } from "../App";
 
 export default function RootComponent({ Root, filterData, genresData, sortData }) {
   const [searchParams, setSearchParams] = useSearchParams();

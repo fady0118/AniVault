@@ -43,7 +43,7 @@ export default function MagazineContainer({ searchParams }) {
         </>
       ) : (
         <>
-          <div className="w-fit flex flex-row items-center py-0.5 px-2 text-xs box-colors rounded-lg">
+          <div className="w-fit flex flex-row items-center py-0.5 px-2 text-xs box-colors-stronger rounded-lg">
             <div className="flex flex-row items-center gap-x-2 text-[0.8em] md:text-[1em]">
               <ChevronLeft
                 onClick={() => pageSwap("prev")}

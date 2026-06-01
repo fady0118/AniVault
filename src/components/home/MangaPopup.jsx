@@ -5,7 +5,7 @@ import { Link } from "react-router";
 export default function MangaPopup({ mouseLeave, ref }) {
   return (
     <>
-      <div ref={ref} onMouseLeave={mouseLeave} id="info" className="z-50 absolute hidden w-64 h-fit rounded-lg bg-amethyst-smoke-200 dark:bg-dark-amethyst-smoke-200">
+      <div ref={ref} onMouseLeave={mouseLeave} id="info" className="z-50 absolute hidden w-64 h-fit rounded-lg bg-amethyst-smoke-200 dark:bg-dark-amethyst-smoke-200 animate-opacity">
         <div className="w-full h-full p-3 flex flex-col gap-y-2 text-xs text-dark-amethyst-smoke-400 dark:text-amethyst-smoke-400">
           <div id="titles" className="flex flex-col gap-y-1 grow-0 items-start justify-center pb-1 capitalize">
             <p className="font-bold text-[1.2em]">title</p>
@@ -22,12 +22,12 @@ export default function MangaPopup({ mouseLeave, ref }) {
             </div>
           </div>
           <div id="synopsis">
-            <p className="font-light max-lines-4 cutoff-text-abs">
+            <p className="font-light max-lines-4 cutoff-text-abs text-[0.8em]">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores quod officia dignissimos earum est illo provident quidem reiciendis hic veniam, autem veritatis ducimus molestiae
               corporis aliquid temporibus voluptatem sint magnam.
             </p>
           </div>
-          <div className="flex flex-col gap-y-0.5">
+          <div className="flex flex-col gap-y-0.5 text-[0.8em]">
             <div id="published" className="flex flex-row gap-x-1 items-center">
               <p className="font-light">published:</p>
               <p className="font-medium">{new Date().toLocaleDateString("en-US")}</p>
@@ -43,7 +43,7 @@ export default function MangaPopup({ mouseLeave, ref }) {
           </div>
           <Link id="details" to="">
             <div className="w-full px-3 py-1.5 mt-1 flex flex-row items-center justify-between rounded-3xl text-dark-amethyst-smoke-300 dark:text-amethyst-smoke-300 bg-indigo-500 dark:bg-indigo-400 group hover:cursor-pointer">
-              <p className="font-extrabold text-[1.35em] dark:group-hover:text-dark-amethyst-smoke-200 group-hover:text-amethyst-smoke-200">More Details</p>
+              <p className="font-extrabold text-[1.25em] dark:group-hover:text-dark-amethyst-smoke-200 group-hover:text-amethyst-smoke-200">More Details</p>
               <Play
                 size={18}
                 className="fill-text-light dark:fill-text-dark stroke-0 group-hover:fill-amethyst-smoke-200 dark:group-hover:fill-dark-amethyst-smoke-200 group-hover:-translate-x-5 duration-300"

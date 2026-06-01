@@ -1,6 +1,6 @@
 import { createContext, useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { Outlet } from "react-router";
-import NavBar from "./components/NavBar";
+import NavBar from "./components/Navbar/NavBar";
 import { getCurrentTheme, themeToggler } from "./utility/utils";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { setSFWValue } from "./utility/jikanApi";
