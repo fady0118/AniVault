@@ -8,7 +8,7 @@ import NavLink from "./NavLink";
 import SmallNavLink from "./SmallNavLink";
 const classes = {
   navListLinkText: "relative wrapper inline-block overflow-hidden font-bold text-text-light dark:text-text-dark px-2.5 py-0.5 rounded-md border navLink-colors hover:cursor-pointer duration-200",
-  smallNavLink: "py-3 px-5 border-b small-navLink-colors hover:cursor-pointer duration-200",
+  smallNavLink: "py-3 px-5 border-b bg-amethyst-smoke-400 dark:bg-dark-amethyst-smoke-100 small-navLink-colors hover:cursor-pointer duration-200",
 };
 
 export default function NavBar({ themeSelect, theme, setTheme }) {

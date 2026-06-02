@@ -107,6 +107,15 @@
     transform: translateY(0);
   }
 }
+@keyframes slideInFromTopHalf {
+  from {
+    transform: translateY(-35%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
 
 @layer components {
   .gallery-image-animation {
@@ -123,6 +132,9 @@
 
   .slide-in-from-top {
     animation: slideInFromTop 0.25s ease;
+  }
+  .slide-in-from-top-half {
+    animation: slideInFromTopHalf 0.25s ease;
   }
 
   .animate-opacity {

@@ -217,7 +217,7 @@ export default function AnimePage() {
                                 {animeQ?.data?.season} {animeQ?.data?.year}
                               </Link>
 
-                              <div className="flex flex-row space-x-1.5 flex-wrap text-[1.35em]">
+                              <div className="flex flex-row space-x-1.5 flex-wrap text-[1.2em]">
                                 {animeQ?.data?.studios?.map((studio, i) => (
                                   <Link key={i} to={`/producer/${studio.mal_id}`} className="blue-link duration-200">
                                     {studio.name}
