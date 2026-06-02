@@ -50,7 +50,7 @@ export default function SearchModal({ showSearchModal, setShowSearchModal }) {
                 <p>{category}</p>
                 <ChevronDown className="group-has-checked:rotate-180 duration-200" size={12} />
               </label>
-              <div className="hidden absolute left-0 top-full min-w-full peer-has-checked:flex flex-col searchModal-box-colors rounded-sm border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10">
+              <div className="hidden absolute left-0 top-full min-w-full peer-has-checked:flex flex-col searchModal-box-colors rounded-sm border border-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10">
                 {categories.map((item, i) => (
                   <p
                     className="px-2 py-1 hover:cursor-pointer hover:bg-amethyst-smoke-500/50 dark:hover:bg-dark-amethyst-smoke-200/50 hover:text-indigo-600/75 dark:hover:text-indigo-400/75 duration-200"
@@ -65,12 +65,12 @@ export default function SearchModal({ showSearchModal, setShowSearchModal }) {
           </div>
           <button
             onClick={() => setShowSearchModal(false)}
-            className="flex items-center text-xs px-1 rounded-sm searchModal-box-colors border border-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 hover:cursor-pointer"
+            className="flex items-center px-1 text-[0.85em] rounded-sm searchModal-box-colors border border-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 hover:cursor-pointer"
           >
             esc
           </button>
         </div>
-        <SearchContainer searchInput={debouncedSearchValue} category={category} />
+        <SearchContainer searchInput={debouncedSearchValue} category={category} closeModal={()=>setShowSearchModal(false)}/>
       </div>
       <div className="z-40 fixed top-0 w-screen h-screen bg-dark-amethyst-smoke-50/90"></div>
     </>

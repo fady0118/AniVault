@@ -53,9 +53,9 @@ export function jikanFetch(input, init) {
   let url = input;
   if (SFW_value && url.includes("?") && !url.includes('magazines')) {
     if(url.includes('genres_exclude=')){
-      url = url.split("genres_exclude=").join("genres_exclude=9,12,49&");
+      url = url.split("genres_exclude=").join("sfw&genres_exclude=9,12,49,");
     } else {
-      url = url.split("?").join("?genres_exclude=9,12,49&sfw&");
+      url = url.split("?").join("?sfw&genres_exclude=9,12,49&");
     }
   }
   return enqueue(() => executeFetch(url, init, 2));

@@ -1,8 +1,8 @@
 import { useQueries } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { jikanFetch } from "../../utility/jikanApi";
+import { Link } from "react-router";
 
-export default function SearchContainer({ searchInput, category }) {
+export default function SearchContainer({ searchInput, category, closeModal }) {
   const [animeSearchQ, mangaSearchQ, charactersSearchQ, producersSearchQ, peopleSearchQ] = useQueries({
     queries: [
       {
@@ -81,7 +81,7 @@ export default function SearchContainer({ searchInput, category }) {
             {animeSearchQ?.isEnabled ? (
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">anime</div>
-                {animeSearchQ?.data?.data?.map((item, i) => useSearchResult({ mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title }))}
+                {animeSearchQ?.data?.data?.map((item, i) => useSearchResult({ closeModal, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title, link:`/anime/${item.mal_id}` }))}
               </>
             ) : (
               ""
@@ -89,7 +89,7 @@ export default function SearchContainer({ searchInput, category }) {
             {mangaSearchQ?.isEnabled ? (
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">manga</div>
-                {mangaSearchQ?.data?.data?.map((item, i) => useSearchResult({ mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title }))}
+                {mangaSearchQ?.data?.data?.map((item, i) => useSearchResult({ closeModal, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title, link:`/manga/${item.mal_id}` }))}
               </>
             ) : (
               ""
@@ -97,7 +97,7 @@ export default function SearchContainer({ searchInput, category }) {
             {charactersSearchQ?.isEnabled ? (
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">characters</div>
-                {charactersSearchQ?.data?.data?.map((item) => useSearchResult({ mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name }))}
+                {charactersSearchQ?.data?.data?.map((item) => useSearchResult({ closeModal, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name, link:`/character/${item.mal_id}` }))}
               </>
             ) : (
               ""
@@ -105,7 +105,7 @@ export default function SearchContainer({ searchInput, category }) {
             {producersSearchQ?.isEnabled ? (
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">producers</div>
-                {producersSearchQ?.data?.data?.map((item) => useSearchResult({ mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.titles[0]?.title }))}
+                {producersSearchQ?.data?.data?.map((item) => useSearchResult({ closeModal, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.titles[0]?.title, link:`/producer/${item.mal_id}` }))}
               </>
             ) : (
               ""
@@ -113,7 +113,7 @@ export default function SearchContainer({ searchInput, category }) {
             {peopleSearchQ?.isEnabled ? (
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">people</div>
-                {peopleSearchQ?.data?.data?.map((item) => useSearchResult({ mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name }))}
+                {peopleSearchQ?.data?.data?.map((item) => useSearchResult({ closeModal, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name, link:`/people/${item.mal_id}` }))}
               </>
             ) : (
               ""
@@ -125,14 +125,16 @@ export default function SearchContainer({ searchInput, category }) {
   );
 }
 
-function useSearchResult({ mal_id, image_url, name }) {
+function useSearchResult({ closeModal, mal_id, image_url, name, link="" }) {
   return (
-    <div
+    <Link 
+      onClick={closeModal}
+      to={link}
       key={mal_id}
       className="w-full flex flex-row items-center justify-start gap-x-3 rounded-md px-4 py-2 lg:py-3 hover:cursor-pointer hover:bg-amethyst-smoke-400/50 dark:hover:bg-dark-amethyst-smoke-300/50 hover:text-indigo-600/75 dark:hover:text-indigo-400/75 durations-200"
     >
       <img src={image_url || ""} alt={name} className="w-1/12 min-w-4 max-w-7 aspect-square rounded-full object-cover" />
       <p>{name}</p>
-    </div>
+    </Link>
   );
 }
