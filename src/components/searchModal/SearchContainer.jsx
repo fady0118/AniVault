@@ -3,30 +3,136 @@ import { useEffect } from "react";
 import { jikanFetch } from "../../utility/jikanApi";
 
 export default function SearchContainer({ searchInput, category }) {
-  useEffect(() => {
-    // call the fetch function
-    console.log(searchInput);
-  }, [searchInput]);
-
-  const [animeSearchQ] = useQueries({
+  const [animeSearchQ, mangaSearchQ, charactersSearchQ, producersSearchQ, peopleSearchQ] = useQueries({
     queries: [
       {
-        queryKey: ["animeSearch", searchInput],
+        queryKey: ["animeSearch", searchInput, category],
         queryFn: async () => {
           if (!searchInput) throw new Error("search term is null");
-          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?q=${searchInput}`);
+          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?q=${searchInput}&order_by=favorites&sort=desc`);
           if (!res.ok) throw new Error(res.statusText);
           const animeData = await res.json();
-          return animeData;
+          const uniqueAnimeData = [...new Map(animeData?.data.map((item) => [item.mal_id, item])).values()];
+          return { data: uniqueAnimeData, pagination: animeData.pagination };
         },
         enabled: Boolean(searchInput) && (category === "all" || category === "anime"),
       },
+      {
+        queryKey: ["mangaSearch", searchInput, category],
+        queryFn: async () => {
+          if (!searchInput) throw new Error("search term is null");
+          const res = await jikanFetch(`https://api.jikan.moe/v4/manga?q=${searchInput}&order_by=favorites&sort=desc`);
+          if (!res.ok) throw new Error(res.statusText);
+          const mangaData = await res.json();
+          const uniqueMangaData = [...new Map(mangaData?.data.map((item) => [item.mal_id, item])).values()];
+          return { data: uniqueMangaData, pagination: mangaData.pagination };
+        },
+        enabled: Boolean(searchInput) && (category === "all" || category === "manga"),
+      },
+      {
+        queryKey: ["charactersSearch", searchInput, category],
+        queryFn: async () => {
+          if (!searchInput) throw new Error("search term is null");
+          const res = await jikanFetch(`https://api.jikan.moe/v4/characters?q=${searchInput}&order_by=favorites&sort=desc`);
+          if (!res.ok) throw new Error(res.statusText);
+          const charactersData = await res.json();
+          const uniqueCharactersData = [...new Map(charactersData?.data.map((item) => [item.mal_id, item])).values()];
+          return { data: uniqueCharactersData, pagination: charactersData.pagination };
+        },
+        enabled: Boolean(searchInput) && (category === "all" || category === "characters"),
+      },
+      {
+        queryKey: ["producersSearch", searchInput, category],
+        queryFn: async () => {
+          if (!searchInput) throw new Error("search term is null");
+          const res = await jikanFetch(`https://api.jikan.moe/v4/producers?q=${searchInput}&order_by=favorites&sort=desc`);
+          if (!res.ok) throw new Error(res.statusText);
+          const producersData = await res.json();
+          const uniqueProducersData = [...new Map(producersData?.data.map((item) => [item.mal_id, item])).values()];
+          return { data: uniqueProducersData, pagination: producersData.pagination };
+        },
+        enabled: Boolean(searchInput) && (category === "all" || category === "producers"),
+      },
+      {
+        queryKey: ["peopleSearch", searchInput, category],
+        queryFn: async () => {
+          if (!searchInput) throw new Error("search term is null");
+          const res = await jikanFetch(`https://api.jikan.moe/v4/people?q=${searchInput}&order_by=favorites&sort=desc`);
+          if (!res.ok) throw new Error(res.statusText);
+          const peopleData = await res.json();
+          const uniquePeopleData = [...new Map(peopleData?.data.map((item) => [item.mal_id, item])).values()];
+          return { data: uniquePeopleData, pagination: peopleData.pagination };
+        },
+        enabled: Boolean(searchInput) && (category === "all" || category === "people"),
+      },
     ],
   });
-
+  const queries = [animeSearchQ, mangaSearchQ, charactersSearchQ, producersSearchQ, peopleSearchQ];
+  const isLoading = queries.some((q) => q.isLoading);
   return (
     <>
-      <div></div>
+      <div className="w-full grid grid-cols-1 max-h-full overflow-y-auto">
+        {isLoading ? (
+          <>
+            <div className="absolute top-1/2 left-1/2 -translate-1/2">Loading...</div>
+          </>
+        ) : (
+          <>
+            {animeSearchQ?.isEnabled ? (
+              <>
+                <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">anime</div>
+                {animeSearchQ?.data?.data?.map((item, i) => useSearchResult({ mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title }))}
+              </>
+            ) : (
+              ""
+            )}
+            {mangaSearchQ?.isEnabled ? (
+              <>
+                <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">manga</div>
+                {mangaSearchQ?.data?.data?.map((item, i) => useSearchResult({ mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title }))}
+              </>
+            ) : (
+              ""
+            )}
+            {charactersSearchQ?.isEnabled ? (
+              <>
+                <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">characters</div>
+                {charactersSearchQ?.data?.data?.map((item) => useSearchResult({ mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name }))}
+              </>
+            ) : (
+              ""
+            )}
+            {producersSearchQ?.isEnabled ? (
+              <>
+                <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">producers</div>
+                {producersSearchQ?.data?.data?.map((item) => useSearchResult({ mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.titles[0]?.title }))}
+              </>
+            ) : (
+              ""
+            )}
+            {peopleSearchQ?.isEnabled ? (
+              <>
+                <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">people</div>
+                {peopleSearchQ?.data?.data?.map((item) => useSearchResult({ mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name }))}
+              </>
+            ) : (
+              ""
+            )}
+          </>
+        )}
+      </div>
     </>
+  );
+}
+
+function useSearchResult({ mal_id, image_url, name }) {
+  return (
+    <div
+      key={mal_id}
+      className="w-full flex flex-row items-center justify-start gap-x-3 rounded-md px-4 py-2 lg:py-3 hover:cursor-pointer hover:bg-amethyst-smoke-400/50 dark:hover:bg-dark-amethyst-smoke-300/50 hover:text-indigo-600/75 dark:hover:text-indigo-400/75 durations-200"
+    >
+      <img src={image_url || ""} alt={name} className="w-1/12 min-w-4 max-w-7 aspect-square rounded-full object-cover" />
+      <p>{name}</p>
+    </div>
   );
 }

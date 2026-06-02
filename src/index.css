@@ -231,6 +231,9 @@
     @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300
   }
 
+  .searchModal-box-colors{
+    @apply bg-amethyst-smoke-400 dark:bg-dark-amethyst-smoke-300
+  }
   .link {
     @apply hover:brightness-150
   }
