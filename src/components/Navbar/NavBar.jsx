@@ -1,7 +1,7 @@
 import { Menu, MonitorCog, Moon, Search, Sun } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useState, useEffect, useContext, useRef } from "react";
-import SearchModal from "../SearchModal";
+import SearchModal from "../searchModal/SearchModal";
 import { RootContext } from "../../App";
 import data from "../../utility/data.json";
 import NavLink from "./NavLink";
@@ -12,7 +12,7 @@ const classes = {
 };
 
 export default function NavBar({ themeSelect, theme, setTheme }) {
-  const navBarRef = useRef(null)
+  const navBarRef = useRef(null);
   const [showNav, setShowNav] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   let navigate = useNavigate();
@@ -38,7 +38,10 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
 
   return (
     <>
-      <nav ref={navBarRef} className="z-40 w-[95vw] text-xs lg:text-sm flex justify-between items-center px-5 sm:px-7 lg:px-9 xl:px-12 h-12 capitalize fixed top-3 left-1/2 -translate-x-1/2 rounded-lg bg-amethyst-smoke-400/80 dark:bg-dark-amethyst-smoke-100 backdrop-blur-3xl">
+      <nav
+        ref={navBarRef}
+        className="z-40 w-[95vw] text-xs lg:text-sm flex justify-between items-center px-5 sm:px-7 lg:px-9 xl:px-12 h-12 capitalize fixed top-3 left-1/2 -translate-x-1/2 rounded-lg bg-amethyst-smoke-400/80 dark:bg-dark-amethyst-smoke-100 backdrop-blur-3xl"
+      >
         <Link to="/" className="inline-block h-1/4 xs:h-1/3 ">
           <img className="w-full h-full grayscale brightness-25 hover:brightness-75 dark:brightness-150 dark:hover:brightness-200 duration-300 hover:cursor-pointer" src="/logo.png" alt="logo" />
         </Link>
@@ -59,8 +62,8 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
                 <span>Ctrl+K</span>
               </div>
               <div className="flex flex-row items-center gap-x-2">
-                <NavLink classes={classes} LinkTitle="anime" data={data.anime.genres} ref={navBarRef}/>
-                <NavLink classes={classes} LinkTitle="manga" data={data.manga.genres} ref={navBarRef}/>
+                <NavLink classes={classes} LinkTitle="anime" data={data.anime.genres} ref={navBarRef} />
+                <NavLink classes={classes} LinkTitle="manga" data={data.manga.genres} ref={navBarRef} />
                 <div className="group flex flex-row items-center">
                   <Link to="/manga/magazine" className={` ${classes.navListLinkText}`}>
                     Magazine
@@ -74,7 +77,7 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
           <button
             type="button"
             onClick={() => setSFW((s) => !s)}
-            className="inline-flex items-center justify-center w-10 text-[0.75em] font-semibold hover:cursor-pointer hover:text-indigo-500 transition duration-200"
+            className="inline-flex items-center justify-center w-10 text-[0.85em] font-semibold hover:cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-300 transition duration-200"
           >
             {SFW ? "SFW" : "NSFW"}
           </button>

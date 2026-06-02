@@ -191,7 +191,7 @@ export default function RecentManga() {
           </div>
         </div>
       </div>
-      <div className="w-full max-h-[75vh] grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 overflow-y-scroll overflow-x-clip gap-5">
+      <div className="w-full max-h-[65vh] grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 overflow-y-scroll snap-mandatory overflow-x-clip gap-5">
         {recent === "manga" ? (
           <>
             {recentMangaQ.isPending ? (
@@ -205,7 +205,11 @@ export default function RecentManga() {
             ) : (
               <>
                 {recentMangaQ?.data?.uniqueMangaData?.map((item, i) => (
-                  <div data-mal-id={item.mal_id} key={i} className="wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
+                  <div
+                    data-mal-id={item.mal_id}
+                    key={i}
+                    className="wrapper relative snap-start scroll-m-10 flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200"
+                  >
                     <Link to={`/manga/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
                       <img
                         className="w-full h-full object-cover"
@@ -243,7 +247,11 @@ export default function RecentManga() {
             ) : (
               <>
                 {recentNovelQ?.data?.uniqueNovelData?.map((item, i) => (
-                  <div data-mal-id={item.mal_id} key={i} className="wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
+                  <div
+                    data-mal-id={item.mal_id}
+                    key={i}
+                    className="wrapper relative snap-start scroll-m-10 flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200"
+                  >
                     <Link to={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
                       <img
                         className="w-full h-full"
@@ -281,7 +289,11 @@ export default function RecentManga() {
             ) : (
               <>
                 {recentManhwaQ?.data?.uniqueManhwaData?.map((item, i) => (
-                  <div data-mal-id={item.mal_id} key={i} className="wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
+                  <div
+                    data-mal-id={item.mal_id}
+                    key={i}
+                    className="wrapper relative snap-start scroll-m-10 flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200"
+                  >
                     <Link to={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
                       <img
                         className="w-full h-full"
