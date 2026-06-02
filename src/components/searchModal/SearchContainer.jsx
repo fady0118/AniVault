@@ -1,9 +1,10 @@
 import { useQueries } from "@tanstack/react-query";
 import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function SearchContainer({ searchInput, category, closeModal }) {
+  const [recentSearches, setRecentSearches] = useState([]);
   const [animeSearchQ, mangaSearchQ, charactersSearchQ, producersSearchQ, peopleSearchQ] = useQueries({
     queries: [
       {
@@ -72,6 +73,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
   const isLoading = queries.some((q) => q.isLoading);
   const anyFetched = queries.some((q) => q.isFetched);
 
+  // arrow navigation with enter selection
   useEffect(() => {
     if (!anyFetched) return;
     const searchResultsCont = document.getElementById("searchResults");
@@ -110,8 +112,50 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
     };
   }, [anyFetched]);
 
+  // add clicked item to localStorage then closeModal
+  function handleClick(mal_id, image_url, name, link) {
+    const savedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
+    if (savedSearches.find((item) => item.mal_id === mal_id)) {
+      closeModal();
+      return;
+    }
+    const newSavedSearches = [{ mal_id, image_url, name, link }].concat(savedSearches).slice(0, 25);
+    localStorage.setItem("recentSearches", JSON.stringify(newSavedSearches));
+    closeModal();
+  }
+  // fetch recentSearches from localStorge then update the localState
+  useEffect(() => {
+    const savedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
+    setRecentSearches(savedSearches);
+  }, []);
   return (
     <>
+      {/* show recentSearches if no query is fetched */}
+      {!anyFetched ? (
+        <div id="recentSearches" className="flex flex-col">
+          <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">Recent</div>
+          {recentSearches.length ? (
+            <>
+              {recentSearches.map((item, i) => (
+                <Link
+                  onClick={() => handleClick(item.mal_id, item.image_url, item.name, item.link)}
+                  to={item.link}
+                  key={`${item.mal_id}-${i}`}
+                  className="w-full flex flex-row items-center justify-start gap-x-3 rounded-md px-4 py-2 lg:py-3 searchResult-hover durations-200"
+                >
+                  <img src={item.image_url || ""} alt={item.name} className="w-1/12 min-w-4 max-w-7 aspect-square rounded-full object-cover" />
+                  <p>{item.name}</p>
+                </Link>
+              ))}
+            </>
+          ) : (
+            ""
+          )}
+        </div>
+      ) : (
+        ""
+      )}
+      {/* show search results */}
       <div id="searchResults" tabIndex={0} className="w-full grid grid-cols-1 max-h-full overflow-y-auto">
         {isLoading ? (
           <>
@@ -123,7 +167,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">anime</div>
                 {animeSearchQ?.data?.data?.map((item, i) =>
-                  useSearchResult({ closeModal, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title, link: `/anime/${item.mal_id}` }),
+                  useSearchResult({ handleClick, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title, link: `/anime/${item.mal_id}` }),
                 )}
               </>
             ) : (
@@ -133,7 +177,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">manga</div>
                 {mangaSearchQ?.data?.data?.map((item, i) =>
-                  useSearchResult({ closeModal, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title, link: `/manga/${item.mal_id}` }),
+                  useSearchResult({ handleClick, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title, link: `/manga/${item.mal_id}` }),
                 )}
               </>
             ) : (
@@ -143,7 +187,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">characters</div>
                 {charactersSearchQ?.data?.data?.map((item) =>
-                  useSearchResult({ closeModal, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name, link: `/character/${item.mal_id}` }),
+                  useSearchResult({ handleClick, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name, link: `/character/${item.mal_id}` }),
                 )}
               </>
             ) : (
@@ -153,7 +197,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">producers</div>
                 {producersSearchQ?.data?.data?.map((item) =>
-                  useSearchResult({ closeModal, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.titles[0]?.title, link: `/producer/${item.mal_id}` }),
+                  useSearchResult({ handleClick, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.titles[0]?.title, link: `/producer/${item.mal_id}` }),
                 )}
               </>
             ) : (
@@ -163,7 +207,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">people</div>
                 {peopleSearchQ?.data?.data?.map((item) =>
-                  useSearchResult({ closeModal, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name, link: `/people/${item.mal_id}` }),
+                  useSearchResult({ handleClick, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name, link: `/people/${item.mal_id}` }),
                 )}
               </>
             ) : (
@@ -176,9 +220,14 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
   );
 }
 
-function useSearchResult({ closeModal, mal_id, image_url, name, link = "" }) {
+function useSearchResult({ handleClick, mal_id, image_url, name, link = "" }) {
   return (
-    <Link onClick={closeModal} to={link} key={mal_id} className="w-full flex flex-row items-center justify-start gap-x-3 rounded-md px-4 py-2 lg:py-3 searchResult-hover durations-200">
+    <Link
+      onClick={() => handleClick(mal_id, image_url, name, link)}
+      to={link}
+      key={mal_id}
+      className="w-full flex flex-row items-center justify-start gap-x-3 rounded-md px-4 py-2 lg:py-3 searchResult-hover durations-200"
+    >
       <img src={image_url || ""} alt={name} className="w-1/12 min-w-4 max-w-7 aspect-square rounded-full object-cover" />
       <p>{name}</p>
     </Link>
