@@ -234,6 +234,12 @@
   .searchModal-box-colors{
     @apply bg-amethyst-smoke-400 dark:bg-dark-amethyst-smoke-300
   }
+  .searchResult-hover {
+    @apply hover:cursor-pointer hover:bg-amethyst-smoke-400/50 dark:hover:bg-dark-amethyst-smoke-300/50 hover:text-indigo-600/75 dark:hover:text-indigo-400/75 
+  }
+  .searchResult-hovered {
+    @apply bg-amethyst-smoke-400/50 dark:bg-dark-amethyst-smoke-300/50 text-indigo-600/75 dark:text-indigo-400/75 
+  }
   .link {
     @apply hover:brightness-150
   }

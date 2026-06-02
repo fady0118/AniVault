@@ -182,43 +182,43 @@ export default function AnimePage() {
                   <div className="flex flex-col xs:flex-row items-stretch gap-3 w-full">
                     <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
                       <div id="poster" className="w-full h-full">
-                        <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={animeQ?.data?.images.jpg.large_image_url} alt={animeQ?.data?.title} />
+                        <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={animeQ?.data?.images?.jpg?.large_image_url} alt={animeQ?.data?.title} />
                       </div>
                     </div>
                     <div className="order-1 flex flex-col gap-3">
                       <div id="details" className="box-colors rounded-lg w-fit">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>
-                        <div className="p-2 flex flex-row flex-wrap gap-2 text-4xs sm:text-3xs">
+                        <div className="p-2 flex flex-row flex-wrap gap-2 text-3xs sm:text-2xs">
                           <div className="flex flex-col justify-evenly pr-2 items-center border-r border-amethyst-smoke-500/20 ">
-                            <p className="text-text-dark text-[1.5em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
-                            <p className="text-[2em]/snug font-semibold">{animeQ?.data?.score || "?"}</p>
-                            <p className="font-light text-[1.35em]">{animeQ?.data?.scored_by?.toLocaleString() || "?"} users</p>
+                            <p className="text-text-dark text-[1.1em] font-medium px-2.5 bg-mal-blue rounded-xs uppercase">Score</p>
+                            <p className="text-[1.35em]/snug font-semibold">{animeQ?.data?.score || "?"}</p>
+                            <p className="font-light">{animeQ?.data?.scored_by?.toLocaleString() || "?"} users</p>
                           </div>
 
                           <div className="flex flex-col py-1 gap-y-1">
                             <div className="grid grid-cols-[repeat(3,auto)] items-start gap-y-2 gap-x-2 lg:gap-x-6 capitalize">
                               <div className="flex flex-col">
-                                <p className="text-[2em]">Ranked</p>
-                                <p className="text-[1.6em]">#{animeQ?.data?.rank}</p>
+                                <p className="text-[1.35em]">Ranked</p>
+                                <p className="text-[1.1em]">#{animeQ?.data?.rank}</p>
                               </div>
                               <div className="flex flex-col">
-                                <p className="text-[2em]">Popularity</p>
-                                <p className="text-[1.6em]">#{animeQ?.data?.popularity}</p>
+                                <p className="text-[1.35em]">Popularity</p>
+                                <p className="text-[1.1em]">#{animeQ?.data?.popularity}</p>
                               </div>
                               <div className="flex flex-col">
-                                <p className="text-[2em]">Members</p>
-                                <p className="text-[1.6em]">{animeQ?.data?.members?.toLocaleString()}</p>
+                                <p className="text-[1.35em]">Members</p>
+                                <p className="text-[1.1em]">{animeQ?.data?.members?.toLocaleString()}</p>
                               </div>
-                              <Link to={`/anime?type=${animeQ?.data?.type.toLowerCase()}`} className="text-[1.35em] blue-link duration-200">
+                              <Link to={`/anime?type=${animeQ?.data?.type?.toLowerCase()}`} className="text-[1.2em] blue-link duration-200">
                                 {animeQ?.data?.type}
                               </Link>
 
-                              <Link to={`/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`} className="flex flex-row text-[1.35em] blue-link duration-200">
+                              <Link to={`/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`} className="flex flex-row text-[1.2em] blue-link duration-200">
                                 {animeQ?.data?.season} {animeQ?.data?.year}
                               </Link>
 
                               <div className="flex flex-row space-x-1.5 flex-wrap text-[1.35em]">
-                                {animeQ?.data?.studios.map((studio, i) => (
+                                {animeQ?.data?.studios?.map((studio, i) => (
                                   <Link key={i} to={`/producer/${studio.mal_id}`} className="blue-link duration-200">
                                     {studio.name}
                                   </Link>
@@ -282,16 +282,13 @@ export default function AnimePage() {
                     ""
                   )}
                 </div>
-                {/* @todo only show see more if there's more lines  */}
-                {/* @todo find alternative source for not found background */}
-
                 <div className="order-2 w-full flex flex-col md:flex-row gap-3">
                   <div className="w-fit md:w-1/4 max-w-sm flex flex-col justify-between h-fit gap-y-2 md:gap-y-8 rounded-lg box-colors">
                     <div id="information" className="w-full">
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">information</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                          {renderInfoStr("type", `${animeQ?.data?.type}`, `/anime?type=${animeQ?.data?.type.toLowerCase()}`)}
+                          {renderInfoStr("type", `${animeQ?.data?.type}`, `/anime?type=${animeQ?.data?.type?.toLowerCase()}`)}
                           <div className="w-full flex flex-row  gap-x-2 items-center capitalize">
                             <div className="flex flex-row gap-x-1">
                               <p className="font-semibold ">episodes:</p>
@@ -312,9 +309,9 @@ export default function AnimePage() {
                             )}
                           </div>
                           {renderInfoStr("status", `${animeQ?.data?.status}`, `/anime?status=${getAnimeStatus(animeQ?.data?.status)}`)}
-                          {renderInfoStr("aired", `${animeQ?.data?.aired.string}`)}
+                          {renderInfoStr("aired", `${animeQ?.data?.aired?.string}`)}
                           {animeQ?.data?.season ? (<>{renderInfoStr("premiered", `${animeQ?.data?.season || ""} ${animeQ?.data?.year || ""}`, `/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`)}</>) : (  "")}
-                          {renderInfoStr("broadcast", `${animeQ?.data?.broadcast.string || ""}`)}
+                          {renderInfoStr("broadcast", `${animeQ?.data?.broadcast?.string || ""}`)}
                           {renderInfoArr("producers", animeQ?.data?.producers, "/producer/")}
                           {renderInfoArr("licensors", animeQ?.data?.licensors)}
                           {renderInfoArr("studios", animeQ?.data?.studios, "/producer/")}
@@ -334,8 +331,8 @@ export default function AnimePage() {
                           {renderInfoStr("score", `${animeQ?.data?.score} (scored by ${animeQ?.data?.scored_by?.toLocaleString()} users) `)}
                           {renderInfoStr("ranked", `#${animeQ?.data?.rank}`)}
                           {renderInfoStr("popularity", `#${animeQ?.data?.popularity}`)}
-                          {renderInfoStr("members", `${animeQ?.data?.members.toLocaleString()}`)}
-                          {renderInfoStr("favorites", `${animeQ?.data?.favorites.toLocaleString()}`)}
+                          {renderInfoStr("members", `${animeQ?.data?.members?.toLocaleString()}`)}
+                          {renderInfoStr("favorites", `${animeQ?.data?.favorites?.toLocaleString()}`)}
                         </div>
                       </div>
                     </div>
@@ -343,7 +340,7 @@ export default function AnimePage() {
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Available At</div>
                       <div className="px-3 py-2 text-xs font-light">
                         <div className="grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]">
-                          {animeQ?.data?.external.map((ext, i) => (
+                          {animeQ?.data?.external?.map((ext, i) => (
                             <p key={i} className="flex flex-row items-center gap-1.5">
                               {renderIcon(ext.name)}
                               <Link className="blue-link" to={ext.url}>
@@ -374,13 +371,13 @@ export default function AnimePage() {
                   </div>
                   <div className="w-full md:w-3/4 flex flex-col md:flex-row flex-wrap gap-3 h-fit">
                     <div className="flex flex-col md:flex-row gap-3 w-full order-1">
-                      {animeQ?.data?.trailer.embed_url && (
+                      {animeQ?.data?.trailer?.embed_url && (
                         <div id="trailer" className="rounded-lg box-colors overflow-hidden w-full h-fit md:w-1/2 order-2 md:order-1">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed">Watch Trailer</div>
                           <div className="w-full aspect-video">
                             <iframe
                               className="w-full h-full"
-                              src={animeQ?.data?.trailer.embed_url.split("&autoplay")[0]}
+                              src={animeQ?.data?.trailer?.embed_url.split("&autoplay")[0]}
                               title="YouTube video player"
                               frameBorder="0"
                               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -393,7 +390,7 @@ export default function AnimePage() {
                       <div className="w-fit md:w-1/2 h-fit rounded-lg box-colors overflow-hidden order-1 md:order-2">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">titles</div>
                         <div className="flex flex-col gap-y-1 px-3 py-2 text-xs font-light">
-                          {animeQ?.data?.titles.map((title, i) => (
+                          {animeQ?.data?.titles?.map((title, i) => (
                             <div key={i} className="flex flex-row space-x-1 w-full">
                               <p className="font-semibold min-w-16">{title.type}: </p>
                               <p>{title.title}</p>
@@ -428,7 +425,7 @@ export default function AnimePage() {
                       <div id="characters" className="flex justify-center w-full h-fit order-4">
                         <div className="rounded-lg box-colors w-full ">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
-                          <CardBox dataArr={charactersQ?.data?.dataArr} />
+                          <CardBox dataArr={charactersQ?.data?.dataArr} num={7}/>
                         </div>
                       </div>
                     ) : (
@@ -451,7 +448,7 @@ export default function AnimePage() {
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
 
                           <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2">
-                            {animeQ?.data?.flattenedRelations.slice(0, 6).map((entry, i) => (
+                            {animeQ?.data?.flattenedRelations?.slice(0, 6).map((entry, i) => (
                               <div key={i} className="flex flex-row w-full">
                                 <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
                                   <img data-mal-id={entry.mal_id} className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
@@ -507,14 +504,14 @@ export default function AnimePage() {
                       ""
                     )}
 
-                    {animeQ?.data?.theme.openings.length || animeQ?.data?.theme.endings.length ? (
+                    {animeQ?.data?.theme?.openings?.length || animeQ?.data?.theme?.endings?.length ? (
                       <div id="theme" className="flex justify-center w-full h-fit text-2xs lg:text-[11px] order-6">
                         <div className="rounded-lg box-colors w-full grid grid-cols-2 gap-4 py-1">
-                          {animeQ?.data?.theme.openings.length ? (
+                          {animeQ?.data?.theme?.openings?.length ? (
                             <div id="openings">
                               <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">openings</div>
                               <div className="flex flex-col w-full gap-y-2 p-2">
-                                {animeQ?.data?.theme.openings.map((opening, i) => (
+                                {animeQ?.data?.theme?.openings?.map((opening, i) => (
                                   <div key={i} className="w-full flex flex-row items-center gap-x-2">
                                     <Music4Icon className="w-[10%]" size={16} />
                                     <p className="w-[90%]">{opening}</p>
@@ -525,11 +522,11 @@ export default function AnimePage() {
                           ) : (
                             ""
                           )}
-                          {animeQ?.data?.theme.endings.length ? (
+                          {animeQ?.data?.theme?.endings?.length ? (
                             <div id="endings">
                               <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">endings</div>
                               <div className="flex flex-col w-full gap-y-2 p-2">
-                                {animeQ?.data?.theme.endings.map((ending, i) => (
+                                {animeQ?.data?.theme?.endings?.map((ending, i) => (
                                   <div key={i} className="w-full flex flex-row items-center gap-x-2">
                                     <Music4Icon className="w-[10%]" size={16} />
                                     <p className="w-[90%]">{ending}</p>
@@ -563,7 +560,7 @@ export default function AnimePage() {
               </div>
             </div>
             <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
-              <img className="w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y" src={animeQ?.data?.images.jpg.large_image_url} alt={animeQ?.data?.title} />
+              <img className="w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y" src={animeQ?.data?.images?.jpg?.large_image_url} alt={animeQ?.data?.title} />
             </div>
           </div>
           {showVideoModal && videoRef.current && <VideoModal closeModal={closeVideo} link={videoRef.current} />}
