@@ -112,13 +112,20 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
     };
   }, [anyFetched]);
 
-  // add clicked item to localStorage then closeModal
+   // add clicked item to localStorage then closeModal
   function handleClick(mal_id, image_url, name, link) {
     const savedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
-    if (savedSearches.find((item) => item.mal_id === mal_id)) {
+    const itemAlreadyExists = savedSearches.filter((item) => item.mal_id === mal_id);
+    if (itemAlreadyExists) {
+      // re-order arr
+      const rest = savedSearches.filter((item) => item.mal_id !== mal_id);
+      savedSearches.length = 0;
+      savedSearches.push(...itemAlreadyExists, ...rest);
+      localStorage.setItem("recentSearches", JSON.stringify(savedSearches));
       closeModal();
       return;
     }
+    // push new item to the start
     const newSavedSearches = [{ mal_id, image_url, name, link }].concat(savedSearches).slice(0, 25);
     localStorage.setItem("recentSearches", JSON.stringify(newSavedSearches));
     closeModal();
