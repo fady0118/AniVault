@@ -71,24 +71,27 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
     ],
   });
   const queries = [animeSearchQ, mangaSearchQ, charactersSearchQ, producersSearchQ, peopleSearchQ];
-  const isLoading = queries.some((q) => q.isLoading);
+  const isLoading = queries.every((q) => q.isLoading);
   const anyFetched = queries.some((q) => q.isFetched);
 
   // arrow navigation with enter selection
   useEffect(() => {
     if (!anyFetched) return;
+
     const searchResultsCont = document.getElementById("searchResults");
     if (!searchResultsCont) return;
+
     const searchResults = Array.from(searchResultsCont.querySelectorAll("a"));
     if (searchResults.length === 0) return;
+
     let index = 0;
-    searchResults[index].classList.add("searchResult-hovered");
+    searchResults[index].classList.add("searchResult-hovered"); // highlight first element automatically
     function handleArrows(event) {
       switch (event.keyCode) {
         case 38: // Up arrow
           event.preventDefault();
           searchResults[index]?.classList.remove("searchResult-hovered");
-          index = index > 0 ? --index : 0;
+          index = index > 0 ? --index : searchResults.length-1;
           searchResults[index]?.classList.add("searchResult-hovered");
           searchResults[index]?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
           break;
@@ -111,7 +114,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
     return () => {
       if (searchModal) searchModal.removeEventListener("keydown", handleArrows);
     };
-  }, [anyFetched]);
+  }, [anyFetched, queries]);
 
   // add clicked item to localStorage then closeModal
   function handleClick(mal_id, image_url, name, link) {

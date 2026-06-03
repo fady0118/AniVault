@@ -8,7 +8,7 @@ export default function SmallNavLink({ classes, LinkTitle, data }) {
       <input className="hidden" type="checkbox" name={`small-navLink-${LinkTitle}`} id={`small-navLink-${LinkTitle}`} />
       <p className={classes}>{LinkTitle}</p>
 
-      <div className="hidden group-has-checked:block slide-in-from-top-half relative -z-10">
+      <div className="hidden group-has-checked:block slide-in-from-top-half">
         <div className="flex flex-row items-center justify-between px-5">
           <Link
             to={`/${LinkTitle}?order_by=score&sort=desc`}
