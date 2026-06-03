@@ -25,7 +25,7 @@ export default function Schedual() {
   const date = new Date();
   const sliderRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(Number(date.getDay()) + OFFSET);
-  
+
   const schedual = useQuery({
     queryKey: ["schedual", currentIndex],
     queryFn: async () => {
@@ -50,7 +50,7 @@ export default function Schedual() {
     const left = container.scrollLeft + (nodeRect.left - containerRect.left) - container.clientWidth / 2 + nodeRect.width / 2;
     container.scrollTo({ left, behavior: animate ? "smooth" : "instant" });
   }
-  
+
   function shift(dir) {
     setCurrentIndex((s) => s + dir);
     // after scrolling into a clone move back
@@ -66,7 +66,7 @@ export default function Schedual() {
     scrollIntoView(currentIndex);
   }, [currentIndex]);
   return (
-    <div id="schedual" className="w-full xs:w-1/2 md:w-full flex flex-col items-center rounded-lg box-colors-lighter py-1 gap-y-1.5 h-fit min-h-64">
+    <div id="schedual" className="w-full xs:w-1/2 md:w-full flex flex-col items-center rounded-lg box-colors-lighter py-1 gap-y-1.5 h-fit">
       <div id="schedualHeader" className="w-full flex flex-row items-center justify-evenly py-1">
         <ChevronLeft
           className="p-1 box-content rounded-full hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200"
@@ -95,9 +95,11 @@ export default function Schedual() {
           }}
         />
       </div>
-      <div>
+      <div className="w-full">
         {schedual?.isPending ? (
-          <div className="text-[0.8em] text-text-light-50 dark:text-text-dark-50 capitalize"><LoaderComponent size={1} /></div>
+          <div className="text-[0.8em] text-text-light-50 dark:text-text-dark-50 capitalize w-full flex flex-row justify-center scale-75 pb-10">
+            <LoaderComponent />
+          </div>
         ) : (
           <div className="flex flex-col">
             <input type="checkbox" name="schedual-checkbox" id="schedual-checkbox" className="peer hidden" />

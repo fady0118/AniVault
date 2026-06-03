@@ -22,7 +22,7 @@ export default function HomeSidePanel() {
   });
   return (
     <div className="w-full md:w-1/3 lg:w-1/4 min-w-0 h-fit flex flex-col xs:flex-row md:flex-col mt-3 gap-4">
-      <div id="Trending" className="w-full xs:w-1/2 md:w-full flex flex-col rounded-lg box-colors-lighter py-2 gap-y-2 min-h-64 text-[1.1em]">
+      <div id="Trending" className="w-full xs:w-1/2 md:w-full flex flex-col rounded-lg box-colors-lighter py-2 gap-y-2 text-[1.1em]">
         <div className="flex flex-row gap-x-3 items-center px-3">
           <Trophy size={20} />
           <p className="uppercase font-extrabold text-sm/loose sm:text-lg/loose">Trending</p>
@@ -30,7 +30,9 @@ export default function HomeSidePanel() {
         <div className="flex flex-col text-[0.65em]">
           {TrendingAnimeQ.isPending ? (
             <>
-              <div className="w-full h-full flex flex-row justify-center items-center text-text-light-50 dark:text-text-dark-50"><LoaderComponent size={1} /></div>
+              <div className="w-full flex flex-row justify-center scale-75 pb-10 text-text-light-50 dark:text-text-dark-50">
+                <LoaderComponent />
+              </div>
             </>
           ) : (
             <>

@@ -40,7 +40,7 @@ export default function MagazineContainer({ searchParams }) {
     <div className="relative order-3 px-3 py-1 min-h-32">
       {magazinesQ.isPending ? (
         <>
-          <div className="absolute top-full left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
+          <div className="absolute top-full left-1/2 -translate-1/2"><LoaderComponent /></div>
         </>
       ) : (
         <>

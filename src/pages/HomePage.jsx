@@ -28,7 +28,7 @@ export default function HomePage() {
   return (
     <div className="relative w-screen">
       {seasonQ.isPending ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent /></div>
       ) : (
         <>
           <HomeSlider season={seasonQ?.data?.uniqueSeasonData?.slice(0, 10)} />

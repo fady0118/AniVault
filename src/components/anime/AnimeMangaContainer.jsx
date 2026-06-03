@@ -143,7 +143,7 @@ export default function AnimeMangaContainer({ searchParams, itemType }) {
       {isLoading ? (
         <>
           <div className="absolute top-full left-1/2 -translate-1/2">
-            <LoaderComponent size={2} />
+            <LoaderComponent />
           </div>
         </>
       ) : (

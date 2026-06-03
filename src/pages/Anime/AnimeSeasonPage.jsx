@@ -59,7 +59,7 @@ export default function AnimeSeasonPage() {
   return (
     <>
       {seasonQ.isPending ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent /></div>
       ) : (
         <>
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3 text-2xs sm:text-xs">

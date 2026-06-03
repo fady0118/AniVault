@@ -3,6 +3,7 @@ import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
 import { useEffect, useState } from "react";
 import LoaderComponent from "../LoaderComponent";
+import { X } from "lucide-react";
 
 export default function SearchContainer({ searchInput, category, closeModal }) {
   const [recentSearches, setRecentSearches] = useState([]);
@@ -119,20 +120,28 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
   // add clicked item to localStorage then closeModal
   function handleClick(mal_id, image_url, name, link) {
     const savedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
-    const itemAlreadyExists = savedSearches.filter((item) => item.mal_id === mal_id);
-    if (itemAlreadyExists) {
+    const existingItem = savedSearches.find((item) => item.mal_id === mal_id);
+    if (existingItem) {
       // re-order arr
       const rest = savedSearches.filter((item) => item.mal_id !== mal_id);
-      savedSearches.length = 0;
-      savedSearches.push(...itemAlreadyExists, ...rest);
-      localStorage.setItem("recentSearches", JSON.stringify(savedSearches));
+      const reorderedSearches = [existingItem, ...rest].slice(0, 25);
+      localStorage.setItem("recentSearches", JSON.stringify(reorderedSearches));
+      setRecentSearches(reorderedSearches);
       closeModal();
       return;
     }
     // push new item to the start
-    const newSavedSearches = [{ mal_id, image_url, name, link }].concat(savedSearches).slice(0, 25);
+    const newSavedSearches = [{ mal_id, image_url, name, link }, ...savedSearches].slice(0, 25);
     localStorage.setItem("recentSearches", JSON.stringify(newSavedSearches));
+    setRecentSearches(newSavedSearches);
     closeModal();
+  }
+  // remove item from recent searches
+  function removeRecentSearch(mal_id) {
+    const savedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
+    const rest = savedSearches.filter((item) => item.mal_id !== mal_id);
+    localStorage.setItem("recentSearches", JSON.stringify(rest));
+    setRecentSearches(rest)
   }
   // fetch recentSearches from localStorge then update the localState
   useEffect(() => {
@@ -148,15 +157,24 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
           {recentSearches.length ? (
             <>
               {recentSearches.map((item, i) => (
-                <Link
-                  onClick={() => handleClick(item.mal_id, item.image_url, item.name, item.link)}
-                  to={item.link}
-                  key={`${item.mal_id}-${i}`}
-                  className="w-full flex flex-row items-center justify-start gap-x-3 rounded-md px-4 py-2 lg:py-3 searchResult-hover durations-200"
-                >
-                  <img src={item.image_url || ""} alt={item.name} className="w-1/12 min-w-4 max-w-7 aspect-square rounded-full object-cover" />
-                  <p>{item.name}</p>
-                </Link>
+                <div className="w-full flex flex-row items-center justify-between rounded-md searchResult-hover durations-200">
+                  <Link
+                    onClick={() => handleClick(item.mal_id, item.image_url, item.name, item.link)}
+                    to={item.link}
+                    key={`${item.mal_id}-${i}`}
+                    className="w-full flex flex-row items-center justify-start rounded-md gap-x-3 px-4 py-2 lg:py-3 searchResult-hover durations-200"
+                  >
+                    <img src={item.image_url || ""} alt={item.name} className="w-1/12 min-w-4 max-w-7 aspect-square rounded-full object-cover" />
+                    <p>{item.name}</p>
+                  </Link>
+                  <X
+                    onClick={() => {
+                      removeRecentSearch(item.mal_id);
+                    }}
+                    size={20}
+                    className="mx-3 rounded-sm hover:cursor-pointer hover:bg-amethyst-smoke-600/20 duration-200"
+                  />
+                </div>
               ))}
             </>
           ) : (
@@ -171,7 +189,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
         {isLoading ? (
           <>
             <div className="absolute top-1/2 left-1/2 -translate-1/2">
-              <LoaderComponent size={2} />
+              <LoaderComponent />
             </div>
           </>
         ) : (

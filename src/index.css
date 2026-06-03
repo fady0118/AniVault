@@ -55,6 +55,7 @@
 
   --animate-logo-light: textLightAnimation 1.5s ease-in-out infinite forwards;
   --animate-logo-dark: textDarkAnimation 1.5s ease-in-out infinite forwards;
+
   @keyframes textLightAnimation {
     0% {
       stroke-dashoffset: var(--stroke-dashes);
@@ -151,6 +152,7 @@
 }
 
 @layer components {
+
   /* loader css */
   #AniVault path {
     --stroke-dashes: 710;
@@ -422,4 +424,43 @@
     @apply rounded-md flex flex-row items-center justify-between px-1.5 py-1 hover:brightness-110 duration-200
   }
 
+  .loader {
+    display: inline-flex;
+    gap: 5px;
+    animation: l3-0 1s infinite;
+    transform-origin: 50% calc(100% + 2.5px);
+  }
+
+  .loader:before,
+  .loader:after {
+    content: "";
+    width: 1rem;
+    aspect-ratio: 1;
+    box-shadow: 0 0 0 3px inset rgba(143, 11, 232, 0.833);
+  }
+
+  .loader:after {
+    transform-origin: -2.5px calc(100% + 2.5px);
+    animation: l3-1 1s infinite;
+  }
+
+  @keyframes l3-1 {
+
+    50%,
+    100% {
+      transform: rotate(180deg)
+    }
+  }
+
+  @keyframes l3-0 {
+
+    0%,
+    50% {
+      transform: rotate(0deg)
+    }
+
+    100% {
+      transform: rotate(90deg)
+    }
+  }
 }

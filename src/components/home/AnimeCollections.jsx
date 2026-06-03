@@ -54,7 +54,7 @@ export default function AnimeCollections() {
           <div className={`${classes.collectionClass}`}>
             {topAnimeQ.isPending ? (
               <div className="absolute top-1/2 left-1/2 -translate-1/2">
-                          <LoaderComponent size={2} />
+                          <LoaderComponent />
                         </div>
             ) : (
               <>
@@ -81,7 +81,7 @@ export default function AnimeCollections() {
           </div>
           <div className={`${classes.collectionClass}`}>
             {topAnimeQ.isPending ? (
-              <div className="absolute top-1/2 left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
+              <div className="absolute top-1/2 left-1/2 -translate-1/2"><LoaderComponent /></div>
             ) : (
               <>
                 {upcomingAnimeQ?.data?.map((anime, i) => (
