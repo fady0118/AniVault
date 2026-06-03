@@ -5,6 +5,7 @@ import { useQueries } from "@tanstack/react-query";
 import { dateFormatter, renderIcon } from "../utility/utils";
 import { Baby, Calendar, ChevronLeft, ChevronRight, Grid3x2, Hash, LucideLayoutGrid, LucideLayoutList, Star, User, Videotape } from "lucide-react";
 import { jikanFetch } from "../utility/jikanApi";
+import LoaderComponent from "../components/LoaderComponent";
 
 const classes = {
   gridClasses: {
@@ -66,7 +67,7 @@ export default function ProducerPage() {
   return (
     <>
       {producerQ.isPending ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
       ) : (
         <>
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">

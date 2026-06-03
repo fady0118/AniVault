@@ -6,6 +6,7 @@ import RecentManga from "../components/home/RecentManga";
 import HomeSidePanel from "../components/home/HomeSidePanel";
 import AnimeCollections from "../components/home/AnimeCollections";
 import { jikanFetch } from "../utility/jikanApi"; 
+import LoaderComponent from "../components/LoaderComponent";
 
 export default function HomePage() {
   const [seasonQ] = useQueries({
@@ -27,7 +28,7 @@ export default function HomePage() {
   return (
     <div className="relative w-screen">
       {seasonQ.isPending ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
       ) : (
         <>
           <HomeSlider season={seasonQ?.data?.uniqueSeasonData?.slice(0, 10)} />

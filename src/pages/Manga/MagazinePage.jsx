@@ -4,6 +4,7 @@ import { Link, useParams, useSearchParams } from "react-router";
 import { RootContext } from "../../App";
 import { BookOpen, Calendar, ChevronLeft, ChevronRight, Hash, LucideLayoutGrid, LucideLayoutList, Star, User } from "lucide-react";
 import { getSeason, getYear } from "../../utility/utils";
+import LoaderComponent from "../../components/LoaderComponent";
 
 const classes = {
   gridClasses: {
@@ -57,7 +58,7 @@ export default function MagazinePage() {
   return (
     <>
       {magazineQ.isPending ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
       ) : (
         <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3">
           <div className="w-[95vw] flex flex-col space-y-3">

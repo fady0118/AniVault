@@ -4,6 +4,7 @@ import { jikanFetch } from "../../utility/jikanApi";
 import { ChevronLeft } from "lucide-react";
 import { RootContext } from "../../App";
 import { Link } from "react-router";
+import LoaderComponent from "../LoaderComponent";
 
 const classes = { chevron: "p-0.5 rounded-md box-content duration-200 scale-80 md:scale-100" };
 export default function AnimeMangaContainer({ searchParams, itemType }) {
@@ -141,7 +142,9 @@ export default function AnimeMangaContainer({ searchParams, itemType }) {
     <div className="relative order-3 px-3 py-1 min-h-32 text-xs">
       {isLoading ? (
         <>
-          <div className="absolute top-full left-1/2 -translate-1/2">Loading...</div>
+          <div className="absolute top-full left-1/2 -translate-1/2">
+            <LoaderComponent size={2} />
+          </div>
         </>
       ) : (
         <>

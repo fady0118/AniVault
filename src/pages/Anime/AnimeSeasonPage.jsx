@@ -4,6 +4,7 @@ import { jikanFetch } from "../../utility/jikanApi";
 import { ChevronLeft, Leaf, Rose, Snowflake, Sun, SunSnow } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { RootContext } from "../../App";
+import LoaderComponent from "../../components/LoaderComponent";
 
 const seasons = [
   { name: "winter", icon: <Sun size={12} /> },
@@ -58,7 +59,7 @@ export default function AnimeSeasonPage() {
   return (
     <>
       {seasonQ.isPending ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
       ) : (
         <>
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3 text-2xs sm:text-xs">

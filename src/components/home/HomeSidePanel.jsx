@@ -3,6 +3,7 @@ import { Trophy } from "lucide-react";
 import Schedual from "./Schedual";
 import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
+import LoaderComponent from "../LoaderComponent";
 
 export default function HomeSidePanel() {
   const [TrendingAnimeQ] = useQueries({
@@ -21,7 +22,7 @@ export default function HomeSidePanel() {
   });
   return (
     <div className="w-full md:w-1/3 lg:w-1/4 min-w-0 h-fit flex flex-col xs:flex-row md:flex-col mt-3 gap-4">
-      <div id="Trending" className="w-full xs:w-1/2 md:w-full flex flex-col rounded-lg box-colors-lighter py-2 gap-y-2 h-fit text-[1.1em]">
+      <div id="Trending" className="w-full xs:w-1/2 md:w-full flex flex-col rounded-lg box-colors-lighter py-2 gap-y-2 min-h-64 text-[1.1em]">
         <div className="flex flex-row gap-x-3 items-center px-3">
           <Trophy size={20} />
           <p className="uppercase font-extrabold text-sm/loose sm:text-lg/loose">Trending</p>
@@ -29,7 +30,7 @@ export default function HomeSidePanel() {
         <div className="flex flex-col text-[0.65em]">
           {TrendingAnimeQ.isPending ? (
             <>
-              <div className="h-72 text-text-light-50 dark:text-text-dark-50 py-3 text-center capitalize">Loading...</div>
+              <div className="w-full h-full flex flex-row justify-center items-center text-text-light-50 dark:text-text-dark-50"><LoaderComponent size={1} /></div>
             </>
           ) : (
             <>

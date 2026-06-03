@@ -2,6 +2,7 @@ import { useQueries } from "@tanstack/react-query";
 import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
 import { useEffect, useState } from "react";
+import LoaderComponent from "../LoaderComponent";
 
 export default function SearchContainer({ searchInput, category, closeModal }) {
   const [recentSearches, setRecentSearches] = useState([]);
@@ -112,7 +113,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
     };
   }, [anyFetched]);
 
-   // add clicked item to localStorage then closeModal
+  // add clicked item to localStorage then closeModal
   function handleClick(mal_id, image_url, name, link) {
     const savedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
     const itemAlreadyExists = savedSearches.filter((item) => item.mal_id === mal_id);
@@ -166,7 +167,9 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
       <div id="searchResults" tabIndex={0} className="w-full grid grid-cols-1 max-h-full overflow-y-auto">
         {isLoading ? (
           <>
-            <div className="absolute top-1/2 left-1/2 -translate-1/2">Loading...</div>
+            <div className="absolute top-1/2 left-1/2 -translate-1/2">
+              <LoaderComponent size={2} />
+            </div>
           </>
         ) : (
           <>

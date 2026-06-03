@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
 import { ChevronLeft } from "lucide-react";
+import LoaderComponent from "../../components/LoaderComponent";
 
 const classes = { chevron: "p-0.5 rounded-md box-content duration-200 scale-80 md:scale-100" };
 export default function MagazineContainer({ searchParams }) {
@@ -39,7 +40,7 @@ export default function MagazineContainer({ searchParams }) {
     <div className="relative order-3 px-3 py-1 min-h-32">
       {magazinesQ.isPending ? (
         <>
-          <div className="absolute top-full left-1/2 -translate-1/2">Loading...</div>
+          <div className="absolute top-full left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
         </>
       ) : (
         <>

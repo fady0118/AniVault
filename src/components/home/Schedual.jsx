@@ -3,6 +3,7 @@ import { ChevronDown, ChevronLeft, ChevronRight, Trophy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
+import LoaderComponent from "../LoaderComponent";
 
 const classes = {
   dayClass: "day py-1 px-2 rounded-md hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200",
@@ -96,7 +97,7 @@ export default function Schedual() {
       </div>
       <div>
         {schedual?.isPending ? (
-          <div className="text-[0.8em] text-text-light-50 dark:text-text-dark-50 capitalize">Loading...</div>
+          <div className="text-[0.8em] text-text-light-50 dark:text-text-dark-50 capitalize"><LoaderComponent size={1} /></div>
         ) : (
           <div className="flex flex-col">
             <input type="checkbox" name="schedual-checkbox" id="schedual-checkbox" className="peer hidden" />

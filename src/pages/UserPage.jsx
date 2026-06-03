@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import CardBox from "../components/CardBox/CardBox";
 import FriendsModal from "../components/user/FriendsModal";
 import { jikanFetch } from "../utility/jikanApi";
+import LoaderComponent from "../components/LoaderComponent";
 
 const colors = ["bg-emerald-500", "bg-indigo-500", "bg-amber-500", "bg-rose-500", "bg-gray-500"];
 
@@ -115,7 +116,7 @@ export default function UserPage() {
   return (
     <>
       {userQ.isPending ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
       ) : (
         <>
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">

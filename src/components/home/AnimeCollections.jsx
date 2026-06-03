@@ -2,8 +2,9 @@ import { useQueries } from "@tanstack/react-query";
 import { ExternalLink } from "lucide-react";
 import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
+import LoaderComponent from "../LoaderComponent";
 const classes = {
-  collectionClass: "w-full flex flex-col rounded-lg overflow-hidden bg-linear-0 from-0% from-amethyst-smoke-300/15 dark:from-dark-amethyst-smoke-50/15 to-100% to-indigo-600/5",
+  collectionClass: "min-h-64 w-full flex flex-col rounded-lg overflow-hidden bg-linear-0 from-0% from-amethyst-smoke-300/15 dark:from-dark-amethyst-smoke-50/15 to-100% to-indigo-600/5",
   gradient: [
     "bg-dark-amethyst-smoke-600/21",
     "bg-dark-amethyst-smoke-600/18",
@@ -43,7 +44,7 @@ export default function AnimeCollections() {
   return (
     <>
       <div className="mt-5 grid grid-cols-1 xs:grid-cols-2 gap-x-6 px-5 w-full lg:w-4/5 capitalize text-sm sm:text-md md:text-lg">
-        <div id="top" className="w-full flex flex-col py-1 gap-y-1">
+        <div id="top" className="relative w-full flex flex-col py-1 gap-y-1">
           <div className="uppercase font-extrabold flex flex-row items-center gap-x-3">
             <p>top anime</p>
             <Link to="/anime?type=tv&order_by=score&sort=desc" target="_blank">
@@ -52,7 +53,9 @@ export default function AnimeCollections() {
           </div>
           <div className={`${classes.collectionClass}`}>
             {topAnimeQ.isPending ? (
-              <div className="h-64 text-text-light-50 dark:text-text-dark-50 py-3 text-center capitalize">Loading...</div>
+              <div className="absolute top-1/2 left-1/2 -translate-1/2">
+                          <LoaderComponent size={2} />
+                        </div>
             ) : (
               <>
                 {topAnimeQ?.data?.map((anime, i) => (
@@ -69,7 +72,7 @@ export default function AnimeCollections() {
             )}
           </div>
         </div>
-        <div id="upcoming" className="w-full flex flex-col py-1 gap-y-1">
+        <div id="upcoming" className="relative w-full flex flex-col py-1 gap-y-1">
           <div className="uppercase font-extrabold flex flex-row items-center gap-x-3">
             <p>upcoming anime</p>
             <Link to="/anime?type=tv&status=upcoming&order_by=popularity&sort=asc" target="_blank">
@@ -78,7 +81,7 @@ export default function AnimeCollections() {
           </div>
           <div className={`${classes.collectionClass}`}>
             {topAnimeQ.isPending ? (
-              <div className="h-64 text-text-light-50 dark:text-text-dark-50 py-3 text-center capitalize">Loading...</div>
+              <div className="absolute top-1/2 left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
             ) : (
               <>
                 {upcomingAnimeQ?.data?.map((anime, i) => (

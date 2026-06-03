@@ -10,6 +10,7 @@ import Gallery from "../components/character/Gallery";
 import { useQueries } from "@tanstack/react-query";
 import { dateFormatter } from "../utility/utils";
 import { jikanFetch } from "../utility/jikanApi";
+import LoaderComponent from "../components/LoaderComponent";
 
 export default function PeoplePage() {
   const { id } = useParams();
@@ -49,7 +50,7 @@ export default function PeoplePage() {
   return (
     <>
       {personQ.isPending ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent size={2} /></div>
       ) : (
         <>
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">

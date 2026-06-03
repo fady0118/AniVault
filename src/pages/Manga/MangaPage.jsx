@@ -12,6 +12,7 @@ import { ChevronRight, Star } from "lucide-react";
 import News from "../../components/anime/News";
 import Reviews from "../../components/anime/Reviews";
 import { jikanFetch } from "../../utility/jikanApi";
+import LoaderComponent from "../../components/LoaderComponent";
 
 export default function MangaPage() {
   let { id } = useParams();
@@ -126,7 +127,9 @@ export default function MangaPage() {
   return (
     <>
       {mangaQ.isLoading ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2">Loading...</div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2">
+          <LoaderComponent size={2} />
+        </div>
       ) : (
         <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
           <div className="w-[95vw] flex flex-col space-y-3">
