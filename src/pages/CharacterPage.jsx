@@ -15,18 +15,17 @@ export default function CharacterPage() {
         queryKey: ["character", id],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/characters/${id}/full`);
-          if (!res.ok) throw new Error(res.statusText);
+          if (!res.ok) throw new Error(`${res.status} - ${res.statusText}`);
           const character_Data = await res.json();
-          return character_Data.data||[];
+          return character_Data.data || [];
         },
       },
       {
         queryKey: ["pictures", id],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/characters/${id}/pictures`);
-          if (!res.ok) throw new Error(res.statusText);
           const pictures_Data = await res.json();
-          return pictures_Data.data||[];
+          return pictures_Data.data || [];
         },
       },
     ],
@@ -37,7 +36,9 @@ export default function CharacterPage() {
   return (
     <>
       {characterQ.isPending ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent /></div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2">
+          <LoaderComponent />
+        </div>
       ) : (
         <>
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3">

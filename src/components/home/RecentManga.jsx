@@ -5,6 +5,7 @@ import { jikanFetch } from "../../utility/jikanApi";
 import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 import MangaPopup from "./mangaPopup";
 import { Link } from "react-router";
+import EmptyDataFallback from "../EmptyDataFallback";
 
 export default function RecentManga() {
   const [recent, setRecent] = useState("manga");
@@ -20,7 +21,6 @@ export default function RecentManga() {
         queryKey: ["recentMangaData", mangaCurrentPage],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/manga?type=manga&sfw=true&genres_exclude=9,12,49&status=publishing&order_by=start_date&sort=desc&page=${mangaCurrentPage || 1}`);
-          if (!res.ok) throw new Error(res.statusText);
           const recentMangaData = await res.json();
           const uniqueMangaData = [...new Map(recentMangaData.data.map((item) => [item.mal_id, item])).values()];
           return { ...recentMangaData, uniqueMangaData };
@@ -30,7 +30,6 @@ export default function RecentManga() {
         queryKey: ["recentNovelData", novelCurrentPage],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/manga?type=novel&sfw=true&genres_exclude=9,12,49&status=publishing&order_by=start_date&sort=desc&page=${novelCurrentPage || 1}`);
-          if (!res.ok) throw new Error(res.statusText);
           const recentNovelData = await res.json();
           const uniqueNovelData = [...new Map(recentNovelData.data.map((item) => [item.mal_id, item])).values()];
           return { ...recentNovelData, uniqueNovelData };
@@ -40,7 +39,6 @@ export default function RecentManga() {
         queryKey: ["recentManhwaData", manhwaCurrentPage],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/manga?type=manhwa&sfw=true&genres_exclude=9,12,49&status=publishing&order_by=start_date&sort=desc&page=${manhwaCurrentPage || 1}`);
-          if (!res.ok) throw new Error(res.statusText);
           const recentManhwaData = await res.json();
           const uniqueManhwaData = [...new Map(recentManhwaData.data.map((item) => [item.mal_id, item])).values()];
           return { ...recentManhwaData, uniqueManhwaData };
@@ -202,7 +200,7 @@ export default function RecentManga() {
                   </div>
                 ))}
               </>
-            ) : (
+            ) : recentMangaQ?.data?.uniqueMangaData?.length ? (
               <>
                 {recentMangaQ?.data?.uniqueMangaData?.map((item, i) => (
                   <div
@@ -232,6 +230,8 @@ export default function RecentManga() {
                   </div>
                 ))}
               </>
+            ) : (
+              <EmptyDataFallback string="no manga data found" />
             )}
           </>
         ) : recent === "novel" ? (
@@ -244,7 +244,7 @@ export default function RecentManga() {
                   </div>
                 ))}
               </>
-            ) : (
+            ) : recentNovelQ?.data?.uniqueNovelData?.length ? (
               <>
                 {recentNovelQ?.data?.uniqueNovelData?.map((item, i) => (
                   <div
@@ -274,6 +274,8 @@ export default function RecentManga() {
                   </div>
                 ))}
               </>
+            ) : (
+              <EmptyDataFallback string="no novel data found" />
             )}
           </>
         ) : recent === "manhwa" ? (
@@ -286,7 +288,7 @@ export default function RecentManga() {
                   </div>
                 ))}
               </>
-            ) : (
+            ) : recentManhwaQ?.data?.uniqueManhwaData?.length ? (
               <>
                 {recentManhwaQ?.data?.uniqueManhwaData?.map((item, i) => (
                   <div
@@ -316,6 +318,8 @@ export default function RecentManga() {
                   </div>
                 ))}
               </>
+            ) : (
+              <EmptyDataFallback string="no manhwa data found" />
             )}
           </>
         ) : (

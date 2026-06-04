@@ -5,6 +5,7 @@ import { jikanFetch } from "../../utility/jikanApi";
 import AnimePopup from "./AnimePopup";
 import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 import { Link } from "react-router";
+import EmptyDataFallback from "../EmptyDataFallback";
 
 export default function RecentAnime() {
   const [recent, setRecent] = useState("tv");
@@ -19,7 +20,6 @@ export default function RecentAnime() {
         queryKey: ["recentTvData", tvCurrentPage],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime?type=tv&status=airing&order_by=start_date&sort=desc&page=${tvCurrentPage || 1}`);
-          if (!res.ok) throw new Error(res.statusText);
           const recentTvData = await res.json();
           const uniqueTvData = [...new Map(recentTvData.data.map((item) => [item.mal_id, item])).values()];
           return { ...recentTvData, uniqueTvData };
@@ -29,7 +29,6 @@ export default function RecentAnime() {
         queryKey: ["recentMovieData", movieCurrentPage],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime?type=movie&status=complete&order_by=start_date&sort=desc&page=${movieCurrentPage || 1}`);
-          if (!res.ok) throw new Error(res.statusText);
           const recentMovieData = await res.json();
           const uniqueMovieData = [...new Map(recentMovieData.data.map((item) => [item.mal_id, item])).values()];
           return { ...recentMovieData, uniqueMovieData };
@@ -171,10 +170,14 @@ export default function RecentAnime() {
                   </div>
                 ))}
               </>
-            ) : (
+            ) : recentTvQ?.data?.uniqueTvData?.length ? (
               <>
                 {recentTvQ?.data?.uniqueTvData?.map((item, i) => (
-                  <div data-mal-id={item.mal_id} key={i} className="snap-start scroll-m-10 wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
+                  <div
+                    data-mal-id={item.mal_id}
+                    key={i}
+                    className="snap-start scroll-m-10 wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200"
+                  >
                     <Link to={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200">
                       <img
                         className="w-full h-full object-cover"
@@ -197,6 +200,8 @@ export default function RecentAnime() {
                   </div>
                 ))}
               </>
+            ) : (
+              <EmptyDataFallback string="no recent anime data" />
             )}
           </>
         ) : (
@@ -209,10 +214,14 @@ export default function RecentAnime() {
                   </div>
                 ))}
               </>
-            ) : (
+            ) : recentMovieQ?.data?.uniqueMovieData?.length ? (
               <>
                 {recentMovieQ?.data?.uniqueMovieData?.map((item, i) => (
-                  <div data-mal-id={item.mal_id} key={i} className="wrapper relative snap-start scroll-m-10 flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200">
+                  <div
+                    data-mal-id={item.mal_id}
+                    key={i}
+                    className="wrapper relative snap-start scroll-m-10 flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200"
+                  >
                     <Link to={`/anime/${item.mal_id}`} className="w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duratito-200">
                       <img
                         className="w-full h-full"
@@ -235,6 +244,8 @@ export default function RecentAnime() {
                   </div>
                 ))}
               </>
+            ) : (
+              <EmptyDataFallback string="no recent movie data" />
             )}
           </>
         )}

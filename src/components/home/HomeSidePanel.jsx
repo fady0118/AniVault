@@ -12,7 +12,6 @@ export default function HomeSidePanel() {
         queryKey: ["recentMangaData"],
         queryFn: async () => {
           const res = await jikanFetch("https://api.jikan.moe/v4/anime?type=tv&sfw=true&status=airing&order_by=popularity&sort=asc&limit=15");
-          if (!res.ok) throw new Error(res.statusText);
           const trendingAnimeData = await res.json();
           const uniqueTrendingAnimeData = [...new Map(trendingAnimeData.data.map((item) => [item.mal_id, item])).values()];
           return uniqueTrendingAnimeData;
@@ -36,18 +35,22 @@ export default function HomeSidePanel() {
             </>
           ) : (
             <>
-              {TrendingAnimeQ?.data?.slice(0, 10).map((item, i) => (
-                <Link key={item?.mal_id || i} to={`/anime/${item?.mal_id}`}>
-                  <div className="group flex flex-row gap-x-1.5 items-center px-3 py-1 hover:bg-blue-600/5 dark:hover:bg-blue-300/5 duration-200">
-                    <img
-                      className="shrink-0 w-1/9 max-w-10 min-w-5 aspect-square object-cover rounded-full"
-                      src={item?.images?.webp?.image_url || item?.images?.jpg?.image_url}
-                      alt={item?.title || ""}
-                    />
-                    <p className="group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
-                  </div>
-                </Link>
-              ))}
+              {TrendingAnimeQ?.data?.length ? (
+                TrendingAnimeQ?.data?.slice(0, 10).map((item, i) => (
+                  <Link key={item?.mal_id || i} to={`/anime/${item?.mal_id}`}>
+                    <div className="group flex flex-row gap-x-1.5 items-center px-3 py-1 hover:bg-blue-600/5 dark:hover:bg-blue-300/5 duration-200">
+                      <img
+                        className="shrink-0 w-1/9 max-w-10 min-w-5 aspect-square object-cover rounded-full"
+                        src={item?.images?.webp?.image_url || item?.images?.jpg?.image_url}
+                        alt={item?.title || ""}
+                      />
+                      <p className="group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <EmptyDataFallback string="no trending anime data found" />
+              )}
             </>
           )}
         </div>

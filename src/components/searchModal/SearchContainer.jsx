@@ -12,9 +12,8 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
       {
         queryKey: ["animeSearch", searchInput, category],
         queryFn: async () => {
-          if (!searchInput) throw new Error("search term is null");
+          if (!searchInput) return;
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime?q=${searchInput}&order_by=favorites&sort=desc`);
-          if (!res.ok) throw new Error(res.statusText);
           const animeData = await res.json();
           const uniqueAnimeData = [...new Map(animeData?.data.map((item) => [item.mal_id, item])).values()];
           return { data: uniqueAnimeData, pagination: animeData.pagination };
@@ -24,9 +23,8 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
       {
         queryKey: ["mangaSearch", searchInput, category],
         queryFn: async () => {
-          if (!searchInput) throw new Error("search term is null");
+          if (!searchInput) return;
           const res = await jikanFetch(`https://api.jikan.moe/v4/manga?q=${searchInput}&order_by=favorites&sort=desc`);
-          if (!res.ok) throw new Error(res.statusText);
           const mangaData = await res.json();
           const uniqueMangaData = [...new Map(mangaData?.data.map((item) => [item.mal_id, item])).values()];
           return { data: uniqueMangaData, pagination: mangaData.pagination };
@@ -36,9 +34,8 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
       {
         queryKey: ["charactersSearch", searchInput, category],
         queryFn: async () => {
-          if (!searchInput) throw new Error("search term is null");
+          if (!searchInput) return;
           const res = await jikanFetch(`https://api.jikan.moe/v4/characters?q=${searchInput}&order_by=favorites&sort=desc`);
-          if (!res.ok) throw new Error(res.statusText);
           const charactersData = await res.json();
           const uniqueCharactersData = [...new Map(charactersData?.data.map((item) => [item.mal_id, item])).values()];
           return { data: uniqueCharactersData, pagination: charactersData.pagination };
@@ -48,9 +45,8 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
       {
         queryKey: ["producersSearch", searchInput, category],
         queryFn: async () => {
-          if (!searchInput) throw new Error("search term is null");
+          if (!searchInput) return;
           const res = await jikanFetch(`https://api.jikan.moe/v4/producers?q=${searchInput}&order_by=favorites&sort=desc`);
-          if (!res.ok) throw new Error(res.statusText);
           const producersData = await res.json();
           const uniqueProducersData = [...new Map(producersData?.data.map((item) => [item.mal_id, item])).values()];
           return { data: uniqueProducersData, pagination: producersData.pagination };
@@ -60,9 +56,8 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
       {
         queryKey: ["peopleSearch", searchInput, category],
         queryFn: async () => {
-          if (!searchInput) throw new Error("search term is null");
+          if (!searchInput) return;
           const res = await jikanFetch(`https://api.jikan.moe/v4/people?q=${searchInput}&order_by=favorites&sort=desc`);
-          if (!res.ok) throw new Error(res.statusText);
           const peopleData = await res.json();
           const uniquePeopleData = [...new Map(peopleData?.data.map((item) => [item.mal_id, item])).values()];
           return { data: uniquePeopleData, pagination: peopleData.pagination };
@@ -92,7 +87,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
         case 38: // Up arrow
           event.preventDefault();
           searchResults[index]?.classList.remove("searchResult-hovered");
-          index = index > 0 ? --index : searchResults.length-1;
+          index = index > 0 ? --index : searchResults.length - 1;
           searchResults[index]?.classList.add("searchResult-hovered");
           searchResults[index]?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
           break;
@@ -141,7 +136,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
     const savedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
     const rest = savedSearches.filter((item) => item.mal_id !== mal_id);
     localStorage.setItem("recentSearches", JSON.stringify(rest));
-    setRecentSearches(rest)
+    setRecentSearches(rest);
   }
   // fetch recentSearches from localStorge then update the localState
   useEffect(() => {
@@ -194,7 +189,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
           </>
         ) : (
           <>
-            {animeSearchQ?.isEnabled ? (
+            {animeSearchQ?.isEnabled && animeSearchQ?.data?.data?.length ? (
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">anime</div>
                 {animeSearchQ?.data?.data?.map((item, i) =>
@@ -204,7 +199,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
             ) : (
               ""
             )}
-            {mangaSearchQ?.isEnabled ? (
+            {mangaSearchQ?.isEnabled && mangaSearchQ?.data?.data?.length ? (
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">manga</div>
                 {mangaSearchQ?.data?.data?.map((item, i) =>
@@ -214,7 +209,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
             ) : (
               ""
             )}
-            {charactersSearchQ?.isEnabled ? (
+            {charactersSearchQ?.isEnabled && charactersSearchQ?.data?.data?.length ? (
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">characters</div>
                 {charactersSearchQ?.data?.data?.map((item) =>
@@ -224,7 +219,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
             ) : (
               ""
             )}
-            {producersSearchQ?.isEnabled ? (
+            {producersSearchQ?.isEnabled && producersSearchQ?.data?.data?.length ? (
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">producers</div>
                 {producersSearchQ?.data?.data?.map((item) =>
@@ -234,7 +229,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
             ) : (
               ""
             )}
-            {peopleSearchQ?.isEnabled ? (
+            {peopleSearchQ?.isEnabled && peopleSearchQ?.data?.data?.length ? (
               <>
                 <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">people</div>
                 {peopleSearchQ?.data?.data?.map((item) =>

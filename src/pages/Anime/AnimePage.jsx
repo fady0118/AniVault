@@ -30,7 +30,7 @@ export default function AnimePage() {
         queryKey: ["anime", id],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/full`);
-          if (!res.ok) throw new Error(res.statusText);
+          if (!res.ok) throw new Error(`${res.status} - ${res.statusText}`);
           const anime_Data = await res.json();
           const flattenedRelations = anime_Data.data?.relations.flatMap(({ relation, entry }) => entry.map((item) => ({ ...item, relation }))) ?? [];
           return { ...anime_Data.data, flattenedRelations };
@@ -40,7 +40,6 @@ export default function AnimePage() {
         queryKey: ["characters", id],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/characters`);
-          if (!res.ok) throw new Error(res.statusText);
           const characters_Data = await res.json();
           // charactersCardBox data array
           const dataArr = characters_Data?.data?.map(({ role, character, voice_actors }) => ({
@@ -54,7 +53,6 @@ export default function AnimePage() {
         queryKey: ["reviews", id],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/reviews`);
-          if (!res.ok) throw new Error(res.statusText);
           const reviews_Data = await res.json();
           const allReviews = reviews_Data?.data ?? [];
           const featured = [
@@ -81,7 +79,7 @@ export default function AnimePage() {
         queryKey: ["pictures", id],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/pictures`);
-          if (!res.ok) throw new Error(res.statusText);
+
           const pictures_Data = await res.json();
           return pictures_Data.data || [];
         },
@@ -90,7 +88,6 @@ export default function AnimePage() {
         queryKey: ["recommendations", id],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/recommendations`);
-          if (!res.ok) throw new Error(res.statusText);
           const recommendations_Data = await res.json();
           // recommendationsDataArr data array
           const recommendationsDataArr =
@@ -104,7 +101,6 @@ export default function AnimePage() {
         queryKey: ["videos", id],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/videos`);
-          if (!res.ok) throw new Error(res.statusText);
           const videos_Data = await res.json();
           return videos_Data.data || [];
         },
@@ -113,7 +109,6 @@ export default function AnimePage() {
         queryKey: ["news", id],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime/${id}/news`);
-          if (!res.ok) throw new Error(res.statusText);
           const news_Data = await res.json();
           return news_Data.data || [];
         },
@@ -142,24 +137,26 @@ export default function AnimePage() {
   function getAnimeRating(rating) {
     if (!rating) return "";
     switch (rating.toLowerCase().trim()) {
-      case ("G - All Ages").toLowerCase().trim():
+      case "G - All Ages".toLowerCase().trim():
         return "g";
-      case ("PG - Children").toLowerCase().trim():
+      case "PG - Children".toLowerCase().trim():
         return "pg";
-      case ("PG-13 - Teens 13 or older").toLowerCase().trim():
+      case "PG-13 - Teens 13 or older".toLowerCase().trim():
         return "pg13";
-      case ("R - 17+ (violence & profanity)").toLowerCase().trim():
+      case "R - 17+ (violence & profanity)".toLowerCase().trim():
         return "r17";
-      case ("R+ - Mild Nudity").toLowerCase().trim():
+      case "R+ - Mild Nudity".toLowerCase().trim():
         return "r";
-      case ("Rx - Hentai").toLowerCase().trim():
+      case "Rx - Hentai".toLowerCase().trim():
         return "rx";
     }
   }
   return (
     <>
       {animeQ.isPending ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent /></div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2">
+          <LoaderComponent />
+        </div>
       ) : (
         <>
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center min-h-screen pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
@@ -311,7 +308,11 @@ export default function AnimePage() {
                           </div>
                           {renderInfoStr("status", `${animeQ?.data?.status}`, `/anime?status=${getAnimeStatus(animeQ?.data?.status)}`)}
                           {renderInfoStr("aired", `${animeQ?.data?.aired?.string}`)}
-                          {animeQ?.data?.season ? (<>{renderInfoStr("premiered", `${animeQ?.data?.season || ""} ${animeQ?.data?.year || ""}`, `/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`)}</>) : (  "")}
+                          {animeQ?.data?.season ? (
+                            <>{renderInfoStr("premiered", `${animeQ?.data?.season || ""} ${animeQ?.data?.year || ""}`, `/anime/seasons/${animeQ?.data?.year}/${animeQ?.data?.season}`)}</>
+                          ) : (
+                            ""
+                          )}
                           {renderInfoStr("broadcast", `${animeQ?.data?.broadcast?.string || ""}`)}
                           {renderInfoArr("producers", animeQ?.data?.producers, "/producer/")}
                           {renderInfoArr("licensors", animeQ?.data?.licensors)}
@@ -426,7 +427,7 @@ export default function AnimePage() {
                       <div id="characters" className="flex justify-center w-full h-fit order-4">
                         <div className="rounded-lg box-colors w-full ">
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Characters & Voice Actors</div>
-                          <CardBox dataArr={charactersQ?.data?.dataArr} num={7}/>
+                          <CardBox dataArr={charactersQ?.data?.dataArr} num={7} />
                         </div>
                       </div>
                     ) : (
@@ -452,7 +453,12 @@ export default function AnimePage() {
                             {animeQ?.data?.flattenedRelations?.slice(0, 6).map((entry, i) => (
                               <div key={i} className="flex flex-row w-full">
                                 <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
-                                  <img data-mal-id={entry.mal_id} className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
+                                  <img
+                                    data-mal-id={entry.mal_id}
+                                    className="w-full h-full object-cover text-[0.75em]"
+                                    src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null}
+                                    alt={entry.name}
+                                  />
                                 </Link>
                                 <div className="w-3/4 flex flex-col gap-y-1 px-2">
                                   <Link to={`/${entry.type}/${entry.mal_id}`} className="blue-link">
@@ -481,7 +487,7 @@ export default function AnimePage() {
                                   <div key={i + 6} className="flex flex-row w-full">
                                     <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
                                       <img
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-cover text-[0.75em]"
                                         data-mal-id={entry.mal_id}
                                         src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null}
                                         alt={entry.name}
@@ -551,7 +557,7 @@ export default function AnimePage() {
                 {recommendationsQ?.data?.recommendations?.length ? (
                   <div id="recommendations" className="order-4 rounded-lg box-colors w-full py-1">
                     <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">recommendations</div>
-                    <CardBox dataArr={recommendationsQ?.data?.recommendationsDataArr} num={7} aspect="2/3" />
+                    <CardBox dataArr={recommendationsQ?.data?.recommendationsDataArr} num={9} aspect="2/3" />
                   </div>
                 ) : (
                   ""

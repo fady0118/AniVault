@@ -8,7 +8,6 @@ const getImage = async ({ mal_id, type }) => {
   const res = await jikanFetch(`https://api.jikan.moe/v4/${type}/${mal_id}/full`);
   const { data } = await res.json();
   const image = data?.images.jpg.large_image_url;
-  if (!image) throw new Error("No image returned");
   return {
     mal_id,
     image,

@@ -3,6 +3,7 @@ import { ExternalLink } from "lucide-react";
 import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
 import LoaderComponent from "../LoaderComponent";
+import EmptyDataFallback from "../EmptyDataFallback";
 const classes = {
   collectionClass: "min-h-64 w-full flex flex-col rounded-lg overflow-hidden bg-linear-0 from-0% from-amethyst-smoke-300/15 dark:from-dark-amethyst-smoke-50/15 to-100% to-indigo-600/5",
   gradient: [
@@ -23,7 +24,6 @@ export default function AnimeCollections() {
         queryKey: ["topAnime"],
         queryFn: async () => {
           const res = await jikanFetch("https://api.jikan.moe/v4/anime?type=tv&status=complete&order_by=score&sort=desc&limit=13");
-          if (!res.ok) throw new Error(res.statusText);
           const topAnimeData = await res.json();
           const uniqueTopAnimeData = [...new Map(topAnimeData.data.map((item) => [item.mal_id, item])).values()].slice(0, 7);
           return uniqueTopAnimeData;
@@ -33,7 +33,6 @@ export default function AnimeCollections() {
         queryKey: ["upcomingAnime"],
         queryFn: async () => {
           const res = await jikanFetch("https://api.jikan.moe/v4/anime?type=tv&status=upcoming&order_by=popularity&sort=asc&limit=13");
-          if (!res.ok) throw new Error(res.statusText);
           const upcomingAnimeData = await res.json();
           const uniqueUpcomingAnimeData = [...new Map(upcomingAnimeData.data.map((item) => [item.mal_id, item])).values()].slice(0, 7);
           return uniqueUpcomingAnimeData;
@@ -54,9 +53,9 @@ export default function AnimeCollections() {
           <div className={`${classes.collectionClass}`}>
             {topAnimeQ.isPending ? (
               <div className="absolute top-1/2 left-1/2 -translate-1/2">
-                          <LoaderComponent />
-                        </div>
-            ) : (
+                <LoaderComponent />
+              </div>
+            ) : topAnimeQ?.data?.length ? (
               <>
                 {topAnimeQ?.data?.map((anime, i) => (
                   <Link
@@ -69,6 +68,8 @@ export default function AnimeCollections() {
                   </Link>
                 ))}
               </>
+            ) : (
+              <EmptyDataFallback string="no top anime data found" />
             )}
           </div>
         </div>
@@ -81,8 +82,10 @@ export default function AnimeCollections() {
           </div>
           <div className={`${classes.collectionClass}`}>
             {topAnimeQ.isPending ? (
-              <div className="absolute top-1/2 left-1/2 -translate-1/2"><LoaderComponent /></div>
-            ) : (
+              <div className="absolute top-1/2 left-1/2 -translate-1/2">
+                <LoaderComponent />
+              </div>
+            ) : upcomingAnimeQ?.data?.length ? (
               <>
                 {upcomingAnimeQ?.data?.map((anime, i) => (
                   <Link
@@ -95,6 +98,8 @@ export default function AnimeCollections() {
                   </Link>
                 ))}
               </>
+            ) : (
+              <EmptyDataFallback string="no upcoming anime data found" />
             )}
           </div>
         </div>

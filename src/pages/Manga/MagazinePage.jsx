@@ -34,7 +34,7 @@ export default function MagazinePage() {
     queryKey: ["magazine", id, currentPage, letterFilter],
     queryFn: async () => {
       const res = await fetch(`https://api.jikan.moe/v4/manga?magazines=${id}&page=${currentPage}&letter=${letterFilter}`);
-      if (!res.ok) throw new Error(res.statusText);
+      if (!res.ok) throw new Error(`${res.status} - ${res.statusText}`);
       const magazine_Data = await res.json();
       return magazine_Data;
     },

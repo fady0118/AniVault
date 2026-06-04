@@ -26,7 +26,7 @@ export default function MagazinesRootPage() {
   }
   const defaultSearchParams = new URLSearchParams({
     q: "",
-    order_by: "mal_id",
+    order_by: "count",
     sort: "desc",
   });
   const effectiveSearchParams = searchParams.size === 0 ? defaultSearchParams : searchParams;

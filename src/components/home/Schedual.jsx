@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
 import LoaderComponent from "../LoaderComponent";
+import EmptyDataFallback from "../EmptyDataFallback";
 
 const classes = {
   dayClass: "day py-1 px-2 rounded-md hover:bg-dark-amethyst-smoke-400/10 dark:hover:bg-amethyst-smoke-400/10 hover:cursor-pointer duration-200",
@@ -30,7 +31,6 @@ export default function Schedual() {
     queryKey: ["schedual", currentIndex],
     queryFn: async () => {
       const res = await jikanFetch(`https://api.jikan.moe/v4/schedules?filter=${days[currentIndex]?.long || ""}`);
-      if (!res.ok) throw new Error(res.statusText);
       const schedual_Data = await res.json();
       const uniqueSchedualData = [...new Map(schedual_Data.data.map((item) => [item.mal_id, item])).values()];
       return uniqueSchedualData;
@@ -102,23 +102,29 @@ export default function Schedual() {
           </div>
         ) : (
           <div className="flex flex-col">
-            <input type="checkbox" name="schedual-checkbox" id="schedual-checkbox" className="peer hidden" />
-            {schedual?.data?.slice(0, 10).map((item) => (
-              <Link to={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass}`}>
-                <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
-                <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
-              </Link>
-            ))}
-            <div className="grid grid-rows-[0fr] peer-checked:grid-rows-[1fr] transition-[grid-template-rows] duration-300">
-              <div className="overflow-hidden">
-                {schedual?.data?.slice(10).map((item) => (
-                  <Link to={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass} `}>
+            {schedual?.data?.length ? (
+              <>
+                <input type="checkbox" name="schedual-checkbox" id="schedual-checkbox" className="peer hidden" />
+                {schedual?.data?.slice(0, 10).map((item) => (
+                  <Link to={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass}`}>
                     <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
                     <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
                   </Link>
                 ))}
-              </div>
-            </div>
+                <div className="grid grid-rows-[0fr] peer-checked:grid-rows-[1fr] transition-[grid-template-rows] duration-300">
+                  <div className="overflow-hidden">
+                    {schedual?.data?.slice(10).map((item) => (
+                      <Link to={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass} `}>
+                        <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
+                        <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <EmptyDataFallback string="no schedual data found" />
+            )}
             {schedual?.data?.length ? (
               <>
                 <p className="px-3 text-[0.6em] text-text-light-50 dark:text-text-dark-50 capitalize">Timezone: {schedual?.data[0].broadcast.timezone}</p>

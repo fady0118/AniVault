@@ -22,7 +22,7 @@ export default function PeoplePage() {
         queryKey: ["person", id],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/people/${id}/full`);
-          if (!res.ok) throw new Error(res.statusText);
+          if (!res.ok) throw new Error(`${res.status} - ${res.statusText}`);
           const person_Data = await res.json();
 
           const dataArr = person_Data?.data?.voices.map(({ role, character, anime }) => ({
@@ -37,7 +37,6 @@ export default function PeoplePage() {
         queryKey: ["picture", id],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/people/${id}/pictures`);
-          if (!res.ok) throw new Error(res.statusText);
           const pictures_Data = await res.json();
           return pictures_Data.data ?? [];
         },

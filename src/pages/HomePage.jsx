@@ -15,7 +15,7 @@ export default function HomePage() {
         queryKey: ["seasonListData"],
         queryFn: async () => {
           const res = await jikanFetch("https://api.jikan.moe/v4/seasons/now?filter=tv&limit=15");
-          if (!res.ok) throw new Error(res.statusText);
+          if (!res.ok) throw new Error(`${res.status} - ${res.statusText}`);
           const season_Data = await res.json();
           const uniqueSeasonData = [...new Map(season_Data.data.map((item) => [item.mal_id, item])).values()];
       

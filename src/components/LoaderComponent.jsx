@@ -1,3 +1,3 @@
 export default function LoaderComponent() {
-  return <div class="loader"></div>;
+  return <div className="loader"></div>;
 }

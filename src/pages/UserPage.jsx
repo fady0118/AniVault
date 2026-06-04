@@ -18,7 +18,7 @@ export default function UserPage() {
         queryKey: ["user", username],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/users/${username}/full`);
-          if (!res.ok) throw new Error(res.statusText);
+          if (!res.ok) throw new Error(`${res.status} - ${res.statusText}`);
           const user_Data = await res.json();
           return user_Data.data || "";
         },
@@ -27,7 +27,6 @@ export default function UserPage() {
         queryKey: ["userFav", username],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/users/${username}/favorites`);
-          if (!res.ok) throw new Error(res.statusText);
           const fav_Data = await res.json();
           const fav_anime_Arr = fav_Data?.data.anime.map((item) => ({ anime: { path: "anime", name: item.title, ...item } })) || [];
           const fav_manga_Arr = fav_Data?.data.manga.map((item) => ({ anime: { path: "manga", name: item.title, ...item } })) || [];
@@ -40,7 +39,6 @@ export default function UserPage() {
         queryKey: ["friends", username],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/users/${username}/friends`);
-          if (!res.ok) throw new Error(res.statusText);
           const friends_Data = await res.json();
           return friends_Data.data || "";
         },
@@ -49,7 +47,6 @@ export default function UserPage() {
         queryKey: ["recommendations", username],
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/users/${username}/recommendations`);
-          if (!res.ok) throw new Error(res.statusText);
           const recommendations_Data = await res.json();
           return recommendations_Data;
         },
@@ -116,7 +113,9 @@ export default function UserPage() {
   return (
     <>
       {userQ.isPending ? (
-        <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent /></div>
+        <div className="fixed top-1/2 left-1/2 -translate-1/2">
+          <LoaderComponent />
+        </div>
       ) : (
         <>
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
@@ -162,15 +161,15 @@ export default function UserPage() {
                         </div>
                         <div className="grid grid-cols-4 p-2 gap-0.5">
                           {friendsQ?.data.slice(0, 11).map((f, i) => (
-                              <div key={i} className="w-full aspect-square hover:">
-                                <Link to={`/user/${f?.user?.username}`}>
-                                  <img
-                                    className="w-full h-full object-cover hover:cursor-pointer hover:border-2 hover:border-amethyst-smoke-400/30 duration-100"
-                                    src={f?.user?.images.webp.image_url || f?.user?.images.jpg.image_url}
-                                    alt=""
-                                  />
-                                </Link>
-                              </div>
+                            <div key={i} className="w-full aspect-square hover:">
+                              <Link to={`/user/${f?.user?.username}`}>
+                                <img
+                                  className="w-full h-full object-cover hover:cursor-pointer hover:border-2 hover:border-amethyst-smoke-400/30 duration-100"
+                                  src={f?.user?.images.webp.image_url || f?.user?.images.jpg.image_url}
+                                  alt=""
+                                />
+                              </Link>
+                            </div>
                           ))}
                           <div
                             onClick={() => setShowFriendsModal(true)}

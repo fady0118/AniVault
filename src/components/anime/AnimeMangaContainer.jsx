@@ -5,6 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { RootContext } from "../../App";
 import { Link } from "react-router";
 import LoaderComponent from "../LoaderComponent";
+import EmptyDataFallback from "../EmptyDataFallback";
 
 const classes = { chevron: "p-0.5 rounded-md box-content duration-200 scale-80 md:scale-100" };
 export default function AnimeMangaContainer({ searchParams, itemType }) {
@@ -67,7 +68,6 @@ export default function AnimeMangaContainer({ searchParams, itemType }) {
           queryKey: ["itemTypeData", rest.toString(), itemType, type, status, currentPage, SFW],
           queryFn: async () => {
             const res = await jikanFetch(`https://api.jikan.moe/v4/${itemType}?${rest}&type=${type}&status=${status}&page=${currentPage}`);
-            if (!res.ok) throw new Error(res.statusText);
             return await res.json();
           },
           // query enable condition depends on prev fetch hasNext value
@@ -146,6 +146,8 @@ export default function AnimeMangaContainer({ searchParams, itemType }) {
             <LoaderComponent />
           </div>
         </>
+      ) : !uniqueData?.length ? (
+        <EmptyDataFallback string="no data found try a different query"/>
       ) : (
         <>
           <div className="w-fit flex flex-row items-center py-0.5 px-2 text-[0.8em] md:text-[1em] box-colors-stronger rounded-lg">

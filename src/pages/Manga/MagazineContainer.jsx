@@ -4,6 +4,7 @@ import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
 import { ChevronLeft } from "lucide-react";
 import LoaderComponent from "../../components/LoaderComponent";
+import EmptyDataFallback from "../../components/EmptyDataFallback";
 
 const classes = { chevron: "p-0.5 rounded-md box-content duration-200 scale-80 md:scale-100" };
 export default function MagazineContainer({ searchParams }) {
@@ -40,7 +41,9 @@ export default function MagazineContainer({ searchParams }) {
     <div className="relative order-3 px-3 py-1 min-h-32">
       {magazinesQ.isPending ? (
         <>
-          <div className="absolute top-full left-1/2 -translate-1/2"><LoaderComponent /></div>
+          <div className="absolute top-full left-1/2 -translate-1/2">
+            <LoaderComponent />
+          </div>
         </>
       ) : (
         <>
@@ -59,20 +62,26 @@ export default function MagazineContainer({ searchParams }) {
               />
             </div>
           </div>
-          <div className="text-xs p-2 grid grid-cols-1 2xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {magazinesQ?.data?.data?.map((item) => (
-              <Link
-                key={item.mal_id}
-                to={`/manga/magazine/${item.mal_id}`}
-                className="p-2 flex flex-row items-center capitalize indigo-link hover:bg-amethyst-smoke-400/45 hover:dark:bg-dark-amethyst-smoke-200/45 border-b magazine-border-colors duration-200"
-              >
-                <ChevronLeft className="rotate-180" size={13} />{" "}
-                <p>
-                  {item.name} ({item.count})
-                </p>
-              </Link>
-            ))}
-          </div>
+          {magazinesQ?.data?.data?.length ? (
+            <div className="text-xs p-2 grid grid-cols-1 2xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              {magazinesQ?.data?.data?.map((item) => (
+                <Link
+                  key={item.mal_id}
+                  to={`/manga/magazine/${item.mal_id}`}
+                  className="p-2 flex flex-row items-center capitalize indigo-link hover:bg-amethyst-smoke-400/45 hover:dark:bg-dark-amethyst-smoke-200/45 border-b magazine-border-colors duration-200"
+                >
+                  <ChevronLeft className="rotate-180" size={13} />{" "}
+                  <p>
+                    {item.name} ({item.count})
+                  </p>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-xs p-2">
+              <EmptyDataFallback string="no magazines found, try a different query" />
+            </div>
+          )}
         </>
       )}
     </div>

@@ -59,6 +59,7 @@
   @keyframes textLightAnimation {
     0% {
       stroke-dashoffset: var(--stroke-dashes);
+      
     }
 
     80% {
@@ -283,7 +284,6 @@
   .box-colors-accent {
     @apply dark:bg-amethyst-smoke-500/30 bg-amethyst-smoke-50/30
   }
-
   .smallHeaderBox-colors {
     @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300
   }

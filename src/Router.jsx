@@ -13,6 +13,7 @@ import ProducerPage from "./pages/ProducerPage";
 import UserPage from "./pages/UserPage";
 import AnimeRootPage from "./pages/Anime/AnimeRootPage";
 import AnimeSeasonPage from "./pages/Anime/AnimeSeasonPage";
+import ErrorComponent from "./components/ErrorComponent";
 
 export const router = createBrowserRouter([
   {
@@ -61,13 +62,10 @@ export const router = createBrowserRouter([
 
 function RootErrorBoundary() {
   let error = useRouteError();
+  const message = error?.statusText || error?.message || "Unknown error";
   return (
     <>
-      <h1 className="text-2xl absolute top-1/2 left-1/2 -translate-1/2">App ran into an error</h1>
-      <h1>
-        {error.status} {error.statusText}
-      </h1>
-      <p>{error.data}</p>
+      <ErrorComponent error={message} />
     </>
   );
 }
