@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 import MangaPopup from "./mangaPopup";
 import { Link } from "react-router";
 import EmptyDataFallback from "../EmptyDataFallback";
+import RecentPlaceHolder from "./RecentPlaceHolder";
 
 export default function RecentManga() {
   const [recent, setRecent] = useState("manga");
@@ -194,11 +195,7 @@ export default function RecentManga() {
           <>
             {recentMangaQ.isPending ? (
               <>
-                {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
-                  <div key={i} className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
-                    <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
-                  </div>
-                ))}
+                <RecentPlaceHolder/>
               </>
             ) : recentMangaQ?.data?.uniqueMangaData?.length ? (
               <>
@@ -238,11 +235,7 @@ export default function RecentManga() {
           <>
             {recentNovelQ.isPending ? (
               <>
-                {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
-                  <div key={i} className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
-                    <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
-                  </div>
-                ))}
+                <RecentPlaceHolder/>
               </>
             ) : recentNovelQ?.data?.uniqueNovelData?.length ? (
               <>
@@ -282,11 +275,7 @@ export default function RecentManga() {
           <>
             {recentManhwaQ.isPending ? (
               <>
-                {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
-                  <div key={i} className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
-                    <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
-                  </div>
-                ))}
+                <RecentPlaceHolder/>
               </>
             ) : recentManhwaQ?.data?.uniqueManhwaData?.length ? (
               <>

@@ -6,6 +6,7 @@ import AnimePopup from "./AnimePopup";
 import { ChevronLeft, ChevronRight, Info } from "lucide-react";
 import { Link } from "react-router";
 import EmptyDataFallback from "../EmptyDataFallback";
+import RecentPlaceHolder from "./RecentPlaceHolder";
 
 export default function RecentAnime() {
   const [recent, setRecent] = useState("tv");
@@ -164,11 +165,7 @@ export default function RecentAnime() {
           <>
             {recentTvQ.isPending ? (
               <>
-                {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
-                  <div key={i} className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 rounded-lg">
-                    <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
-                  </div>
-                ))}
+                <RecentPlaceHolder/>
               </>
             ) : recentTvQ?.data?.uniqueTvData?.length ? (
               <>
@@ -208,11 +205,7 @@ export default function RecentAnime() {
           <>
             {recentMovieQ.isPending ? (
               <>
-                {Array.from({ length: 25 }, (_, i) => i).map((item, i) => (
-                  <div key={i} className="flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3">
-                    <div className="w-full aspect-3/4 rounded-lg overflow-hidden bg-amethyst-smoke-600/40"></div>
-                  </div>
-                ))}
+                <RecentPlaceHolder/>
               </>
             ) : recentMovieQ?.data?.uniqueMovieData?.length ? (
               <>
