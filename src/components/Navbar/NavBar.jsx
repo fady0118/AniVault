@@ -1,4 +1,4 @@
-import { Menu, MonitorCog, Moon, Search, Sun } from "lucide-react";
+import { LogIn, LogOut, Menu, MonitorCog, Moon, Search, Sun, X } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useState, useEffect, useContext, useRef } from "react";
 import SearchModal from "../searchModal/SearchModal";
@@ -6,6 +6,8 @@ import { RootContext } from "../../App";
 import data from "../../utility/data.json";
 import NavLink from "./NavLink";
 import SmallNavLink from "./SmallNavLink";
+import { useAuth } from "../../Contexts/AuthContext";
+import AuthModal from "../../pages/AuthModal";
 const classes = {
   navListLinkText: "relative wrapper inline-block overflow-hidden font-bold text-text-light dark:text-text-dark px-2.5 py-0.5 rounded-md border navLink-colors hover:cursor-pointer duration-200",
   smallNavLink: "py-3 px-5 border-b bg-amethyst-smoke-400 dark:bg-dark-amethyst-smoke-100 small-navLink-colors hover:cursor-pointer duration-200",
@@ -15,8 +17,11 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
   const navBarRef = useRef(null);
   const [showNav, setShowNav] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   let navigate = useNavigate();
   const { windowWidth, SFW, setSFW } = useContext(RootContext);
+  const { loggedInUser, init } = useAuth();
+
   useEffect(() => {
     themeSelect(theme);
   }, [theme]);
@@ -35,7 +40,9 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
     document.addEventListener("keydown", handleKeyPresses);
     return () => document.removeEventListener("keydown", handleKeyPresses);
   }, []);
-
+  useEffect(() => {
+    init();
+  }, []);
   return (
     <>
       <nav
@@ -61,6 +68,7 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
                 <Search size={12} className="group-hover:stroke-indigo-600 dark:group-hover:stroke-indigo-300 duration-200" />
                 <span>Ctrl+K</span>
               </div>
+
               <div className="flex flex-row items-center gap-x-2">
                 <NavLink classes={classes} LinkTitle="anime" data={data.anime.genres} ref={navBarRef} />
                 <NavLink classes={classes} LinkTitle="manga" data={data.manga.genres} ref={navBarRef} />
@@ -70,32 +78,58 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
                     <div className="w-full h-0.5 absolute bottom-0 left-1/2 -translate-x-1/2 bg-pink-500/50 targetBar"></div>
                   </Link>
                 </div>
+                {/* register/login */}
+                {loggedInUser ? (
+                  <NavLink classes={classes} LinkTitle={loggedInUser?.name} data={[]} ref={navBarRef} />
+                ) : (
+                  <div className="group wrapperLink flex" onClick={() => setShowAuthModal(true)}>
+                    <div className={`${classes.navListLinkText}`}>
+                      <div className="flex flex-row items-center gap-x-0.5">
+                        Login <LogIn size={14} />
+                      </div>
+                      <div className="w-full h-0.5 absolute bottom-0 left-1/2 -translate-x-1/2 bg-pink-500/50 targetBar"></div>
+                    </div>
+                  </div>
+                )}
               </div>
             </>
           )}
-          {/* sfw filter */}
-          <button
-            type="button"
-            onClick={() => setSFW((s) => !s)}
-            className="inline-flex items-center justify-center w-10 text-[0.85em] font-semibold hover:cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-300 transition duration-200"
-          >
-            {SFW ? "SFW" : "NSFW"}
-          </button>
 
-          <div className="group w-fit flex justify-start items-center space-x-0.5 text-[1.2em]" onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}>
-            <button id="themeTogglerBtn" className="group-hover:cursor-pointer" data-next-theme={theme === "light" ? "dark" : "light"}>
-              {theme === "light" ? (
-                <Moon className="group-hover:stroke-indigo-600 dark:group-hover:stroke-indigo-300 duration-200" size={16} />
-              ) : (
-                <Sun className="group-hover:stroke-indigo-600 dark:group-hover:stroke-indigo-300 duration-200" size={16} />
-              )}
-            </button>
+          {/* sfw filter */}
+          <label className="swap text-xs font-semibold">
+            <input type="checkbox" className="hidden" checked={!SFW} />
+            <div onClick={() => setSFW((s) => !s)} className="swap-off">
+              SFW
+            </div>
+            <div onClick={() => setSFW((s) => !s)} className="swap-on">
+              NSFW
+            </div>
+          </label>
+
+          <div id="themeTogglerBtn" className="flex h-fit" data-next-theme={theme === "light" ? "dark" : "light"}>
+            <label class="swap swap-rotate">
+              <input type="checkbox" className="hidden" checked={theme === "dark"} />
+              <Moon
+                class="swap-off p-0"
+                size={16}
+                onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}
+                className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200"
+              />
+              <Sun
+                class="swap-on p-0"
+                size={16}
+                onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}
+                className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200"
+              />
+            </label>
           </div>
 
           {windowWidth <= 640 && (
-            <div className="hover:cursor-pointer">
-              <Menu size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
-            </div>
+            <label class="swap swap-rotate">
+              <input type="checkbox" className="hidden" />
+              <Menu class="swap-off p-0" size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
+              <X class="swap-on p-0" size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
+            </label>
           )}
         </div>
       </nav>
@@ -105,7 +139,8 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
           <SmallNavLink classes={classes.smallNavLink} LinkTitle="manga" data={data.manga.genres} />
         </div>
       )}
-      {showSearchModal && <SearchModal showSearchModal={showSearchModal} setShowSearchModal={setShowSearchModal} />}
+      {showSearchModal && <SearchModal setShowSearchModal={setShowSearchModal} />}
+      {showAuthModal && <AuthModal setShowAuthModal={setShowAuthModal} />}
     </>
   );
 }

@@ -1,6 +1,5 @@
 import { createBrowserRouter, useRouteError } from "react-router";
 import App from "./App";
-import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
 import AnimePage from "./pages/Anime/AnimePage";
 import CharacterPage from "./pages/CharacterPage";
@@ -14,6 +13,7 @@ import UserPage from "./pages/UserPage";
 import AnimeRootPage from "./pages/Anime/AnimeRootPage";
 import AnimeSeasonPage from "./pages/Anime/AnimeSeasonPage";
 import ErrorComponent from "./components/ErrorComponent";
+import UserProfilePage from "./pages/UserProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -22,7 +22,6 @@ export const router = createBrowserRouter([
     ErrorBoundary: RootErrorBoundary,
     children: [
       { index: true, Component: HomePage },
-      { path: "auth", Component: AuthPage },
       {
         path: "anime",
         children: [
@@ -56,6 +55,7 @@ export const router = createBrowserRouter([
       { path: "people/:id", Component: PeoplePage },
       { path: "producer", children: [{ path: ":id", Component: ProducerPage }] },
       { path: "user", children: [{ path: ":username", Component: UserPage }] },
+      { path: "profile", children: [{ index: true, Component: UserProfilePage }] },
     ],
   },
 ]);

@@ -52,7 +52,7 @@ export default function PeoplePage() {
         <div className="fixed top-1/2 left-1/2 -translate-1/2"><LoaderComponent /></div>
       ) : (
         <>
-          <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
+          <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3">
             <div id="title" className="mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex items-center space-x-2">
               <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">{personQ?.data.name}</div>
               <Link className="w-7 sm:w-9 rounded-sm overflow-hidden" to={personQ?.data.url} target="_blank">

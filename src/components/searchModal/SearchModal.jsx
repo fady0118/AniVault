@@ -4,7 +4,7 @@ import SearchContainer from "./SearchContainer";
 import { useDebounce } from "../../utility/useDebounce";
 
 const categories = ["all", "anime", "manga", "characters", "producers", "people"];
-export default function SearchModal({ showSearchModal, setShowSearchModal }) {
+export default function SearchModal({ setShowSearchModal }) {
   const [searchInput, setSearchInput] = useState("");
   const [category, setCategory] = useState("all");
   const searchCategoryRef = useRef(null);

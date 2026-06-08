@@ -103,7 +103,7 @@ export default function CharacterPage() {
                   </div>
                 </div>
                 <div id="Mangaography" className="order-2 box-colors w-full sm:w-1/2 rounded-md h-fit">
-                  <div className="border-b border-amethyst-smoke-200/40 pt-0.5 pt-1 px-3 font-semibold text-md/relaxed capitalize">Mangaography</div>
+                  <div className="border-b border-amethyst-smoke-200/40 pt-1 px-3 font-semibold text-md/relaxed capitalize">Mangaography</div>
                   <div className="flex flex-col pt-2 space-y-2">
                     {!characterQ?.data.manga.length ? (
                       <p className="p-3 text-xs font-light">No mangaography found.</p>

@@ -4,8 +4,10 @@ import NavBar from "./components/Navbar/NavBar";
 import { getCurrentTheme, themeToggler } from "./utility/utils";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { setSFWValue } from "./utility/jikanApi";
+import AuthProvider from "./Contexts/AuthContext";
 
 export const RootContext = createContext(null);
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -14,7 +16,7 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 10,
       refetchOnWindowFocus: false,
-      throwOnError:true,
+      throwOnError: true,
     },
   },
 });
@@ -64,14 +66,16 @@ function App() {
 
   return (
     <RootContext value={{ windowWidth, SFW, setSFW }}>
-      <QueryClientProvider client={queryClient}>
-        <div className="font-inter">
-          <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} />
-          <div>
-            <Outlet />
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <div className="font-inter">
+            <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} />
+            <div>
+              <Outlet />
+            </div>
           </div>
-        </div>
-      </QueryClientProvider>
+        </QueryClientProvider>
+      </AuthProvider>
     </RootContext>
   );
 }
