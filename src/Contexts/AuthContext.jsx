@@ -4,6 +4,7 @@ import { account, ID } from "../appwrite";
 export const AuthContext = createContext(null);
 export default function AuthProvider({ children }) {
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [userData, setUserData] = useState(null);
 
   async function login(email, password) {
     await account.createEmailPasswordSession({
@@ -48,7 +49,7 @@ export default function AuthProvider({ children }) {
     }
   }
 
-  return <AuthContext value={{ login, register, logout, init, loggedInUser }}>{children}</AuthContext>;
+  return <AuthContext value={{ login, register, logout, init, loggedInUser, setLoggedInUser, userData, setUserData }}>{children}</AuthContext>;
 }
 
 // custom auth hook

@@ -8,6 +8,7 @@ import NavLink from "./NavLink";
 import SmallNavLink from "./SmallNavLink";
 import { useAuth } from "../../Contexts/AuthContext";
 import AuthModal from "../../pages/AuthModal";
+import { tablesDB } from "../../appwrite";
 const classes = {
   navListLinkText: "relative wrapper inline-block overflow-hidden font-bold text-text-light dark:text-text-dark px-2.5 py-0.5 rounded-md border navLink-colors hover:cursor-pointer duration-200",
   smallNavLink: "py-3 px-5 border-b bg-amethyst-smoke-400 dark:bg-dark-amethyst-smoke-100 small-navLink-colors hover:cursor-pointer duration-200",
@@ -20,7 +21,7 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   let navigate = useNavigate();
   const { windowWidth, SFW, setSFW } = useContext(RootContext);
-  const { loggedInUser, init } = useAuth();
+  const { loggedInUser, init, setUserData } = useAuth();
 
   useEffect(() => {
     themeSelect(theme);
@@ -40,9 +41,26 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
     document.addEventListener("keydown", handleKeyPresses);
     return () => document.removeEventListener("keydown", handleKeyPresses);
   }, []);
+
+  // user-auth related effects
   useEffect(() => {
     init();
   }, []);
+
+  useEffect(() => {
+    // fetch user Data
+    async function getUserData(){
+      if (!loggedInUser) return;
+      const result = await tablesDB.getRow({
+        databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        tableId: import.meta.env.VITE_TABLE_ID_USER_PROFILE,
+        rowId: loggedInUser.$id,
+      });
+      setUserData(result);
+    }
+    getUserData();
+  }, [loggedInUser]);
+
   return (
     <>
       <nav
