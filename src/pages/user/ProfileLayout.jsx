@@ -1,9 +1,10 @@
-import { Camera, X } from "lucide-react";
-import { useAuth } from "../Contexts/AuthContext";
-import { useEffect, useState } from "react";
-import AvatarModal from "../components/profile/AvatarModal";
+import { useState } from "react";
+import { useAuth } from "../../Contexts/AuthContext";
+import { Camera, Edit } from "lucide-react";
+import { Link, Outlet } from "react-router";
+import AvatarModal from "../../components/profile/AvatarModal";
 
-export default function UserProfilePage() {
+export default function ProfileLayout() {
   const { loggedInUser, userData, avatarImg } = useAuth();
   const [showAvatarModal, setShowAvatarModal] = useState(false);
 
@@ -12,12 +13,8 @@ export default function UserProfilePage() {
       <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
         {loggedInUser ? (
           <>
-            <div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex items-center space-x-2">
-              <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">{loggedInUser?.name}'s Profile</div>
-            </div>
-
-            <div id="userContent" className="relative order-2 w-full flex flex-col sm:flex-row sm:justify-start gap-3">
-              <div className="sm:sticky sm:top-18 flex flex-col gap-y-3 h-fit w-1/5 min-w-48 max-w-64">
+            <div className="flex flex-row items-start gap-3 mt-3">
+              <div className="flex flex-col gap-y-3 h-fit w-1/5 min-w-48 max-w-64">
                 <div
                   onClick={() => {
                     setShowAvatarModal(true);
@@ -36,15 +33,12 @@ export default function UserProfilePage() {
                   />
                 </div>
               </div>
-              <div className="w-4/5 grow flex flex-col gap-y-3">
-                <div id="about" className="w-fit max-w-full h-fit min-h-32 rounded-lg overflow-hidden box-colors">
-                  <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">About</div>
-                  <div id="aboutText" className="flex flex-col px-3 py-2 text-xs min-w-2xs">
-                    {loggedInUser?.bio || "this user left his bio blank"}
-                  </div>
-                </div>
+              <div id="title" className="order-1 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex items-center space-x-2">
+                <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">{loggedInUser?.name}'s Profile</div>
+                <Link to="/profile/profile_edit">{!window.location.pathname.includes("profile_edit") && <Edit size={18} />}</Link>
               </div>
             </div>
+            <Outlet />
           </>
         ) : (
           <div>you are not logged in</div>

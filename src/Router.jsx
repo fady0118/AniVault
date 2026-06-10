@@ -9,11 +9,13 @@ import MangaRootPage from "./pages/Manga/MangaRootPage";
 import MagazinesRootPage from "./pages/Manga/MagazinesRootPage";
 import MagazinePage from "./pages/Manga/MagazinePage";
 import ProducerPage from "./pages/ProducerPage";
-import UserPage from "./pages/UserPage";
+import UserPage from "./pages/user/UserPage";
 import AnimeRootPage from "./pages/Anime/AnimeRootPage";
 import AnimeSeasonPage from "./pages/Anime/AnimeSeasonPage";
 import ErrorComponent from "./components/ErrorComponent";
-import UserProfilePage from "./pages/UserProfilePage";
+import UserProfilePage from "./pages/user/UserProfilePage";
+import UserProfileEditPage from "./pages/user/UserProfileEditPage";
+import ProfileLayout from "./pages/user/ProfileLayout";
 
 export const router = createBrowserRouter([
   {
@@ -55,7 +57,14 @@ export const router = createBrowserRouter([
       { path: "people/:id", Component: PeoplePage },
       { path: "producer", children: [{ path: ":id", Component: ProducerPage }] },
       { path: "user", children: [{ path: ":username", Component: UserPage }] },
-      { path: "profile", children: [{ index: true, Component: UserProfilePage }] },
+      {
+        path: "profile",
+        Component: ProfileLayout,
+        children: [
+          { index: true, Component: UserProfilePage },
+          { path: "profile_edit", Component: UserProfileEditPage },
+        ],
+      },
     ],
   },
 ]);

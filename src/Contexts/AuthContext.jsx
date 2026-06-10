@@ -69,12 +69,16 @@ export default function AuthProvider({ children }) {
   // fetch avatarImg and update its local state
   async function fetchAvatarFromBucket(id) {
     if (!id) return;
-    const result = await storage.getFileView({
-      bucketId: import.meta.env.VITE_APPWRITE_BUCKET_ID,
-      fileId: id,
-    });
-    if (!result) return;
-    setAvatarImg(result);
+    try {
+      const res = await storage.getFileView({
+        bucketId: import.meta.env.VITE_APPWRITE_BUCKET_ID,
+        fileId: id,
+      });
+      if (res.code>=400) return;
+      setAvatarImg(res);
+    } catch (error) {
+      console.log(error)
+    }
   }
   // if the user changes or his data change refetch the avatar from storage
   useEffect(() => {

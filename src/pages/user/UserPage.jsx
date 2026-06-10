@@ -1,11 +1,11 @@
 import { useQueries } from "@tanstack/react-query";
 import { Link, useParams } from "react-router";
-import { DateTimeFormatter, renderInfoStr } from "../utility/utils";
+import { DateTimeFormatter, renderInfoStr } from "../../utility/utils";
 import { useEffect, useState } from "react";
-import CardBox from "../components/CardBox/CardBox";
-import FriendsModal from "../components/user/FriendsModal";
-import { jikanFetch } from "../utility/jikanApi";
-import LoaderComponent from "../components/LoaderComponent";
+import CardBox from "../../components/CardBox/CardBox";
+import FriendsModal from "../../components/user/FriendsModal";
+import { jikanFetch } from "../../utility/jikanApi";
+import LoaderComponent from "../../components/LoaderComponent";
 
 const colors = ["bg-emerald-500", "bg-indigo-500", "bg-amber-500", "bg-rose-500", "bg-gray-500"];
 
@@ -28,10 +28,10 @@ export default function UserPage() {
         queryFn: async () => {
           const res = await jikanFetch(`https://api.jikan.moe/v4/users/${username}/favorites`);
           const fav_Data = await res.json();
-          const fav_anime_Arr = fav_Data?.data.anime.map((item) => ({ anime: { path: "anime", name: item.title, ...item } })) || [];
-          const fav_manga_Arr = fav_Data?.data.manga.map((item) => ({ anime: { path: "manga", name: item.title, ...item } })) || [];
-          const fav_character_Arr = fav_Data?.data.characters.map((item) => ({ anime: { path: "characters", ...item } })) || [];
-          const fav_people_Arr = fav_Data?.data.people.map((item) => ({ anime: { path: "people", ...item } })) || [];
+          const fav_anime_Arr = fav_Data?.data?.anime.map((item) => ({ anime: { path: "anime", name: item.title, ...item } })) || [];
+          const fav_manga_Arr = fav_Data?.data?.manga.map((item) => ({ anime: { path: "manga", name: item.title, ...item } })) || [];
+          const fav_character_Arr = fav_Data?.data?.characters.map((item) => ({ anime: { path: "characters", ...item } })) || [];
+          const fav_people_Arr = fav_Data?.data?.people.map((item) => ({ anime: { path: "people", ...item } })) || [];
           return { anime: fav_anime_Arr, manga: fav_manga_Arr, characters: fav_character_Arr, people: fav_people_Arr } || "";
         },
       },
