@@ -16,6 +16,7 @@ import ErrorComponent from "./components/ErrorComponent";
 import UserProfilePage from "./pages/user/UserProfilePage";
 import UserProfileEditPage from "./pages/user/UserProfileEditPage";
 import ProfileLayout from "./pages/user/ProfileLayout";
+import OtherUserProfilePage from "./pages/user/OtherUserProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ export const router = createBrowserRouter([
           { index: true, Component: UserProfilePage },
           { path: "profile_edit", Component: UserProfileEditPage },
         ],
+      },
+      {
+        path: "userProfile",
+        children: [{ path: ":userId", Component: OtherUserProfilePage }],
       },
     ],
   },
