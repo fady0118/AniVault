@@ -2,29 +2,11 @@ import { Camera, X } from "lucide-react";
 import { useAuth } from "../Contexts/AuthContext";
 import { useEffect, useState } from "react";
 import AvatarModal from "../components/profile/AvatarModal";
-import { storage } from "../appwrite";
 
 export default function UserProfilePage() {
-  const { loggedInUser, userData } = useAuth();
+  const { loggedInUser, userData, avatarImg } = useAuth();
   const [showAvatarModal, setShowAvatarModal] = useState(false);
-  const [avatarImg, setAvatarImg] = useState(null);
 
-
-  async function fetchAvatarFromBucket(id) {
-    if (!id) return;
-    const result = await storage.getFileView({
-      bucketId: import.meta.env.VITE_APPWRITE_BUCKET_ID,
-      fileId: id,
-    });
-    if (!result) return;
-    console.log(result)
-    setAvatarImg((result));
-  }
-  useEffect(() => {
-    if (!loggedInUser) return;
-    if (!userData) return;
-    fetchAvatarFromBucket(userData.avatarId);
-  }, [loggedInUser, userData]);
   return (
     <>
       <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">

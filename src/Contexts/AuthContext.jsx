@@ -1,10 +1,11 @@
-import { createContext, useContext, useState } from "react";
-import { account, ID } from "../appwrite";
+import { createContext, useContext, useState, useEffect } from "react";
+import { account, ID, storage, tablesDB } from "../appwrite";
 
 export const AuthContext = createContext(null);
 export default function AuthProvider({ children }) {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [avatarImg, setAvatarImg] = useState(null);
 
   async function login(email, password) {
     await account.createEmailPasswordSession({
@@ -33,6 +34,8 @@ export default function AuthProvider({ children }) {
       if (error?.code === 401) {
         // reset user state
         setLoggedInUser(null);
+        setUserData(null);
+        setAvatarImg(null);
       } else {
         // session deletion failed
         throw error;
@@ -49,7 +52,39 @@ export default function AuthProvider({ children }) {
     }
   }
 
-  return <AuthContext value={{ login, register, logout, init, loggedInUser, setLoggedInUser, userData, setUserData }}>{children}</AuthContext>;
+  useEffect(() => {
+    // fetch user Data on loggedInUser change
+    async function getUserData() {
+      if (!loggedInUser) return;
+      const result = await tablesDB.getRow({
+        databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        tableId: import.meta.env.VITE_TABLE_ID_USER_PROFILE,
+        rowId: loggedInUser.$id,
+      });
+      setUserData(result);
+    }
+    getUserData();
+  }, [loggedInUser]);
+
+  // fetch avatarImg and update its local state
+  async function fetchAvatarFromBucket(id) {
+    if (!id) return;
+    const result = await storage.getFileView({
+      bucketId: import.meta.env.VITE_APPWRITE_BUCKET_ID,
+      fileId: id,
+    });
+    if (!result) return;
+    setAvatarImg(result);
+  }
+  // if the user changes or his data change refetch the avatar from storage
+  useEffect(() => {
+    if (!loggedInUser) return;
+    if (!userData) return;
+    console.log("[loggedInUser, userData] changed regetch avatar");
+    fetchAvatarFromBucket(userData.avatarId);
+  }, [loggedInUser, userData]);
+
+  return <AuthContext value={{ login, register, logout, init, loggedInUser, setLoggedInUser, userData, setUserData, avatarImg, setAvatarImg }}>{children}</AuthContext>;
 }
 
 // custom auth hook

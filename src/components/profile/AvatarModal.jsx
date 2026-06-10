@@ -9,7 +9,7 @@ export default function AvatarModal({ avatarImg, setShowAvatarModal }) {
   const [preview, setPreview] = useState(null);
   const [status, setStatus] = useState("idle"); // idle, uploading, success, error
   const [error, setError] = useState(null);
-  const { loggedInUser, setLoggedInUser } = useAuth();
+  const { loggedInUser, setAvatarImg } = useAuth();
 
   // modal close eventListener
   useEffect(() => {
@@ -60,7 +60,8 @@ export default function AvatarModal({ avatarImg, setShowAvatarModal }) {
       });
 
       const user = await tablesDB.updateRow(import.meta.env.VITE_APPWRITE_DATABASE_ID, import.meta.env.VITE_TABLE_ID_USER_PROFILE, loggedInUser.$id, { avatarId: fileId });
-      setLoggedInUser(user);
+      // instead of fetching the image from the storage we just set its state locally (more efficient)
+      setAvatarImg(URL.createObjectURL(file))
     } catch (e) {
       setError(e.message);
     } finally {
