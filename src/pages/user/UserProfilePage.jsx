@@ -3,6 +3,7 @@ import { useAuth } from "../../Contexts/AuthContext";
 import { useEffect, useState } from "react";
 import AvatarModal from "../../components/profile/AvatarModal";
 import { Link, useOutletContext } from "react-router";
+import { marked } from "marked";
 
 export default function UserProfilePage() {
   const { loggedInUser, userData } = useAuth();
@@ -12,6 +13,13 @@ export default function UserProfilePage() {
   useEffect(() => {
     setIsEditPage(false);
   }, []);
+
+  useEffect(() => {
+    setIsEditPage(false);
+    if (userData?.bio) {
+      document.getElementById("bioText").innerHTML = marked.parse(userData?.bio);
+    }
+  }, [userData]);
   return (
     <>
       <div id="userContent" className="relative order-2 w-full flex flex-col sm:flex-row sm:justify-start gap-3">
@@ -19,7 +27,7 @@ export default function UserProfilePage() {
           <div id="bio" className="w-fit max-w-full h-fit min-h-32 rounded-lg overflow-hidden box-colors">
             <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">bio</div>
             <div id="bioText" className="flex flex-col px-3 py-2 text-xs min-w-2xs">
-              {userData?.bio || "this user left his bio blank"}
+              this user left his bio blank
             </div>
           </div>
         </div>

@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../Contexts/AuthContext";
 import { tablesDB } from "../../appwrite";
 import { useOutletContext } from "react-router";
+import LoaderComponent from "../../components/LoaderComponent";
 
 export default function UserProfileEditPage() {
   const { loggedInUser, userData, setUserData, avatarImg } = useAuth();
+  const [status, setStatus] = useState("idle"); // "idle", "editing", "uploading", "success", "fail"
+  const [error, setError] = useState(null);
   const [personalData, setPersonalData] = useState({ gender: userData?.gender || "", age: userData?.age || "", bio: userData?.bio || "" });
   const { setIsEditPage } = useOutletContext();
   const bioTextareaRef = null;
@@ -20,13 +23,23 @@ export default function UserProfileEditPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const res = await tablesDB.updateRow(import.meta.env.VITE_APPWRITE_DATABASE_ID, import.meta.env.VITE_TABLE_ID_USER_PROFILE, loggedInUser.$id, {
-      gender: personalData.gender || null,
-      age: Number(personalData.age) || null,
-      bio: personalData.bio || null,
-    });
-    setUserData(res);
+    setStatus("uploading");
+    try {
+      const res = await tablesDB.updateRow(import.meta.env.VITE_APPWRITE_DATABASE_ID, import.meta.env.VITE_TABLE_ID_USER_PROFILE, loggedInUser.$id, {
+        gender: personalData.gender || null,
+        age: Number(personalData.age) || null,
+        bio: personalData.bio || null,
+      });
+      console.log(res);
+      setUserData(res);
+      setStatus("success");
+      setError(null);
+    } catch (error) {
+      setStatus("fail");
+      setError(error);
+    }
   }
+
   useEffect(() => {
     setIsEditPage(true);
   }, []);
@@ -40,11 +53,14 @@ export default function UserProfileEditPage() {
               gender
             </label>
             <select
-              class="select select-primary select-xs outline-0"
+              class="select select-primary bg-transparent select-xs outline-0"
               name="gender"
               id="gender"
               value={personalData.gender}
-              onChange={(e) => setPersonalData((s) => ({ ...s, gender: e.target.value }))}
+              onChange={(e) => {
+                setPersonalData((s) => ({ ...s, gender: e.target.value }));
+                setStatus("editing");
+              }}
             >
               <option value="" hidden disabled>
                 select your gender
@@ -65,9 +81,12 @@ export default function UserProfileEditPage() {
               max="120"
               step="1"
               placeholder="Enter Your Age"
-              class="input input-primary select-xs outline-0"
+              class="input input-primary bg-transparent select-xs outline-0"
               value={personalData.age}
-              onChange={(e) => setPersonalData((s) => ({ ...s, age: e.target.value }))}
+              onChange={(e) => {
+                setPersonalData((s) => ({ ...s, age: e.target.value }));
+                setStatus("editing");
+              }}
             />
           </div>
           <div className="form-control w-full flex flex-col gap-y-1">
@@ -95,15 +114,35 @@ export default function UserProfileEditPage() {
               name="bioInput"
               id="bioInput"
               placeholder="Tell us about yourself..."
-              className="textarea textarea-primary select-xs outline-0"
+              className="textarea textarea-primary bg-transparent select-xs outline-0"
               rows="4"
               value={personalData.bio}
-              onChange={(e) => setPersonalData((s) => ({ ...s, bio: e.target.value }))}
+              onChange={(e) => {
+                setPersonalData((s) => ({ ...s, bio: e.target.value }));
+                setStatus("editing");
+              }}
             />
           </div>
-          <button className="btn btn-primary capitalize" type="submit">
-            update info
-          </button>
+          {status === "editing" && !error && (
+            <button className="btn btn-primary capitalize" type="submit">
+              update info
+            </button>
+          )}
+          {status === "uploading" && (
+            <div className="scale-75 py-2">
+              <LoaderComponent />
+            </div>
+          )}
+          {status === "success" && (
+            <div class="text-emerald-600 dark:text-emerald-400 bg-emerald-600/5 rounded-sm px-1.5 py-1 text-[0.8em]">
+              <span>Your data has been updated!</span>
+            </div>
+          )}
+          {error && (
+            <div role="alert" className="text-rose-600 dark:text-rose-400 bg-rose-600/5 rounded-sm px-1.5 py-1 text-[0.8em]">
+              <span>{error}</span>
+            </div>
+          )}
         </form>
       </div>
     </>

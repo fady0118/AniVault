@@ -5,7 +5,7 @@ import { useAuth } from "../../Contexts/AuthContext";
 import { LogOut } from "lucide-react";
 
 export default function NavLink({ classes, LinkTitle, data, ref }) {
-  const { loggedInUser, logout } = useAuth();
+  const { userData, avatarImg, logout } = useAuth();
   const navLinkBoxRef = useRef(null);
   function calcPos(e) {
     const navBarRect = ref.current.getBoundingClientRect();
@@ -36,10 +36,11 @@ export default function NavLink({ classes, LinkTitle, data, ref }) {
       ) : (
         <>
           {/* user Navlink */}
-          <Link onMouseEnter={(e) => calcPos(e)} to="/profile" className={classes.navListLinkText}>
-            {LinkTitle}
-            <div className="w-full h-0.5 absolute bottom-0 left-1/2 -translate-x-1/2 bg-pink-500/50 targetBar"></div>
-          </Link>
+          <div onMouseEnter={(e) => calcPos(e)} className="w-6 aspect-square relative wrapper inline-block overflow-hidden duration-200">
+            <Link to="/profile"> 
+              <img className="w-full h-full object-cover rounded-full" src={avatarImg || "/favicon-sq.png"} alt={userData?.username} />
+            </Link>
+          </div>
           {/* logout largeScreens form */}
           <div ref={navLinkBoxRef} className="w-fit absolute box-colors-darker border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 rounded-md linkTarget">
             <div className="w-full h-full p-2 flex flex-col items-start gap-y-1">

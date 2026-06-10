@@ -1,4 +1,4 @@
-import { LogIn, LogOut, Menu, MonitorCog, Moon, Search, Sun, X } from "lucide-react";
+import { CircleUserRound, LogIn, LogOut, Menu, MonitorCog, Moon, Search, Sun, User2, UserCircle2, X } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useState, useEffect, useContext, useRef } from "react";
 import SearchModal from "../searchModal/SearchModal";
@@ -17,11 +17,12 @@ const classes = {
 export default function NavBar({ themeSelect, theme, setTheme }) {
   const navBarRef = useRef(null);
   const [showNav, setShowNav] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   let navigate = useNavigate();
   const { windowWidth, SFW, setSFW } = useContext(RootContext);
-  const { loggedInUser, init } = useAuth();
+  const { loggedInUser, userData, avatarImg, init, logout } = useAuth();
 
   useEffect(() => {
     themeSelect(theme);
@@ -101,7 +102,7 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
 
           {/* sfw filter */}
           <label className="swap text-xs font-semibold">
-            <input type="checkbox" className="hidden" checked={!SFW} readOnly/>
+            <input type="checkbox" className="hidden" checked={!SFW} readOnly />
             <div onClick={() => setSFW((s) => !s)} className="swap-off">
               SFW
             </div>
@@ -111,32 +112,62 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
           </label>
 
           <div id="themeTogglerBtn" className="flex h-fit" data-next-theme={theme === "light" ? "dark" : "light"}>
-            <label class="swap swap-rotate">
-              <input type="checkbox" className="hidden" checked={theme === "dark"} readOnly/>
+            <label class="swap swap-rotate w-4">
+              <input type="checkbox" className="hidden" checked={theme === "dark"} readOnly />
               <Moon
-                class="swap-off p-0"
-                size={16}
+                class="swap-off p-0 w-full h-auto"
                 onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}
-                className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200"
               />
               <Sun
-                class="swap-on p-0"
-                size={16}
+                class="swap-on p-0  w-full h-auto"
                 onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}
-                className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200"
               />
             </label>
           </div>
 
           {windowWidth <= 640 && (
-            <label class="swap swap-rotate">
-              <input type="checkbox" className="hidden" />
-              <Menu class="swap-off p-0" size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
-              <X class="swap-on p-0" size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
-            </label>
+            <>
+              {loggedInUser ? (
+                <div className="w-4 aspect-square cursor-pointer" onClick={() => setShowProfileMenu((s) => !s)}>
+                  <img className="w-full h-full object-cover rounded-full" src={avatarImg || "/favicon-sq.png"} alt={userData?.username} />
+                </div>
+              ) : (
+                  <label class="swap swap-rotate w-4 aspect-square">
+                    <input type="checkbox" hidden />
+                      <CircleUserRound onClick={() => setShowProfileMenu((s) => !s)} className="swap-on p-0 w-full h-auto" />
+                      <CircleUserRound strokeWidth={1} onClick={() => setShowProfileMenu((s) => !s)} className="swap-off p-0 w-full h-auto" />
+                    </label>
+                
+              )}
+              <label class="swap swap-rotate">
+                <input type="checkbox" className="hidden" />
+                <Menu class="swap-off p-0" size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
+                <X class="swap-on p-0" size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
+              </label>
+            </>
           )}
         </div>
       </nav>
+      {windowWidth <= 640 && showProfileMenu && (
+        <>
+          <div className="z-50 text-xs p-2 rounded-md absolute top-15 right-[2.5vw] flex flex-col gap-y-1 box-colors backdrop-blur-md">
+            {loggedInUser ? (
+              <>
+                <Link className="opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile">
+                  Your Account
+                </Link>
+                <div onClick={logout} className="btn btn-primary btn-xs w-fit h-fit text-[1em]">
+                  logout <LogOut size={12} />
+                </div>
+              </>
+            ) : (
+              <div onClick={()=>setShowAuthModal(true)} className="flex flex-row items-center btn btn-primary btn-xs text-[1em] hover:cursor-pointer duration-200">
+                Login <LogIn size={12} />
+              </div>
+            )}
+          </div>
+        </>
+      )}
       {windowWidth <= 640 && showNav && (
         <div className="z-30 w-[95vw] flex flex-col fixed top-15 left-1/2 -translate-x-1/2 overflow-y-scroll text-sm xs:text-md font-bold capitalize box-colors-darker border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10  rounded-md slide-in-from-top">
           <SmallNavLink classes={classes.smallNavLink} LinkTitle="anime" data={data.anime.genres} />
