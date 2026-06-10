@@ -74,17 +74,16 @@ export default function AuthProvider({ children }) {
         bucketId: import.meta.env.VITE_APPWRITE_BUCKET_ID,
         fileId: id,
       });
-      if (res.code>=400) return;
+      if (res.code >= 400) return;
       setAvatarImg(res);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
   // if the user changes or his data change refetch the avatar from storage
   useEffect(() => {
     if (!loggedInUser) return;
     if (!userData) return;
-    console.log("[loggedInUser, userData] changed regetch avatar");
     fetchAvatarFromBucket(userData.avatarId);
   }, [loggedInUser, userData]);
 

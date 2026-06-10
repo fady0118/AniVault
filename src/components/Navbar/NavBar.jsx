@@ -101,7 +101,7 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
 
           {/* sfw filter */}
           <label className="swap text-xs font-semibold">
-            <input type="checkbox" className="hidden" checked={!SFW} />
+            <input type="checkbox" className="hidden" checked={!SFW} readOnly/>
             <div onClick={() => setSFW((s) => !s)} className="swap-off">
               SFW
             </div>
@@ -112,7 +112,7 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
 
           <div id="themeTogglerBtn" className="flex h-fit" data-next-theme={theme === "light" ? "dark" : "light"}>
             <label class="swap swap-rotate">
-              <input type="checkbox" className="hidden" checked={theme === "dark"} />
+              <input type="checkbox" className="hidden" checked={theme === "dark"} readOnly/>
               <Moon
                 class="swap-off p-0"
                 size={16}
