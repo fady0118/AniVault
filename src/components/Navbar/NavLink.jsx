@@ -38,13 +38,14 @@ export default function NavLink({ classes, LinkTitle, data, ref }) {
           {/* user Navlink */}
           <div onMouseEnter={(e) => calcPos(e)} className="w-6 aspect-square relative wrapper inline-block overflow-hidden duration-200">
             <Link to="/profile"> 
-              <img className="w-full h-full object-cover rounded-full" src={avatarImg || "/favicon-sq.png"} alt={userData?.username} />
+              <img className="w-full h-full object-cover rounded-full border-2 border-text-light-50 dark:border-text-dark-50 hover:border-indigo-500 duration-200" src={avatarImg || "/favicon-sq.png"} alt={userData?.username} />
             </Link>
           </div>
           {/* logout largeScreens form */}
           <div ref={navLinkBoxRef} className="w-fit absolute box-colors-darker border border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 rounded-md linkTarget">
             <div className="w-full h-full p-2 flex flex-col items-start gap-y-1">
               <div className="w-full flex flex-col gap-y-1">
+                <div className="font-light text-[0.85em]">hello, {userData?.username}</div>
                 <Link className="opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile">
                   Your Account
                 </Link>

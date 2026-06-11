@@ -127,9 +127,10 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
 
           {windowWidth <= 640 && (
             <>
+            {/* smallscreens user Navlink */}
               {loggedInUser ? (
                 <div className="w-4 aspect-square cursor-pointer" onClick={() => setShowProfileMenu((s) => !s)}>
-                  <img className="w-full h-full object-cover rounded-full" src={avatarImg || "/favicon-sq.png"} alt={userData?.username} />
+                  <img className="w-full h-full object-cover rounded-full border border-text-light-50 dark:border-text-dark-50 hover:border-indigo-500 duration-200" src={avatarImg || "/favicon-sq.png"} alt={userData?.username} />
                 </div>
               ) : (
                   <label class="swap swap-rotate w-4 aspect-square">
@@ -153,6 +154,7 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
           <div className="z-50 text-xs p-2 rounded-md absolute top-15 right-[2.5vw] flex flex-col gap-y-1 box-colors backdrop-blur-md">
             {loggedInUser ? (
               <>
+               <div className="font-light text-[0.85em]">hello, {userData?.username}</div>
                 <Link className="opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile">
                   Your Account
                 </Link>
