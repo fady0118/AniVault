@@ -1,14 +1,17 @@
 import { useQueries, useQueryClient } from "@tanstack/react-query";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { jikanFetch } from "../../utility/jikanApi";
-import { ChevronLeft } from "lucide-react";
+import { Bookmark, ChevronLeft } from "lucide-react";
 import { RootContext } from "../../App";
 import { Link } from "react-router";
 import LoaderComponent from "../LoaderComponent";
 import EmptyDataFallback from "../EmptyDataFallback";
+import { useUserItemModal } from "../useUserItemModal";
 
 const classes = { chevron: "p-0.5 rounded-md box-content duration-200 scale-80 md:scale-100" };
-export default function AnimeMangaContainer({ searchParams, itemType }) {
+export default function AnimeMangaContainer({ searchParams, itemType, useritemModal }) {
+  // user-item modal
+  const { setShowUserItemModal, setUserItemData } = useritemModal;
   // type & status are enums in the api so we need to seperate them from the other params and fetch in parallel
   const types = useMemo(() => searchParams.get("type"), [searchParams]);
   const statuses = useMemo(() => searchParams.get("status"), [searchParams]);
@@ -147,7 +150,7 @@ export default function AnimeMangaContainer({ searchParams, itemType }) {
           </div>
         </>
       ) : !uniqueData?.length ? (
-        <EmptyDataFallback string="no data found try a different query"/>
+        <EmptyDataFallback string="no data found try a different query" />
       ) : (
         <>
           <div className="w-fit flex flex-row items-center py-0.5 px-2 text-[0.8em] md:text-[1em] box-colors-stronger rounded-lg">
@@ -210,6 +213,16 @@ export default function AnimeMangaContainer({ searchParams, itemType }) {
                       ""
                     )}
                   </div>
+                </div>
+                {/* open user-item modal */}
+                <div
+                  onClick={() => {
+                    setShowUserItemModal(true);
+                    setUserItemData(item);
+                  }}
+                  className="hover:text-indigo-500 absolute top-2 right-2 w-6.5 h-6.5 box-border p-1 box-colors rounded-full duration-200"
+                >
+                  <Bookmark className="w-full h-full pointer-events-none" />
                 </div>
               </div>
             ))}
