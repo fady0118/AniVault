@@ -360,7 +360,7 @@ export default function MangaPage() {
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
 
                         <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2">
-                          {mangaQ?.data?.flattenedRelations.slice(0, 6).map((entry, i) => (
+                          {mangaQ?.data?.flattenedRelations.slice(0, 3).map((entry, i) => (
                             <div key={i} className="flex flex-row w-full">
                               <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
                                 <img data-mal-id={entry.mal_id} className="w-full h-full object-cover" src={relationsImgs?.find((r) => r.mal_id === entry.mal_id)?.image ?? null} alt={entry.name} />
@@ -375,21 +375,21 @@ export default function MangaPage() {
                               </div>
                             </div>
                           ))}
-                          {!showAllRelations && mangaQ?.data?.flattenedRelations?.length > 6 ? (
+                          {!showAllRelations && mangaQ?.data?.flattenedRelations?.length > 3 ? (
                             <div
                               onClick={() => {
                                 setShowAllRelations(true);
                               }}
                               className="flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20"
                             >
-                              +{mangaQ?.data?.flattenedRelations.length - 6}
+                              +{mangaQ?.data?.flattenedRelations.length - 3}
                             </div>
                           ) : (
                             ""
                           )}
                           {showAllRelations
-                            ? mangaQ?.data?.flattenedRelations.slice(6).map((entry, i) => (
-                                <div key={i} className="flex flex-row w-full">
+                            ? mangaQ?.data?.flattenedRelations.slice(3).map((entry, i) => (
+                                <div key={i+3} className="flex flex-row w-full">
                                   <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
                                     <img
                                       className="w-full h-full object-cover"

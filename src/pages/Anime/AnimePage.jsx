@@ -451,7 +451,7 @@ export default function AnimePage() {
                           <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Related Entries</div>
 
                           <div className="grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2">
-                            {animeQ?.data?.flattenedRelations?.slice(0, 6).map((entry, i) => (
+                            {animeQ?.data?.flattenedRelations?.slice(0, 3).map((entry, i) => (
                               <div key={i} className="flex flex-row w-full">
                                 <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
                                   <img
@@ -471,21 +471,21 @@ export default function AnimePage() {
                                 </div>
                               </div>
                             ))}
-                            {!showAllRelations && animeQ?.data?.flattenedRelations.length > 6 ? (
+                            {!showAllRelations && animeQ?.data?.flattenedRelations.length > 3 ? (
                               <div
                                 onClick={() => {
                                   setShowAllRelations(true);
                                 }}
                                 className="flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20"
                               >
-                                +{animeQ?.data?.flattenedRelations.length - 6}
+                                +{animeQ?.data?.flattenedRelations.length - 3}
                               </div>
                             ) : (
                               ""
                             )}
                             {showAllRelations
-                              ? animeQ?.data?.flattenedRelations.slice(6).map((entry, i) => (
-                                  <div key={i + 6} className="flex flex-row w-full">
+                              ? animeQ?.data?.flattenedRelations.slice(3).map((entry, i) => (
+                                  <div key={i + 3} className="flex flex-row w-full">
                                     <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
                                       <img
                                         className="w-full h-full object-cover text-[0.75em]"
