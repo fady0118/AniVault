@@ -1,37 +1,118 @@
 import { useEffect, useState } from "react";
 import { tablesDB } from "../appwrite";
 import { useAuth } from "../Contexts/AuthContext";
-import { Query } from "appwrite";
+import { ID, Query } from "appwrite";
+import LoaderComponent from "./LoaderComponent";
 
+const animeTypes = ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"];
+// data is passed from the caller component
 export default function UserItemModal({ data, setShowUserItemModal }) {
-  const [itemData, setItemData] = useState(null);
-  const [status, setStatus] = useState("");
-  const [progress, setProgress] = useState(null);
+  // auth state to get the user_id
   const { loggedInUser } = useAuth();
+  // item data from user_item table in the DB
+  const [itemData, setItemData] = useState(null);
+  const [mediaType, setMediaType] = useState(animeTypes.includes((data?.type).toLowerCase()) ? "anime" : "manga")
+  // form states
+  const [itemStatus, setItemStatus] = useState(itemData?.status); // unwatched, plan_to_watch, watching, completed, dropped
+  const [progress, setProgress] = useState(itemData?.progress);
+  const [timesWatched, setTimesWatched] = useState(itemData?.times_watched); // if itemStatus !== completed -> (state=>0)
+  // form status
+  const [status, setStatus] = useState("idle"); // idle, modified, loading, success, error
+  const [error, setError] = useState(null); // error state
 
+  // fetch the item data from user_item table in the DB
   async function fetchItemFromDb() {
     try {
-      const result = await tablesDB.listRows({
+      const res = await tablesDB.listRows({
         databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
         tableId: import.meta.env.VITE_TABLE_ID_USER_ITEM,
         queries: [Query.equal("user_id", loggedInUser.$id), Query.equal("mal_id", data.mal_id), Query.limit(1)],
       });
-      setItemData(result?.rows[0]);
+      setItemData(res?.rows[0]);
     } catch (error) {
-      console.log(error);
+      setError(error);
     }
   }
 
-  useEffect(() => {
-    if (!itemData) return;
-    // update status
-    setStatus(itemData?.status)
-    setProgress(itemData?.progress)
-  }, [itemData]);
+  // update data in the DB
+  async function updateData() {
+    setStatus("loading");
+    let res;
+    try {
+      if (!itemData) {
+        // create new row
+        res = await tablesDB.createRow({
+          databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+          tableId: import.meta.env.VITE_TABLE_ID_USER_ITEM,
+          rowId: ID.unique(),
+          data: {
+            status: itemStatus,
+            progress: Number(progress),
+            times_watched: Number(timesWatched),
+            media_type: mediaType,
+            mal_id: data.mal_id,
+            user_id: loggedInUser.$id,
+            user_id_str: loggedInUser.$id,
+          },
+        });
+      } else {
+        // update existing row
+        res = await tablesDB.updateRow({
+          databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+          tableId: import.meta.env.VITE_TABLE_ID_USER_ITEM,
+          rowId: itemData.$id,
+          data: {
+            status: itemStatus,
+            progress: Number(progress),
+            times_watched: Number(timesWatched),
+          },
+        });
+      }
+      setStatus("success");
+    } catch (error) {
+      console.log(error);
+      setStatus("error");
+    }
+  }
 
+  // call fetchItemFromDb on component mount to populate itemData state
   useEffect(() => {
     fetchItemFromDb();
   }, []);
+
+  // sync form states with fetched data
+  useEffect(() => {
+    if (!itemData) return;
+    // update form states
+    setItemStatus(itemData?.status);
+    setProgress(itemData?.progress);
+    setTimesWatched(itemData?.times_watched);
+  }, [itemData]);
+
+  // reactions to user changing any form states
+  useEffect(() => {
+    // if (!itemData) return;
+    if (itemStatus === itemData?.status && progress === itemData?.progress && timesWatched === itemData?.times_watched) return;
+    setStatus("modified");
+    switch (itemStatus) {
+      case "unwatched":
+        setProgress(0);
+        setTimesWatched(null);
+        break;
+      case "completed":
+        setProgress(data?.episodes);
+        break;
+      case "plan_to_watch":
+        setProgress(0);
+        setTimesWatched(null);
+      case "watching":
+        setTimesWatched(null);
+        break;
+      case "dropped":
+        setTimesWatched(null);
+        break;
+    }
+  }, [itemStatus, progress, timesWatched]);
 
   return (
     <div className="z-50 fixed top-0 left-[-2.5vw] w-[102.5vw] h-screen backdrop-blur-lg">
@@ -47,10 +128,8 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                 {data?.title}
               </div>
               <div className="flex gap-2">
-                <select name="statusList" id="statusList" className="select select-primary bg-transparent select-xs outline-0" value={status} onChange={(e) => setStatus(e.target.value)}>
-                  <option value="" hidden disabled>
-                    Status
-                  </option>
+                <select name="statusList" id="statusList" className="select select-primary bg-transparent select-xs outline-0" value={itemStatus} onChange={(e) => setItemStatus(e.target.value)}>
+                  <option disabled={true}>Set status</option>
                   <option className="capitallize" value="unwatched">
                     unwatched
                   </option>
@@ -67,9 +146,9 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                     dropped
                   </option>
                 </select>
-                {status && status !== "unwatched" && (
+                {itemStatus && itemStatus !== ("unwatched" || "plan_to_watch") && (
                   <>
-                    {status === "watching" && (
+                    {itemStatus === "watching" && (
                       <>
                         <select
                           name="progressList"
@@ -77,10 +156,9 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                           className="select select-primary bg-transparent select-xs outline-0"
                           value={progress}
                           onChange={(e) => setProgress(e.target.value)}
+                          disabled={itemStatus !== "watching"}
                         >
-                          <option value="" selected hidden>
-                            progress
-                          </option>
+                          <option disabled={true}>Set progress</option>
                           {Array.from({ length: data?.episodes }, (_, i) => i).map((i) => (
                             <option key={i + 1} value={i + 1}>
                               {i + 1}
@@ -89,16 +167,44 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                         </select>
                       </>
                     )}
+                    {itemStatus === "completed" && (
+                      <>
+                        <select
+                          name="timesWatchedList"
+                          id="timesWatchedList"
+                          className="select select-primary bg-transparent select-xs outline-0"
+                          value={timesWatched}
+                          onChange={(e) => setTimesWatched(e.target.value)}
+                        >
+                          <option disabled={true}>Set times watched</option>
+                          {Array.from({ length: 99 }, (_, i) => i).map((i) => (
+                            <option key={i + 1} value={i + 1}>
+                              {i + 1}X
+                            </option>
+                          ))}
+                        </select>
+                      </>
+                    )}
                   </>
                 )}
               </div>
+              {status === "modified" && (
+                <button onClick={updateData} className="btn btn-primary w-fit capitalize">
+                  update
+                </button>
+              )}
+              {status === "loading" && <LoaderComponent className="scale-75" />}
+              {status === "success" && (
+                <div role="alert" className="text-emerald-600 dark:text-emerald-400 rounded-sm px-1 py-0.5 text-xs">
+                  <span>status updated successfully</span>
+                </div>
+              )}
+              {status === "error" && (
+                <div role="alert" className="text-rose-600 dark:text-rose-400 rounded-sm px-1 py-0.5 text-xs">
+                  <span>{error}</span>
+                </div>
+              )}
             </div>
-          </div>
-          <div className="text-rose-400">
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi ex sit aliquid asperiores necessitatibus dolor nesciunt neque, dolorem harum, qui praesentium mollitia inventore. Earum
-              tempore fugit odit facilis. Blanditiis, esse?
-            </p>
           </div>
         </div>
       </div>
