@@ -10,15 +10,18 @@ const statusEnum = { anime: ["unwatched", "plan_to_watch", "watching", "complete
 export default function UserItemModal({ data, setShowUserItemModal }) {
   // auth state to get the user_id
   const { loggedInUser } = useAuth();
+
   // item data from user_item table in the DB
   const [itemData, setItemData] = useState(null);
+  const [userListsData, setUserListsData] = useState(null);
   const [mediaType, setMediaType] = useState(animeTypes.includes((data?.type).toLowerCase()) ? "anime" : "manga");
-  // form states
+
+  // item form-states
   const [itemStatus, setItemStatus] = useState(null); // unwatched, plan_to_watch, watching, completed, dropped
   const [progress, setProgress] = useState(null);
   const [mangaProgress, setMangaProgress] = useState({ vols: null, chaps: null });
-
   const [timesWatched, setTimesWatched] = useState(null); // if itemStatus !== completed -> (state=>0) only for anime mediaType
+
   // form status
   const [status, setStatus] = useState("idle"); // idle, modified, loading, success, error
   const [error, setError] = useState(null); // error state
@@ -37,6 +40,20 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
     }
   }
 
+  async function fetchUserListsFromDb() {
+    try {
+      const res = await tablesDB.listRows({
+        databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        tableId: import.meta.env.VITE_TABLE_ID_LIST,
+        queries: [Query.equal("user_id", loggedInUser.$id)],
+      });
+      console.log(res);
+      if (res?.rows?.length) setUserListsData(res);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   // update data in the DB
   async function updateData() {
     setStatus("loading");
@@ -50,10 +67,10 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
           rowId: ID.unique(),
           data: {
             status: itemStatus,
-            progress: Number(progress),
-            times_watched: Number(timesWatched),
-            manga_vols: Number(mangaProgress.vols),
-            manga_chaps: Number(mangaProgress.chaps),
+            progress: Number(progress)||null,
+            times_watched: Number(timesWatched)||null,
+            manga_vols: Number(mangaProgress.vols)||null,
+            manga_chaps: Number(mangaProgress.chaps)||null,
             media_type: mediaType,
             mal_id: data.mal_id,
             user_id: loggedInUser.$id,
@@ -68,10 +85,10 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
           rowId: itemData.$id,
           data: {
             status: itemStatus,
-            progress: Number(progress),
-            times_watched: Number(timesWatched),
-            manga_vols: Number(mangaProgress.vols),
-            manga_chaps: Number(mangaProgress.chaps),
+            progress: Number(progress)||null,
+            times_watched: Number(timesWatched)||null,
+            manga_vols: Number(mangaProgress.vols)||null,
+            manga_chaps: Number(mangaProgress.chaps)||null,
           },
         });
       }
@@ -85,6 +102,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
   // call fetchItemFromDb on component mount to populate itemData state
   useEffect(() => {
     fetchItemFromDb();
+    fetchUserListsFromDb();
   }, []);
 
   // sync form states with fetched data
@@ -99,9 +117,6 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
 
   // reactions to user changing any form states
   useEffect(() => {
-    // if (!itemData) return;
-    if (itemStatus === itemData?.status && progress === itemData?.progress && timesWatched === itemData?.times_watched) return;
-    setStatus("modified");
     switch (itemStatus) {
       case "unwatched":
         setProgress(0);
@@ -111,8 +126,9 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
         setProgress(data?.episodes);
         break;
       case "plan_to_watch":
-        setProgress(0);
+        setProgress(null);
         setTimesWatched(null);
+        break;
       case "watching":
         setTimesWatched(null);
         break;
@@ -120,7 +136,26 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
         setTimesWatched(null);
         break;
     }
-  }, [itemStatus, progress, timesWatched]);
+
+    const initialStatus = itemData?.status ?? null;
+    const initialProgress = itemData?.progress ?? null;
+    const initialTimesWatched = itemData?.times_watched ?? null;
+    const initialMangaVols = itemData?.manga_vols ?? null;
+    const initialMangaChaps = itemData?.manga_chaps ?? null;
+
+    const hasChanges =
+      itemStatus != initialStatus ||
+      progress != initialProgress ||
+      timesWatched != initialTimesWatched ||
+      mangaProgress.vols != initialMangaVols ||
+      mangaProgress.chaps != initialMangaChaps;
+
+    setStatus(hasChanges ? "modified" : "idle");
+
+console.log({initialStatus}, {initialProgress}, {initialTimesWatched}, {initialMangaVols}, {initialMangaChaps})
+console.log({itemStatus}, {progress}, {timesWatched}, {mangaProgress})
+
+  }, [itemData, itemStatus, progress, timesWatched, mangaProgress]);
 
   return (
     <div className="z-50 fixed top-0 left-[-2.5vw] w-[102.5vw] h-screen backdrop-blur-lg">
@@ -226,7 +261,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                 )}
               </div>
               {status === "modified" && (
-                <button onClick={updateData} className="btn btn-primary w-fit capitalize">
+                <button onClick={updateData} className="btn btn-primary btn-sm w-fit capitalize ">
                   update
                 </button>
               )}
@@ -242,6 +277,19 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                 </div>
               )}
             </div>
+          </div>
+          <div className="flex flex-col gap-1 text-sm">
+            <p className="uppercase font-semibold">{loggedInUser.name}'s Lists</p>
+            <ul class="list text-[0.8em]">
+              {userListsData?.rows?.map((list) => (
+                <>
+                      <label htmlFor={`list-${list?.name}`} class="flex flex-row items-center mx-1 px-0.5 gap-x-2 w-fit rounded-xs hover:cursor-pointer hover:bg-text-light/10 dark:hover:bg-text-dark/10 duration-200">
+                        <p className="flex font-medium opacity-80">{list?.name}</p>
+                        <input name={`list-${list?.name}`} id={`list-${list?.name}`} type="checkbox" className="w-2.5 h-2.5" />
+                      </label>
+                </>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
