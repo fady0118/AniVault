@@ -5,17 +5,20 @@ import { ID, Query } from "appwrite";
 import LoaderComponent from "./LoaderComponent";
 
 const animeTypes = ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"];
+const statusEnum = { anime: ["unwatched", "plan_to_watch", "watching", "completed", "dropped"], manga: ["unread", "plan_to_read", "reading", "completed", "dropped"] };
 // data is passed from the caller component
 export default function UserItemModal({ data, setShowUserItemModal }) {
   // auth state to get the user_id
   const { loggedInUser } = useAuth();
   // item data from user_item table in the DB
   const [itemData, setItemData] = useState(null);
-  const [mediaType, setMediaType] = useState(animeTypes.includes((data?.type).toLowerCase()) ? "anime" : "manga")
+  const [mediaType, setMediaType] = useState(animeTypes.includes((data?.type).toLowerCase()) ? "anime" : "manga");
   // form states
-  const [itemStatus, setItemStatus] = useState(itemData?.status); // unwatched, plan_to_watch, watching, completed, dropped
-  const [progress, setProgress] = useState(itemData?.progress);
-  const [timesWatched, setTimesWatched] = useState(itemData?.times_watched); // if itemStatus !== completed -> (state=>0)
+  const [itemStatus, setItemStatus] = useState(null); // unwatched, plan_to_watch, watching, completed, dropped
+  const [progress, setProgress] = useState(null);
+  const [mangaProgress, setMangaProgress] = useState({ vols: null, chaps: null });
+
+  const [timesWatched, setTimesWatched] = useState(null); // if itemStatus !== completed -> (state=>0) only for anime mediaType
   // form status
   const [status, setStatus] = useState("idle"); // idle, modified, loading, success, error
   const [error, setError] = useState(null); // error state
@@ -49,6 +52,8 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
             status: itemStatus,
             progress: Number(progress),
             times_watched: Number(timesWatched),
+            manga_vols: Number(mangaProgress.vols),
+            manga_chaps: Number(mangaProgress.chaps),
             media_type: mediaType,
             mal_id: data.mal_id,
             user_id: loggedInUser.$id,
@@ -65,6 +70,8 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
             status: itemStatus,
             progress: Number(progress),
             times_watched: Number(timesWatched),
+            manga_vols: Number(mangaProgress.vols),
+            manga_chaps: Number(mangaProgress.chaps),
           },
         });
       }
@@ -87,6 +94,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
     setItemStatus(itemData?.status);
     setProgress(itemData?.progress);
     setTimesWatched(itemData?.times_watched);
+    setMangaProgress({ vols: itemData?.manga_vols, chaps: itemData?.manga_chaps });
   }, [itemData]);
 
   // reactions to user changing any form states
@@ -116,7 +124,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
 
   return (
     <div className="z-50 fixed top-0 left-[-2.5vw] w-[102.5vw] h-screen backdrop-blur-lg">
-      <div className="fixed top-1/2 left-1/2 -translate-1/2 w-[90%] sm:w-3/4 md:w-2/3 lg:w-1/2 rounded-md p-4 box-colors-medium">
+      <div className="fixed top-1/2 left-1/2 -translate-1/2 w-[90%] sm:w-3/4 md:w-2/3 lg:w-1/2 rounded-lg p-4 box-colors-medium">
         <button onClick={() => setShowUserItemModal(false)} className="btn btn-ghost btn-sm btn-circle absolute right-2 top-2 bg-transparent" aria-label="Close authentication modal">
           ✕
         </button>
@@ -124,36 +132,31 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
           <div className="flex flex-row items-start gap-3">
             <img src={data.images.webp.large_image_url || data.images.webp.image_url} className="w-1/4 min-w-20 max-w-32 aspect-2/3 rounded-sm object-cover" alt="" />
             <div className="flex flex-col gap-2">
-              <div id="title" className="min-w-1/2 w-fit rounded-md px-1.5 py-0.5 text-sm box-colors-stronger">
-                {data?.title}
+              <div id="title" className="flex flex-row items-end gap-2 min-w-1/2 w-fit rounded-md px-1.5 py-0.5 text-sm">
+                <p>{data?.title}</p>
+                <span
+                  class={`inline-flex items-center rounded-md bg-indigo-400/10 px-1 py-0.5 text-2xs font-medium ${mediaType === "anime" ? "text-indigo-400 inset-ring inset-ring-indigo-400/30" : "text-purple-400 inset-ring inset-ring-purple-400/30"}`}
+                >
+                  {mediaType}
+                </span>
               </div>
               <div className="flex gap-2">
-                <select name="statusList" id="statusList" className="select select-primary bg-transparent select-xs outline-0" value={itemStatus} onChange={(e) => setItemStatus(e.target.value)}>
+                <select name="statusList" id="statusList" className="select select-primary bg-transparent select-xs outline-0 w-fit" value={itemStatus} onChange={(e) => setItemStatus(e.target.value)}>
                   <option disabled={true}>Set status</option>
-                  <option className="capitallize" value="unwatched">
-                    unwatched
-                  </option>
-                  <option className="capitallize" value="plan_to_watch">
-                    plan to watch
-                  </option>
-                  <option className="capitallize" value="watching">
-                    watching
-                  </option>
-                  <option className="capitallize" value="completed">
-                    completed
-                  </option>
-                  <option className="capitallize" value="dropped">
-                    dropped
-                  </option>
+                  {statusEnum[mediaType].map((str, i) => (
+                    <option key={i} className="capitallize" value={str}>
+                      {str}
+                    </option>
+                  ))}
                 </select>
-                {itemStatus && itemStatus !== ("unwatched" || "plan_to_watch") && (
+                {itemStatus && itemStatus !== ("unwatched" || "plan_to_watch" || "unread" || "plan_to_read") && (
                   <>
-                    {itemStatus === "watching" && (
+                    {itemStatus === "watching" && mediaType === "anime" && (
                       <>
                         <select
                           name="progressList"
                           id="progressList"
-                          className="select select-primary bg-transparent select-xs outline-0"
+                          className="select select-primary bg-transparent select-xs outline-0 w-fit"
                           value={progress}
                           onChange={(e) => setProgress(e.target.value)}
                           disabled={itemStatus !== "watching"}
@@ -167,12 +170,46 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                         </select>
                       </>
                     )}
-                    {itemStatus === "completed" && (
+                    {itemStatus === "reading" && mediaType === "manga" && (
+                      <>
+                        <select
+                          name="volList"
+                          id="volList"
+                          className="select select-primary bg-transparent select-xs outline-0 w-fit"
+                          value={mangaProgress.vols}
+                          onChange={(e) => setMangaProgress((prevState) => ({ ...prevState, vols: e.target.value }))}
+                          disabled={itemStatus !== "reading"}
+                        >
+                          <option disabled={true}>Set volumes</option>
+                          {Array.from({ length: data?.volumes }, (_, i) => i).map((i) => (
+                            <option key={i + 1} value={i + 1}>
+                              {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          name="chapsList"
+                          id="chapsList"
+                          className="select select-primary bg-transparent select-xs outline-0 w-fit"
+                          value={mangaProgress.chaps}
+                          onChange={(e) => setMangaProgress((prevState) => ({ ...prevState, chaps: e.target.value }))}
+                          disabled={itemStatus !== "reading"}
+                        >
+                          <option disabled={true}>Set chapters</option>
+                          {Array.from({ length: data?.chapters }, (_, i) => i).map((i) => (
+                            <option key={i + 1} value={i + 1}>
+                              {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </>
+                    )}
+                    {itemStatus === "completed" && mediaType === "anime" && (
                       <>
                         <select
                           name="timesWatchedList"
                           id="timesWatchedList"
-                          className="select select-primary bg-transparent select-xs outline-0"
+                          className="select select-primary bg-transparent select-xs outline-0 w-fit"
                           value={timesWatched}
                           onChange={(e) => setTimesWatched(e.target.value)}
                         >
