@@ -31,7 +31,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
   const [error, setError] = useState(null); // error state
 
   // add to custom-lists
-  const [lists, setLists] = useState([]); // holds all lists the user wants to add the item to, get cleared when the add list action is done
+  const [selectedLists, setSelectedLists] = useState({}); // { listId: { name, notes } } - lists user wants to add item to
   const [newList, setNewlist] = useState(""); // holds the newList input value, used in case the user adds the item to a new List
   const [listsUpdateStatus, setListsUpdateStatus] = useState("idle"); // idle, loading, success, error
   const [listsUpdateError, setListsUpdateError] = useState(null);
@@ -201,7 +201,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
   }
 
   // create new row in item-list table
-  async function addItemToList(itemId, img, title, mediaType, notes, listId) {
+  async function addItemToList(itemId, img, title, mediaType, notes=null, listId) {
     // is the list public? private?? this will affect the permissions
     // public/private is an attribute of the list but will affect all its items in item-list
     // if public read permission is given to all users
@@ -244,36 +244,36 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
   async function updateLists() {
     try {
       setListsUpdateStatus("loading");
-      const notes = null; // @todo will handle later
-      // call addItemToList for each list (newList && lists)
-
-      await Promise.all(lists.map((listId) => addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, listId)));
+      // call addItemToList for each selected list
+      await Promise.all(
+        Object.entries(selectedLists).map(([listId, { notes }]) =>
+          addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, listId)
+        )
+      );
       if (newList) {
-        console.log(newList);
         const newListRes = await createNewList(newList, null, loggedInUser.$id, false);
-        console.log(newListRes);
-        addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, newListRes.$id);
+        await addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, null, newListRes.$id);
       }
-      // reset newList && lists
-      setLists([]);
+      // reset selectedLists && newList
+      setSelectedLists({});
       setNewlist("");
       setListsUpdateStatus("success");
     } catch (error) {
       setListsUpdateStatus("error");
       setListsUpdateError(error.message);
-      setLists([]);
+      setSelectedLists({});
       setNewlist("");
     }
   }
+
   useEffect(() => {
-    // runs when user or updateLists() change the (lists or newList) states
-    if (!lists.length && !newList) return; // keep success or error status until a value change
+    if (!Object.keys(selectedLists).length && !newList) return; // keep success or error status until a value change
     setListsUpdateStatus("idle"); // if a value changes update the state to idle
-  }, [newList, lists]);
+  }, [newList, selectedLists]);
 
   return (
     <div className="z-50 fixed top-0 left-[-2.5vw] w-[102.5vw] h-screen backdrop-blur-lg">
-      <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 lg:w-1/2 xl:w-2/5  rounded-lg p-3 xs:p-4 box-colors-medium">
+      <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 lg:w-1/2 rounded-lg p-3 xs:p-4 box-colors-medium">
         <button onClick={() => setShowUserItemModal(false)} className="btn btn-ghost btn-sm btn-circle absolute right-2 top-2 bg-transparent" aria-label="Close authentication modal">
           ✕
         </button>
@@ -420,19 +420,19 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
             </div>
           </div>
           <div className="flex flex-col gap-1 text-sm md:text-md">
-            <p className="font-medium text-[0.8em]">Add {data?.title} to your lists</p>
+            <p className="font-light text-[0.75em]">Add {data?.title} to one of your custom lists </p>
             <p className="uppercase font-semibold">{loggedInUser.name}'s Lists</p>
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-y-2">
-              <ul className="list text-[0.8em]">
+            <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-y-2">
+              <ul className="grid grid-cols-2 col-span-2 gap-y-0.5 list text-[0.8em]">
                 {userListsData?.flattenedLists && (
                   <>
                     {Object.entries(userListsData?.flattenedLists).map(([listId, { name, listItems }]) => {
                       return (
                         <>
                           {listItems?.includes(data.mal_id) ? (
-                            <label htmlFor={`${name}-list`} className="flex flex-row items-center gap-x-1">
+                            <label htmlFor={`${name}-list`} className="flex flex-row items-center gap-x-1 ">
                               {name}
-                              <input name={`${name}-list`} key={name} type="checkbox" checked className="checkbox scale-50" />
+                              <input name={`${name}-list`} key={name} type="checkbox" checked readOnly className="checkbox scale-65" />
                             </label>
                           ) : (
                             <label htmlFor={`${name}-list`} className="flex flex-row items-center gap-x-1">
@@ -441,11 +441,18 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                                 name={`${name}-list`}
                                 key={name}
                                 type="checkbox"
-                                checked={lists.includes(listId)}
+                                checked={listId in selectedLists}
                                 onChange={() => {
-                                  setLists((prevState) => (prevState.includes(listId) ? prevState.filter((item) => item !== listId) : [...prevState, listId]));
+                                  setSelectedLists((prevState) => {
+                                    if (listId in prevState) {
+                                      const { [listId]: _, ...rest } = prevState;
+                                      return rest;
+                                    } else {
+                                      return { ...prevState, [listId]: { name, notes: null } };
+                                    }
+                                  });
                                 }}
-                                className="checkbox checkbox-primary scale-50"
+                                className="checkbox checkbox-primary scale-65"
                               />
                             </label>
                           )}
@@ -473,12 +480,38 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
             </div>
             {listsUpdateStatus === "idle" ? (
               <>
-                {newList || lists.length ? (
-                  <button onClick={updateLists} className="btn btn-primary btn-sm w-fit capitalize">
+                {newList || Object.keys(selectedLists).length ? (
+                  <>
+                    <div className="flex flex-col gap-y-1">
+                      {Object.entries(selectedLists)?.map(([listId, { name, notes }]) => (
+                        <div key={listId} className="w-full flex flex-col 2xs:flex-row items-start 2xs:items-center justify-between text-2xs">
+                          <p>{name}</p>
+                          <input
+                            type="text"
+                            name={`${listId}-notes`}
+                            id={`${listId}-notes`}
+                            placeholder="Why does this anime belong on this list?"
+                            className="input input-primary input-xs bg-transparent outline-0 px-1 w-3/4 text-3xs xs:text-2xs"
+                            value={notes || ""}
+                            onChange={(e) => {
+                              setSelectedLists((prevState) => ({
+                                ...prevState,
+                                [listId]: { ...prevState[listId], notes: e.target.value },
+                              }));
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    <button onClick={updateLists} className="btn btn-primary btn-sm w-fit capitalize">
+                      update
+                    </button>
+                  </>
+                ) : (
+                  <button disabled className="btn btn-sm w-fit capitalize">
                     update
                   </button>
-                ) : (
-                  ""
                 )}
               </>
             ) : (
