@@ -112,6 +112,13 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
   useEffect(() => {
     fetchItemFromDb();
     fetchUserListsFromDb();
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setShowUserItemModal(false);
+      }
+    };
+    document.documentElement.addEventListener("keydown", handleKeyDown);
+    return () => document.documentElement.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   // sync form states with fetched data
@@ -195,15 +202,21 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
               <div className="flex flex-wrap gap-2">
                 <select name="statusList" id="statusList" className="select select-primary bg-transparent select-xs outline-0 w-fit" value={itemStatus} onChange={(e) => setItemStatus(e.target.value)}>
                   <option disabled={true}>Set status</option>
-                  {statusEnum[mediaType].map((str, i) => (
-                    <option key={i} className="capitallize" value={str}>
-                      {str}
-                    </option>
-                  ))}
+                  {data?.status?.toLowerCase() === "not yet aired"
+                    ? statusEnum[mediaType].slice(0, 2).map((str, i) => (
+                        <option key={i} className="capitallize" value={str}>
+                          {str}
+                        </option>
+                      ))
+                    : statusEnum[mediaType].map((str, i) => (
+                        <option key={i} className="capitallize" value={str}>
+                          {str}
+                        </option>
+                      ))}
                 </select>
                 {itemStatus && itemStatus !== "unwatched" && itemStatus !== "plan_to_watch" && itemStatus !== "unread" && itemStatus !== "plan_to_read" && (
                   <>
-                    {itemStatus === "watching" && mediaType === "anime" && (
+                    {(itemStatus === "watching" || itemStatus === "dropped") && mediaType === "anime" && (
                       <>
                         <select
                           name="progressList"
@@ -211,7 +224,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                           className="select select-primary bg-transparent select-xs outline-0 w-fit"
                           value={progress}
                           onChange={(e) => setProgress(e.target.value)}
-                          disabled={itemStatus !== "watching"}
+                          disabled={itemStatus !== "watching" && itemStatus !== "dropped"}
                         >
                           <option disabled={true}>Set progress</option>
                           {Array.from({ length: data?.episodes }, (_, i) => i).map((i) => (
@@ -222,7 +235,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                         </select>
                       </>
                     )}
-                    {itemStatus === "reading" && mediaType === "manga" && (
+                    {(itemStatus === "reading" || itemStatus === "dropped") && mediaType === "manga" && (
                       <>
                         <select
                           name="volList"
@@ -230,7 +243,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                           className="select select-primary bg-transparent select-xs outline-0 w-fit"
                           value={mangaProgress.vols}
                           onChange={(e) => setMangaProgress((prevState) => ({ ...prevState, vols: e.target.value }))}
-                          disabled={itemStatus !== "reading"}
+                          disabled={itemStatus !== "reading" && itemStatus !== "dropped"}
                         >
                           <option disabled={true}>Set volumes</option>
                           {Array.from({ length: data?.volumes }, (_, i) => i).map((i) => (

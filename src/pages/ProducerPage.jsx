@@ -197,7 +197,7 @@ export default function ProducerPage() {
                                     alt={anime.title_english || anime.title}
                                   />
                                 </Link>
-                                <div className="absolute bottom-0 left-0 py-2 px-3 gap-1 flex flex-col w-full text-xs font-light bg-linear-45 from-35% from-amethyst-smoke-400 dark:from-dark-amethyst-smoke-200 to-75% to-transparent">
+                                <div className="pointer-events-none absolute bottom-0 left-0 py-2 px-3 gap-1 flex flex-col w-full text-xs font-light bg-linear-45 from-35% from-amethyst-smoke-400 dark:from-dark-amethyst-smoke-200 to-75% to-transparent">
                                   <div className="flex items-center gap-2">
                                     <Star size={15} />
                                     <span>{anime.score}</span>
