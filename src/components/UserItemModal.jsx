@@ -190,7 +190,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
         return {
           ...prevState,
           flattenedLists: {
-            ...prevState.flattenedLists,
+            ...prevState?.flattenedLists,
             [res.$id]: {
               name,
             },
