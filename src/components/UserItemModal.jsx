@@ -28,9 +28,13 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
 
   // form status
   const [status, setStatus] = useState("idle"); // idle, modified, loading, success, error
-
   const [error, setError] = useState(null); // error state
 
+  // add to custom-lists
+  const [lists, setLists] = useState([]); // holds all lists the user wants to add the item to, get cleared when the add list action is done
+  const [newList, setNewlist] = useState(""); // holds the newList input value, used in case the user adds the item to a new List
+  const [listsUpdateStatus, setListsUpdateStatus] = useState("idle"); // idle, loading, success, error
+  const [listsUpdateError, setListsUpdateError] = useState(null);
   // fetch the item data from user_item table in the DB
   async function fetchItemFromDb() {
     try {
@@ -53,7 +57,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
       });
       if (res?.rows?.length) {
         // flatten the listItems extract mal_id
-        const flattenedLists = Object.fromEntries((res?.rows ?? []).map(({ name, listItem_id }) => [name, listItem_id.map((i) => Number(i.mal_id))]));
+        const flattenedLists = Object.fromEntries((res?.rows ?? []).map(({ name, $id, listItem_id }) => [$id, { name, listItems: listItem_id.map((i) => Number(i.mal_id)) }]));
         setUserListsData({ ...res, flattenedLists });
       }
     } catch (error) {
@@ -167,6 +171,106 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
 
     setStatus(hasChanges ? "modified" : "idle");
   }, [itemData, itemStatus, progress, timesWatched, mangaProgress]);
+
+  // create new row in list table
+  async function createNewList(name, description = null, user_id, is_public = false) {
+    // is the list public? private?? this will affect the permissions
+    try {
+      const res = await tablesDB.createRow({
+        databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        tableId: import.meta.env.VITE_TABLE_ID_LIST,
+        rowId: ID.unique(),
+        data: { name, description, user_id, user_id_str: String(user_id), is_public },
+        permissions: [Permission.read(Role.user(loggedInUser.$id)), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))],
+      });
+      setUserListsData((prevState) => {
+        return {
+          ...prevState,
+          flattenedLists: {
+            ...prevState.flattenedLists,
+            [res.$id]: {
+              name,
+            },
+          },
+        };
+      });
+      return res;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // create new row in item-list table
+  async function addItemToList(itemId, img, title, mediaType, notes, listId) {
+    // is the list public? private?? this will affect the permissions
+    // public/private is an attribute of the list but will affect all its items in item-list
+    // if public read permission is given to all users
+    try {
+      const res = await tablesDB.createRow({
+        databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        tableId: import.meta.env.VITE_TABLE_ID_LIST_ITEM,
+        rowId: ID.unique(),
+        data: {
+          mal_id: String(itemId),
+          notes,
+          cached_img: img,
+          title,
+          mediaType,
+          userList_id: listId,
+        },
+        permissions: [Permission.read(Role.user(loggedInUser.$id)), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))],
+      });
+      // push new item to its list in userListsData
+      setUserListsData((prevState) => {
+        const listItems = prevState.flattenedLists[listId]?.listItems ?? [];
+        // Deduplicate using Set, then add the new item
+        const updatedItems = [...new Set([...listItems, itemId])];
+        return {
+          ...prevState,
+          flattenedLists: {
+            ...prevState.flattenedLists,
+            [listId]: {
+              ...prevState.flattenedLists[listId],
+              listItems: updatedItems,
+            },
+          },
+        };
+      });
+    } catch (error) {
+      throw new Error(`failed to add ${title} to the list`);
+    }
+  }
+
+  async function updateLists() {
+    try {
+      setListsUpdateStatus("loading");
+      const notes = null; // @todo will handle later
+      // call addItemToList for each list (newList && lists)
+
+      await Promise.all(lists.map((listId) => addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, listId)));
+      if (newList) {
+        console.log(newList);
+        const newListRes = await createNewList(newList, null, loggedInUser.$id, false);
+        console.log(newListRes);
+        addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, newListRes.$id);
+      }
+      // reset newList && lists
+      setLists([]);
+      setNewlist("");
+      setListsUpdateStatus("success");
+    } catch (error) {
+      setListsUpdateStatus("error");
+      setListsUpdateError(error.message);
+      setLists([]);
+      setNewlist("");
+    }
+  }
+  useEffect(() => {
+    // runs when user or updateLists() change the (lists or newList) states
+    if (!lists.length && !newList) return; // keep success or error status until a value change
+    setListsUpdateStatus("idle"); // if a value changes update the state to idle
+  }, [newList, lists]);
+
   return (
     <div className="z-50 fixed top-0 left-[-2.5vw] w-[102.5vw] h-screen backdrop-blur-lg">
       <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 lg:w-1/2 xl:w-2/5  rounded-lg p-3 xs:p-4 box-colors-medium">
@@ -316,24 +420,96 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
             </div>
           </div>
           <div className="flex flex-col gap-1 text-sm md:text-md">
+            <p className="font-medium text-[0.8em]">Add {data?.title} to your lists</p>
             <p className="uppercase font-semibold">{loggedInUser.name}'s Lists</p>
-            <ul className="list text-[0.8em]">
-              {userListsData?.flattenedLists && (
-                <>
-                  {Object.entries(userListsData?.flattenedLists).map(([name, items]) => (
-                    <>
-                      <label
-                        htmlFor={`list-${name}`}
-                        className="flex flex-row items-center mx-1 px-0.5 gap-x-2 w-fit rounded-xs hover:cursor-pointer hover:bg-text-light/10 dark:hover:bg-text-dark/10 duration-200"
-                      >
-                        {items.includes(data.mal_id) ? <CheckCircle size={14} /> : <Circle size={14} />}
-                        <p className="flex font-medium opacity-80">{name}</p>
-                      </label>
-                    </>
-                  ))}
-                </>
-              )}
-            </ul>
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-y-2">
+              <ul className="list text-[0.8em]">
+                {userListsData?.flattenedLists && (
+                  <>
+                    {Object.entries(userListsData?.flattenedLists).map(([listId, { name, listItems }]) => {
+                      return (
+                        <>
+                          {listItems?.includes(data.mal_id) ? (
+                            <label htmlFor={`${name}-list`} className="flex flex-row items-center gap-x-1">
+                              {name}
+                              <input name={`${name}-list`} key={name} type="checkbox" checked className="checkbox scale-50" />
+                            </label>
+                          ) : (
+                            <label htmlFor={`${name}-list`} className="flex flex-row items-center gap-x-1">
+                              {name}
+                              <input
+                                name={`${name}-list`}
+                                key={name}
+                                type="checkbox"
+                                checked={lists.includes(listId)}
+                                onChange={() => {
+                                  setLists((prevState) => (prevState.includes(listId) ? prevState.filter((item) => item !== listId) : [...prevState, listId]));
+                                }}
+                                className="checkbox checkbox-primary scale-50"
+                              />
+                            </label>
+                          )}
+                        </>
+                      );
+                    })}
+                  </>
+                )}
+              </ul>
+              <div className="text-[0.8em]">
+                <div className="flex flex-row items-center flex-wrap gap-2">
+                  <p>New List</p>
+                  <input
+                    value={newList}
+                    onChange={(e) => {
+                      setNewlist(e.target.value);
+                    }}
+                    type="text"
+                    name="newListName"
+                    id="newListName"
+                    className="input input-primary bg-transparent text-[1em] h-fit px-1 py-0.5 outline-0 w-2/3 min-w-24 max-w-48"
+                  />
+                </div>
+              </div>
+            </div>
+            {listsUpdateStatus === "idle" ? (
+              <>
+                {newList || lists.length ? (
+                  <button onClick={updateLists} className="btn btn-primary btn-sm w-fit capitalize">
+                    update
+                  </button>
+                ) : (
+                  ""
+                )}
+              </>
+            ) : (
+              <>
+                {listsUpdateStatus === "loading" ? (
+                  <div className="flex">
+                    <div className="relative scale-75">
+                      <LoaderComponent />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {listsUpdateStatus === "success" ? (
+                      <div role="alert" className="text-emerald-600 dark:text-emerald-400 rounded-sm px-1 py-0.5 text-xs">
+                        <span>list updated successfully</span>
+                      </div>
+                    ) : (
+                      <>
+                        {listsUpdateError ? (
+                          <div role="alert" className="text-rose-600 dark:text-rose-400 rounded-sm px-1 py-0.5 text-xs">
+                            <span>{listsUpdateError}</span>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
