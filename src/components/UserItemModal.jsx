@@ -33,8 +33,11 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
   // add to custom-lists
   const [selectedLists, setSelectedLists] = useState({}); // { listId: { name, notes } } - lists user wants to add item to
   const [newList, setNewlist] = useState(""); // holds the newList input value, used in case the user adds the item to a new List
+  const [newListNotes, setNewListNotes] = useState(null); // holds the newList notes value
+  // lists-status states
   const [listsUpdateStatus, setListsUpdateStatus] = useState("idle"); // idle, loading, success, error
   const [listsUpdateError, setListsUpdateError] = useState(null);
+
   // fetch the item data from user_item table in the DB
   async function fetchItemFromDb() {
     try {
@@ -201,7 +204,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
   }
 
   // create new row in item-list table
-  async function addItemToList(itemId, img, title, mediaType, notes=null, listId) {
+  async function addItemToList(itemId, img, title, mediaType, notes = null, listId) {
     // is the list public? private?? this will affect the permissions
     // public/private is an attribute of the list but will affect all its items in item-list
     // if public read permission is given to all users
@@ -245,14 +248,10 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
     try {
       setListsUpdateStatus("loading");
       // call addItemToList for each selected list
-      await Promise.all(
-        Object.entries(selectedLists).map(([listId, { notes }]) =>
-          addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, listId)
-        )
-      );
+      await Promise.all(Object.entries(selectedLists).map(([listId, { notes }]) => addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, listId)));
       if (newList) {
         const newListRes = await createNewList(newList, null, loggedInUser.$id, false);
-        await addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, null, newListRes.$id);
+        await addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, newListNotes || null, newListRes.$id);
       }
       // reset selectedLists && newList
       setSelectedLists({});
@@ -488,8 +487,8 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                           <p>{name}</p>
                           <input
                             type="text"
-                            name={`${listId}-notes`}
-                            id={`${listId}-notes`}
+                            name={`${name}-notes`}
+                            id={`${name}-notes`}
                             placeholder="Why does this anime belong on this list?"
                             className="input input-primary input-xs bg-transparent outline-0 px-1 w-3/4 text-3xs xs:text-2xs"
                             value={notes || ""}
@@ -502,6 +501,23 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                           />
                         </div>
                       ))}
+                      {
+                        newList?
+                        <div className="w-full flex flex-col 2xs:flex-row items-start 2xs:items-center justify-between text-2xs">
+                          <p>{newList}</p>
+                          <input
+                            type="text"
+                            name={`${newList}-notes`}
+                            id={`${newList}-notes`}
+                            placeholder="Why does this anime belong on this list?"
+                            className="input input-primary input-xs bg-transparent outline-0 px-1 w-3/4 text-3xs xs:text-2xs"
+                            value={newListNotes || ""}
+                            onChange={(e) => {
+                              setNewListNotes(e.target.value);
+                            }}
+                          />
+                        </div>:""
+                      }
                     </div>
 
                     <button onClick={updateLists} className="btn btn-primary btn-sm w-fit capitalize">
