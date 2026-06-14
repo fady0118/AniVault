@@ -31,8 +31,8 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
   const [error, setError] = useState(null); // error state
 
   // add to custom-lists
-  const [selectedLists, setSelectedLists] = useState({}); // { listId: { name, notes } } - lists user wants to add item to
-  const [newList, setNewlist] = useState({ name: null, notes: null, is_public: false }); // holds the newList data, used in case the user adds the item to a new List
+  const [selectedLists, setSelectedLists] = useState({}); // { listId: { name, notes, is_public, is_item_public } } - lists user wants to add item to
+  const [newList, setNewlist] = useState({ name: null, notes: null, is_public: false, is_item_public: false }); // holds the newList data, used in case the user adds the item to a new List
 
   // lists-status states
   const [listsUpdateStatus, setListsUpdateStatus] = useState("idle"); // idle, loading, success, error
@@ -181,8 +181,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
     const permissions = is_public
       ? [Permission.read(Role.users()), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))]
       : [Permission.read(Role.user(loggedInUser.$id)), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))];
-    console.log({createNewList:permissions})
-      try {
+    try {
       const res = await tablesDB.createRow({
         databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
         tableId: import.meta.env.VITE_TABLE_ID_LIST,
@@ -208,13 +207,11 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
   }
 
   // create new row in item-list table
-  async function addItemToList(itemId, img, title, mediaType, notes = null, listId, is_public=false) {
-    
-    const permissions = is_public
+  async function addItemToList(itemId, img, title, mediaType, notes = null, listId, is_public = false, is_item_public = false) {
+    const permissions = is_item_public
       ? [Permission.read(Role.users()), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))]
       : [Permission.read(Role.user(loggedInUser.$id)), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))];
-    console.log({addItemToListPermissions:permissions})
-      try {
+    try {
       const res = await tablesDB.createRow({
         databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
         tableId: import.meta.env.VITE_TABLE_ID_LIST_ITEM,
@@ -254,20 +251,24 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
     try {
       setListsUpdateStatus("loading");
       // call addItemToList for each selected list
-      await Promise.all(Object.entries(selectedLists).map(([listId, { notes, is_public }]) => addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, listId, is_public)));
+      await Promise.all(
+        Object.entries(selectedLists).map(([listId, { notes, is_public, is_item_public }]) =>
+          addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, listId, is_public, is_item_public),
+        ),
+      );
       if (newList?.name) {
         const newListRes = await createNewList(newList?.name, null, loggedInUser.$id, newList?.is_public);
         await addItemToList(data?.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, newList?.notes || null, newListRes.$id, newList?.is_public);
       }
       // reset selectedLists && newList
       setSelectedLists({});
-      setNewlist({ name: null, notes: null, is_public: false });
+      setNewlist({ name: null, notes: null, is_public: false, is_item_public: false });
       setListsUpdateStatus("success");
     } catch (error) {
       setListsUpdateStatus("error");
       setListsUpdateError(error.message);
       setSelectedLists({});
-      setNewlist({ name: null, notes: null, is_public: false });
+      setNewlist({ name: null, notes: null, is_public: false, is_item_public: false });
     }
   }
 
@@ -278,7 +279,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
 
   return (
     <div className="z-50 fixed top-0 left-[-2.5vw] w-[102.5vw] h-screen backdrop-blur-lg">
-      <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 lg:w-1/2 rounded-lg p-3 xs:p-4 box-colors-medium">
+      <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 lg:w-1/2 rounded-lg p-3 xs:p-4 max-h-[90vh] overflow-y-auto box-colors-medium">
         <button onClick={() => setShowUserItemModal(false)} className="btn btn-ghost btn-sm btn-circle absolute right-2 top-2 bg-transparent" aria-label="Close authentication modal">
           ✕
         </button>
@@ -428,7 +429,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
             <p className="font-light text-[0.75em]">Add {data?.title} to one of your custom lists </p>
             <p className="uppercase font-semibold">{loggedInUser.name}'s Lists</p>
             <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-y-2">
-              <ul className="grid grid-cols-2 col-span-2 gap-y-0.5 list text-[0.8em]">
+              <ul className="grid grid-cols-1 xs:grid-cols-2 col-span-2 gap-y-0.5 list text-[0.8em]">
                 {userListsData?.flattenedLists && (
                   <>
                     {Object.entries(userListsData?.flattenedLists).map(([listId, { name, is_public, listItems }]) => {
@@ -453,7 +454,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                                       const { [listId]: _, ...rest } = prevState;
                                       return rest;
                                     } else {
-                                      return { ...prevState, [listId]: { name, is_public, notes: null } };
+                                      return { ...prevState, [listId]: { name, is_public, notes: null, is_item_public: is_public } };
                                     }
                                   });
                                 }}
@@ -468,7 +469,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                 )}
               </ul>
               <div className="text-[0.8em]">
-                <div className="flex flex-row items-center flex-wrap gap-2">
+                <div className="flex flex-row items-center flex-wrap gap-1">
                   <p>New List</p>
                   <input
                     value={newList?.name || ""}
@@ -482,18 +483,30 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                   />
                 </div>
                 {newList?.name ? (
-                  <label htmlFor="NewListPrivacy" className="flex flex-row items-center gap-x-1">
-                    <p>List Privacy: {newList?.is_public ? "public" : "private"}</p>
-                    <input
-                      type="checkbox"
-                      name="NewListPrivacy"
-                      id="NewListPrivacy"
-                      checked={newList?.is_public}
-                      onChange={(e) => {
-                        setNewlist((prevState) => ({ ...prevState, is_public: e.target.checked }));
-                      }}
-                    />
-                  </label>
+                  <div className="flex flex-row gap-1 items-center text-[0.9em]">
+                    <p>List Privacy:</p>
+                    <div className="flex flex-row items-center">
+                      <label class="swap">
+                        <input
+                          type="checkbox"
+                          checked={newList?.is_public}
+                          onChange={(e) => {
+                            setNewlist((prevState) => ({ ...prevState, is_public: e.target.checked }));
+                          }}
+                        />
+                        <div class="swap-on">Public</div>
+                        <div class="swap-off">Private</div>
+                      </label>
+                      <input
+                        className="toggle toggle-xs scale-75"
+                        type="checkbox"
+                        checked={newList?.is_public}
+                        onChange={(e) => {
+                          setNewlist((prevState) => ({ ...prevState, is_public: e.target.checked }));
+                        }}
+                      />
+                    </div>
+                  </div>
                 ) : (
                   ""
                 )}
@@ -506,37 +519,102 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                     <div className="flex flex-col gap-y-1">
                       {Object.entries(selectedLists)?.map(([listId, { name, notes }]) => (
                         <div key={listId} className="w-full flex flex-col 2xs:flex-row items-start 2xs:items-center justify-between text-2xs">
+                          {/* list name */}
                           <p>{name}</p>
-                          <input
-                            type="text"
-                            name={`${name}-notes`}
-                            id={`${name}-notes`}
-                            placeholder="Why does this anime belong on this list?"
-                            className="input input-primary input-xs bg-transparent outline-0 px-1 w-3/4 text-3xs xs:text-2xs"
-                            value={notes || ""}
-                            onChange={(e) => {
-                              setSelectedLists((prevState) => ({
-                                ...prevState,
-                                [listId]: { ...prevState[listId], notes: e.target.value },
-                              }));
-                            }}
-                          />
+                          {/* item privacy switch */}
+                          <div className="flex flex-row items-center justify-between gap-2 w-4/5">
+                            <div className="flex flex-row items-center">
+                              <label class="swap">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedLists[listId].is_item_public}
+                                  onChange={(e) => {
+                                    setSelectedLists((prevState) => ({
+                                      ...prevState,
+                                      [listId]: { ...prevState[listId], is_item_public: e.target.checked },
+                                    }));
+                                  }}
+                                />
+                                <div class="swap-on">Public</div>
+                                <div class="swap-off">Private</div>
+                              </label>
+                              <input
+                                className="toggle toggle-xs scale-75"
+                                type="checkbox"
+                                checked={selectedLists[listId].is_item_public}
+                                onChange={(e) => {
+                                  setSelectedLists((prevState) => ({
+                                    ...prevState,
+                                    [listId]: { ...prevState[listId], is_item_public: e.target.checked },
+                                  }));
+                                }}
+                              />
+                            </div>
+                            {/* notes (why this item belongs to this list) */}
+                            <input
+                              type="text"
+                              name={`${name}-notes`}
+                              id={`${name}-notes`}
+                              placeholder="Why does this anime belong on this list?"
+                              className="input input-primary input-xs bg-transparent outline-0 px-1 grow text-3xs xs:text-2xs"
+                              value={notes || ""}
+                              onChange={(e) => {
+                                setSelectedLists((prevState) => ({
+                                  ...prevState,
+                                  [listId]: { ...prevState[listId], notes: e.target.value },
+                                }));
+                              }}
+                            />
+                          </div>
                         </div>
                       ))}
+
                       {newList?.name ? (
                         <div className="w-full flex flex-col 2xs:flex-row items-start 2xs:items-center justify-between text-2xs">
+                          {/* list name */}
                           <p>{newList?.name}</p>
-                          <input
-                            type="text"
-                            name={`${newList?.name}-notes`}
-                            id={`${newList?.name}-notes`}
-                            placeholder="Why does this anime belong on this list?"
-                            className="input input-primary input-xs bg-transparent outline-0 px-1 w-3/4 text-3xs xs:text-2xs"
-                            value={newList?.notes || ""}
-                            onChange={(e) => {
-                              setNewlist((prevState) => ({ ...prevState, notes: e.target.value }));
-                            }}
-                          />
+                          {/* item privacy switch */}
+                          <div className="flex flex-row items-center justify-between gap-2 w-4/5">
+                            <div className="flex flex-row items-center">
+                              <label class="swap">
+                                <input
+                                  type="checkbox"
+                                  checked={newList.is_item_public}
+                                  onChange={(e) => {
+                                    setNewlist((prevState) => ({
+                                      ...prevState,
+                                      is_item_public: e.target.checked,
+                                    }));
+                                  }}
+                                />
+                                <div class="swap-on">Public</div>
+                                <div class="swap-off">Private</div>
+                              </label>
+                              <input
+                                className="toggle toggle-xs scale-75"
+                                type="checkbox"
+                                checked={newList.is_item_public}
+                                onChange={(e) => {
+                                  setNewlist((prevState) => ({
+                                    ...prevState,
+                                    is_item_public: e.target.checked,
+                                  }));
+                                }}
+                              />
+                            </div>
+                            {/* notes (why this item belongs to this list) */}
+                            <input
+                              type="text"
+                              name={`${newList?.name}-notes`}
+                              id={`${newList?.name}-notes`}
+                              placeholder="Why does this anime belong on this list?"
+                              className="input input-primary input-xs bg-transparent outline-0 px-1 grow text-3xs xs:text-2xs"
+                              value={newList?.notes || ""}
+                              onChange={(e) => {
+                                setNewlist((prevState) => ({ ...prevState, notes: e.target.value }));
+                              }}
+                            />
+                          </div>
                         </div>
                       ) : (
                         ""
