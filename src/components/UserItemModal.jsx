@@ -32,8 +32,8 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
 
   // add to custom-lists
   const [selectedLists, setSelectedLists] = useState({}); // { listId: { name, notes } } - lists user wants to add item to
-  const [newList, setNewlist] = useState(""); // holds the newList input value, used in case the user adds the item to a new List
-  const [newListNotes, setNewListNotes] = useState(null); // holds the newList notes value
+  const [newList, setNewlist] = useState({ name: null, notes: null, is_public: false }); // holds the newList data, used in case the user adds the item to a new List
+
   // lists-status states
   const [listsUpdateStatus, setListsUpdateStatus] = useState("idle"); // idle, loading, success, error
   const [listsUpdateError, setListsUpdateError] = useState(null);
@@ -60,7 +60,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
       });
       if (res?.rows?.length) {
         // flatten the listItems extract mal_id
-        const flattenedLists = Object.fromEntries((res?.rows ?? []).map(({ name, $id, listItem_id }) => [$id, { name, listItems: listItem_id.map((i) => Number(i.mal_id)) }]));
+        const flattenedLists = Object.fromEntries((res?.rows ?? []).map(({ name, $id, listItem_id, is_public }) => [$id, { name, listItems: listItem_id.map((i) => Number(i.mal_id)), is_public }]));
         setUserListsData({ ...res, flattenedLists });
       }
     } catch (error) {
@@ -178,13 +178,17 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
   // create new row in list table
   async function createNewList(name, description = null, user_id, is_public = false) {
     // is the list public? private?? this will affect the permissions
-    try {
+    const permissions = is_public
+      ? [Permission.read(Role.users()), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))]
+      : [Permission.read(Role.user(loggedInUser.$id)), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))];
+    console.log({createNewList:permissions})
+      try {
       const res = await tablesDB.createRow({
         databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
         tableId: import.meta.env.VITE_TABLE_ID_LIST,
         rowId: ID.unique(),
         data: { name, description, user_id, user_id_str: String(user_id), is_public },
-        permissions: [Permission.read(Role.user(loggedInUser.$id)), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))],
+        permissions,
       });
       setUserListsData((prevState) => {
         return {
@@ -204,11 +208,13 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
   }
 
   // create new row in item-list table
-  async function addItemToList(itemId, img, title, mediaType, notes = null, listId) {
-    // is the list public? private?? this will affect the permissions
-    // public/private is an attribute of the list but will affect all its items in item-list
-    // if public read permission is given to all users
-    try {
+  async function addItemToList(itemId, img, title, mediaType, notes = null, listId, is_public=false) {
+    
+    const permissions = is_public
+      ? [Permission.read(Role.users()), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))]
+      : [Permission.read(Role.user(loggedInUser.$id)), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))];
+    console.log({addItemToListPermissions:permissions})
+      try {
       const res = await tablesDB.createRow({
         databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
         tableId: import.meta.env.VITE_TABLE_ID_LIST_ITEM,
@@ -221,7 +227,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
           mediaType,
           userList_id: listId,
         },
-        permissions: [Permission.read(Role.user(loggedInUser.$id)), Permission.update(Role.user(loggedInUser.$id)), Permission.delete(Role.user(loggedInUser.$id))],
+        permissions,
       });
       // push new item to its list in userListsData
       setUserListsData((prevState) => {
@@ -248,25 +254,25 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
     try {
       setListsUpdateStatus("loading");
       // call addItemToList for each selected list
-      await Promise.all(Object.entries(selectedLists).map(([listId, { notes }]) => addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, listId)));
-      if (newList) {
-        const newListRes = await createNewList(newList, null, loggedInUser.$id, false);
-        await addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, newListNotes || null, newListRes.$id);
+      await Promise.all(Object.entries(selectedLists).map(([listId, { notes, is_public }]) => addItemToList(data.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, listId, is_public)));
+      if (newList?.name) {
+        const newListRes = await createNewList(newList?.name, null, loggedInUser.$id, newList?.is_public);
+        await addItemToList(data?.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, newList?.notes || null, newListRes.$id, newList?.is_public);
       }
       // reset selectedLists && newList
       setSelectedLists({});
-      setNewlist("");
+      setNewlist({ name: null, notes: null, is_public: false });
       setListsUpdateStatus("success");
     } catch (error) {
       setListsUpdateStatus("error");
       setListsUpdateError(error.message);
       setSelectedLists({});
-      setNewlist("");
+      setNewlist({ name: null, notes: null, is_public: false });
     }
   }
 
   useEffect(() => {
-    if (!Object.keys(selectedLists).length && !newList) return; // keep success or error status until a value change
+    if (!Object.keys(selectedLists).length && !newList?.name) return; // keep success or error status until a value change
     setListsUpdateStatus("idle"); // if a value changes update the state to idle
   }, [newList, selectedLists]);
 
@@ -425,9 +431,9 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
               <ul className="grid grid-cols-2 col-span-2 gap-y-0.5 list text-[0.8em]">
                 {userListsData?.flattenedLists && (
                   <>
-                    {Object.entries(userListsData?.flattenedLists).map(([listId, { name, listItems }]) => {
+                    {Object.entries(userListsData?.flattenedLists).map(([listId, { name, is_public, listItems }]) => {
                       return (
-                        <>
+                        <div key={name}>
                           {listItems?.includes(data.mal_id) ? (
                             <label htmlFor={`${name}-list`} className="flex flex-row items-center gap-x-1 ">
                               {name}
@@ -447,7 +453,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                                       const { [listId]: _, ...rest } = prevState;
                                       return rest;
                                     } else {
-                                      return { ...prevState, [listId]: { name, notes: null } };
+                                      return { ...prevState, [listId]: { name, is_public, notes: null } };
                                     }
                                   });
                                 }}
@@ -455,7 +461,7 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                               />
                             </label>
                           )}
-                        </>
+                        </div>
                       );
                     })}
                   </>
@@ -465,9 +471,9 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                 <div className="flex flex-row items-center flex-wrap gap-2">
                   <p>New List</p>
                   <input
-                    value={newList}
+                    value={newList?.name || ""}
                     onChange={(e) => {
-                      setNewlist(e.target.value);
+                      setNewlist((prevState) => ({ ...prevState, name: e.target.value }));
                     }}
                     type="text"
                     name="newListName"
@@ -475,11 +481,27 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                     className="input input-primary bg-transparent text-[1em] h-fit px-1 py-0.5 outline-0 w-2/3 min-w-24 max-w-48"
                   />
                 </div>
+                {newList?.name ? (
+                  <label htmlFor="NewListPrivacy" className="flex flex-row items-center gap-x-1">
+                    <p>List Privacy: {newList?.is_public ? "public" : "private"}</p>
+                    <input
+                      type="checkbox"
+                      name="NewListPrivacy"
+                      id="NewListPrivacy"
+                      checked={newList?.is_public}
+                      onChange={(e) => {
+                        setNewlist((prevState) => ({ ...prevState, is_public: e.target.checked }));
+                      }}
+                    />
+                  </label>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
             {listsUpdateStatus === "idle" ? (
               <>
-                {newList || Object.keys(selectedLists).length ? (
+                {newList?.name || Object.keys(selectedLists).length ? (
                   <>
                     <div className="flex flex-col gap-y-1">
                       {Object.entries(selectedLists)?.map(([listId, { name, notes }]) => (
@@ -501,23 +523,24 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                           />
                         </div>
                       ))}
-                      {
-                        newList?
+                      {newList?.name ? (
                         <div className="w-full flex flex-col 2xs:flex-row items-start 2xs:items-center justify-between text-2xs">
-                          <p>{newList}</p>
+                          <p>{newList?.name}</p>
                           <input
                             type="text"
-                            name={`${newList}-notes`}
-                            id={`${newList}-notes`}
+                            name={`${newList?.name}-notes`}
+                            id={`${newList?.name}-notes`}
                             placeholder="Why does this anime belong on this list?"
                             className="input input-primary input-xs bg-transparent outline-0 px-1 w-3/4 text-3xs xs:text-2xs"
-                            value={newListNotes || ""}
+                            value={newList?.notes || ""}
                             onChange={(e) => {
-                              setNewListNotes(e.target.value);
+                              setNewlist((prevState) => ({ ...prevState, notes: e.target.value }));
                             }}
                           />
-                        </div>:""
-                      }
+                        </div>
+                      ) : (
+                        ""
+                      )}
                     </div>
 
                     <button onClick={updateLists} className="btn btn-primary btn-sm w-fit capitalize">

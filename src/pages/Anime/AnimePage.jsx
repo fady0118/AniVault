@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 import Character from "../../components/CardBox/Box";
 import CardBox from "../../components/CardBox/CardBox";
 import { RootContext } from "../../App";
-import { ChevronRight, Music4Icon, SquareArrowOutUpRight, Star } from "lucide-react";
+import { Bookmark, ChevronRight, Music4Icon, SquareArrowOutUpRight, Star } from "lucide-react";
 import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions, getYouTubeThumbnail } from "../../utility/utils";
 import { useRelations } from "../../utility/useRelations";
 import useGallery from "../../utility/useGallery";
@@ -19,11 +19,13 @@ import EpisodesModal from "../../components/anime/EpisodesModal";
 import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
 import LoaderComponent from "../../components/LoaderComponent";
+import { useUserItemModal } from "../../components/useUserItemModal";
 
 export default function AnimePage() {
   let { id } = useParams();
   const { windowWidth } = useContext(RootContext);
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
+  const { setShowUserItemModal, showUserItemModal, setUserItemData, userItemData, UserItemModal } = useUserItemModal();
   const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, videosQ, newsQ] = useQueries({
     queries: [
       {
@@ -161,19 +163,31 @@ export default function AnimePage() {
         <>
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center min-h-screen pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
             <div className="w-[95vw] flex flex-col space-y-3 ">
-              <div id="title" className="order-1 mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-col">
-                <div className="flex items-center gap-x-2.5 text-sm/relaxed sm:text-lg/relaxed font-bold">{animeQ?.data?.title}
-                  <Link className="w-7 sm:w-9 rounded-sm overflow-hidden" to={animeQ?.data?.url} target="_blank">
-                    <img
-                      src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
-                      alt="MyAnimeList Logo"
-                      className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
-                    />
-                  </Link>
+              <div className="flex flex-row items-center gap-x-2 order-1 mt-3">
+                <div id="title" className="min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-col">
+                  <div className="flex items-center gap-x-2.5 text-sm/relaxed sm:text-lg/relaxed font-bold">
+                    {animeQ?.data?.title}
+                    <Link className="min-w-6 w-7 sm:w-9 rounded-sm overflow-hidden" to={animeQ?.data?.url} target="_blank">
+                      <img
+                        src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
+                        alt="MyAnimeList Logo"
+                        className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
+                      />
+                    </Link>
+                  </div>
+                  <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
+                    {animeQ?.data?.title_english ? <span>{animeQ?.data.title_english}</span> : ""}
+                    {animeQ?.data?.title_japanese ? <span>{animeQ?.data.title_japanese}</span> : ""}
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
-                  {animeQ?.data?.title_english ? <span>{animeQ?.data.title_english}</span> : ""}
-                  {animeQ?.data?.title_japanese ? <span>{animeQ?.data.title_japanese}</span> : ""}
+                <div className="h-full flex items-center">
+                  <Bookmark
+                    className="h-2/3 min-h-6 max-h-10 w-auto aspect-square rounded-full p-1.5 text-amethyst-smoke-600  hover:cursor-pointer hover:text-amethyst-smoke-400 hover:bg-amethyst-smoke-500/20 duration-200"
+                    onClick={() => {
+                      setUserItemData(animeQ?.data);
+                      setShowUserItemModal(true);
+                    }}
+                  />
                 </div>
               </div>
               <div className="order-2 flex flex-col w-full gap-y-3">
@@ -584,6 +598,7 @@ export default function AnimePage() {
             />
           )}
           {showEpisodesModal && <EpisodesModal setShowEpisodesModal={setShowEpisodesModal} />}
+          {showUserItemModal && <UserItemModal data={userItemData} setShowUserItemModal={setShowUserItemModal} />}
         </>
       )}
     </>

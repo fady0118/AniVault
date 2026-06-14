@@ -8,16 +8,17 @@ import Pictures from "../../components/character/Pictures";
 import CardBox from "../../components/CardBox/CardBox";
 import { useRelations } from "../../utility/useRelations";
 import { useQueries } from "@tanstack/react-query";
-import { ChevronRight, Star } from "lucide-react";
+import { Bookmark, ChevronRight, Star } from "lucide-react";
 import News from "../../components/anime/News";
 import Reviews from "../../components/anime/Reviews";
 import { jikanFetch } from "../../utility/jikanApi";
 import LoaderComponent from "../../components/LoaderComponent";
+import { useUserItemModal } from "../../components/useUserItemModal";
 
 export default function MangaPage() {
   let { id } = useParams();
   const { windowWidth } = useContext(RootContext);
-
+  const { setShowUserItemModal, showUserItemModal, setUserItemData, userItemData, UserItemModal } = useUserItemModal();
   const [mangaQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, newsQ] = useQueries({
     queries: [
       {
@@ -128,21 +129,33 @@ export default function MangaPage() {
       ) : (
         <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
           <div className="w-[95vw] flex flex-col space-y-3">
-            <div id="title" className="mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex flex-col">
-              <span className="text-sm/relaxed sm:text-lg/relaxed font-bold">{mangaQ?.data?.title}</span>
-              <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
-                <span>{mangaQ?.data?.title_english}</span>
-                <span>{mangaQ?.data?.title_japanese}</span>
-                <Link className="w-7 sm:w-9 rounded-sm overflow-hidden" to={mangaQ?.data?.url} target="_blank">
-                  <img
-                    src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
-                    alt="MyAnimeList Logo"
-                    className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
-                  />
-                </Link>
+            <div className="flex flex-row items-center gap-x-2 order-1 mt-3">
+              <div id="title" className="min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-col">
+                <div className="flex items-center gap-x-2.5 text-sm/relaxed sm:text-lg/relaxed font-bold">
+                  {mangaQ?.data?.title}
+                  <Link className="min-w-6 w-7 sm:w-9 rounded-sm overflow-hidden" to={mangaQ?.data?.url} target="_blank">
+                    <img
+                      src="https:upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png"
+                      alt="MyAnimeList Logo"
+                      className="w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300"
+                    />
+                  </Link>
+                </div>
+                <div className="flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65">
+                  {mangaQ?.data?.title_english ? <span>{mangaQ?.data.title_english}</span> : ""}
+                  {mangaQ?.data?.title_japanese ? <span>{mangaQ?.data.title_japanese}</span> : ""}
+                </div>
+              </div>
+              <div className="h-full flex items-center">
+                <Bookmark
+                  className="h-2/3 min-h-6 max-h-10 w-auto aspect-square rounded-full p-1.5 text-amethyst-smoke-600  hover:cursor-pointer hover:text-amethyst-smoke-400 hover:bg-amethyst-smoke-500/20 duration-200"
+                  onClick={() => {
+                    setUserItemData(mangaQ?.data);
+                    setShowUserItemModal(true);
+                  }}
+                />
               </div>
             </div>
-
             <div className="order-2 flex flex-col w-full gap-y-3">
               <div className="w-full order-1 flex flex-col gap-3">
                 <div className="flex flex-col xs:flex-row items-stretch gap-3 w-full">
@@ -389,7 +402,7 @@ export default function MangaPage() {
                           )}
                           {showAllRelations
                             ? mangaQ?.data?.flattenedRelations.slice(3).map((entry, i) => (
-                                <div key={i+3} className="flex flex-row w-full">
+                                <div key={i + 3} className="flex flex-row w-full">
                                   <Link className="w-1/4 max-w-14 h-full aspect-2/3 " to={`/${entry.type}/${entry.mal_id}`}>
                                     <img
                                       className="w-full h-full object-cover"
@@ -448,6 +461,7 @@ export default function MangaPage() {
           onOpen={(index) => dispatch({ type: "open", newIndex: index })}
         />
       )}
+      {showUserItemModal && <UserItemModal data={userItemData} setShowUserItemModal={setShowUserItemModal} />}
     </>
   );
 }
