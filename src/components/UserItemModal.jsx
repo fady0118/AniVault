@@ -279,19 +279,23 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
 
   return (
     <div className="z-50 fixed top-0 left-[-2.5vw] w-[102.5vw] h-screen backdrop-blur-lg">
-      <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 lg:w-1/2 rounded-lg p-3 xs:p-4 max-h-[90vh] overflow-y-auto box-colors-medium">
-        <button onClick={() => setShowUserItemModal(false)} className="btn btn-ghost btn-sm btn-circle absolute right-2 top-2 bg-transparent" aria-label="Close authentication modal">
+      <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 rounded-lg p-3 xs:p-4 max-h-[90vh] overflow-y-auto box-colors">
+        <button
+          onClick={() => setShowUserItemModal(false)}
+          className="btn btn-ghost btn-sm btn-circle absolute top-1 right-1 sm:right-2 sm:top-2 bg-transparent"
+          aria-label="Close authentication modal"
+        >
           ✕
         </button>
         <div className="flex flex-col gap-2">
           <div className="flex flex-col 2xs:flex-row items-start  gap-3">
-            <div className="flex flex-row items-start w-fit text-xs 3xs:text-sm">
+            <div className="flex flex-row items-start w-fit text-xs 3xs:text-sm gap-2 2xs:gap-0">
               <img src={data.images.webp.large_image_url || data.images.webp.image_url} className="min-w-20 max-w-28 aspect-2/3 rounded-sm object-cover" alt="" />
               {windowWidth < 384 && (
-                <div id="title" className="flex flex-col items-start gap-2 min-w-1/2 w-fit rounded-md px-1.5 py-0.5 ">
-                  <p>{data?.title}</p>
+                <div id="title" className="flex flex-col items-start gap-2 min-w-1/2 mr-3 w-fit rounded-md py-0.5 ">
+                  <p className="font-bold">{data?.title}</p>
                   <span
-                    className={`inline-flex items-center rounded-md bg-indigo-400/10 px-1 py-0.5 text-2xs font-medium ${mediaType === "anime" ? "text-indigo-400 inset-ring inset-ring-indigo-400/30" : "text-purple-400 inset-ring inset-ring-purple-400/30"}`}
+                    className={`inline-flex items-center rounded-md px-1 py-0.5 text-2xs font-medium ${mediaType === "anime" ? " text-indigo-500 dark:text-indigo-400 inset-ring inset-ring-indigo-500/50 dark:inset-ring-indigo-400/50" : "text-purple-500 dark:text-purple-400 inset-ring inset-ring-purple-500/50 dark:inset-ring-purple-400/50"}`}
                   >
                     {mediaType}
                   </span>
@@ -300,10 +304,10 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
             </div>
             <div className="flex flex-col gap-2">
               {windowWidth >= 384 && (
-                <div id="title" className="flex flex-row flex-wrap items-end gap-2 min-w-1/2 w-fit rounded-md px-1.5 py-0.5 text-sm">
-                  <p>{data?.title}</p>
+                <div id="title" className="flex flex-row flex-warp items-center min-w-1/2 w-fit rounded-md gap-2 font-bold">
+                  {data?.title}
                   <span
-                    className={`inline-flex items-center rounded-md bg-indigo-400/10 px-1 py-0.5 text-2xs font-medium ${mediaType === "anime" ? "text-indigo-400 inset-ring inset-ring-indigo-400/30" : "text-purple-400 inset-ring inset-ring-purple-400/30"}`}
+                    className={`inline-flex items-center rounded-md px-1 py-0.5 text-2xs font-medium ${mediaType === "anime" ? " text-indigo-500 dark:text-indigo-400 inset-ring inset-ring-indigo-500/50 dark:inset-ring-indigo-400/50" : "text-purple-500 dark:text-purple-400 inset-ring inset-ring-purple-500/50 dark:inset-ring-purple-400/50"}`}
                   >
                     {mediaType}
                   </span>
@@ -426,137 +430,142 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
             </div>
           </div>
           <div className="flex flex-col gap-1 text-sm md:text-md">
-            <p className="font-light text-[0.75em]">Add {data?.title} to one of your custom lists </p>
-            <p className="uppercase font-semibold">{loggedInUser.name}'s Lists</p>
-            <div className="w-full grid grid-cols-2 sm:grid-cols-3 gap-y-2">
-              <ul className="grid grid-cols-1 xs:grid-cols-2 col-span-2 gap-y-0.5 list text-[0.8em]">
-                {userListsData?.flattenedLists && (
-                  <>
-                    {Object.entries(userListsData?.flattenedLists).map(([listId, { name, is_public, listItems }]) => {
-                      return (
-                        <div key={name}>
-                          {listItems?.includes(data.mal_id) ? (
-                            <label htmlFor={`${name}-list`} className="flex flex-row items-center gap-x-1 ">
-                              {name}
-                              <input name={`${name}-list`} key={name} type="checkbox" checked readOnly className="checkbox scale-65" />
-                            </label>
-                          ) : (
-                            <label htmlFor={`${name}-list`} className="flex flex-row items-center gap-x-1">
-                              {name}
-                              <input
-                                name={`${name}-list`}
-                                key={name}
-                                type="checkbox"
-                                checked={listId in selectedLists}
-                                onChange={() => {
-                                  setSelectedLists((prevState) => {
-                                    if (listId in prevState) {
-                                      const { [listId]: _, ...rest } = prevState;
-                                      return rest;
-                                    } else {
-                                      return { ...prevState, [listId]: { name, is_public, notes: null, is_item_public: is_public } };
-                                    }
-                                  });
-                                }}
-                                className="checkbox checkbox-primary scale-65"
-                              />
-                            </label>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </>
-                )}
-              </ul>
-              <div className="text-[0.8em]">
-                <div className="flex flex-row items-center flex-wrap gap-1">
-                  <p>New List</p>
-                  <input
-                    value={newList?.name || ""}
-                    onChange={(e) => {
-                      setNewlist((prevState) => ({ ...prevState, name: e.target.value }));
-                    }}
-                    type="text"
-                    name="newListName"
-                    id="newListName"
-                    className="input input-primary bg-transparent text-[1em] h-fit px-1 py-0.5 outline-0 w-2/3 min-w-24 max-w-48"
-                  />
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="font-light text-[0.85em]">
+                  Add <b>{data?.title}</b> to one of your custom lists
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[1.4fr_0.9fr]">
+              <section className="h-fit rounded-2xl border border-white/10 section-colors-medium p-3 shadow-inner shadow-slate-900/30">
+                <div className="mb-2 flex items-center flex-wrap justify-between gap-0.5">
+                  <div>
+                    <p className="text-sm font-semibold">Choose existing lists</p>
+                    <p className="text-xs text-amethyst-smoke-800 dark:text-amethyst-smoke-600">Select one or more lists to add this item.</p>
+                  </div>
+                  <span className="inline-flex items-center rounded-md px-1 py-0.5 text-2xs font-medium text-indigo-500 dark:text-indigo-400 inset-ring inset-ring-indigo-500/50 dark:inset-ring-indigo-400/50">
+                    {Object.keys(userListsData?.flattenedLists ?? {}).length} total
+                  </span>
                 </div>
-                {newList?.name ? (
-                  <div className="flex flex-row gap-1 items-center text-[0.9em]">
-                    <p>List Privacy:</p>
-                    <div className="flex flex-row items-center">
-                      <label class="swap">
-                        <input
-                          type="checkbox"
-                          checked={newList?.is_public}
-                          onChange={(e) => {
-                            setNewlist((prevState) => ({ ...prevState, is_public: e.target.checked }));
-                          }}
-                        />
-                        <div class="swap-on">Public</div>
-                        <div class="swap-off">Private</div>
-                      </label>
+                <div className="grid gap-2 max-h-50 overflow-y-auto pr-2">
+                  {userListsData?.flattenedLists ? (
+                    Object.entries(userListsData.flattenedLists).map(([listId, { name, is_public, listItems }]) => {
+                      const alreadyAdded = listItems?.includes(data.mal_id);
+                      const selected = listId in selectedLists;
+                      return (
+                        <label
+                          key={listId}
+                          htmlFor={`${listId}-list`}
+                          className={`group grid rounded-2xl border p-2.5 transition ${alreadyAdded ? "border-emerald-500/40 bg-emerald-500/10 dark:bg-emerald-500/5" : selected ? "border-primary/40 bg-primary/10 dark:bg-primary/5 hover:cursor-pointer" : "border-amethyst-smoke-800/20 dark:border-amethyst-smoke-600/20 bg-transparent hover:cursor-pointer hover:border-primary/50 hover:bg-primary-900/10"}`}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex flex-row items-end gap-1.5 text-xs">
+                              <p className="truncate font-medium text-amethyst-smoke-950 dark:text-amethyst-smoke-100">{name}</p>
+                              <p className="text-[0.85em] text-amethyst-smoke-800 dark:text-amethyst-smoke-600">{is_public ? "Public list" : "Private list"}</p>
+                            </div>
+                            <input
+                              id={`${listId}-list`}
+                              name={`${listId}-list`}
+                              type="checkbox"
+                              checked={alreadyAdded || selected}
+                              disabled={alreadyAdded}
+                              onChange={() => {
+                                if (alreadyAdded) return;
+                                setSelectedLists((prevState) => {
+                                  if (listId in prevState) {
+                                    const { [listId]: _, ...rest } = prevState;
+                                    return rest;
+                                  }
+                                  return { ...prevState, [listId]: { name, is_public, notes: null, is_item_public: is_public } };
+                                });
+                              }}
+                              className="checkbox checkbox-primary scale-75"
+                            />
+                          </div>
+                          {alreadyAdded ? (
+                            <p className="text-2xs text-emerald-600 dark:text-emerald-300">Already contains this item.</p>
+                          ) : (
+                            <p className="text-2xs text-amethyst-smoke-800 dark:text-amethyst-smoke-600">Tap to add this item to the list.</p>
+                          )}
+                        </label>
+                      );
+                    })
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-amethyst-smoke-100/10 bg-transparent p-4 text-xs text-slate-600 dark:text-slate-400">
+                      No custom lists yet. Use the panel on the right to create one.
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              <section className="h-fit rounded-2xl border border-amethyst-smoke-100/10 section-colors-medium p-3 shadow-inner shadow-slate-900/30">
+                <div className="flex flex-row items-center justify-between gap-1 flex-wrap">
+                  <p className="text-sm font-semibold">Create a new list</p>
+                  <div className="flex items-center text-amethyst-smoke-400 gap-2 text-xs">
+                    <p className="text-[0.9em] text-amethyst-smoke-800 dark:text-amethyst-smoke-600">List privacy</p>
+                    <label className="flex cursor-pointer items-center gap-2 rounded-full bg-transparent text-amethyst-smoke-900 dark:text-amethyst-smoke-500 transition hover:border-primary/50">
+                      <span className="text-xs">{newList?.is_public ? "Public" : "Private"}</span>
                       <input
-                        className="toggle toggle-xs scale-75"
                         type="checkbox"
                         checked={newList?.is_public}
                         onChange={(e) => {
                           setNewlist((prevState) => ({ ...prevState, is_public: e.target.checked }));
                         }}
+                        className="toggle toggle-primary toggle-xs bg-transparent not-checked:text-amethyst-smoke-600"
                       />
-                    </div>
+                    </label>
                   </div>
-                ) : (
-                  ""
-                )}
-              </div>
+                </div>
+                <input
+                  value={newList?.name || ""}
+                  onChange={(e) => {
+                    setNewlist((prevState) => ({ ...prevState, name: e.target.value }));
+                  }}
+                  type="text"
+                  name="newListName"
+                  id="newListName"
+                  placeholder="List name"
+                  className="input input-primary input-xs bg-transparent px-3 py-2 mt-1 outline-0 w-full"
+                />
+              </section>
             </div>
-            {listsUpdateStatus === "idle" ? (
-              <>
-                {newList?.name || Object.keys(selectedLists).length ? (
-                  <>
-                    <div className="flex flex-col gap-y-1">
-                      {Object.entries(selectedLists)?.map(([listId, { name, notes }]) => (
-                        <div key={listId} className="w-full flex flex-col 2xs:flex-row items-start 2xs:items-center justify-between text-2xs">
-                          {/* list name */}
-                          <p>{name}</p>
-                          {/* item privacy switch */}
-                          <div className="flex flex-row items-center justify-between gap-2 w-4/5">
-                            <div className="flex flex-row items-center">
-                              <label class="swap">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedLists[listId].is_item_public}
-                                  onChange={(e) => {
-                                    setSelectedLists((prevState) => ({
-                                      ...prevState,
-                                      [listId]: { ...prevState[listId], is_item_public: e.target.checked },
-                                    }));
-                                  }}
-                                />
-                                <div class="swap-on">Public</div>
-                                <div class="swap-off">Private</div>
-                              </label>
-                              <input
-                                className="toggle toggle-xs scale-75"
-                                type="checkbox"
-                                checked={selectedLists[listId].is_item_public}
-                                onChange={(e) => {
-                                  setSelectedLists((prevState) => ({
-                                    ...prevState,
-                                    [listId]: { ...prevState[listId], is_item_public: e.target.checked },
-                                  }));
-                                }}
-                              />
+
+            <div className="space-y-3 pt-3">
+              {listsUpdateStatus === "idle" ? (
+                <>
+                  {newList?.name || Object.keys(selectedLists).length ? (
+                    <>
+                      <div className="grid gap-3">
+                        {Object.entries(selectedLists).map(([listId, { name, notes, is_item_public }]) => (
+                          <div key={listId} className="rounded-2xl border border-amethyst-smoke-100/10 section-colors-medium p-3">
+                            <div className="flex flex-row items-center justify-between gap-1 flex-wrap">
+                              <p className="text-sm font-medium  text-amethyst-smoke-950 dark:text-amethyst-smoke-100">{name}</p>
+                              <div className="flex items-center text-amethyst-smoke-400 gap-2 text-xs">
+                                <p className="text-[0.9em] text-amethyst-smoke-800 dark:text-amethyst-smoke-600">Item privacy</p>
+                                <label className="flex cursor-pointer items-center gap-2 rounded-full bg-transparent text-amethyst-smoke-900 dark:text-amethyst-smoke-500 transition hover:border-primary/50">
+                                  <span className="w-10">{is_item_public ? "Public" : "Private"}</span>
+                                  <input
+                                    className="toggle toggle-primary toggle-xs bg-transparent not-checked:text-amethyst-smoke-600"
+                                    type="checkbox"
+                                    checked={is_item_public}
+                                    onChange={(e) => {
+                                      setSelectedLists((prevState) => ({
+                                        ...prevState,
+                                        [listId]: { ...prevState[listId], is_item_public: e.target.checked },
+                                      }));
+                                    }}
+                                  />
+                                </label>
+                              </div>
                             </div>
-                            {/* notes (why this item belongs to this list) */}
                             <input
                               type="text"
                               name={`${name}-notes`}
                               id={`${name}-notes`}
                               placeholder="Why does this anime belong on this list?"
-                              className="input input-primary input-xs bg-transparent outline-0 px-1 grow text-3xs xs:text-2xs"
+                              className="input input-primary input-xs bg-transparent outline-0 px-2 py-2 mt-1 w-full"
                               value={notes || ""}
                               onChange={(e) => {
                                 setSelectedLists((prevState) => ({
@@ -566,20 +575,19 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                               }}
                             />
                           </div>
-                        </div>
-                      ))}
-
-                      {newList?.name ? (
-                        <div className="w-full flex flex-col 2xs:flex-row items-start 2xs:items-center justify-between text-2xs">
-                          {/* list name */}
-                          <p>{newList?.name}</p>
-                          {/* item privacy switch */}
-                          <div className="flex flex-row items-center justify-between gap-2 w-4/5">
-                            <div className="flex flex-row items-center">
-                              <label class="swap">
+                        ))}
+                        {newList?.name ? (
+                          <div className="rounded-2xl border border-amethyst-smoke-100/10 section-colors-medium p-3">
+                            <div className="flex gap-1.5 flex-row items-center justify-between flex-wrap">
+                              <div>
+                                <p className="text-sm font-medium text-amethyst-smoke-950 dark:text-amethyst-smoke-100">{newList?.name}</p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-slate-600 dark:text-slate-400">{newList?.is_item_public ? "Public" : "Private"}</span>
                                 <input
+                                  className="toggle toggle-primary scale-80"
                                   type="checkbox"
-                                  checked={newList.is_item_public}
+                                  checked={newList?.is_item_public}
                                   onChange={(e) => {
                                     setNewlist((prevState) => ({
                                       ...prevState,
@@ -587,79 +595,60 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
                                     }));
                                   }}
                                 />
-                                <div class="swap-on">Public</div>
-                                <div class="swap-off">Private</div>
-                              </label>
-                              <input
-                                className="toggle toggle-xs scale-75"
-                                type="checkbox"
-                                checked={newList.is_item_public}
-                                onChange={(e) => {
-                                  setNewlist((prevState) => ({
-                                    ...prevState,
-                                    is_item_public: e.target.checked,
-                                  }));
-                                }}
-                              />
+                              </div>
                             </div>
-                            {/* notes (why this item belongs to this list) */}
                             <input
                               type="text"
                               name={`${newList?.name}-notes`}
                               id={`${newList?.name}-notes`}
                               placeholder="Why does this anime belong on this list?"
-                              className="input input-primary input-xs bg-transparent outline-0 px-1 grow text-3xs xs:text-2xs"
+                              className="input input-primary input-xs bg-transparent outline-0 px-2 py-2 mt-2 w-full"
                               value={newList?.notes || ""}
                               onChange={(e) => {
                                 setNewlist((prevState) => ({ ...prevState, notes: e.target.value }));
                               }}
                             />
                           </div>
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-
-                    <button onClick={updateLists} className="btn btn-primary btn-sm w-fit capitalize">
+                        ) : null}
+                      </div>
+                      <button onClick={updateLists} className="btn btn-primary btn-sm w-fit capitalize">
+                        update
+                      </button>
+                    </>
+                  ) : (
+                    <button disabled className="btn btn-sm w-fit capitalize">
                       update
                     </button>
-                  </>
-                ) : (
-                  <button disabled className="btn btn-sm w-fit capitalize">
-                    update
-                  </button>
-                )}
-              </>
-            ) : (
-              <>
-                {listsUpdateStatus === "loading" ? (
-                  <div className="flex">
-                    <div className="relative scale-75">
-                      <LoaderComponent />
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    {listsUpdateStatus === "success" ? (
-                      <div role="alert" className="text-emerald-600 dark:text-emerald-400 rounded-sm px-1 py-0.5 text-xs">
-                        <span>list updated successfully</span>
+                  )}
+                </>
+              ) : (
+                <>
+                  {listsUpdateStatus === "loading" ? (
+                    <div className="flex">
+                      <div className="relative scale-75">
+                        <LoaderComponent />
                       </div>
-                    ) : (
-                      <>
-                        {listsUpdateError ? (
-                          <div role="alert" className="text-rose-600 dark:text-rose-400 rounded-sm px-1 py-0.5 text-xs">
-                            <span>{listsUpdateError}</span>
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                      </>
-                    )}
-                  </>
-                )}
-              </>
-            )}
+                    </div>
+                  ) : (
+                    <>
+                      {listsUpdateStatus === "success" ? (
+                        <div role="alert" className="text-emerald-600 dark:text-emerald-400 rounded-sm px-1 py-0.5 text-xs">
+                          <span>list updated successfully</span>
+                        </div>
+                      ) : (
+                        <>
+                          {listsUpdateError ? (
+                            <div role="alert" className="text-rose-600 dark:text-rose-400 rounded-sm px-1 py-0.5 text-xs">
+                              <span>{listsUpdateError}</span>
+                            </div>
+                          ) : null}
+                        </>
+                      )}
+                    </>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

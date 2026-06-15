@@ -163,8 +163,8 @@ export default function AnimePage() {
         <>
           <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center min-h-screen pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
             <div className="w-[95vw] flex flex-col space-y-3 ">
-              <div className="flex flex-row items-center gap-x-2 order-1 mt-3">
-                <div id="title" className="min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-col">
+              <div className="flex flex-row items-end gap-x-2 order-1 mt-3 h-fit">
+                <div id="title" className="min-w-1/2 h-fit w-fit rounded-md px-3 py-1 box-colors flex flex-col">
                   <div className="flex items-center gap-x-2.5 text-sm/relaxed sm:text-lg/relaxed font-bold">
                     {animeQ?.data?.title}
                     <Link className="min-w-6 w-7 sm:w-9 rounded-sm overflow-hidden" to={animeQ?.data?.url} target="_blank">
@@ -180,24 +180,43 @@ export default function AnimePage() {
                     {animeQ?.data?.title_japanese ? <span>{animeQ?.data.title_japanese}</span> : ""}
                   </div>
                 </div>
-                <div className="h-full flex items-center">
+                {windowWidth > 384 ? (
                   <Bookmark
-                    className="h-2/3 min-h-6 max-h-10 w-auto aspect-square rounded-full p-1.5 text-amethyst-smoke-600  hover:cursor-pointer hover:text-amethyst-smoke-400 hover:bg-amethyst-smoke-500/20 duration-200"
+                    className="h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors"
                     onClick={() => {
                       setUserItemData(animeQ?.data);
                       setShowUserItemModal(true);
                     }}
                   />
-                </div>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="order-2 flex flex-col w-full gap-y-3">
                 <div className="w-full order-1 flex flex-col gap-3">
                   <div className="flex flex-col xs:flex-row items-stretch gap-3 w-full">
-                    <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
-                      <div id="poster" className="w-full h-full">
-                        <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={animeQ?.data?.images?.jpg?.large_image_url} alt={animeQ?.data?.title} />
+                    {windowWidth <= 384 ? (
+                      <div className="w-full flex flex-row items-start gap-2 2xs:w-fit 2xs:inline-block">
+                        <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
+                          <div id="poster" className="w-full h-full">
+                            <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={animeQ?.data?.images?.jpg?.large_image_url} alt={animeQ?.data?.title} />
+                          </div>
+                        </div>
+                        <Bookmark
+                          className="order-last h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors"
+                          onClick={() => {
+                            setUserItemData(animeQ?.data);
+                            setShowUserItemModal(true);
+                          }}
+                        />
                       </div>
-                    </div>
+                    ) : (
+                      <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
+                        <div id="poster" className="w-full h-full">
+                          <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={animeQ?.data?.images?.jpg?.large_image_url} alt={animeQ?.data?.title} />
+                        </div>
+                      </div>
+                    )}
                     <div className="order-1 flex flex-col gap-3">
                       <div id="details" className="box-colors rounded-lg w-fit">
                         <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>

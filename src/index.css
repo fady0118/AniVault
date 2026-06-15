@@ -272,6 +272,9 @@
   .box-colors-medium {
     @apply bg-amethyst-smoke-300/90 dark:bg-dark-amethyst-smoke-200/90
   }
+  .section-colors-medium {
+    @apply bg-amethyst-smoke-300/40 dark:bg-dark-amethyst-smoke-200/40
+  }
 
   .box-colors-stronger {
     @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300
@@ -288,6 +291,9 @@
     @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300
   }
 
+  .bookmark-colors{
+    @apply text-amethyst-smoke-900 hover:text-amethyst-smoke-800  dark:hover:text-amethyst-smoke-600 hover:bg-amethyst-smoke-400 dark:hover:bg-amethyst-smoke-500/20 hover:cursor-pointer duration-200
+  }
   .searchModal-box-colors {
     @apply bg-amethyst-smoke-400 dark:bg-dark-amethyst-smoke-300
   }
