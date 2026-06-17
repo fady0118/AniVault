@@ -51,8 +51,8 @@ async function executeFetch(input, init, retries = 2) {
 
 export function jikanFetch(input, init) {
   let url = input;
-  if (SFW_value && url.includes("?") && !url.includes('magazines')) {
-    if(url.includes('genres_exclude=')){
+  if (SFW_value && url.includes("?") && !url.includes("magazines")) {
+    if (url.includes("genres_exclude=")) {
       url = url.split("genres_exclude=").join("sfw&genres_exclude=9,12,49,");
     } else {
       url = url.split("?").join("?sfw&genres_exclude=9,12,49&");
