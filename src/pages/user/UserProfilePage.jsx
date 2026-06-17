@@ -5,6 +5,8 @@ import AvatarModal from "../../components/profile/AvatarModal";
 import { Link, useOutletContext } from "react-router";
 import { marked } from "marked";
 import UserProfileData from "./UserProfileData";
+import UserLists from "./userLists";
+import UserWatchList from "./UserWatchList";
 
 export default function UserProfilePage() {
   const { loggedInUser, userData } = useAuth();
@@ -17,6 +19,7 @@ export default function UserProfilePage() {
   return (
     <>
       <UserProfileData userData={userData} />
+      <UserWatchList user={loggedInUser}/>
     </>
   );
 }

@@ -10,7 +10,7 @@ export default function UserProfileData({ userData }) {
     }
   }, [userData]);
   return (
-    <div id="userContent" className="relative order-2 w-full flex flex-col sm:flex-row sm:justify-start gap-3">
+    <div id="userContent" className="relative  w-full flex flex-col sm:flex-row sm:justify-start gap-3">
       <div className="grow flex flex-col gap-3">
         <div className="w-full flex flex-row flex-wrap gap-3 text-xs">
           <div id="info" className="w-1/5 min-w-38 h-fit min-h-32 rounded-lg overflow-hidden box-colors">

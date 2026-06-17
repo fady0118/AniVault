@@ -86,9 +86,11 @@ export default function UserItemModal({ data, setShowUserItemModal }) {
             manga_vols: Number(mangaProgress.vols) || null,
             manga_chaps: Number(mangaProgress.chaps) || null,
             media_type: mediaType,
-            mal_id: data.mal_id,
-            user_id: loggedInUser.$id,
-            user_id_str: loggedInUser.$id,
+            mal_id: data?.mal_id,
+            cached_img: data?.images?.jpg?.image_url,
+            title: data?.title,
+            user_id: loggedInUser?.$id,
+            user_id_str: loggedInUser?.$id,
           },
         });
       } else {
