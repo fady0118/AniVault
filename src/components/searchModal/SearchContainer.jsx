@@ -15,7 +15,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
           if (!searchInput) return;
           const res = await jikanFetch(`https://api.jikan.moe/v4/anime?q=${searchInput}&order_by=favorites&sort=desc`);
           const animeData = await res.json();
-          const uniqueAnimeData = [...new Map(animeData?.data.map((item) => [item.mal_id, item])).values()];
+          const uniqueAnimeData = [...new Map(animeData?.data?.map((item) => [item.mal_id, item])).values()];
           return { data: uniqueAnimeData, pagination: animeData.pagination };
         },
         enabled: Boolean(searchInput) && (category === "all" || category === "anime"),
@@ -26,7 +26,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
           if (!searchInput) return;
           const res = await jikanFetch(`https://api.jikan.moe/v4/manga?q=${searchInput}&order_by=favorites&sort=desc`);
           const mangaData = await res.json();
-          const uniqueMangaData = [...new Map(mangaData?.data.map((item) => [item.mal_id, item])).values()];
+          const uniqueMangaData = [...new Map(mangaData?.data?.map((item) => [item.mal_id, item])).values()];
           return { data: uniqueMangaData, pagination: mangaData.pagination };
         },
         enabled: Boolean(searchInput) && (category === "all" || category === "manga"),
@@ -37,7 +37,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
           if (!searchInput) return;
           const res = await jikanFetch(`https://api.jikan.moe/v4/characters?q=${searchInput}&order_by=favorites&sort=desc`);
           const charactersData = await res.json();
-          const uniqueCharactersData = [...new Map(charactersData?.data.map((item) => [item.mal_id, item])).values()];
+          const uniqueCharactersData = [...new Map(charactersData?.data?.map((item) => [item.mal_id, item])).values()];
           return { data: uniqueCharactersData, pagination: charactersData.pagination };
         },
         enabled: Boolean(searchInput) && (category === "all" || category === "characters"),
@@ -48,7 +48,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
           if (!searchInput) return;
           const res = await jikanFetch(`https://api.jikan.moe/v4/producers?q=${searchInput}&order_by=favorites&sort=desc`);
           const producersData = await res.json();
-          const uniqueProducersData = [...new Map(producersData?.data.map((item) => [item.mal_id, item])).values()];
+          const uniqueProducersData = [...new Map(producersData?.data?.map((item) => [item.mal_id, item])).values()];
           return { data: uniqueProducersData, pagination: producersData.pagination };
         },
         enabled: Boolean(searchInput) && (category === "all" || category === "producers"),
@@ -59,7 +59,7 @@ export default function SearchContainer({ searchInput, category, closeModal }) {
           if (!searchInput) return;
           const res = await jikanFetch(`https://api.jikan.moe/v4/people?q=${searchInput}&order_by=favorites&sort=desc`);
           const peopleData = await res.json();
-          const uniquePeopleData = [...new Map(peopleData?.data.map((item) => [item.mal_id, item])).values()];
+          const uniquePeopleData = [...new Map(peopleData?.data?.map((item) => [item.mal_id, item])).values()];
           return { data: uniquePeopleData, pagination: peopleData.pagination };
         },
         enabled: Boolean(searchInput) && (category === "all" || category === "people"),

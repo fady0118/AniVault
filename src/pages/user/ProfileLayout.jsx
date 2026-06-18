@@ -10,7 +10,7 @@ export default function ProfileLayout() {
   const [isEditPage, setIsEditPage] = useState(window.location.pathname.includes("profile_edit"));
   return (
     <>
-      <div className="relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
+      <div className="relative z-10 w-full px-[2.5vw] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
         {loggedInUser ? (
           <>
             <div className="flex flex-row items-start flex-wrap gap-3 mt-3">

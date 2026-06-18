@@ -112,12 +112,17 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
       }
       setUserItemData(res);
       setUserItems((prevState) => {
-        let newState = prevState;
-        if (mediaType === "anime") {
-          return { mangaItems: prevState?.mangaItems ?? [], animeItems: [...newState?.animeItems?.filter((item) => item?.mal_id !== res?.mal_id), res] };
-        } else {
-          return { animeItems: prevState?.mangaItems ?? [], mangaItems: [...newState?.mangaItems?.filter((item) => item?.mal_id !== res?.mal_id), res] };
-        }
+        const animeItems = prevState?.animeItems ?? [];
+        const mangaItems = prevState?.mangaItems ?? [];
+        return mediaType === "anime"
+          ? {
+              mangaItems,
+              animeItems: [res, ...animeItems.filter((item) => item?.mal_id !== res?.mal_id)],
+            }
+          : {
+              animeItems,
+              mangaItems: [res, ...mangaItems.filter((item) => item?.mal_id !== res?.mal_id)],
+            };
       });
       await delay(300);
       setStatus("success");

@@ -59,7 +59,7 @@
   @keyframes textLightAnimation {
     0% {
       stroke-dashoffset: var(--stroke-dashes);
-      
+
     }
 
     80% {
@@ -201,6 +201,19 @@
 }
 
 @layer utilities {
+  #listTabs.tabs-box {
+    @apply bg-transparent;
+  }
+  #listTabs.tabs-box>.tab {
+    @apply text-text-light dark:text-text-dark bg-amethyst-smoke-400/75 dark:bg-dark-amethyst-smoke-200/75 hover:bg-indigo-500/20 duration-200;
+  }
+  #listTabs.tabs-box>.tab:checked {
+    @apply bg-indigo-500 text-text-dark;
+  }
+  #listTabs.tabs-box .tab-content {
+    @apply p-1 bg-amethyst-smoke-400/50 dark:bg-dark-amethyst-smoke-200/50;
+  }
+
   .theme-colors {
     @apply bg-amethyst-smoke-300 text-text-light dark:bg-dark-amethyst-smoke-50 dark:text-text-dark
   }
@@ -211,8 +224,6 @@
 
   .no-scrollbar::-webkit-scrollbar {
     display: none;
-    /* color: #141617; */
-    /* Chrome, Safari, and Opera */
   }
 
   .no-scrollbar {
@@ -272,6 +283,7 @@
   .box-colors-medium {
     @apply bg-amethyst-smoke-300/90 dark:bg-dark-amethyst-smoke-200/90
   }
+
   .section-colors-medium {
     @apply bg-amethyst-smoke-300/40 dark:bg-dark-amethyst-smoke-200/40
   }
@@ -287,13 +299,15 @@
   .box-colors-accent {
     @apply dark:bg-amethyst-smoke-500/30 bg-amethyst-smoke-50/30
   }
+
   .smallHeaderBox-colors {
     @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300
   }
 
-  .bookmark-colors{
-    @apply text-amethyst-smoke-900 hover:text-amethyst-smoke-800  dark:hover:text-amethyst-smoke-600 hover:bg-amethyst-smoke-400 dark:hover:bg-amethyst-smoke-500/20 hover:cursor-pointer duration-200
+  .bookmark-colors {
+    @apply text-amethyst-smoke-900 hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-600 hover:bg-amethyst-smoke-400 dark:hover:bg-amethyst-smoke-500/20 hover:cursor-pointer duration-200
   }
+
   .searchModal-box-colors {
     @apply bg-amethyst-smoke-400 dark:bg-dark-amethyst-smoke-300
   }

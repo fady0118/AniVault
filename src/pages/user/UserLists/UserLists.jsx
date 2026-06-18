@@ -3,8 +3,11 @@ import { useAuth } from "../../../Contexts/AuthContext";
 import { tablesDB } from "../../../appwrite";
 import { Query } from "appwrite";
 import UserWatchList from "./UserWatchList";
+import { useState } from "react";
+import UserCustomLists from "./UserCustomLists";
 
 export default function UserLists({ user }) {
+  const [currentTab, setCurrentTab] = useState(1);
   const [userItemQ, userListsQ] = useQueries({
     queries: [
       {
@@ -32,5 +35,35 @@ export default function UserLists({ user }) {
     ],
   });
 
-  return <div>{userItemQ.isPending ? <div>Loading...</div> : <UserWatchList data={userItemQ?.data} />}</div>;
+  return (
+    <>
+      <div role="tablist" id="listTabs" className="tabs tabs-box flex flex-row items-center gap-2">
+        <input
+          type="radio"
+          name="userTabs"
+          className="tab"
+          aria-label="user watchlist"
+          value={1}
+          checked={Number(currentTab) === 1}
+          onChange={(e) => {
+            setCurrentTab(Number(e.target.value));
+          }}
+        />
+        <div className="tab-content">{userItemQ.isPending ? <div>Loading...</div> : <UserWatchList data={userItemQ?.data} />}</div>
+
+        <input
+          type="radio"
+          name="userTabs"
+          className="tab"
+          aria-label="user custom lists"
+          value={2}
+          checked={Number(currentTab) === 2}
+          onChange={(e) => {
+            setCurrentTab(Number(e.target.value));
+          }}
+        />
+        <div className="tab-content">{userListsQ.isPending ? <div>Loading...</div> : <UserCustomLists data={userListsQ?.data} />}</div>
+      </div>
+    </>
+  );
 }

@@ -161,7 +161,7 @@ export default function AnimePage() {
         </div>
       ) : (
         <>
-          <div className="relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center min-h-screen pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
+          <div className="relative z-10 w-full  flex justify-center min-h-screen pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
             <div className="w-[95vw] flex flex-col space-y-3 ">
               <div className="flex flex-row items-end gap-x-2 order-1 mt-3 h-fit">
                 <div id="title" className="min-w-1/2 h-fit w-fit rounded-md px-3 py-1 box-colors flex flex-col">
