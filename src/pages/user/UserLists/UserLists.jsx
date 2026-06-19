@@ -7,7 +7,7 @@ import { useState } from "react";
 import UserCustomLists from "./UserCustomLists";
 
 export default function UserLists({ user }) {
-  const [currentTab, setCurrentTab] = useState(1);
+  const [currentTab, setCurrentTab] = useState(2);
   const [userItemQ, userListsQ] = useQueries({
     queries: [
       {

@@ -36,7 +36,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
   const [newList, setNewlist] = useState({ name: null, notes: null, is_public: false, is_item_public: false }); // holds the newList data, used in case the user adds the item to a new List
 
   // lists-status states
-  const [listsUpdateStatus, setListsUpdateStatus] = useState("idle"); // idle, loading, success, error
+  const [listsUpdateStatus, setListsUpdateStatus] = useState("idle"); // idle, modified, loading, success, error
   const [listsUpdateError, setListsUpdateError] = useState(null);
 
   // fetch the item data from user_item table in the DB
@@ -293,7 +293,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
 
   useEffect(() => {
     if (!Object.keys(selectedLists).length && !newList?.name) return; // keep success or error status until a value change
-    setListsUpdateStatus("idle"); // if a value changes update the state to idle
+    setListsUpdateStatus("modified"); // if a value changes update the state to idle
   }, [newList, selectedLists]);
 
   return (
@@ -310,10 +310,10 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
         <div className="flex flex-col gap-4">
           <div className="flex flex-row justify-between items-center gap-2">
             <div role="tablist" className="tabs tabs-border w-full justify-start">
-              <button onClick={() => setCurrentTab(1)} role="tab" className={`tab ${currentTab === 1 ? "tab-active text-indigo-500" : "text-text-light/50 dark:text-text-dark-50"}`}>
+              <button onClick={() => setCurrentTab(1)} role="tab" className={`tab ${currentTab === 1 ? "tab-active text-indigo-500" : "text-text-light/50 dark:text-text-dark/50"}`}>
                 Status
               </button>
-              <button onClick={() => setCurrentTab(2)} role="tab" className={`tab ${currentTab === 2 ? "tab-active text-indigo-500" : "text-text-light/50 dark:text-text-dark-50"}`}>
+              <button onClick={() => setCurrentTab(2)} role="tab" className={`tab ${currentTab === 2 ? "tab-active text-indigo-500" : "text-text-light/50 dark:text-text-dark/50"}`}>
                 Lists
               </button>
             </div>
@@ -568,7 +568,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                 </div>
 
                 <div className="space-y-3 pt-3">
-                  {listsUpdateStatus === "idle" ? (
+                  {listsUpdateStatus === "idle" || listsUpdateStatus === "modified" ? (
                     <>
                       {newList?.name || Object.keys(selectedLists).length ? (
                         <>
@@ -648,7 +648,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                           </div>
                           <button
                             onClick={updateLists}
-                            disabled
+                            disabled={listsUpdateStatus!=="modified"}
                             className="w-fit px-8 btn btn-sm btn-outline border-indigo-600/80 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-500/15 dark:hover:bg-indigo-600/30  capitalize"
                           >
                             update
