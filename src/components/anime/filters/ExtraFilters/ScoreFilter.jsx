@@ -47,7 +47,7 @@ export default function ScoreFilter({ registerCollector, view }) {
         <div id="score" className="relative">
           <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
             <input ref={checkboxRef} type="checkbox" className="hidden" />
-            <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">Score</p>
+            <p className="text-text-light/70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">Score</p>
             <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200" />
           </label>
           <div className="w-fit absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 p-2 text-2xs/loose">
@@ -65,7 +65,7 @@ export default function ScoreFilter({ registerCollector, view }) {
         <div id="score" className="relative w-full text-2xs/loose">
           <label className="group peer w-full small-header-box smallHeaderBox-colors hover:cursor-pointer">
             <input ref={checkboxRef} type="checkbox" className="hidden" />
-            <p className="text-text-light-70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark capitalize">Score</p>
+            <p className="text-text-light/70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark capitalize">Score</p>
             <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200" />
           </label>
           <div className="z-30 absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-full p-2">

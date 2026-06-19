@@ -220,7 +220,7 @@ export default function AnimeMangaContainer({ searchParams, itemType, useritemMo
                     setShowUserItemModal(true);
                     setUserItemData(item);
                   }}
-                  className="hover:text-indigo-500 absolute top-2 right-2 w-6.5 h-6.5 box-border p-1 box-colors rounded-full duration-200"
+                  className="hover:text-indigo-500 absolute top-1.5 right-1.5 w-7.5 h-7.5 box-border p-1 box-colors rounded-full duration-200"
                 >
                   <Bookmark className="w-full h-full pointer-events-none" />
                 </div>

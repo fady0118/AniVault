@@ -111,19 +111,21 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
         });
       }
       setUserItemData(res);
-      setUserItems((prevState) => {
-        const animeItems = prevState?.animeItems ?? [];
-        const mangaItems = prevState?.mangaItems ?? [];
-        return mediaType === "anime"
-          ? {
-              mangaItems,
-              animeItems: [res, ...animeItems.filter((item) => item?.mal_id !== res?.mal_id)],
-            }
-          : {
-              animeItems,
-              mangaItems: [res, ...mangaItems.filter((item) => item?.mal_id !== res?.mal_id)],
-            };
-      });
+      if (setUserItems) {
+        setUserItems((prevState) => {
+          const animeItems = prevState?.animeItems ?? [];
+          const mangaItems = prevState?.mangaItems ?? [];
+          return mediaType === "anime"
+            ? {
+                mangaItems,
+                animeItems: [res, ...animeItems.filter((item) => item?.mal_id !== res?.mal_id)],
+              }
+            : {
+                animeItems,
+                mangaItems: [res, ...mangaItems.filter((item) => item?.mal_id !== res?.mal_id)],
+              };
+        });
+      }
       await delay(300);
       setStatus("success");
     } catch (error) {
@@ -296,7 +298,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
 
   return (
     <div className="z-50 fixed top-0 left-[-2.5vw] w-[102.5vw] h-screen backdrop-blur-lg">
-      <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 rounded-lg p-3 xs:p-4 max-h-[90vh] overflow-y-auto box-colors">
+      <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 rounded-xl p-3 xs:p-4 max-h-[90vh] overflow-y-auto box-colors">
         <button
           onClick={() => setShowUserItemModal(false)}
           className="btn btn-ghost btn-sm btn-circle absolute top-1 right-1 sm:right-2 sm:top-2 bg-transparent"
@@ -308,10 +310,10 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
         <div className="flex flex-col gap-4">
           <div className="flex flex-row justify-between items-center gap-2">
             <div role="tablist" className="tabs tabs-border w-full justify-start">
-              <button onClick={() => setCurrentTab(1)} role="tab" className={`tab ${currentTab === 1 ? "tab-active text-indigo-500" : "text-text-light-50 dark:text-text-dark-50"}`}>
+              <button onClick={() => setCurrentTab(1)} role="tab" className={`tab ${currentTab === 1 ? "tab-active text-indigo-500" : "text-text-light/50 dark:text-text-dark-50"}`}>
                 Status
               </button>
-              <button onClick={() => setCurrentTab(2)} role="tab" className={`tab ${currentTab === 2 ? "tab-active text-indigo-500" : "text-text-light-50 dark:text-text-dark-50"}`}>
+              <button onClick={() => setCurrentTab(2)} role="tab" className={`tab ${currentTab === 2 ? "tab-active text-indigo-500" : "text-text-light/50 dark:text-text-dark-50"}`}>
                 Lists
               </button>
             </div>
@@ -548,7 +550,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                             type="checkbox"
                             checked={newList?.is_public}
                             onChange={(e) => setNewlist((prev) => ({ ...prev, is_public: e.target.checked }))}
-                            className="toggle toggle-primary toggle-xs bg-transparent"
+                            className="toggle toggle-primary toggle-xs bg-transparent not-checked:text-amethyst-smoke-600"
                           />
                         </label>
                       </div>
@@ -618,7 +620,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                                   <div className="flex items-center gap-2">
                                     <span className="text-xs text-slate-600 dark:text-slate-400">{newList?.is_item_public ? "Public" : "Private"}</span>
                                     <input
-                                      className="toggle toggle-primary scale-80"
+                                      className="toggle toggle-primary toggle-xs bg-transparent not-checked:text-amethyst-smoke-600"
                                       type="checkbox"
                                       checked={newList?.is_item_public}
                                       onChange={(e) => {
@@ -644,12 +646,20 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                               </div>
                             ) : null}
                           </div>
-                          <button onClick={updateLists} className="btn btn-primary btn-sm w-fit capitalize">
+                          <button
+                            onClick={updateLists}
+                            disabled
+                            className="w-fit px-8 btn btn-sm btn-outline border-indigo-600/80 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-500/15 dark:hover:bg-indigo-600/30  capitalize"
+                          >
                             update
                           </button>
                         </>
                       ) : (
-                        <button disabled className="btn btn-sm w-fit capitalize">
+                        <button
+                          onClick={updateLists}
+                          disabled
+                          className="w-fit px-8 btn btn-sm btn-outline border-amethyst-smoke-600 text-amethyst-smoke-900/40 dark:text-amethyst-smoke-200/40 capitalize"
+                        >
                           update
                         </button>
                       )}

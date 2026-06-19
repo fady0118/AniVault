@@ -45,11 +45,11 @@
 
   --color-text-light: #383342;
   --color-text-dark: #f8f8fa;
-
+/* 
   --color-text-light-50: hsla(260, 13%, 23%, 0.5);
   --color-text-dark-50: hsla(240, 20%, 98%, 0.5);
   --color-text-light-70: hsla(260, 13%, 23%, 0.7);
-  --color-text-dark-70: hsla(240, 20%, 98%, 0.7);
+  --color-text-dark-70: hsla(240, 20%, 98%, 0.7); */
 
   --color-mal-blue: #2c51a7;
 
@@ -282,6 +282,9 @@
     @apply bg-amethyst-smoke-400/45 dark:bg-dark-amethyst-smoke-200/45
   }
 
+  .box-colors-semi-medium {
+    @apply bg-amethyst-smoke-300/80 dark:bg-dark-amethyst-smoke-200/80
+  }
   .box-colors-medium {
     @apply bg-amethyst-smoke-300/90 dark:bg-dark-amethyst-smoke-200/90
   }

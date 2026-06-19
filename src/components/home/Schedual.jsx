@@ -97,7 +97,7 @@ export default function Schedual() {
       </div>
       <div className="w-full">
         {schedual?.isPending ? (
-          <div className="text-[0.8em] text-text-light-50 dark:text-text-dark-50 capitalize w-full flex flex-row justify-center scale-75 pb-10">
+          <div className="text-[0.8em] text-text-light/50 dark:text-text-dark-50 capitalize w-full flex flex-row justify-center scale-75 pb-10">
             <LoaderComponent />
           </div>
         ) : (
@@ -107,7 +107,7 @@ export default function Schedual() {
                 <input type="checkbox" name="schedual-checkbox" id="schedual-checkbox" className="peer hidden" />
                 {schedual?.data?.slice(0, 10).map((item) => (
                   <Link to={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass}`}>
-                    <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
+                    <p className="text-text-light/50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
                     <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
                   </Link>
                 ))}
@@ -115,7 +115,7 @@ export default function Schedual() {
                   <div className="overflow-hidden">
                     {schedual?.data?.slice(10).map((item) => (
                       <Link to={`/anime/${item.mal_id}`} key={item?.mal_id} className={`${classes.schedualClass} `}>
-                        <p className="text-text-light-50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
+                        <p className="text-text-light/50 dark:text-text-dark-50 group-hover:text-blue-600/70 dark:group-hover:text-blue-300/70 duration-200">{item?.broadcast?.time}</p>
                         <p className="w-full group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200">{item?.title}</p>
                       </Link>
                     ))}
@@ -127,11 +127,11 @@ export default function Schedual() {
             )}
             {schedual?.data?.length ? (
               <>
-                <p className="px-3 text-[0.6em] text-text-light-50 dark:text-text-dark-50 capitalize">Timezone: {schedual?.data[0].broadcast.timezone}</p>
+                <p className="px-3 text-[0.6em] text-text-light/50 dark:text-text-dark-50 capitalize">Timezone: {schedual?.data[0].broadcast.timezone}</p>
                 {schedual?.data?.length > 10 ? (
                   <label
                     htmlFor="schedual-checkbox"
-                    className="group flex flex-row w-full items-center justify-end px-3 gap-x-0.5 hover:cursor-pointer text-[0.6em] text-text-light-50 dark:text-text-dark-50 capitalize"
+                    className="group flex flex-row w-full items-center justify-end px-3 gap-x-0.5 hover:cursor-pointer text-[0.6em] text-text-light/50 dark:text-text-dark-50 capitalize"
                   >
                     <p className="group-hover:text-blue-600 dark:group-hover:text-blue-300 duration-200 before:content-['see_more'] group-[.peer:checked_~_&]:before:content-['see_less']"></p>
                     <ChevronDown className="group-hover:stroke-blue-600 dark:group-hover:stroke-blue-300 duration-200 group-[.peer:checked_~_&]:rotate-180" size={12} />

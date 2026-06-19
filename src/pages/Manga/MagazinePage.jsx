@@ -265,7 +265,7 @@ export default function MagazinePage() {
                               <Link to={`/manga/${manga.mal_id}`} className="text-[1.25em] font-medium blue-link hover:underline leading-snug truncate">
                                 {manga.title_english || manga.title}
                               </Link>
-                              <span className="text-[1em] text-text-light-50 dark:text-text-dark-50 font-normal whitespace-pre-wrap">{manga.title_japanese}</span>
+                              <span className="text-[1em] text-text-light/50 dark:text-text-dark-50 font-normal whitespace-pre-wrap">{manga.title_japanese}</span>
                             </div>
 
                             <div className="px-3 overflow-y-scroll w-full max-h-25">

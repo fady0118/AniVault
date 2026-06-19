@@ -130,7 +130,7 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
             {/* smallscreens user Navlink */}
               {loggedInUser ? (
                 <div className="w-4 aspect-square cursor-pointer" onClick={() => setShowProfileMenu((s) => !s)}>
-                  <img className="w-full h-full object-cover rounded-full border border-text-light-50 dark:border-text-dark-50 hover:border-indigo-500 duration-200" src={avatarImg || "/favicon-sq.png"} alt={userData?.username} />
+                  <img className="w-full h-full object-cover rounded-full border border-text-light/50 dark:border-text-dark/50 hover:border-indigo-500 duration-200" src={avatarImg || "/favicon-sq.png"} alt={userData?.username} />
                 </div>
               ) : (
                   <label class="swap swap-rotate w-4 aspect-square">

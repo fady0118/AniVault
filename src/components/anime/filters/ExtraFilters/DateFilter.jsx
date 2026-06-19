@@ -52,11 +52,11 @@ export default function DateFilter({ data, registerCollector }) {
     <>
       {data.map((type, i) => (
         <div key={i} className="flex flex-col h-fit text-3xs">
-          <label className=" text-text-light-70 dark:text-text-dark-70 px-0.5" htmlFor={type}>
+          <label className=" text-text-light/70 dark:text-text-dark-70 px-0.5" htmlFor={type}>
             {type.split("_").join(" ")}
           </label>
           <input
-            className="dark:text-text-dark-50 text-text-light-50 outline-0 hover:cursor-pointer hover:text-text-light dark:hover:text-text-dark duration-200"
+            className="dark:text-text-dark-50 text-text-light/50 outline-0 hover:cursor-pointer hover:text-text-light dark:hover:text-text-dark duration-200"
             type="date"
             placeholder=""
             name={type}

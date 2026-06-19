@@ -29,7 +29,7 @@ export default function HomeSidePanel() {
         <div className="flex flex-col text-[0.65em]">
           {TrendingAnimeQ.isPending ? (
             <>
-              <div className="w-full flex flex-row justify-center scale-75 pb-10 text-text-light-50 dark:text-text-dark-50">
+              <div className="w-full flex flex-row justify-center scale-75 pb-10 text-text-light/50 dark:text-text-dark-50">
                 <LoaderComponent />
               </div>
             </>
