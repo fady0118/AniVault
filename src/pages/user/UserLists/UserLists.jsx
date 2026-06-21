@@ -3,11 +3,18 @@ import { useAuth } from "../../../Contexts/AuthContext";
 import { tablesDB } from "../../../appwrite";
 import { Query } from "appwrite";
 import UserWatchList from "./UserWatchList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserCustomLists from "./UserCustomLists";
+import { useSearchParams } from "react-router";
 
 export default function UserLists({ user }) {
-  const [currentTab, setCurrentTab] = useState(2);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currentTab, setCurrentTab] = useState(Number(searchParams.get("tab")) || 1);
+
+  useEffect(() => {
+    setSearchParams({ tab: currentTab });
+  }, [currentTab]);
+
   const [userItemQ, userListsQ] = useQueries({
     queries: [
       {

@@ -55,11 +55,11 @@ export default function UserWatchList({ data }) {
   return (
     <>
       <div className="flex flex-col gap-1">
-        <div class="tabs tabs-box gap-1 border-0 bg-transparent capitalize font-semibold w-fit text-sm">
+        <div className="tabs tabs-box gap-1 border-0 bg-transparent capitalize font-semibold w-fit text-sm">
           <input
             type="radio"
             name="selectedTab"
-            class={`tab h-fit py-1.5 px-3 ${selectedTab === "anime" ? "text-text-dark  bg-indigo-500 hover:cursor-default" : "text-text-light dark:text-text-dark bg-amethyst-smoke-600/30 hover:bg-amethyst-smoke-500/30"} duration-200`}
+            className={`tab h-fit py-1.5 px-3 ${selectedTab === "anime" ? "text-text-dark  bg-indigo-500 hover:cursor-default" : "text-text-light dark:text-text-dark bg-amethyst-smoke-600/30 hover:bg-amethyst-smoke-500/30"} duration-200`}
             aria-label="Anime"
             value="anime"
             checked={selectedTab === "anime"}
@@ -68,7 +68,7 @@ export default function UserWatchList({ data }) {
           <input
             type="radio"
             name="selectedTab"
-            class={`tab h-fit py-1.5 px-3 ${selectedTab === "manga" ? "text-text-dark  bg-violet-500 hover:cursor-default" : "text-text-light dark:text-text-dark  bg-amethyst-smoke-600/30 hover:bg-amethyst-smoke-500/30"}`}
+            className={`tab h-fit py-1.5 px-3 ${selectedTab === "manga" ? "text-text-dark  bg-violet-500 hover:cursor-default" : "text-text-light dark:text-text-dark  bg-amethyst-smoke-600/30 hover:bg-amethyst-smoke-500/30"}`}
             aria-label="Manga"
             value="manga"
             checked={selectedTab === "manga"}
@@ -82,13 +82,13 @@ export default function UserWatchList({ data }) {
               {selectedTab === "anime" ? (
                 <>
                   <div id="animeStatuses" className="flex flex-row items-center">
-                    <div class="tabs tabs-box gap-1 border-0 bg-transparent capitalize font-semibold w-fit ">
+                    <div className="tabs tabs-box gap-1 border-0 bg-transparent capitalize font-semibold w-fit ">
                       {statuses.anime.map((status, i) => (
                         <input
                           key={i}
                           type="radio"
                           name="animeStatus"
-                          class={`tab h-fit py-1 px-2 text-xs ${animeStatus === status ? "text-text-dark  bg-indigo-500 hover:cursor-default" : "text-text-light dark:text-text-dark  bg-amethyst-smoke-600/30 hover:bg-amethyst-smoke-500/30"}`}
+                          className={`tab h-fit py-1 px-2 text-xs ${animeStatus === status ? "text-text-dark  bg-indigo-500 hover:cursor-default" : "text-text-light dark:text-text-dark  bg-amethyst-smoke-600/30 hover:bg-amethyst-smoke-500/30"}`}
                           aria-label={status}
                           value={status}
                           checked={animeStatus === status}
@@ -115,13 +115,13 @@ export default function UserWatchList({ data }) {
               ) : (
                 <>
                   <div id="mangaStatuses" className="flex flex-row items-center">
-                    <div class="tabs tabs-box gap-1 border-0 bg-transparent capitalize font-semibold w-fit ">
+                    <div className="tabs tabs-box gap-1 border-0 bg-transparent capitalize font-semibold w-fit ">
                       {statuses.manga.map((status, i) => (
                         <input
                           key={i}
                           type="radio"
                           name="mangaStatus"
-                          class={`tab h-fit py-1 px-2 text-xs ${mangaStatus === status ? "text-text-dark  bg-violet-500 hover:cursor-default" : "text-text-light dark:text-text-dark  bg-amethyst-smoke-600/30 hover:bg-amethyst-smoke-500/30"}`}
+                          className={`tab h-fit py-1 px-2 text-xs ${mangaStatus === status ? "text-text-dark  bg-violet-500 hover:cursor-default" : "text-text-light dark:text-text-dark  bg-amethyst-smoke-600/30 hover:bg-amethyst-smoke-500/30"}`}
                           aria-label={status}
                           value={status}
                           checked={mangaStatus === status}

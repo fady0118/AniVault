@@ -112,14 +112,14 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
           </label>
 
           <div id="themeTogglerBtn" className="flex h-fit" data-next-theme={theme === "light" ? "dark" : "light"}>
-            <label class="swap swap-rotate w-4">
+            <label className="swap swap-rotate w-4">
               <input type="checkbox" className="hidden" checked={theme === "dark"} readOnly />
               <Moon
-                class="swap-off p-0 w-full h-auto"
+                className="swap-off p-0 w-full h-auto"
                 onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}
               />
               <Sun
-                class="swap-on p-0  w-full h-auto"
+                className="swap-on p-0  w-full h-auto"
                 onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}
               />
             </label>
@@ -133,17 +133,17 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
                   <img className="w-full h-full object-cover rounded-full border border-text-light/50 dark:border-text-dark/50 hover:border-indigo-500 duration-200" src={avatarImg || "/favicon-sq.png"} alt={userData?.username} />
                 </div>
               ) : (
-                  <label class="swap swap-rotate w-4 aspect-square">
+                  <label className="swap swap-rotate w-4 aspect-square">
                     <input type="checkbox" hidden />
                       <CircleUserRound onClick={() => setShowProfileMenu((s) => !s)} className="swap-on p-0 w-full h-auto" />
                       <CircleUserRound strokeWidth={1} onClick={() => setShowProfileMenu((s) => !s)} className="swap-off p-0 w-full h-auto" />
                     </label>
                 
               )}
-              <label class="swap swap-rotate">
+              <label className="swap swap-rotate">
                 <input type="checkbox" className="hidden" />
-                <Menu class="swap-off p-0" size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
-                <X class="swap-on p-0" size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
+                <Menu className="swap-off p-0" size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
+                <X className="swap-on p-0" size={16} onClick={() => setShowNav(!showNav)} className="hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200" />
               </label>
             </>
           )}

@@ -16,8 +16,9 @@ import ErrorComponent from "./components/ErrorComponent";
 import UserProfilePage from "./pages/user/UserProfilePage";
 import UserProfileEditPage from "./pages/user/UserProfileEditPage";
 import ProfileLayout from "./pages/user/ProfileLayout";
-import OtherUserProfilePage from "./pages/user/OtherUserProfilePage";
+import OtherUserProfilePage from "./pages/user/OtherUser/OtherUserProfilePage";
 import UserCustomListPage from "./pages/user/UserLists/UserCustomListPage";
+import OtherUserCustomListPage from "./pages/user/OtherUser/OtherUserCustomListPage";
 
 export const router = createBrowserRouter([
   {
@@ -80,7 +81,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: "userList/:id",
-                children: [{ index: true, Component: UserCustomListPage }],
+                children: [{ index: true, Component: OtherUserCustomListPage }],
               },
             ],
           },

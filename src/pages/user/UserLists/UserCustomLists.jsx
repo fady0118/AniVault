@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { tablesDB } from "../../../appwrite";
 import LoaderComponent from "../../../components/LoaderComponent";
 
@@ -26,8 +26,9 @@ export default function UserCustomLists({ data }) {
     <>
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 auto-rows-fr gap-4">
         {filteredLists?.map((list) => (
-          <div
-            onClick={() => navigate(`userList/${list?.$id}`, { state: { list } })}
+          <Link
+            to={`userList/${list?.$id}`}
+            state={{ list }}
             key={list?.$id}
             className="w-full flex flex-row flex-wrap items-start gap-4 p-4 rounded-lg bg-amethyst-smoke-400/80 dark:bg-dark-amethyst-smoke-200/80 border border-amethyst-smoke-600/30 hover:bg-indigo-500/10 hover:cursor-pointer hover:shadow-[0px_5px_10px_#4f39f64d] duration-200"
           >
@@ -79,7 +80,7 @@ export default function UserCustomLists({ data }) {
                 </button>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
       {showEditModal && <ListEditModal list={listToModify} setListToModify={setListToModify} setShowEditModal={setShowEditModal} setFilteredLists={setFilteredLists} />}
@@ -223,7 +224,6 @@ function ListDeleteModal({ list, setShowDeleteModal }) {
   async function handleDelete() {
     try {
       setStatus("loading");
-      // console.log("deleting list...", list?.name || list?.$id);
       const res = await tablesDB.deleteRow({
         databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
         tableId: import.meta.env.VITE_TABLE_ID_LIST,
