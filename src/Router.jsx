@@ -65,15 +65,26 @@ export const router = createBrowserRouter([
         children: [
           { index: true, Component: UserProfilePage },
           { path: "profile_edit", Component: UserProfileEditPage },
+          {
+            path: "userList/:id",
+            children: [{ index: true, Component: UserCustomListPage }],
+          },
         ],
       },
       {
         path: "userProfile",
-        children: [{ path: ":userId", Component: OtherUserProfilePage }],
-      },
-      {
-        path: "userList/:id",
-        children: [{ index: true, Component: UserCustomListPage }],
+        children: [
+          {
+            path: ":userId",
+            Component: OtherUserProfilePage,
+            children: [
+              {
+                path: "userList/:id",
+                children: [{ index: true, Component: UserCustomListPage }],
+              },
+            ],
+          },
+        ],
       },
     ],
   },

@@ -20,7 +20,6 @@ export default function UserProfilePage() {
     <>
       <UserProfileData userData={userData} />
       <UserLists user={loggedInUser} />
-      {/* <UserWatchList user={loggedInUser}/> */}
     </>
   );
 }

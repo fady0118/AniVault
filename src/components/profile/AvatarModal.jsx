@@ -111,7 +111,7 @@ export default function AvatarModal({ avatarImg, setShowAvatarModal }) {
               </>
             )}
 
-            <p className="text-[0.85em] font-light text-text-light/70 dark:text-text-dark-70">AniVault automatically displays a default avatar, or you can add a custom avatar instead.</p>
+            <p className="text-[0.85em] font-light text-text-light/70 dark:text-text-dark/70">AniVault automatically displays a default avatar, or you can add a custom avatar instead.</p>
           </div>
         </div>
       </div>

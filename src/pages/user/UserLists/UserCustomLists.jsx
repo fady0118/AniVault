@@ -27,7 +27,7 @@ export default function UserCustomLists({ data }) {
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 auto-rows-fr gap-4">
         {filteredLists?.map((list) => (
           <div
-            onClick={() => navigate(`/userList/${list?.$id}`, { state: { list } })}
+            onClick={() => navigate(`userList/${list?.$id}`, { state: { list } })}
             key={list?.$id}
             className="w-full flex flex-row flex-wrap items-start gap-4 p-4 rounded-lg bg-amethyst-smoke-400/80 dark:bg-dark-amethyst-smoke-200/80 border border-amethyst-smoke-600/30 hover:bg-indigo-500/10 hover:cursor-pointer hover:shadow-[0px_5px_10px_#4f39f64d] duration-200"
           >
@@ -46,7 +46,7 @@ export default function UserCustomLists({ data }) {
             <div className="flex-1 flex flex-col gap-3">
               <div className="flex flex-col gap-1">
                 <h3 className="text-lg font-semibold">{list?.name}</h3>
-                {list?.description && <p className="text-sm">{list?.description}</p>}
+                {list?.description && <p className="text-[0.8em] max-lines-2 cutoff-text-abs text-text-light/70 dark:text-text-dark/70">{list?.description}</p>}
                 <p className="text-xs text-text-light/80 dark:text-text-dark/80">
                   {list?.listItem_id?.length || 0} item{list?.listItem_id?.length !== 1 ? "s" : ""}
                 </p>
@@ -223,7 +223,7 @@ function ListDeleteModal({ list, setShowDeleteModal }) {
   async function handleDelete() {
     try {
       setStatus("loading");
-      console.log("deleting list...", list?.name || list?.$id);
+      // console.log("deleting list...", list?.name || list?.$id);
       const res = await tablesDB.deleteRow({
         databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
         tableId: import.meta.env.VITE_TABLE_ID_LIST,

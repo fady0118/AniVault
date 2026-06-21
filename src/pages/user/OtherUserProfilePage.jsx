@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Outlet, useParams } from "react-router";
 import { storage, tablesDB } from "../../appwrite";
 import { marked } from "marked";
 import UserProfileData from "./UserProfileData";
@@ -62,6 +62,7 @@ export default function OtherUserProfilePage() {
           </div>
         </>
         <UserProfileData userData={userData} />
+        <Outlet/>
       </div>
     </>
   );

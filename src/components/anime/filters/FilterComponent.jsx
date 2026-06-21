@@ -74,10 +74,10 @@ export default function FilterComponent({ keyName, data, registerCollector, view
         <div id={keyName} className="group relative max-w-28">
           <label className="group peer w-full header-box box-colors-stronger hover:cursor-pointer">
             <input ref={checkboxRef} type="checkbox" className="hidden" />
-            <p className="text-text-light/70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">{heading}</p>
+            <p className="text-text-light/70 dark:text-text-dark/70 group-hover:text-text-light dark:group-hover:text-text-dark">{heading}</p>
             <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200 ml-1" />
           </label>
-          <div className="absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-26 p-2 text-2xs/loose">
+          <div className="absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-26 p-2 text-2xs/loose ">
             {data.map((item, i) => (
               <FilterItem key={i} item={item} localState={localState} handleChange={handleChange} />
             ))}
@@ -89,7 +89,7 @@ export default function FilterComponent({ keyName, data, registerCollector, view
           <div id={keyName} className="group relative min-w-28 max-w-full w-fit">
             <label className="group peer w-full small-header-box smallHeaderBox-colors hover:cursor-pointer">
               <input type="checkbox" className="hidden" />
-              <p className="capitalize text-text-light/70 dark:text-text-dark-70 group-hover:text-text-light dark:group-hover:text-text-dark">{heading}</p>
+              <p className="capitalize text-text-light/70 dark:text-text-dark/70 group-hover:text-text-light dark:group-hover:text-text-dark">{heading}</p>
               <ChevronDown size={14} className="group-has-checked:rotate-180 duration-200 ml-1" />
             </label>
             <div className="mt-1 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-26 p-2 text-2xs/loose">

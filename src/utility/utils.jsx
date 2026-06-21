@@ -5,9 +5,9 @@ import { Link } from "react-router";
 export function themeToggler() {
   // get local & os theme value
   const localTheme = localStorage.getItem("theme");
-  const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const prefersDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
   // modify the html theme class
-  if (localTheme === "dark" || (!("theme" in localStorage) && isDarkMode)) {
+  if (localTheme === "dark" || (!("theme" in localStorage) && prefersDarkMode)) {
     document.documentElement.classList.add("dark");
   } else {
     document.documentElement.classList.remove("dark");

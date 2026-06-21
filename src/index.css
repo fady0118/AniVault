@@ -45,11 +45,6 @@
 
   --color-text-light: #383342;
   --color-text-dark: #f8f8fa;
-/* 
-  --color-text-light-50: hsla(260, 13%, 23%, 0.5);
-  --color-text-dark-50: hsla(240, 20%, 98%, 0.5);
-  --color-text-light-70: hsla(260, 13%, 23%, 0.7);
-  --color-text-dark-70: hsla(240, 20%, 98%, 0.7); */
 
   --color-mal-blue: #2c51a7;
 
@@ -399,7 +394,6 @@
 
   .letter-filter-hover {
     @apply hover:text-blue-700
-    /* @apply hover:bg-dark-amethyst-smoke-200/30 dark:hover:bg-amethyst-smoke-300/30 */
   }
 
   .active-letter-filter {
