@@ -150,7 +150,7 @@ export default function UserPage() {
                     </div>
                     {friendsQ?.data?.length ? (
                       <div id="friends" className="w-full">
-                        <div className="flex flex-row items-center justify-between border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">
+                        <div className="flex flex-row items-center justify-between border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">
                           <p>friends</p>
                           <p
                             onClick={() => setShowFriendsModal(true)}
@@ -187,13 +187,13 @@ export default function UserPage() {
               </div>
               <div className="w-3/4 grow flex flex-col gap-y-3">
                 <div id="about" className="w-fit max-w-full h-fit min-h-32 rounded-lg overflow-hidden box-colors">
-                  <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">About</div>
+                  <div className="border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">About</div>
                   <div id="aboutText" className="flex flex-col px-3 py-2 text-xs">
                     About section is left empty by the user
                   </div>
                 </div>
                 <div id="statistics" className="w-full flex flex-col py-2 gap-y-2 rounded-lg overflow-hidden box-colors">
-                  <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">statistics</div>
+                  <div className="border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">statistics</div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 px-3">
                     <div>
                       <div className="border-b border-amethyst-smoke-200/40 pt-0.5 font-semibold text-sm/relaxed capitalize">ِAnime stats</div>
@@ -242,7 +242,7 @@ export default function UserPage() {
                 </div>
                 {favoritesQ?.data?.anime.length || favoritesQ?.data?.manga.length || favoritesQ?.data?.characters.length || favoritesQ?.data?.people.length ? (
                   <div id="favorites" className="w-full flex flex-col py-2 gap-y-2 rounded-lg overflow-hidden box-colors">
-                    <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">favorites</div>
+                    <div className="border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">favorites</div>
                     {renderFavorites(favoritesQ?.data.anime, "anime")}
                     {renderFavorites(favoritesQ?.data.manga, "manga")}
                     {renderFavorites(favoritesQ?.data.characters, "characters")}

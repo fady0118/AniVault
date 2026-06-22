@@ -14,7 +14,7 @@ export default function UserProfileData({ userData }) {
       <div className="grow flex flex-col gap-3">
         <div className="w-full flex flex-row flex-wrap gap-3 text-xs">
           <div id="info" className="w-1/5 min-w-38 h-fit min-h-32 rounded-lg overflow-hidden box-colors">
-            <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">info</div>
+            <div className="border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">info</div>
             <div className="flex flex-col gap-2 capitalize px-3 py-2">
               <div>age: {userData?.age || "-"}</div>
               <div>gender: {userData?.gender || "-"}</div>
@@ -22,7 +22,7 @@ export default function UserProfileData({ userData }) {
             </div>
           </div>
           <div id="bio" className="w-4/5 max-w-fit h-fit min-h-32 rounded-lg overflow-hidden box-colors">
-            <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">bio</div>
+            <div className="border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">bio</div>
             <div id="bioText" className="flex flex-col px-3 py-2 min-w-2xs">
               this user left his bio blank
             </div>

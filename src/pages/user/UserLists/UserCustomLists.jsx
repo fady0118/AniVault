@@ -47,7 +47,7 @@ export default function UserCustomLists({ data }) {
             <div className="flex-1 flex flex-col gap-3">
               <div className="flex flex-col gap-1">
                 <h3 className="text-lg font-semibold">{list?.name}</h3>
-                {list?.description && <p className="text-[0.8em] max-lines-2 cutoff-text-abs text-text-light/70 dark:text-text-dark/70">{list?.description}</p>}
+                {list?.description && <p className="text-[0.8em] max-lines-1 cutoff-text-abs text-text-light/70 dark:text-text-dark/70">{list?.description}</p>}
                 <p className="text-xs text-text-light/80 dark:text-text-dark/80">
                   {list?.listItem_id?.length || 0} item{list?.listItem_id?.length !== 1 ? "s" : ""}
                 </p>

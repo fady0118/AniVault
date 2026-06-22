@@ -68,14 +68,27 @@ export default function UserCustomListComp({ loggedInUser, id, state }) {
                 <Link
                   key={item.$id || item.mal_id}
                   to={`/${item.mediaType || "anime"}/${item.mal_id}`}
-                  className="relative w-full group flex flex-row gap-4 text-md md:text-lg overflow-hidden rounded-md border border-amethyst-smoke-500/20 bg-amethyst-smoke-500/5 shadow-sm transition duration-200 hover:-translate-y-1 hover:bg-indigo-500/10 hover:shadow-md"
+                  className="relative w-full group flex flex-row text-md md:text-lg overflow-hidden rounded-md border border-amethyst-smoke-500/20 bg-amethyst-smoke-500/5 shadow-sm transition duration-200 hover:-translate-y-1 hover:bg-indigo-500/10 hover:shadow-md"
                 >
                   <div className="w-1/10 min-w-20 max-w-32 aspect-3/4 bg-amethyst-smoke-200/80">
                     <img src={item?.cached_img} alt={item?.title} className="h-full w-full object-cover transition duration-200 group-hover:scale-105" />
                   </div>
-                  <div className="flex flex-col items-start py-3 gap-1">
-                    <h2 className="text-[1em] font-semibold">{item?.title || "Untitled"}</h2>
-                    <p className="text-[0.8em] text-text-light/70 dark:text-text-dark/70">{item?.notes || ""}</p>
+                  <div className="flex flex-row flex-wrap justify-between grow items-start p-3">
+                    <div className="flex flex-col items-start gap-1">
+                      <h2 className="text-[1em] font-semibold">{item?.title || "Untitled"}</h2>
+                      <p className="text-[0.8em] text-text-light/70 dark:text-text-dark/70">{item?.notes || ""}</p>
+                    </div>
+                    <div className="text-[0.65em] text-text-light/70 dark:text-text-dark/70">
+                      {item?.is_public ? (
+                        <div className="flex flex-row items-center gap-1">
+                          <Eye size={14} /> Public item
+                        </div>
+                      ) : (
+                        <div className="flex flex-row items-center gap-1">
+                          <EyeOff size={14} /> Private item
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </Link>
               ))}

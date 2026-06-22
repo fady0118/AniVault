@@ -208,7 +208,7 @@
     @apply bg-indigo-500 text-text-dark;
   }
   #listTabs.tabs-box .tab-content {
-    @apply p-1 bg-amethyst-smoke-400/50 dark:bg-dark-amethyst-smoke-200/50;
+    @apply p-1 bg-amethyst-smoke-400/10 dark:bg-dark-amethyst-smoke-200/10;
   }
 
   .theme-colors {

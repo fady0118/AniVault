@@ -89,14 +89,14 @@ export default function ProducerPage() {
                   <img className="w-full aspect-square object-cover order-1 rounded-lg overflow-hidden" src={producerQ?.data?.images?.jpg?.image_url} alt="" />
                 </div>
                 <div id="info" className="flex flex-col grow rounded-md box-colors h-fit">
-                  <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">About</div>
+                  <div className="border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">About</div>
                   <div className="p-3 text-xs font-light whitespace-pre-wrap">{producerQ?.data.about ? producerQ?.data.about : "No biography written."}</div>
                 </div>
               </div>
               <div className="flex flex-col md:flex-row gap-3">
                 <div className="flex flex-col gap-y-3 w-full h-fit md:w-1/6 min-w-40 text-xs font-light box-colors rounded-md">
                   <div>
-                    <div className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>
+                    <div className="border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>
                     <div className="flex flex-col p-2 gap-y-2">
                       <div className="flex flex-row flex-wrap gap-x-3 capitalize">
                         <p className="font-semibold">Japanese:</p>
@@ -114,7 +114,7 @@ export default function ProducerPage() {
                   </div>
                   {producerQ?.data.external.length ? (
                     <div>
-                      <div id="external" className="border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">
+                      <div id="external" className="border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">
                         Available At
                       </div>
                       <div className="flex flex-col p-2 gap-y-2">
@@ -134,7 +134,7 @@ export default function ProducerPage() {
                 </div>
 
                 <div id="anime" className="flex flex-col w-full md:w-5/6 box-colors rounded-md">
-                  <div className="flex flex-row justify-between border-b border-amethyst-smoke-200/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">
+                  <div className="flex flex-row justify-between border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">
                     <span>animeography</span>
                     <div id="controls" className="flex flex-row justify-between flex-wrap w-fit gap-x-5">
                       <div className="flex flex-row gap-x-1 items-center">

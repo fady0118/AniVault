@@ -242,6 +242,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
           title,
           mediaType,
           userList_id: listId,
+          is_public: is_item_public,
         },
         permissions,
       });
@@ -277,7 +278,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
       );
       if (newList?.name) {
         const newListRes = await createNewList(newList?.name, null, loggedInUser.$id, newList?.is_public);
-        await addItemToList(data?.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, newList?.notes || null, newListRes.$id, newList?.is_public);
+        await addItemToList(data?.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, newList?.notes || null, newListRes.$id, newList?.is_public, newList?.is_item_public);
       }
       // reset selectedLists && newList
       setSelectedLists({});
@@ -613,23 +614,24 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                             ))}
                             {newList?.name ? (
                               <div className="rounded-2xl border border-amethyst-smoke-100/10 section-colors-medium p-3">
-                                <div className="flex gap-1.5 flex-row items-center justify-between flex-wrap">
-                                  <div>
-                                    <p className="text-sm font-medium text-amethyst-smoke-950 dark:text-amethyst-smoke-100">{newList?.name}</p>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs text-slate-600 dark:text-slate-400">{newList?.is_item_public ? "Public" : "Private"}</span>
-                                    <input
-                                      className="toggle toggle-primary toggle-xs bg-transparent not-checked:text-amethyst-smoke-600"
-                                      type="checkbox"
-                                      checked={newList?.is_item_public}
-                                      onChange={(e) => {
-                                        setNewlist((prevState) => ({
-                                          ...prevState,
-                                          is_item_public: e.target.checked,
-                                        }));
-                                      }}
-                                    />
+                                <div className="flex flex-row items-center justify-between gap-1 flex-wrap">
+                                  <p className="text-sm font-medium text-amethyst-smoke-950 dark:text-amethyst-smoke-100">{newList?.name}</p>
+                                  <div className="flex items-center text-amethyst-smoke-400 gap-2 text-xs">
+                                    <p className="text-[0.9em] text-amethyst-smoke-800 dark:text-amethyst-smoke-600">Item privacy</p>
+                                    <label className="flex cursor-pointer items-center gap-2 rounded-full bg-transparent text-amethyst-smoke-900 dark:text-amethyst-smoke-500">
+                                      <span className="w-10">{newList?.is_item_public ? "Public" : "Private"}</span>
+                                      <input
+                                        className="toggle toggle-primary toggle-xs bg-transparent not-checked:text-amethyst-smoke-600"
+                                        type="checkbox"
+                                        checked={newList?.is_item_public}
+                                        onChange={(e) => {
+                                          setNewlist((prevState) => ({
+                                            ...prevState,
+                                            is_item_public: e.target.checked,
+                                          }));
+                                        }}
+                                      />
+                                    </label>
                                   </div>
                                 </div>
                                 <input
@@ -648,7 +650,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                           </div>
                           <button
                             onClick={updateLists}
-                            disabled={listsUpdateStatus!=="modified"}
+                            disabled={listsUpdateStatus !== "modified"}
                             className="w-fit px-8 btn btn-sm btn-outline border-indigo-600/80 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-500/15 dark:hover:bg-indigo-600/30  capitalize"
                           >
                             update
