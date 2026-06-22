@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { tablesDB } from "../../../appwrite";
 import LoaderComponent from "../../../components/LoaderComponent";
+import { delay } from "../../../utility/utils";
 
 export default function UserCustomLists({ data }) {
   const [filteredLists, setFilteredLists] = useState(data?.rows ?? []);
@@ -28,20 +29,25 @@ export default function UserCustomLists({ data }) {
         {filteredLists?.map((list) => (
           <Link
             to={`userList/${list?.$id}`}
-            state={{ list }}
             key={list?.$id}
             className="w-full flex flex-row flex-wrap items-start gap-4 p-4 rounded-lg bg-amethyst-smoke-400/80 dark:bg-dark-amethyst-smoke-200/80 border border-amethyst-smoke-600/30 hover:bg-indigo-500/10 hover:cursor-pointer hover:shadow-[0px_5px_10px_#4f39f64d] duration-200"
           >
             <div className="relative w-1/10 min-w-32 max-w-48 mr-4 aspect-7/6 shrink-0">
-              {list?.listItem_id?.slice(0, 3)?.map((item, i) => (
-                <img
-                  key={item?.$id}
-                  style={{ transformStyle: "preserve-3d", left: `calc(${Math.floor((i / 3) * 100)}%)` }}
-                  className={`absolute top-1/2 -translate-y-1/2 w-1/2 aspect-2/3 z-${10 * (2 - i)} object-cover transform-[rotate3d(1,10,0,45deg)] shadow-[7px_3px_12px_#1e2122] duration-200`}
-                  src={item?.cached_img}
-                  alt={list?.name}
-                />
-              ))}
+              {list?.listItem_id?.slice(0, 3)?.length ? (
+                <>
+                  {list?.listItem_id?.slice(0, 3)?.map((item, i) => (
+                    <img
+                      key={item?.$id}
+                      style={{ transformStyle: "preserve-3d", left: `calc(${Math.floor((i / 3) * 100 - 5)}%)` }}
+                      className={`absolute top-1/2 -translate-y-1/2 w-3/5 aspect-3/4 z-${10 * (2 - i)} object-cover transform-[rotate3d(1,10,0,45deg)] shadow-[15px_5px_15px_#1e2122cb] dark:shadow-[15px_5px_15px_#1e2122f0] duration-200`}
+                      src={item?.cached_img}
+                      alt={list?.name}
+                    />
+                  ))}
+                </>
+              ) : (
+                <div className="w-full h-full rounded-md bg-amethyst-smoke-300/45 dark:bg-dark-amethyst-smoke-300/45"></div>
+              )}
             </div>
 
             <div className="flex-1 flex flex-col gap-3">
@@ -52,16 +58,18 @@ export default function UserCustomLists({ data }) {
                   {list?.listItem_id?.length || 0} item{list?.listItem_id?.length !== 1 ? "s" : ""}
                 </p>
               </div>
-
               <div
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
                 }}
                 id="buttons"
                 className="flex flex-row gap-2.5 py-2 w-fit hover:cursor-default"
               >
                 <button
+                  type="button"
                   onClick={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     handleEditList(list);
                   }}
@@ -70,7 +78,9 @@ export default function UserCustomLists({ data }) {
                   edit
                 </button>
                 <button
+                  type="button"
                   onClick={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     handleDeleteList(list);
                   }}
@@ -122,14 +132,16 @@ function ListEditModal({ list, setListToModify, setShowEditModal, setFilteredLis
   async function updateList() {
     setStatus("loading");
     try {
-      const res = await tablesDB.updateRow({
+      await tablesDB.updateRow({
         databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
         tableId: import.meta.env.VITE_TABLE_ID_LIST,
         rowId: list.$id,
         data: { name, description, is_public: isPublic },
       });
-      setListToModify(res);
-      setFilteredLists((prevState) => [res, ...prevState.filter((list) => list.$id !== res.$id)]);
+      // Update local state
+      const updatedList = { ...list, name, description, is_public: isPublic };
+      setListToModify(updatedList);
+      setFilteredLists((prevState) => [updatedList, ...prevState.filter((item) => item.$id !== list.$id)]);
       setStatus("success");
     } catch (error) {
       setStatus("error");
@@ -144,8 +156,7 @@ function ListEditModal({ list, setListToModify, setShowEditModal, setFilteredLis
             ✕
           </button>
           <div className="flex flex-col w-full gap-2 text-xs">
-            <h2 className="text-2xl font-semibold text-text-light/85 dark:text-text-dark/85 mt-1">Edit "{list?.name || "this list"}"</h2>
-
+            <h2 className="text-[2em] font-semibold text-text-light/85 dark:text-text-dark/85 mt-1">Edit "{list?.name || "this list"}"</h2>
             <label htmlFor="listName" className="w-fit min-w-3/4 flex flex-col gap-0.5 text-[1em]">
               <p className="w-fit text-text-light/65 dark:text-text-dark/65 text-[1.2em]">List Name</p>
               <input
@@ -230,6 +241,8 @@ function ListDeleteModal({ list, setShowDeleteModal }) {
         rowId: list.$id,
       });
       setStatus("success");
+      await delay(1000);
+      setStatus("idle");
     } catch (error) {
       setStatus("error");
       return setError("failed to delete list");
