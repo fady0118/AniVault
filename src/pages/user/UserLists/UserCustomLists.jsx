@@ -32,22 +32,38 @@ export default function UserCustomLists({ data }) {
             key={list?.$id}
             className="w-full flex flex-row flex-wrap items-start gap-4 p-4 rounded-lg bg-amethyst-smoke-400/80 dark:bg-dark-amethyst-smoke-200/80 border border-amethyst-smoke-600/30 hover:bg-indigo-500/10 hover:cursor-pointer hover:shadow-[0px_5px_10px_#4f39f64d] duration-200"
           >
-            <div className="relative w-1/10 min-w-32 max-w-48 mr-4 aspect-7/6 shrink-0">
-              {list?.listItem_id?.slice(0, 3)?.length ? (
-                <>
-                  {list?.listItem_id?.slice(0, 3)?.map((item, i) => (
+            <div className="relative w-36 h-28 shrink-0">
+              {(() => {
+                const items = list?.listItem_id?.slice(0, 3) ?? [];
+                const padded = [...items, ...Array(Math.max(0, 3 - items.length)).fill(null)];
+                const containerW = 144;
+                const cardW = containerW * 0.52;
+                const step = (containerW - cardW) / 2;
+
+                return padded.map((item, i) =>
+                  item ? (
                     <img
-                      key={item?.$id}
-                      style={{ transformStyle: "preserve-3d", left: `calc(${Math.floor((i / 3) * 100 - 5)}%)` }}
-                      className={`absolute top-1/2 -translate-y-1/2 w-3/5 aspect-3/4 z-${10 * (2 - i)} object-cover transform-[rotate3d(1,10,0,45deg)] shadow-[15px_5px_15px_#1e2122cb] dark:shadow-[15px_5px_15px_#1e2122f0] duration-200`}
-                      src={item?.cached_img}
+                      key={item.$id}
+                      style={{
+                        left: `${i * step}px`,
+                        zIndex: 3 - i,
+                      }}
+                      className="absolute top-1/2 -translate-y-1/2 w-[52%] aspect-3/4 object-cover rounded-sm shadow-[15px_5px_15px_#1e2122cb] dark:shadow-[15px_5px_15px_#1e2122f0] transform-[rotate3d(1,10,0,45deg)] duration-200"
+                      src={item.cached_img}
                       alt={list?.name}
                     />
-                  ))}
-                </>
-              ) : (
-                <div className="w-full h-full rounded-md bg-amethyst-smoke-300/45 dark:bg-dark-amethyst-smoke-300/45"></div>
-              )}
+                  ) : (
+                    <div
+                      key={`placeholder-${i}`}
+                      style={{
+                        left: `${i * step}px`,
+                        zIndex: 3 - i,
+                      }}
+                      className="absolute top-1/2 -translate-y-1/2 w-[52%] aspect-3/4 rounded-sm shadow-[15px_5px_15px_#1e212282] dark:shadow-[15px_5px_15px_#1e2122f0] transform-[rotate3d(1,10,0,45deg)] duration-200 bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-300"
+                    />
+                  ),
+                );
+              })()}
             </div>
 
             <div className="flex-1 flex flex-col gap-3">
@@ -94,7 +110,7 @@ export default function UserCustomLists({ data }) {
         ))}
       </div>
       {showEditModal && <ListEditModal list={listToModify} setListToModify={setListToModify} setShowEditModal={setShowEditModal} setFilteredLists={setFilteredLists} />}
-      {showDeleteModal && <ListDeleteModal list={listToModify} setShowDeleteModal={setShowDeleteModal} />}
+      {showDeleteModal && <ListDeleteModal list={listToModify} setShowDeleteModal={setShowDeleteModal} setFilteredLists={setFilteredLists} />}
     </>
   );
 }
@@ -227,7 +243,7 @@ function ListEditModal({ list, setListToModify, setShowEditModal, setFilteredLis
     </>
   );
 }
-function ListDeleteModal({ list, setShowDeleteModal }) {
+function ListDeleteModal({ list, setShowDeleteModal, setFilteredLists }) {
   const [status, setStatus] = useState("idle"); // idle, loading,success, error
   const [error, setError] = useState(null);
 
@@ -240,9 +256,8 @@ function ListDeleteModal({ list, setShowDeleteModal }) {
         tableId: import.meta.env.VITE_TABLE_ID_LIST,
         rowId: list.$id,
       });
+      setFilteredLists((prevState) => [...prevState.filter((l) => l?.$id !== list.$id)]);
       setStatus("success");
-      await delay(1000);
-      setStatus("idle");
     } catch (error) {
       setStatus("error");
       return setError("failed to delete list");
