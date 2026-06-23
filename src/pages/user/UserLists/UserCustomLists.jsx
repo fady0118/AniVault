@@ -13,6 +13,10 @@ export default function UserCustomLists({ data }) {
   const [filteredLists, setFilteredLists] = useState(data?.rows ?? []);
   const [listToModify, setListToModify] = useState(null);
 
+  useEffect(() => {
+    setFilteredLists(data?.rows ?? []);
+  }, [data]);
+
   const {
     updateRef,
     updateList,

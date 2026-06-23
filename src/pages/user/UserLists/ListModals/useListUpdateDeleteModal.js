@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { tablesDB } from "../../../../appwrite";
 
-export function useListUpdateDeleteModal(setlistToModify, setFilteredLists=null) {
+export function useListUpdateDeleteModal(setlistToModify, setFilteredLists = null) {
   const list = useRef({});
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [name, setName] = useState(list.current?.name);
-  const [description, setDescription] = useState(list.current?.description);
+  const [name, setName] = useState(list.current?.name||"");
+  const [description, setDescription] = useState(list.current?.description||"");
   const [isPublic, setIsPublic] = useState(list.current?.is_public);
   const [isChanged, setIsChanged] = useState(false);
   const [status, setStatus] = useState("idle"); // idle, loading, success, error

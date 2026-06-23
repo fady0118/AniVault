@@ -24,7 +24,9 @@ export default function UserCustomListPage() {
           className="tab"
           aria-label="user custom lists"
           onClick={() => {
-            navigate("/profile?tab=2");
+            navigate("/profile?tab=2", {
+              state: { forceRefetch: true },
+            });
           }}
         >
           user custom lists

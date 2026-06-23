@@ -1,15 +1,25 @@
-import { useQueries } from "@tanstack/react-query";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../../Contexts/AuthContext";
 import { tablesDB } from "../../../appwrite";
 import { Query } from "appwrite";
 import UserWatchList from "./UserWatchList";
 import { useEffect, useState } from "react";
 import UserCustomLists from "./UserCustomLists";
-import { useSearchParams } from "react-router";
+import { useLocation, useSearchParams } from "react-router";
 
 export default function UserLists({ user }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentTab, setCurrentTab] = useState(Number(searchParams.get("tab")) || 1);
+
+  // forceRefetch
+  const location = useLocation();
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (location.state?.forceRefetch) {
+      console.log(location.state);
+      queryClient.invalidateQueries({ queryKey: ["userLists"] });
+    }
+  }, []);
 
   useEffect(() => {
     setSearchParams({ tab: currentTab });
@@ -56,7 +66,7 @@ export default function UserLists({ user }) {
             setCurrentTab(Number(e.target.value));
           }}
         />
-        {/* <div className="tab-content">{userItemQ.isPending ? <div>Loading...</div> : <UserWatchList data={userItemQ?.data} />}</div> */}
+        <div className="tab-content">{userItemQ.isPending ? <div>Loading...</div> : <UserWatchList data={userItemQ?.data} />}</div>
         <div className="tab-content">{userItemQ.isPending ? <div>Loading...</div> : ""}</div>
 
         <input
