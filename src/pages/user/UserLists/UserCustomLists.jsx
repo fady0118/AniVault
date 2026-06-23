@@ -18,7 +18,7 @@ export default function UserCustomLists({ data }) {
     updateList,
     handleDelete,
     showUpdateModal,
-    setshowUpdateModal,
+    setShowUpdateModal,
     showDeleteModal,
     setShowDeleteModal,
     status,
@@ -42,14 +42,14 @@ export default function UserCustomLists({ data }) {
 
   const handleEditList = (list) => {
     setListToModify(list);
-    setshowUpdateModal(true);
+    setShowUpdateModal(true);
     setShowDeleteModal(false);
   };
 
   const handleDeleteList = (list) => {
     setListToModify(list);
     setShowDeleteModal(true);
-    setshowUpdateModal(false);
+    setShowUpdateModal(false);
   };
 
   return (
@@ -154,7 +154,7 @@ export default function UserCustomLists({ data }) {
 
       {showUpdateModal && (
         <ListUpdateModal
-          setshowUpdateModal={setshowUpdateModal}
+          setShowUpdateModal={setShowUpdateModal}
           updateList={updateList}
           status={status}
           name={name}

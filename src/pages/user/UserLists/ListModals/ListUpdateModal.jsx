@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import LoaderComponent from "../../../../components/LoaderComponent";
 
-export default function ListUpdateModal({ setshowUpdateModal, status, name, setName, description, setDescription, isPublic, setIsPublic, updateList, isChanged, error, resetStates }) {
+export default function ListUpdateModal({ setShowUpdateModal, status, name, setName, description, setDescription, isPublic, setIsPublic, updateList, isChanged, error, resetStates }) {
   // close modal by pressing esc
   useEffect(() => {
     resetStates();
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        setshowUpdateModal(false);
+        setShowUpdateModal(false);
       }
     };
     document.documentElement.addEventListener("keydown", handleKeyDown);
@@ -18,7 +18,7 @@ export default function ListUpdateModal({ setshowUpdateModal, status, name, setN
       <div className="z-50 fixed inset-0 bg-dark-amethyst-smoke-50/40 backdrop-blur-lg">
         <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] max-w-lg rounded-lg border border-amethyst-smoke-600/20 box-colors p-3 xs:p-5 overflow-y-auto box-colors-semi-medium">
           <button
-            onClick={() => setshowUpdateModal(false)}
+            onClick={() => setShowUpdateModal(false)}
             className="btn btn-ghost btn-sm btn-circle absolute top-1 right-1 sm:right-2 sm:top-2 bg-transparent"
             aria-label="Close authentication modal"
           >

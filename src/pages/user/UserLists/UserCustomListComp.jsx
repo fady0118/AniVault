@@ -6,16 +6,42 @@ import { tablesDB } from "../../../appwrite";
 import { useEffect, useState } from "react";
 import { Query } from "appwrite";
 import { delay } from "../../../utility/utils";
+import { useListUpdateDeleteModal } from "./ListModals/useListUpdateDeleteModal";
+import ListUpdateModal from "./ListModals/ListUpdateModal";
+import ListDeleteModal from "./ListModals/ListDeleteModal";
 
 export default function UserCustomListComp({ loggedInUser, id, state }) {
   const [list, setList] = useState(null);
-  const [status, setStatus] = useState("idle");
+  const [pageStatus, setPageStatus] = useState("idle");
   const [listItemToModify, setListItemToModify] = useState(null);
   const [showListItemUpdateModal, setShowListItemUpdateModal] = useState(false);
   const [showListItemDeleteModal, setShowListItemDeleteModal] = useState(false);
 
+  const {
+    updateRef,
+    updateList,
+    handleDelete,
+    showUpdateModal,
+    setShowUpdateModal,
+    showDeleteModal,
+    setShowDeleteModal,
+    status,
+    setStatus,
+    name,
+    setName,
+    description,
+    setDescription,
+    isPublic,
+    setIsPublic,
+    isChanged,
+    setIsChanged,
+    error,
+    setError,
+    resetStates,
+  } = useListUpdateDeleteModal(setList);
+
   async function fetchListFromDb() {
-    setStatus("loading");
+    setPageStatus("loading");
     try {
       const res = await tablesDB.getRow({
         databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
@@ -24,20 +50,34 @@ export default function UserCustomListComp({ loggedInUser, id, state }) {
         queries: [Query.select(["*", "listItem_id.*"])],
       });
       setList(res);
-      setStatus("idle");
+      setPageStatus("idle");
     } catch (error) {
-      setStatus("error");
+      setPageStatus("error");
     }
   }
+  useEffect(() => {
+    if (!list) return;
+    updateRef(list);
+  }, [list]);
 
   useEffect(() => {
     fetchListFromDb();
   }, [id]);
 
+  const handleEditList = () => {
+    setShowUpdateModal(true);
+    setShowDeleteModal(false);
+  };
+
+  const handleDeleteList = () => {
+    setShowDeleteModal(true);
+    setShowUpdateModal(false);
+  };
+
   return (
     <>
       <div className="relative w-full flex flex-col gap-4 text-text-light dark:text-text-dark">
-        {status === "loading" ? (
+        {pageStatus === "loading" ? (
           <div className="w-full py-10">
             <LoaderComponent />
           </div>
@@ -112,8 +152,7 @@ export default function UserCustomListComp({ loggedInUser, id, state }) {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          setListItemToModify(item);
-                          setShowListItemUpdateModal(true);
+                          handleEditList();
                         }}
                         className="btn btn-sm btn-outline border-indigo-500/50 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/20 capitalize"
                       >
@@ -124,8 +163,7 @@ export default function UserCustomListComp({ loggedInUser, id, state }) {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          setListItemToModify(item);
-                          setShowListItemDeleteModal(true);
+                          handleDeleteList();
                         }}
                         className="btn btn-sm btn-primary bg-indigo-500 hover:bg-indigo-600 border-0 capitalize"
                       >
@@ -207,13 +245,33 @@ export default function UserCustomListComp({ loggedInUser, id, state }) {
             )}
           </>
         ) : (
-          status === "error" && (
+          pageStatus === "error" && (
             <div className="">
               <EmptyDataFallback string="list doesn't exist or is set private by the owner" />
             </div>
           )
         )}
       </div>
+      {/* List modals */}
+      {showUpdateModal && (
+        <ListUpdateModal
+          setShowUpdateModal={setShowUpdateModal}
+          updateList={updateList}
+          status={status}
+          name={name}
+          setName={setName}
+          description={description}
+          setDescription={setDescription}
+          isPublic={isPublic}
+          setIsPublic={setIsPublic}
+          isChanged={isChanged}
+          error={error}
+          resetStates={resetStates}
+        />
+      )}
+      {showDeleteModal && <ListDeleteModal name={name} setShowDeleteModal={setShowDeleteModal} status={status} handleDelete={handleDelete} error={error} resetStates={resetStates} />}
+
+      {/* List Items modals */}
       {showListItemUpdateModal && (
         <ListItemUpdateModal listItem={listItemToModify} setListItemToModify={setListItemToModify} setShowListItemUpdateModal={setShowListItemUpdateModal} setList={setList} />
       )}

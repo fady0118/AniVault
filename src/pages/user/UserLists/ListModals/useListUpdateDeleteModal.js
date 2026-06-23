@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { tablesDB } from "../../../../appwrite";
 
-export function useListUpdateDeleteModal(setlistToModify, setFilteredLists) {
+export function useListUpdateDeleteModal(setlistToModify, setFilteredLists=null) {
   const list = useRef({});
-  const [showUpdateModal, setshowUpdateModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [name, setName] = useState(list.current?.name);
   const [description, setDescription] = useState(list.current?.description);
@@ -40,7 +40,6 @@ export function useListUpdateDeleteModal(setlistToModify, setFilteredLists) {
 
   // update list function
   async function updateList() {
-    console.log(`updateList - ${list.current.$id}`);
     setStatus("loading");
     try {
       await tablesDB.updateRow({
@@ -52,7 +51,9 @@ export function useListUpdateDeleteModal(setlistToModify, setFilteredLists) {
       // Update local state
       const updatedlist = { ...list.current, name, description, is_public: isPublic };
       setlistToModify(updatedlist);
-      setFilteredLists((prevState) => [updatedlist, ...prevState.filter((item) => item.$id !== list.current.$id)]);
+      if (setFilteredLists) {
+        setFilteredLists((prevState) => [updatedlist, ...prevState.filter((item) => item.$id !== list.current.$id)]);
+      }
       setStatus("success");
     } catch (error) {
       console.log(error);
@@ -70,8 +71,10 @@ export function useListUpdateDeleteModal(setlistToModify, setFilteredLists) {
         tableId: import.meta.env.VITE_TABLE_ID_LIST,
         rowId: list.current.$id,
       });
-      console.log(res);
-      setFilteredLists((prevState) => [...prevState.filter((l) => l?.$id !== list.current.$id)]);
+      if (setFilteredLists) {
+        setFilteredLists((prevState) => [...prevState.filter((l) => l?.$id !== list.current.$id)]);
+      }
+      setlistToModify(null);
       setStatus("success");
     } catch (error) {
       console.log(error);
@@ -85,7 +88,7 @@ export function useListUpdateDeleteModal(setlistToModify, setFilteredLists) {
     updateList,
     handleDelete,
     showUpdateModal,
-    setshowUpdateModal,
+    setShowUpdateModal,
     showDeleteModal,
     setShowDeleteModal,
     status,
