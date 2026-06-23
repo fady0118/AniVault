@@ -1,7 +1,18 @@
 import { useEffect } from "react";
 import LoaderComponent from "../../../../components/LoaderComponent";
 
-export default function ListUpdateModal({ setshowUpdateModal, status, name, setName, description, setDescription, isPublic, setIsPublic, updateList, isChanged, error }) {
+export default function ListUpdateModal({ setshowUpdateModal, status, name, setName, description, setDescription, isPublic, setIsPublic, updateList, isChanged, error, resetStates }) {
+  // close modal by pressing esc
+  useEffect(() => {
+    resetStates();
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setshowUpdateModal(false);
+      }
+    };
+    document.documentElement.addEventListener("keydown", handleKeyDown);
+    return () => document.documentElement.removeEventListener("keydown", handleKeyDown);
+  }, []);
   return (
     <>
       <div className="z-50 fixed inset-0 bg-dark-amethyst-smoke-50/40 backdrop-blur-lg">
