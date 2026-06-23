@@ -98,6 +98,40 @@ export default function UserCustomListComp({ loggedInUser, id, state }) {
                     <p className="text-[0.9em] text-text-light/75 dark:text-text-dark/75">
                       {list?.listItem_id?.length} item{list?.listItem_id?.length !== 1 ? "s" : ""}
                     </p>
+
+                    <div
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      id="buttons"
+                      className="flex flex-row gap-2.5 py-2 w-fit hover:cursor-default"
+                    >
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setListItemToModify(item);
+                          setShowListItemUpdateModal(true);
+                        }}
+                        className="btn btn-sm btn-outline border-indigo-500/50 text-indigo-500 dark:text-indigo-400 hover:bg-indigo-500/20 capitalize"
+                      >
+                        edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setListItemToModify(item);
+                          setShowListItemDeleteModal(true);
+                        }}
+                        className="btn btn-sm btn-primary bg-indigo-500 hover:bg-indigo-600 border-0 capitalize"
+                      >
+                        delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -117,7 +151,6 @@ export default function UserCustomListComp({ loggedInUser, id, state }) {
                       <div className="flex flex-col items-start gap-1">
                         <h2 className="text-[1em] font-semibold">{item?.title || "Untitled"}</h2>
                         <p className="text-[0.8em] text-text-light/70 dark:text-text-dark/70">{item?.notes || ""}</p>
-
                         <div
                           onClick={(e) => {
                             e.preventDefault();

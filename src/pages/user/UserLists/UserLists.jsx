@@ -56,7 +56,8 @@ export default function UserLists({ user }) {
             setCurrentTab(Number(e.target.value));
           }}
         />
-        <div className="tab-content">{userItemQ.isPending ? <div>Loading...</div> : <UserWatchList data={userItemQ?.data} />}</div>
+        {/* <div className="tab-content">{userItemQ.isPending ? <div>Loading...</div> : <UserWatchList data={userItemQ?.data} />}</div> */}
+        <div className="tab-content">{userItemQ.isPending ? <div>Loading...</div> : ""}</div>
 
         <input
           type="radio"
