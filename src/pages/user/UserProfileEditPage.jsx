@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../Contexts/AuthContext";
 import { tablesDB } from "../../appwrite";
-import { useOutletContext } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import LoaderComponent from "../../components/LoaderComponent";
 
 export default function UserProfileEditPage() {
   const { loggedInUser, userData, setUserData, avatarImg } = useAuth();
+  const navigate = useNavigate()
+  const [currentTab, setCurrentTab] = useState(1);
   const [status, setStatus] = useState("idle"); // "idle", "editing", "uploading", "success", "fail"
   const [error, setError] = useState(null);
   const [personalData, setPersonalData] = useState({ gender: userData?.gender || "", age: userData?.age || "", bio: userData?.bio || "" });
@@ -40,110 +42,150 @@ export default function UserProfileEditPage() {
     }
   }
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
     setIsEditPage(true);
   }, []);
   return (
     <>
-      <h2 className="text-gl font-bold">Profile Settings</h2>
-      <div id="editSection" className="relative w-full flex flex-col gap-3">
-        <form className="flex flex-col gap-2 items-start" onSubmit={handleSubmit}>
-          <div className="form-control w-full flex flex-col gap-y-1">
-            <label className="font-light text-xs capitalize" htmlFor="ageInput">
-              gender
-            </label>
-            <select
-              class="select select-primary bg-transparent select-xs outline-0"
-              name="gender"
-              id="gender"
-              value={personalData.gender}
-              onChange={(e) => {
-                setPersonalData((s) => ({ ...s, gender: e.target.value }));
-                setStatus("editing");
-              }}
-            >
-              <option value="" hidden disabled>
-                select your gender
-              </option>
-              <option value="male">male</option>
-              <option value="female">female</option>
-              <option value="prefer_not_say">prefer not say</option>
-            </select>
+      <div role="tablist" id="listTabs" className="tabs tabs-box flex flex-row items-center gap-2">
+        <input
+          type="radio"
+          name="profileTabs"
+          className="tab"
+          aria-label="Profile Settings"
+          value={1}
+          checked={Number(currentTab) === 1}
+          onChange={(e) => {
+            setCurrentTab(Number(e.target.value));
+          }}
+        />
+        <div className="tab-content">
+          <div id="editSection" className="relative w-full flex flex-col gap-3">
+            <form className="flex flex-col gap-2 items-start" onSubmit={handleSubmit}>
+              <div className="form-control w-full flex flex-col gap-y-1">
+                <label className="font-light text-xs capitalize" htmlFor="ageInput">
+                  gender
+                </label>
+                <select
+                  class="select select-primary bg-transparent select-xs outline-0"
+                  name="gender"
+                  id="gender"
+                  value={personalData.gender}
+                  onChange={(e) => {
+                    setPersonalData((s) => ({ ...s, gender: e.target.value }));
+                    setStatus("editing");
+                  }}
+                >
+                  <option value="" hidden disabled>
+                    select your gender
+                  </option>
+                  <option value="male">male</option>
+                  <option value="female">female</option>
+                  <option value="prefer_not_say">prefer not say</option>
+                </select>
+              </div>
+              <div className="form-control w-full flex flex-col gap-y-1">
+                <label className="font-light text-xs capitalize" htmlFor="ageInput">
+                  age
+                </label>
+                <input
+                  type="number"
+                  name="ageInput"
+                  min="0"
+                  max="120"
+                  step="1"
+                  placeholder="Enter Your Age"
+                  class="input input-primary bg-transparent select-xs outline-0"
+                  value={personalData.age}
+                  onChange={(e) => {
+                    setPersonalData((s) => ({ ...s, age: e.target.value }));
+                    setStatus("editing");
+                  }}
+                />
+              </div>
+              <div className="form-control w-full flex flex-col gap-y-1">
+                <label className="font-light text-xs capitalize" htmlFor="bioInput">
+                  bio
+                </label>
+                <div className="flex gap-1 mb-1">
+                  <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("**", "**")} title="Bold">
+                    <strong>B</strong>
+                  </button>
+                  <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("*", "*")} title="Italic">
+                    <em>I</em>
+                  </button>
+                  <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("__", "__")} title="Underline">
+                    <u>U</u>
+                  </button>
+                  <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("~~", "~~")} title="Strikethrough">
+                    <s>S</s>
+                  </button>
+                  <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("`", "`")} title="Code">
+                    &lt;/&gt;
+                  </button>
+                </div>
+                <textarea
+                  name="bioInput"
+                  id="bioInput"
+                  placeholder="Tell us about yourself..."
+                  className="textarea textarea-primary bg-transparent select-xs outline-0"
+                  rows="4"
+                  value={personalData.bio}
+                  onChange={(e) => {
+                    setPersonalData((s) => ({ ...s, bio: e.target.value }));
+                    setStatus("editing");
+                  }}
+                />
+              </div>
+              {status === "editing" && !error && (
+                <button className="btn btn-primary capitalize" type="submit">
+                  update info
+                </button>
+              )}
+              {status === "uploading" && (
+                <div className="scale-75 py-2">
+                  <LoaderComponent />
+                </div>
+              )}
+              {status === "success" && (
+                <div class="text-emerald-600 dark:text-emerald-400 bg-emerald-600/5 rounded-sm px-1.5 py-1 text-[0.8em]">
+                  <span>Your data has been updated!</span>
+                </div>
+              )}
+              {error && (
+                <div role="alert" className="text-rose-600 dark:text-rose-400 bg-rose-600/5 rounded-sm px-1.5 py-1 text-[0.8em]">
+                  <span>{error}</span>
+                </div>
+              )}
+            </form>
           </div>
-          <div className="form-control w-full flex flex-col gap-y-1">
-            <label className="font-light text-xs capitalize" htmlFor="ageInput">
-              age
-            </label>
-            <input
-              type="number"
-              name="ageInput"
-              min="0"
-              max="120"
-              step="1"
-              placeholder="Enter Your Age"
-              class="input input-primary bg-transparent select-xs outline-0"
-              value={personalData.age}
-              onChange={(e) => {
-                setPersonalData((s) => ({ ...s, age: e.target.value }));
-                setStatus("editing");
-              }}
-            />
+        </div>
+
+        <input
+          type="radio"
+          name="profileTabs"
+          className="tab"
+          aria-label="Account Settings"
+          value={2}
+          checked={Number(currentTab) === 2}
+          onChange={(e) => {
+            setCurrentTab(Number(e.target.value));
+          }}
+        />
+        <div className="tab-content">
+          <div className="flex flex-col gap-3.5 text-xs md:text-sm">
+            <div className="flex flex-col gap-1.5 items-start">
+              <p>If you wish to update the email or password associated with your account you can do that by clicking the button below.</p>
+              <button onClick={()=>{navigate("edit_email_password")}} className="btn btn-primary text-xs md:text-sm">Edit email and password</button>
+            </div>
+            <div className="flex flex-col gap-1.5 items-start">
+              <p>If you wish to delete your account you can click the button below to start the deletion process.</p>
+              <button className="btn border-0 bg-rose-600/90 text-text-dark text-xs md:text-sm">Delete account</button>
+            </div>
           </div>
-          <div className="form-control w-full flex flex-col gap-y-1">
-            <label className="font-light text-xs capitalize" htmlFor="bioInput">
-              bio
-            </label>
-            <div className="flex gap-1 mb-1">
-              <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("**", "**")} title="Bold">
-                <strong>B</strong>
-              </button>
-              <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("*", "*")} title="Italic">
-                <em>I</em>
-              </button>
-              <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("__", "__")} title="Underline">
-                <u>U</u>
-              </button>
-              <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("~~", "~~")} title="Strikethrough">
-                <s>S</s>
-              </button>
-              <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("`", "`")} title="Code">
-                &lt;/&gt;
-              </button>
-            </div>
-            <textarea
-              name="bioInput"
-              id="bioInput"
-              placeholder="Tell us about yourself..."
-              className="textarea textarea-primary bg-transparent select-xs outline-0"
-              rows="4"
-              value={personalData.bio}
-              onChange={(e) => {
-                setPersonalData((s) => ({ ...s, bio: e.target.value }));
-                setStatus("editing");
-              }}
-            />
-          </div>
-          {status === "editing" && !error && (
-            <button className="btn btn-primary capitalize" type="submit">
-              update info
-            </button>
-          )}
-          {status === "uploading" && (
-            <div className="scale-75 py-2">
-              <LoaderComponent />
-            </div>
-          )}
-          {status === "success" && (
-            <div class="text-emerald-600 dark:text-emerald-400 bg-emerald-600/5 rounded-sm px-1.5 py-1 text-[0.8em]">
-              <span>Your data has been updated!</span>
-            </div>
-          )}
-          {error && (
-            <div role="alert" className="text-rose-600 dark:text-rose-400 bg-rose-600/5 rounded-sm px-1.5 py-1 text-[0.8em]">
-              <span>{error}</span>
-            </div>
-          )}
-        </form>
+        </div>
       </div>
     </>
   );

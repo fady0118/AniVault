@@ -20,6 +20,7 @@ import OtherUserProfilePage from "./pages/user/OtherUser/OtherUserProfilePage";
 import UserCustomListPage from "./pages/user/UserLists/UserCustomListPage";
 import OtherUserCustomListPage from "./pages/user/OtherUser/OtherUserCustomListPage";
 import OtherProfileLayout from "./pages/user/OtherUser/OtherProfileLayout";
+import UserProfileEditEmailPasswordPage from "./pages/user/ProfileEditEmailPassword/UserProfileEditEmailPasswordPage";
 
 export const router = createBrowserRouter([
   {
@@ -66,7 +67,13 @@ export const router = createBrowserRouter([
         Component: ProfileLayout,
         children: [
           { index: true, Component: UserProfilePage },
-          { path: "profile_edit", Component: UserProfileEditPage },
+          {
+            path: "profile_edit",
+            children: [
+              { index: true, Component: UserProfileEditPage },
+              { path: "edit_email_password", Component: UserProfileEditEmailPasswordPage },
+            ],
+          },
           {
             path: "userList/:id",
             children: [{ index: true, Component: UserCustomListPage }],
@@ -80,7 +87,7 @@ export const router = createBrowserRouter([
             path: ":userId",
             Component: OtherProfileLayout,
             children: [
-              {index:true, Component: OtherUserProfilePage}, 
+              { index: true, Component: OtherUserProfilePage },
               {
                 path: "userList/:id",
                 children: [{ index: true, Component: OtherUserCustomListPage }],
