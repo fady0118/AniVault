@@ -50,7 +50,7 @@ export default function EmailEditForm() {
         {/* password field */}
         <div className="form-control">
           <p className="capitalize">current password</p>
-          <label className="input bg-transparent outline-0">
+          <label className="input border-base-300/15 dark:border-white/15 bg-amethyst-smoke-300 dark:bg-transparent outline-0">
             <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                 <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
@@ -64,7 +64,7 @@ export default function EmailEditForm() {
         {/* email field */}
         <div className="form-control">
           <p className="capitalize">new email</p>
-          <label className="input validator bg-transparent outline-0">
+          <label className="input validator border-base-300/15 dark:border-white/15 bg-amethyst-smoke-300 dark:bg-transparent outline-0">
             <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                 <rect width="20" height="16" x="2" y="4" rx="2"></rect>
@@ -78,7 +78,7 @@ export default function EmailEditForm() {
         {/* confirm email field */}
         <div className="form-control">
           <p className="capitalize">confirm new email</p>
-          <label className="input validator bg-transparent outline-0">
+          <label className="input validator border-base-300/15 dark:border-white/15 bg-amethyst-smoke-300 dark:bg-transparent outline-0">
             <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                 <rect width="20" height="16" x="2" y="4" rx="2"></rect>
