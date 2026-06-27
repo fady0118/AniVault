@@ -6,8 +6,9 @@ import LoaderComponent from "./LoaderComponent";
 import { CheckCircle, Circle } from "lucide-react";
 import { RootContext } from "../App";
 import { delay } from "../utility/utils";
+import { jikanFetchWithCache } from "../utility/jikanApi";
 
-const animeTypes = ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"];
+const animeTypes = ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv special"];
 const statusEnum = { anime: ["unwatched", "plan_to_watch", "watching", "completed", "dropped"], manga: ["unread", "plan_to_read", "reading", "completed", "dropped"] };
 // data is passed from the caller component
 export default function UserItemModal({ data, setShowUserItemModal, userItemTableData = undefined, setUserItems = undefined }) {
@@ -19,6 +20,8 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
   const [userItemData, setUserItemData] = useState(null);
   const [userListsData, setUserListsData] = useState(null);
   const [mediaType, setMediaType] = useState(userItemTableData?.media_type || (animeTypes.includes(data?.type?.toLowerCase()) ? "anime" : "manga"));
+  const [resolvedData, setResolvedData] = useState(data ?? null);
+  const displayData = resolvedData ?? data ?? userItemTableData ?? null;
 
   // item form-states
   const [currentTab, setCurrentTab] = useState(1);
@@ -70,6 +73,31 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
     }
   }
 
+  // fetch jikanData if it data==null
+  useEffect(() => {
+    if (data) {
+      console.log("data was not null")
+      setResolvedData(data);
+      return;
+    }
+    
+    let active = true;
+    (async () => {
+      try {
+        console.log("data was null")
+        const detailData = await jikanFetchWithCache(`https://api.jikan.moe/v4/${userItemTableData.media_type}/${userItemTableData.mal_id}`);
+        if (!active) return;
+        setResolvedData(detailData ?? null);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [data]);
+
   // update data in the DB
   async function updateData() {
     setStatus("loading");
@@ -88,9 +116,9 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
             manga_vols: Number(mangaProgress.vols) || null,
             manga_chaps: Number(mangaProgress.chaps) || null,
             media_type: mediaType,
-            mal_id: data?.mal_id,
-            cached_img: data?.images?.jpg?.image_url,
-            title: data?.title,
+            mal_id: displayData?.mal_id ?? userItemTableData?.mal_id,
+            cached_img: displayData?.images?.jpg?.image_url ?? displayData?.images?.webp?.image_url ?? userItemTableData?.cached_img,
+            title: displayData?.title ?? userItemTableData?.title,
             user_id: loggedInUser?.$id,
             user_id_str: loggedInUser?.$id,
           },
@@ -166,7 +194,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
         break;
       case "completed":
         setTimesWatched((prevState) => prevState ?? 1);
-        setProgress(data?.episodes ?? null);
+        setProgress(displayData?.episodes ?? null);
         break;
       case "plan_to_watch":
         setProgress(null);
@@ -273,12 +301,12 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
       // call addItemToList for each selected list
       await Promise.all(
         Object.entries(selectedLists).map(([listId, { notes, is_public, is_item_public }]) =>
-          addItemToList(data?.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, notes, listId, is_public, is_item_public),
+          addItemToList(displayData?.mal_id ?? userItemTableData?.mal_id, displayData?.images?.jpg?.image_url ?? displayData?.images?.webp?.image_url ?? userItemTableData?.cached_img, displayData?.title ?? userItemTableData?.title, mediaType, notes, listId, is_public, is_item_public),
         ),
       );
       if (newList?.name) {
         const newListRes = await createNewList(newList?.name, null, loggedInUser.$id, newList?.is_public);
-        await addItemToList(data?.mal_id, data?.images?.jpg?.image_url, data?.title, mediaType, newList?.notes || null, newListRes.$id, newList?.is_public, newList?.is_item_public);
+        await addItemToList(displayData?.mal_id ?? userItemTableData?.mal_id, displayData?.images?.jpg?.image_url ?? displayData?.images?.webp?.image_url ?? userItemTableData?.cached_img, displayData?.title ?? userItemTableData?.title, mediaType, newList?.notes || null, newListRes.$id, newList?.is_public, newList?.is_item_public);
       }
       // reset selectedLists && newList
       setSelectedLists({});
@@ -324,9 +352,9 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
             <section className="rounded-2xl border border-white/10 section-colors-medium p-4 shadow-inner shadow-slate-900/30">
               <div className="flex flex-col gap-4">
                 <div className="flex flex-row flex-wrap items-start gap-4">
-                  <img src={userItemTableData?.cached_img || data?.images?.webp?.large_image_url || data?.images?.webp?.image_url} className="w-24 h-32 rounded-sm object-cover" alt="" />
+                  <img src={userItemTableData?.cached_img || displayData?.images?.webp?.large_image_url || displayData?.images?.webp?.image_url} className="w-24 h-32 rounded-sm object-cover" alt="" />
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-lg truncate">{data?.title}</p>
+                    <p className="font-bold text-lg truncate">{displayData?.title}</p>
                     <span
                       className={`inline-flex items-center rounded-md px-2 py-1 mt-2 text-2xs font-medium ${mediaType === "anime" ? "text-indigo-500 dark:text-indigo-400 inset-ring inset-ring-indigo-500/50 dark:inset-ring-indigo-400/50" : "text-purple-500 dark:text-purple-400 inset-ring inset-ring-purple-500/50 dark:inset-ring-purple-400/50"}`}
                     >
@@ -344,7 +372,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                       <option disabled value="">
                         Select status
                       </option>
-                      {data?.status?.toLowerCase() === "not yet aired"
+                      {displayData?.status?.toLowerCase() === "not yet aired"
                         ? statusEnum[mediaType].slice(0, 2).map((str, i) => (
                             <option key={i} value={str}>
                               {str}
@@ -369,7 +397,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                             <option disabled value="">
                               Set progress
                             </option>
-                            {Array.from({ length: Number(data?.episodes ?? null) || 0 }, (_, i) => i + 1).map((value) => (
+                            {Array.from({ length: Number(displayData?.episodes ?? null) || 0 }, (_, i) => i + 1).map((value) => (
                               <option key={value} value={value}>
                                 {value}
                               </option>
@@ -393,7 +421,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                               <option disabled value="">
                                 Set volumes
                               </option>
-                              {Array.from({ length: Number(data?.volumes ?? null) || 0 }, (_, i) => i + 1).map((value) => (
+                              {Array.from({ length: Number(displayData?.volumes ?? null) || 0 }, (_, i) => i + 1).map((value) => (
                                 <option key={value} value={value}>
                                   {value}
                                 </option>
@@ -414,7 +442,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                               <option disabled value="">
                                 Set chapters
                               </option>
-                              {Array.from({ length: Number(data?.chapters ?? null) || 0 }, (_, i) => i + 1).map((value) => (
+                              {Array.from({ length: Number(displayData?.chapters ?? null) || 0 }, (_, i) => i + 1).map((value) => (
                                 <option key={value} value={value}>
                                   {value}
                                 </option>

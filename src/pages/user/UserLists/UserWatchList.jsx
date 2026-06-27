@@ -1,10 +1,6 @@
-import { Query } from "appwrite";
-import { tablesDB } from "../../../appwrite";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useUserItemModal } from "../../../components/useUserItemModal";
-import { useQueries } from "@tanstack/react-query";
-import { jikanFetch } from "../../../utility/jikanApi";
 
 const animeTypes = ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"];
 const statuses = { anime: ["all", "unwatched", "watching", "plan_to_watch", "completed", "dropped"], manga: ["all", "unread", "reading", "plan_to_read", "completed", "dropped"] };
@@ -15,7 +11,6 @@ export default function UserWatchList({ data }) {
   const [mangaStatus, setMangaStatus] = useState("all"); // all, unread, reading, plan to read, completed, dropped
 
   const [updatedItemData, setUpdatedItemData] = useState(null);
-  const [jikanData, setJikanData] = useState(null);
   const { setShowUserItemModal, showUserItemModal, UserItemModal } = useUserItemModal();
 
   useEffect(() => {
@@ -23,25 +18,6 @@ export default function UserWatchList({ data }) {
     const mangaItems = data?.rows?.filter((item) => item.media_type === "manga") ?? [];
     setUserItems({ animeItems, mangaItems });
   }, [data]);
-
-  const ItemsJikanDataQueries = useQueries({
-    queries: [...(userItems?.animeItems ?? []), ...(userItems?.mangaItems ?? [])].map((item) => {
-      return {
-        queryKey: ["ItemsData", `${item.mal_id}`],
-        queryFn: async () => {
-          try {
-            const res = await jikanFetch(`https://api.jikan.moe/v4/${item?.media_type}/${item?.mal_id}`);
-            if (!res.ok) throw new Error("failed to fetch data from jikan API");
-            const data = await res.json();
-            return data.data;
-          } catch (error) {
-            console.log(error);
-            return {};
-          }
-        },
-      };
-    }),
-  });
 
   function handleTypeChange(e) {
     setSelectedTab(e.target.value);
@@ -101,14 +77,7 @@ export default function UserWatchList({ data }) {
                     {userItems?.animeItems
                       ?.filter((item) => item.status === animeStatus || animeStatus === "all")
                       .map((item) => (
-                        <GridItem
-                          key={item?.$id}
-                          item={item}
-                          setShowUserItemModal={setShowUserItemModal}
-                          setUpdatedItemData={setUpdatedItemData}
-                          setJikanData={setJikanData}
-                          jData={ItemsJikanDataQueries?.find((jItem) => jItem?.data?.mal_id === item?.mal_id && animeTypes.includes(jItem?.data?.type?.toLowerCase()))}
-                        />
+                        <GridItem key={item?.$id} item={item} setShowUserItemModal={setShowUserItemModal} setUpdatedItemData={setUpdatedItemData} />
                       ))}
                   </div>
                 </>
@@ -134,14 +103,7 @@ export default function UserWatchList({ data }) {
                     {userItems?.mangaItems
                       ?.filter((item) => item?.status === mangaStatus || mangaStatus === "all")
                       .map((item) => (
-                        <GridItem
-                          key={item?.$id}
-                          item={item}
-                          setShowUserItemModal={setShowUserItemModal}
-                          setUpdatedItemData={setUpdatedItemData}
-                          setJikanData={setJikanData}
-                          jData={ItemsJikanDataQueries?.find((jItem) => jItem?.data?.mal_id === item?.mal_id && !animeTypes.includes(jItem?.data?.type?.toLowerCase()))}
-                        />
+                        <GridItem key={item?.$id} item={item} setShowUserItemModal={setShowUserItemModal} setUpdatedItemData={setUpdatedItemData} />
                       ))}
                   </div>
                 </>
@@ -152,12 +114,12 @@ export default function UserWatchList({ data }) {
           )}
         </div>
       </div>
-      {showUserItemModal && <UserItemModal data={jikanData} userItemTableData={updatedItemData} setShowUserItemModal={setShowUserItemModal} setUserItems={setUserItems} />}
+      {showUserItemModal && <UserItemModal userItemTableData={updatedItemData} setShowUserItemModal={setShowUserItemModal} setUserItems={setUserItems} />}
     </>
   );
 }
 
-function GridItem({ item, setShowUserItemModal, setUpdatedItemData, jData, setJikanData }) {
+function GridItem({ item, setShowUserItemModal, setUpdatedItemData }) {
   return (
     <div className="group relative rounded-md overflow-hidden">
       <Link to={`/${item?.media_type}/${item?.mal_id}`}>
@@ -166,7 +128,6 @@ function GridItem({ item, setShowUserItemModal, setUpdatedItemData, jData, setJi
       <div className="absolute bottom-0 left-0 translate-y-0 md:translate-y-full  group-hover:translate-y-0 w-full flex flex-row justify-center items-center box-colors-lighter duration-200">
         <button
           onClick={() => {
-            setJikanData(jData?.data ?? null);
             setUpdatedItemData(item);
             setShowUserItemModal(true);
           }}

@@ -1,6 +1,8 @@
 import { delay } from "./utils";
 
 let SFW_value = null;
+const detailCache = new Map();
+const DETAIL_CACHE_TTL_MS = 10 * 60 * 1000;
 
 export function setSFWValue(val) {
   SFW_value = val;
@@ -59,4 +61,23 @@ export function jikanFetch(input, init) {
     }
   }
   return enqueue(() => executeFetch(url, init, 2));
+}
+
+export async function jikanFetchWithCache(input, init, ttlMs = DETAIL_CACHE_TTL_MS) {
+  const cacheKey = typeof input === "string" ? input : String(input);
+  const cachedEntry = detailCache.get(cacheKey);
+
+  if (cachedEntry && Date.now() - cachedEntry.timestamp < ttlMs) {
+    console.log("jikan found the data in cache map")
+    return cachedEntry.data;
+  }
+  
+  const res = await jikanFetch(input, init);
+  console.log("jikan fetched the data")
+  if (!res.ok) throw new Error("failed to fetch data from jikan API");
+
+  const payload = await res.json();
+  const data = payload?.data ?? null;
+  detailCache.set(cacheKey, { timestamp: Date.now(), data });
+  return data;
 }
