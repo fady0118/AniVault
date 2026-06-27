@@ -44,7 +44,7 @@ export default function PasswordEditForm() {
 
   return (
     <div className="flex flex-col items-start gap-y-3">
-      <h2>Change Password</h2>
+      <h2 className="font-bold text-[1.35em]">Change Password</h2>
       <div className="w-full space-y-3">
         {/* email field */}
         <div className="form-control">
@@ -53,23 +53,23 @@ export default function PasswordEditForm() {
         {/* current password field */}
         <div className="form-control">
           <p className="capitalize">current password</p>
-          <label class="input validator bg-transparent outline-0">
-            <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <label className="input validator bg-transparent outline-0">
+            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                 <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
                 <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
               </g>
             </svg>
             <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value.trim())} required minLength="8" placeholder="Current Password" />
-            <p class="validator-hint hidden">Must be more than 8 characters</p>
+            <p className="validator-hint hidden">Must be more than 8 characters</p>
           </label>
         </div>
 
         {/* new password field */}
         <div className="form-control">
           <p className="capitalize">new password</p>
-          <label class="input validator bg-transparent outline-0">
-            <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <label className="input validator bg-transparent outline-0">
+            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                 <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
                 <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
@@ -77,7 +77,7 @@ export default function PasswordEditForm() {
             </svg>
             <input type="password" autoComplete="new-password" value={newPassword} onChange={(e) => setNewPassword(e.target.value.trim())} required minLength="8" placeholder="New Password" />
           </label>
-          <p class="validator-hint hidden">Must be more than 8 characters</p>
+          <p className="validator-hint hidden">Must be more than 8 characters</p>
         </div>
 
         <button type="submit" className="btn btn-primary w-fit" onClick={handleChangePassword}>

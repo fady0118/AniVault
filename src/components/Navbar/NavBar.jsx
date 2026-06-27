@@ -114,31 +114,28 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
           <div id="themeTogglerBtn" className="flex h-fit" data-next-theme={theme === "light" ? "dark" : "light"}>
             <label className="swap swap-rotate w-4">
               <input type="checkbox" className="hidden" checked={theme === "dark"} readOnly />
-              <Moon
-                className="swap-off p-0 w-full h-auto"
-                onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}
-              />
-              <Sun
-                className="swap-on p-0  w-full h-auto"
-                onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)}
-              />
+              <Moon className="swap-off p-0 w-full h-auto" onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)} />
+              <Sun className="swap-on p-0  w-full h-auto" onClick={() => handleClick(document.getElementById("themeTogglerBtn").dataset.nextTheme)} />
             </label>
           </div>
 
           {windowWidth <= 640 && (
             <>
-            {/* smallscreens user Navlink */}
+              {/* smallscreens user Navlink */}
               {loggedInUser ? (
                 <div className="w-4 aspect-square cursor-pointer" onClick={() => setShowProfileMenu((s) => !s)}>
-                  <img className="w-full h-full object-cover rounded-full border border-text-light/50 dark:border-text-dark/50 hover:border-indigo-500 duration-200" src={avatarImg || "/favicon-sq.png"} alt={userData?.username} />
+                  <img
+                    className="w-full h-full object-cover rounded-full border border-text-light/50 dark:border-text-dark/50 hover:border-indigo-500 duration-200"
+                    src={avatarImg || "/favicon-sq.png"}
+                    alt={userData?.username}
+                  />
                 </div>
               ) : (
-                  <label className="swap swap-rotate w-4 aspect-square">
-                    <input type="checkbox" hidden />
-                      <CircleUserRound onClick={() => setShowProfileMenu((s) => !s)} className="swap-on p-0 w-full h-auto" />
-                      <CircleUserRound strokeWidth={1} onClick={() => setShowProfileMenu((s) => !s)} className="swap-off p-0 w-full h-auto" />
-                    </label>
-                
+                <label className="swap swap-rotate w-4 aspect-square">
+                  <input type="checkbox" hidden />
+                  <CircleUserRound onClick={() => setShowProfileMenu((s) => !s)} className="swap-on p-0 w-full h-auto" />
+                  <CircleUserRound strokeWidth={1} onClick={() => setShowProfileMenu((s) => !s)} className="swap-off p-0 w-full h-auto" />
+                </label>
               )}
               <label className="swap swap-rotate">
                 <input type="checkbox" className="hidden" />
@@ -154,16 +151,25 @@ export default function NavBar({ themeSelect, theme, setTheme }) {
           <div className="z-50 text-xs p-2 rounded-md absolute top-15 right-[2.5vw] flex flex-col gap-y-1 box-colors backdrop-blur-md">
             {loggedInUser ? (
               <>
-               <div className="font-light text-[0.85em]">hello, {userData?.username}</div>
+                <div className="font-light text-[0.85em]">hello, {userData?.username}</div>
                 <Link className="opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile">
                   Your Account
+                </Link>
+                <Link className="opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile?tab=1">
+                  Your Watchlists
+                </Link>
+                <Link className="opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile?tab=2">
+                  Your custom lists
+                </Link>
+                <Link className="opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile/profile_edit">
+                  edit profile
                 </Link>
                 <div onClick={logout} className="btn btn-primary btn-xs w-fit h-fit text-[1em]">
                   logout <LogOut size={12} />
                 </div>
               </>
             ) : (
-              <div onClick={()=>setShowAuthModal(true)} className="flex flex-row items-center btn btn-primary btn-xs text-[1em] hover:cursor-pointer duration-200">
+              <div onClick={() => setShowAuthModal(true)} className="flex flex-row items-center btn btn-primary btn-xs text-[1em] hover:cursor-pointer duration-200">
                 Login <LogIn size={12} />
               </div>
             )}

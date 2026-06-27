@@ -37,8 +37,12 @@ export default function NavLink({ classes, LinkTitle, data, ref }) {
         <>
           {/* user Navlink */}
           <div onMouseEnter={(e) => calcPos(e)} className="w-6 aspect-square relative wrapper inline-block overflow-hidden duration-200">
-            <Link to="/profile"> 
-              <img className="w-full h-full object-cover rounded-full border-2 border-text-light/50 dark:border-text-dark/50 hover:border-indigo-500 duration-200" src={avatarImg || "/favicon-sq.png"} alt={userData?.username} />
+            <Link to="/profile">
+              <img
+                className="w-full h-full object-cover rounded-full border-2 border-text-light/50 dark:border-text-dark/50 hover:border-indigo-500 duration-200"
+                src={avatarImg || "/favicon-sq.png"}
+                alt={userData?.username}
+              />
             </Link>
           </div>
           {/* logout largeScreens form */}
@@ -46,9 +50,20 @@ export default function NavLink({ classes, LinkTitle, data, ref }) {
             <div className="w-full h-full p-2 flex flex-col items-start gap-y-1">
               <div className="w-full flex flex-col gap-y-1">
                 <div className="font-light text-[0.85em]">hello, {userData?.username}</div>
-                <Link className="opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile">
-                  Your Account
-                </Link>
+                <div className="w-fit grid grid-cols-1 gap-1.5">
+                  <Link className="text-nowrap opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile">
+                    Your Account
+                  </Link>
+                  <Link className="text-nowrap opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile?tab=1">
+                    Your Watchlists
+                  </Link>
+                  <Link className="text-nowrap opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile?tab=2">
+                    Your custom lists
+                  </Link>
+                  <Link className="text-nowrap opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile/profile_edit">
+                    edit profile
+                  </Link>
+                </div>
                 <div onClick={logout} className="btn btn-primary w-fit h-fit">
                   logout <LogOut size={14} />
                 </div>

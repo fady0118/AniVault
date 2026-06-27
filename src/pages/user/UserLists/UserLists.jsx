@@ -9,7 +9,11 @@ import { useLocation, useSearchParams } from "react-router";
 
 export default function UserLists({ user }) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentTab, setCurrentTab] = useState(Number(searchParams.get("tab")) || 1);
+  const currentTab = Number(searchParams.get("tab")) || 1;
+
+  const handleTabChange = (tab) => {
+    setSearchParams({ tab: Number(tab) });
+  };
 
   // forceRefetch
   const location = useLocation();
@@ -20,10 +24,6 @@ export default function UserLists({ user }) {
       queryClient.invalidateQueries({ queryKey: ["userLists"] });
     }
   }, []);
-
-  useEffect(() => {
-    setSearchParams({ tab: currentTab });
-  }, [currentTab]);
 
   const [userItemQ, userListsQ] = useQueries({
     queries: [
@@ -61,9 +61,9 @@ export default function UserLists({ user }) {
           className="tab"
           aria-label="user watchlist"
           value={1}
-          checked={Number(currentTab) === 1}
+          checked={currentTab === 1}
           onChange={(e) => {
-            setCurrentTab(Number(e.target.value));
+            handleTabChange(e.target.value);
           }}
         />
         <div className="tab-content">{userItemQ.isPending ? <div>Loading...</div> : <UserWatchList data={userItemQ?.data} />}</div>
@@ -74,9 +74,9 @@ export default function UserLists({ user }) {
           className="tab"
           aria-label="user custom lists"
           value={2}
-          checked={Number(currentTab) === 2}
+          checked={currentTab === 2}
           onChange={(e) => {
-            setCurrentTab(Number(e.target.value));
+            handleTabChange(e.target.value);
           }}
         />
         <div className="tab-content">{userListsQ.isPending ? <div>Loading...</div> : <UserCustomLists data={userListsQ?.data} />}</div>

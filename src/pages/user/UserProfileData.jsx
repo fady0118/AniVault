@@ -17,7 +17,7 @@ export default function UserProfileData({ userData }) {
             <div className="border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">info</div>
             <div className="flex flex-col gap-2 capitalize px-3 py-2">
               <div>age: {userData?.age || "-"}</div>
-              <div>gender: {userData?.gender || "-"}</div>
+              <div>gender: {userData?.gender?.split('_')?.join(" ") || "-"}</div>
               <div>joined at: {new Date(userData?.$createdAt).toLocaleDateString("eng-us", {month:"short", day:"numeric", year:"numeric"}) || "-"}</div>
             </div>
           </div>
