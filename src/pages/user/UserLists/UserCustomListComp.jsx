@@ -427,7 +427,7 @@ function ListItemDeleteModal({ listItem, setShowListItemDeleteModal, setList }) 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        setShowDeleteModal(false);
+        setShowListItemDeleteModal(false);
       }
     };
     document.documentElement.addEventListener("keydown", handleKeyDown);
@@ -439,7 +439,7 @@ function ListItemDeleteModal({ listItem, setShowListItemDeleteModal, setList }) 
       <div className="fixed inset-0 z-50 bg-dark-amethyst-smoke-50/40 backdrop-blur-lg flex items-center justify-center p-4 text-md">
         <div className="fixed w-full max-w-lg rounded-lg border border-amethyst-smoke-600/20 shadow-2xl shadow-slate-950/40 px-6 py-4 box-colors-semi-medium">
           <button
-            onClick={() => setShowDeleteModal(false)}
+            onClick={() => setShowListItemDeleteModal(false)}
             className="btn btn-ghost btn-sm btn-circle absolute top-1 right-1 sm:right-2 sm:top-2 bg-transparent"
             aria-label="Close delete confirmation modal"
           >

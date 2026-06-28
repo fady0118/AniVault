@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { account } from "../../../appwrite";
+import LoaderComponent from "../../../components/LoaderComponent";
 
 export default function EmailEditForm() {
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ export default function EmailEditForm() {
   // Update currently logged in user account email address
   async function handleChangeEmail(e) {
     e.preventDefault();
+    setStatus("loading");
     if (!password || !email || !confirmEmail) {
       setStatus("error");
       setError("all fields are required");
@@ -90,9 +92,16 @@ export default function EmailEditForm() {
           <div className="validator-hint hidden">Enter valid email address</div>
         </div>
 
-        <button type="submit" className="btn btn-primary w-fit">
-          Save Changes
-        </button>
+        <div className="w-full flex flex-row gap-x-2">
+          <button type="submit" className="btn btn-primary w-fit">
+            Save Changes
+          </button>
+          {status === "loading" && (
+            <div className="scale-75">
+              <LoaderComponent />
+            </div>
+          )}
+        </div>
         {status === "error" && <p className="alert alert-error alert-soft border-rose-500/5 bg-rose-500/10 dark:bg-rose-500/5 text-rose-600 dark:text-rose-400">{error}</p>}
         {status === "success" && (
           <p className="alert alert-success alert-soft border-emerald-500/5 bg-emerald-500/10 dark:bg-emerald-500/5 text-emerald-600 dark:text-emerald-400">email updated successfully</p>

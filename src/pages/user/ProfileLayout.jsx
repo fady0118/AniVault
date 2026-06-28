@@ -34,16 +34,18 @@ export default function ProfileLayout() {
                 </div>
               </div>
               <div id="title" className="order-1 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex items-center space-x-2">
-                <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark">{loggedInUser?.name}'s Profile</div>
+                <div className="text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark hover:text-dark-amethyst-smoke-600 dark:hover:text-amethyst-smoke-600 duration-200">
+                  <Link to="/profile">{loggedInUser?.name}'s Profile</Link>
+                </div>
                 {!isEditPage && (
                   <Link to="/profile/profile_edit">
                     {" "}
-                    <Edit size={18} />
+                    <Edit size={18} className="hover:text-dark-amethyst-smoke-600 dark:hover:text-amethyst-smoke-600 duration-200" />
                   </Link>
                 )}
               </div>
             </div>
-            <Outlet context={{setIsEditPage}}/>
+            <Outlet context={{ setIsEditPage }} />
           </>
         ) : (
           <div>you are not logged in</div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../Contexts/AuthContext";
 import { account } from "../../../appwrite";
+import LoaderComponent from "../../../components/LoaderComponent";
 
 export default function PasswordEditForm() {
   const { loggedInUser } = useAuth();
@@ -11,6 +12,7 @@ export default function PasswordEditForm() {
 
   async function handleChangePassword(e) {
     e.preventDefault();
+    setStatus("loading");
     if (!currentPassword || !newPassword) {
       setStatus("error");
       setError("all fields are required");
@@ -61,8 +63,8 @@ export default function PasswordEditForm() {
               </g>
             </svg>
             <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value.trim())} required minLength="8" placeholder="Current Password" />
-            <p className="validator-hint hidden">Must be more than 8 characters</p>
           </label>
+          <p className="validator-hint hidden">Must be more than 8 characters</p>
         </div>
 
         {/* new password field */}
@@ -80,9 +82,17 @@ export default function PasswordEditForm() {
           <p className="validator-hint hidden">Must be more than 8 characters</p>
         </div>
 
-        <button type="submit" className="btn btn-primary w-fit" onClick={handleChangePassword}>
-          Save Changes
-        </button>
+        <div className="w-full flex flex-row gap-x-2">
+          <button type="submit" className="btn btn-primary w-fit" onClick={handleChangePassword}>
+            Save Changes
+          </button>
+          {status === "loading" && (
+            <div className="scale-75">
+              <LoaderComponent />
+            </div>
+          )}
+        </div>
+
         {status === "error" && <p className="alert alert-error alert-soft border-rose-500/5 bg-rose-500/10 dark:bg-rose-500/5 text-rose-600 dark:text-rose-400">{error}</p>}
         {status === "success" && (
           <p className="alert alert-success alert-soft border-emerald-500/5 bg-emerald-500/10 dark:bg-emerald-500/5 text-emerald-600 dark:text-emerald-400">password updated successfully</p>
