@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { account, tablesDB, ID } from "../appwrite";
 import { useAuth } from "../Contexts/AuthContext";
+import LoaderComponent from "../components/LoaderComponent";
 
 export default function AuthModal({ setShowAuthModal }) {
   const { loggedInUser, login, register, logout, init } = useAuth();
@@ -8,23 +9,59 @@ export default function AuthModal({ setShowAuthModal }) {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [isLogin, setIsLogin] = useState(true);
+  const [status, setStatus] = useState("idle");
+  const [error, setError] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setStatus("loading");
     if (isLogin) {
-      //login
-      await login(email, password);
+      try {
+        //login
+        await login(email, password);
+        setStatus("idle");
+        setEmail("");
+        setPassword("");
+        setName("");
+      } catch (error) {
+        if (error.code === 403) {
+          setError("This account has been deleted / blocked");
+        } else {
+          setError(error.message);
+        }
+        setStatus("error");
+      }
     } else {
-      //signup
-      const user = await register(email, password, name);
-      const res = await tablesDB.createRow({
-        databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
-        tableId: import.meta.env.VITE_TABLE_ID_USER_PROFILE,
-        rowId: user.$id,
-        data: {
-          username: user.name,
-        },
-      });
+      try {
+        //signup
+        const user = await register(email, password, name);
+        const res = await tablesDB.createRow({
+          databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+          tableId: import.meta.env.VITE_TABLE_ID_USER_PROFILE,
+          rowId: user.$id,
+          data: {
+            username: user.name,
+          },
+        });
+      } catch (error) {
+        if (error.code === 409) {
+          setError("A user with the same email already exists in this project");
+        } else {
+          setError(error.message);
+        }
+        setStatus("error");
+      }
+    }
+  }
+
+  async function handleLogout() {
+    try {
+      setStatus("loading");
+      await logout();
+      setStatus("idle");
+    } catch (error) {
+      setError(error.message);
+      setStatus("error");
     }
   }
 
@@ -40,7 +77,7 @@ export default function AuthModal({ setShowAuthModal }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 box-colors-lighter text-[0.75em] text-text-dark backdrop-blur-sm">
-      <div className="relative w-full max-w-lg rounded-3xl box-colors-medium border border-base-200/60 p-8">
+      <div className="relative w-full max-w-md rounded-3xl box-colors-medium border border-base-200/60 p-8">
         <button onClick={() => setShowAuthModal(false)} className="btn btn-ghost btn-sm btn-circle absolute right-4 top-4 bg-transparent" aria-label="Close authentication modal">
           ✕
         </button>
@@ -50,9 +87,16 @@ export default function AuthModal({ setShowAuthModal }) {
             <div className="uppercase tracking-[0.35em] text-primary">Welcome back</div>
             <h2 className="text-[1.75em] font-semibold">{loggedInUser.name}</h2>
             <p className=" text-base-content/70">You are currently signed in. Use the button below to logout.</p>
-            <button onClick={logout} className="btn btn-primary w-full">
-              Logout
-            </button>
+            {status === "loading" ? (
+              <div className="flex justify-center scale-75">
+                <LoaderComponent />
+              </div>
+            ) : (
+              <button onClick={handleLogout} className="btn btn-primary w-full">
+                Logout
+              </button>
+            )}
+            {status === "error" && <p className="text-rose-500 dark:text-rose-400 capitalize">{error}</p>}
           </div>
         ) : (
           <div className="space-y-6">
@@ -64,7 +108,7 @@ export default function AuthModal({ setShowAuthModal }) {
             <form className="space-y-4" onSubmit={handleSubmit}>
               {/* email field */}
               <div className="form-control">
-                <label class="input validator bg-transparent">
+                <label class="input validator bg-transparent w-full">
                   <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                       <rect width="20" height="16" x="2" y="4" rx="2"></rect>
@@ -78,7 +122,7 @@ export default function AuthModal({ setShowAuthModal }) {
 
               {/* password field */}
               <div className="form-control">
-                <label class="input validator bg-transparent">
+                <label class="input validator bg-transparent w-full">
                   <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                       <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
@@ -101,7 +145,7 @@ export default function AuthModal({ setShowAuthModal }) {
               {/* username field */}
               {!isLogin && (
                 <div className="form-control">
-                  <label class="input validator bg-transparent">
+                  <label class="input validator bg-transparent w-full">
                     <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                       <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
@@ -115,8 +159,8 @@ export default function AuthModal({ setShowAuthModal }) {
                       required
                       placeholder="Username"
                       pattern="[A-Za-z][A-Za-z0-9\-]*"
-                      minlength="3"
-                      maxlength="30"
+                      minLength="3"
+                      maxLength="30"
                       title="Only letters, numbers or dash"
                     />
                   </label>
@@ -127,10 +171,16 @@ export default function AuthModal({ setShowAuthModal }) {
                   </p>
                 </div>
               )}
-
-              <button type="submit" className="btn btn-primary w-full">
-                {isLogin ? "Login" : "Sign Up"}
-              </button>
+              {status === "loading" ? (
+                <div className="flex justify-center scale-75">
+                  <LoaderComponent />
+                </div>
+              ) : (
+                <button type="submit" className="btn btn-primary w-full">
+                  {isLogin ? "Login" : "Sign Up"}
+                </button>
+              )}
+              {status === "error" && <p className="text-rose-500 dark:text-rose-400 capitalize">{error}</p>}
             </form>
 
             <div className="flex items-center justify-between space-3 rounded-full border border-base-200/70 bg-base-200/50 px-4 py-3  text-base-content/70">
