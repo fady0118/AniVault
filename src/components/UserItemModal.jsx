@@ -76,15 +76,15 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
   // fetch jikanData if it data==null
   useEffect(() => {
     if (data) {
-      console.log("data was not null")
+      console.log("data was not null");
       setResolvedData(data);
       return;
     }
-    
+
     let active = true;
     (async () => {
       try {
-        console.log("data was null")
+        console.log("data was null");
         const detailData = await jikanFetchWithCache(`https://api.jikan.moe/v4/${userItemTableData.media_type}/${userItemTableData.mal_id}`);
         if (!active) return;
         setResolvedData(detailData ?? null);
@@ -301,12 +301,30 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
       // call addItemToList for each selected list
       await Promise.all(
         Object.entries(selectedLists).map(([listId, { notes, is_public, is_item_public }]) =>
-          addItemToList(displayData?.mal_id ?? userItemTableData?.mal_id, displayData?.images?.jpg?.image_url ?? displayData?.images?.webp?.image_url ?? userItemTableData?.cached_img, displayData?.title ?? userItemTableData?.title, mediaType, notes, listId, is_public, is_item_public),
+          addItemToList(
+            displayData?.mal_id ?? userItemTableData?.mal_id,
+            displayData?.images?.jpg?.image_url ?? displayData?.images?.webp?.image_url ?? userItemTableData?.cached_img,
+            displayData?.title ?? userItemTableData?.title,
+            mediaType,
+            notes,
+            listId,
+            is_public,
+            is_item_public,
+          ),
         ),
       );
       if (newList?.name) {
         const newListRes = await createNewList(newList?.name, null, loggedInUser.$id, newList?.is_public);
-        await addItemToList(displayData?.mal_id ?? userItemTableData?.mal_id, displayData?.images?.jpg?.image_url ?? displayData?.images?.webp?.image_url ?? userItemTableData?.cached_img, displayData?.title ?? userItemTableData?.title, mediaType, newList?.notes || null, newListRes.$id, newList?.is_public, newList?.is_item_public);
+        await addItemToList(
+          displayData?.mal_id ?? userItemTableData?.mal_id,
+          displayData?.images?.jpg?.image_url ?? displayData?.images?.webp?.image_url ?? userItemTableData?.cached_img,
+          displayData?.title ?? userItemTableData?.title,
+          mediaType,
+          newList?.notes || null,
+          newListRes.$id,
+          newList?.is_public,
+          newList?.is_item_public,
+        );
       }
       // reset selectedLists && newList
       setSelectedLists({});
@@ -437,7 +455,6 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                               className="select select-primary bg-transparent select-xs outline-0 w-fit"
                               value={mangaProgress.chaps || ""}
                               onChange={(e) => setMangaProgress((prev) => ({ ...prev, chaps: e.target.value }))}
-                              disabled={itemStatus !== "reading"}
                             >
                               <option disabled value="">
                                 Set chapters
@@ -478,7 +495,11 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                   )}
 
                   <div className="flex flex-wrap items-center gap-3">
-                    <button onClick={updateData} disabled={status !== "modified"} className="btn btn-primary btn-sm w-fit capitalize">
+                    <button
+                      onClick={updateData}
+                      disabled={status !== "modified"}
+                      className="w-fit px-8 btn btn-sm btn-outline border-amethyst-smoke-600 text-amethyst-smoke-900/40 dark:text-amethyst-smoke-200/40 capitalize"
+                    >
                       update
                     </button>
                     {status === "loading" && (
@@ -679,7 +700,7 @@ export default function UserItemModal({ data, setShowUserItemModal, userItemTabl
                           <button
                             onClick={updateLists}
                             disabled={listsUpdateStatus !== "modified"}
-                            className="w-fit px-8 btn btn-sm btn-outline border-indigo-600/80 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-500/15 dark:hover:bg-indigo-600/30  capitalize"
+                            className="w-fit px-8 btn btn-sm btn-outline border-indigo-600/80 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-500/15 dark:hover:bg-indigo-600/30 capitalize"
                           >
                             update
                           </button>

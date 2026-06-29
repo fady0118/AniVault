@@ -26,7 +26,10 @@ export default function AuthModal({ setShowAuthModal }) {
       } catch (error) {
         if (error.code === 403) {
           setError("This account has been deleted / blocked");
-        } else {
+        } else if (error.code === 401) {
+          setError("Please check your email and password and try again.");
+        } 
+        else {
           setError(error.message);
         }
         setStatus("error");

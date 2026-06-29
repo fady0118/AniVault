@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 import Character from "../../components/CardBox/Box";
 import CardBox from "../../components/CardBox/CardBox";
 import { RootContext } from "../../App";
-import { Bookmark, ChevronRight, Music4Icon, SquareArrowOutUpRight, Star } from "lucide-react";
+import { Bookmark, ChevronRight, Music4Icon, NotebookPen, SquareArrowOutUpRight, Star } from "lucide-react";
 import { renderInfoStr, renderInfoArr, renderIcon, delay, dateFormatter, renderReactions, getYouTubeThumbnail } from "../../utility/utils";
 import { useRelations } from "../../utility/useRelations";
 import useGallery from "../../utility/useGallery";
@@ -20,12 +20,15 @@ import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
 import LoaderComponent from "../../components/LoaderComponent";
 import { useUserItemModal } from "../../components/useUserItemModal";
+import ReviewsModal from "../../components/ReviewsModal";
 
 export default function AnimePage() {
   let { id } = useParams();
   const { windowWidth } = useContext(RootContext);
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const { setShowUserItemModal, showUserItemModal, setUserItemData, userItemData, UserItemModal } = useUserItemModal();
+  const [showReviewsModal, setShowReviewsModal] = useState(false);
+
   const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, videosQ, newsQ] = useQueries({
     queries: [
       {
@@ -180,14 +183,26 @@ export default function AnimePage() {
                     {animeQ?.data?.title_japanese ? <span>{animeQ?.data.title_japanese}</span> : ""}
                   </div>
                 </div>
-                {windowWidth > 384 ? (
-                  <Bookmark
-                    className="h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors"
-                    onClick={() => {
-                      setUserItemData(animeQ?.data);
-                      setShowUserItemModal(true);
-                    }}
-                  />
+                {windowWidth > 480 ? (
+                  <div className="flex flex-row items-end flex-wrap gap-y-1 gap-x-1.5">
+                    <Bookmark
+                      className="h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors"
+                      onClick={() => {
+                        setUserItemData(animeQ?.data);
+                        setShowUserItemModal(true);
+                      }}
+                    />
+                    <div
+                      id="reviewModalBtn"
+                      onClick={() => {
+                        setShowReviewsModal(true);
+                      }}
+                      className="flex items-center gap-x-1 text-xs sm:text-sm rounded-sm p-1 box-colors bookmark-colors"
+                    >
+                      <NotebookPen size={14} />
+                      <p>write a review</p>
+                    </div>
+                  </div>
                 ) : (
                   ""
                 )}
@@ -195,20 +210,32 @@ export default function AnimePage() {
               <div className="order-2 flex flex-col w-full gap-y-3">
                 <div className="w-full order-1 flex flex-col gap-3">
                   <div className="flex flex-col xs:flex-row items-stretch gap-3 w-full">
-                    {windowWidth <= 384 ? (
-                      <div className="w-full flex flex-row items-start gap-2 2xs:w-fit 2xs:inline-block">
+                    {windowWidth <= 480 ? (
+                      <div className="w-full flex flex-row items-start gap-2 xs:w-fit xs:inline-block">
                         <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
                           <div id="poster" className="w-full h-full">
                             <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={animeQ?.data?.images?.jpg?.large_image_url} alt={animeQ?.data?.title} />
                           </div>
                         </div>
-                        <Bookmark
-                          className="order-last h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors"
-                          onClick={() => {
-                            setUserItemData(animeQ?.data);
-                            setShowUserItemModal(true);
-                          }}
-                        />
+                        <div className="order-last flex flex-col items-start flex-wrap gap-y-1 gap-x-1.5">
+                          <Bookmark
+                            className="h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors"
+                            onClick={() => {
+                              setUserItemData(animeQ?.data);
+                              setShowUserItemModal(true);
+                            }}
+                          />
+                          <div
+                            id="reviewModalBtn"
+                            onClick={() => {
+                              setShowReviewsModal(true);
+                            }}
+                            className="flex items-center gap-x-1 text-xs sm:text-sm rounded-sm p-1 box-colors bookmark-colors"
+                          >
+                            <NotebookPen size={14} />
+                            <p>write a review</p>
+                          </div>
+                        </div>
                       </div>
                     ) : (
                       <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
@@ -618,6 +645,7 @@ export default function AnimePage() {
           )}
           {showEpisodesModal && <EpisodesModal setShowEpisodesModal={setShowEpisodesModal} />}
           {showUserItemModal && <UserItemModal data={userItemData} setShowUserItemModal={setShowUserItemModal} />}
+          {showReviewsModal && <ReviewsModal setShowReviewsModal={setShowReviewsModal} data={animeQ?.data}/>}
         </>
       )}
     </>

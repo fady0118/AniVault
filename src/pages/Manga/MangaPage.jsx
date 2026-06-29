@@ -8,17 +8,20 @@ import Pictures from "../../components/character/Pictures";
 import CardBox from "../../components/CardBox/CardBox";
 import { useRelations } from "../../utility/useRelations";
 import { useQueries } from "@tanstack/react-query";
-import { Bookmark, ChevronRight, Star } from "lucide-react";
+import { Bookmark, ChevronRight, NotebookPen, Star } from "lucide-react";
 import News from "../../components/anime/News";
 import Reviews from "../../components/anime/Reviews";
 import { jikanFetch } from "../../utility/jikanApi";
 import LoaderComponent from "../../components/LoaderComponent";
 import { useUserItemModal } from "../../components/useUserItemModal";
+import ReviewsModal from "../../components/ReviewsModal";
 
 export default function MangaPage() {
   let { id } = useParams();
   const { windowWidth } = useContext(RootContext);
   const { setShowUserItemModal, showUserItemModal, setUserItemData, userItemData, UserItemModal } = useUserItemModal();
+  const [showReviewsModal, setShowReviewsModal] = useState(false);
+
   const [mangaQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, newsQ] = useQueries({
     queries: [
       {
@@ -146,24 +149,67 @@ export default function MangaPage() {
                   {mangaQ?.data?.title_japanese ? <span>{mangaQ?.data.title_japanese}</span> : ""}
                 </div>
               </div>
-              <div className="h-full flex items-center">
-                <Bookmark
-                  className="h-2/3 min-h-6 max-h-10 w-auto aspect-square rounded-full p-1.5 text-amethyst-smoke-600  hover:cursor-pointer hover:text-amethyst-smoke-400 hover:bg-amethyst-smoke-500/20 duration-200"
-                  onClick={() => {
-                    setUserItemData(mangaQ?.data);
-                    setShowUserItemModal(true);
-                  }}
-                />
-              </div>
+              {windowWidth > 480 ? (
+                <div className="flex flex-row items-end flex-wrap gap-y-1 gap-x-1.5">
+                  <Bookmark
+                    className="h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors"
+                    onClick={() => {
+                      setUserItemData(mangaQ?.data);
+                      setShowUserItemModal(true);
+                    }}
+                  />
+                  <div
+                    id="reviewModalBtn"
+                    onClick={() => {
+                      setShowReviewsModal(true);
+                    }}
+                    className="flex items-center gap-x-1 text-xs sm:text-sm rounded-sm p-1 box-colors bookmark-colors"
+                  >
+                    <NotebookPen size={14} />
+                    <p>write a review</p>
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
             <div className="order-2 flex flex-col w-full gap-y-3">
               <div className="w-full order-1 flex flex-col gap-3">
                 <div className="flex flex-col xs:flex-row items-stretch gap-3 w-full">
-                  <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
-                    <div id="poster" className="w-full h-full">
-                      <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={mangaQ?.data?.images?.jpg.large_image_url} alt={mangaQ?.data?.title} />
+                  {windowWidth <= 480 ? (
+                    <div className="w-full flex flex-row items-start gap-2 xs:w-fit xs:inline-block">
+                      <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
+                        <div id="poster" className="w-full h-full">
+                          <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={mangaQ?.data?.images?.jpg?.large_image_url} alt={mangaQ?.data?.title} />
+                        </div>
+                      </div>
+                      <div className="order-last flex flex-col items-start flex-wrap gap-y-1 gap-x-1.5">
+                        <Bookmark
+                          className="h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors"
+                          onClick={() => {
+                            setUserItemData(mangaQ?.data);
+                            setShowUserItemModal(true);
+                          }}
+                        />
+                        <div
+                          id="reviewModalBtn"
+                          onClick={() => {
+                            setShowReviewsModal(true);
+                          }}
+                          className="flex items-center gap-x-1 text-xs sm:text-sm rounded-sm p-1 box-colors bookmark-colors"
+                        >
+                          <NotebookPen size={14} />
+                          <p>write a review</p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="w-1/6 min-w-28 2xs:min-w-36 aspect-2/3 rounded-lg box-colors order-1 overflow-hidden self-auto shrink-0">
+                      <div id="poster" className="w-full h-full">
+                        <img className="h-full w-full object-cover rounded-lg overflow-hidden" src={mangaQ?.data?.images?.jpg?.large_image_url} alt={mangaQ?.data?.title} />
+                      </div>
+                    </div>
+                  )}
                   <div className="order-1 flex flex-col gap-3">
                     <div id="details" className="box-colors rounded-lg w-fit">
                       <div className="bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize">Details</div>
@@ -462,6 +508,7 @@ export default function MangaPage() {
         />
       )}
       {showUserItemModal && <UserItemModal data={userItemData} setShowUserItemModal={setShowUserItemModal} />}
+      {showReviewsModal && <ReviewsModal setShowReviewsModal={setShowReviewsModal} data={mangaQ?.data} />}
     </>
   );
 }
