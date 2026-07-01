@@ -13,13 +13,14 @@ import News from "../../components/anime/News";
 import Reviews from "../../components/anime/Reviews";
 import { jikanFetch } from "../../utility/jikanApi";
 import LoaderComponent from "../../components/LoaderComponent";
-import { useUserItemModal } from "../../components/useUserItemModal";
+import { useUserItemModal } from "../../components/userItemModal/useUserItemModal";
 import ReviewsModal from "../../components/ReviewsModal";
+import UserItemModal from "../../components/userItemModal/UserItemModal";
 
 export default function MangaPage() {
   let { id } = useParams();
   const { windowWidth } = useContext(RootContext);
-  const { setShowUserItemModal, showUserItemModal, setUserItemData, userItemData, UserItemModal } = useUserItemModal();
+  const { setShowUserItemModal, showUserItemModal, setUserItemData, userItemData } = useUserItemModal();
   const [showReviewsModal, setShowReviewsModal] = useState(false);
 
   const [mangaQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, newsQ] = useQueries({

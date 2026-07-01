@@ -2,28 +2,33 @@ import { useEffect, useState } from "react";
 import { tablesDB } from "../appwrite";
 import { Query } from "appwrite";
 import { useAuth } from "../Contexts/AuthContext";
+import TextAreaToolBox from "./textareaToolbox/TextAreaToolBox";
+import useTextAreaToolBox from "./textareaToolbox/useTextAreaToolBox";
 
 const animeTypes = ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv special"];
 const statusEnum = { anime: ["unwatched", "plan_to_watch", "watching", "completed", "dropped"], manga: ["unread", "plan_to_read", "reading", "completed", "dropped"] };
-
 export default function ReviewsModal({ setShowReviewsModal, data }) {
   const { loggedInUser } = useAuth();
-  // data
+  // data local states
   const [reviewData, setReviewData] = useState(null);
   const [userItemData, setUserItemData] = useState(null);
-  // layout
+  // layout tab switch state
   const [currentTab, setCurrentTab] = useState(1);
   // local input states
   const [itemStatus, setItemStatus] = useState(null);
   const [progress, setProgress] = useState(null);
   const [mangaProgress, setMangaProgress] = useState({ vols: null, chaps: null });
   const [timesWatched, setTimesWatched] = useState(null);
-
+  // status handling
   const [status, setStatus] = useState("idle"); // posting review status
   const [error, setError] = useState(null);
 
+  // review body TextArea
+  const { textAreaData, setTextAreaData, insertTextStyle } = useTextAreaToolBox(reviewData?.review_body||"")
+  // derive mediaType from item data
   const mediaType = animeTypes.includes(data?.type?.toLowerCase()) ? "anime" : "manga";
 
+  // appwrite data fetch
   async function fetchReviewFromDB() {
     try {
       const res = await tablesDB.listRows({
@@ -31,13 +36,13 @@ export default function ReviewsModal({ setShowReviewsModal, data }) {
         tableId: import.meta.env.VITE_TABLE_ID_REVIEWS,
         queries: [Query.equal("item_mal_id", data?.mal_id), Query.equal("userProfile", loggedInUser?.$id)],
       });
-      console.log(res);
       setReviewData(res?.rows[0] || null);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      setStatus(error);
+      setError(error.message);
     }
   }
-
   async function fetchUserItemFromDB() {
     try {
       const res = await tablesDB.listRows({
@@ -45,17 +50,17 @@ export default function ReviewsModal({ setShowReviewsModal, data }) {
         tableId: import.meta.env.VITE_TABLE_ID_USER_ITEM,
         queries: [Query.equal("mal_id", data?.mal_id), Query.equal("user_id", loggedInUser?.$id)],
       });
-      console.log(res);
       setUserItemData(res?.rows[0] || null);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      setStatus(error);
+      setError(error.message);
     }
   }
 
   useEffect(() => {
     fetchReviewFromDB();
     fetchUserItemFromDB();
-    // setReviewData("f u");
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
         setShowReviewsModal(false);
@@ -103,7 +108,7 @@ export default function ReviewsModal({ setShowReviewsModal, data }) {
 
   return (
     <div className="z-50 fixed top-0 left-[-2.5vw] w-[102.5vw] h-screen backdrop-blur-lg">
-      <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 rounded-xl px-4 py-2 min-h-36 max-h-[90vh] overflow-y-auto box-colors">
+      <div className="fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 rounded-xl px-4 py-2  max-h-[90vh] overflow-y-auto box-colors">
         <button
           onClick={() => setShowReviewsModal(false)}
           className="btn btn-ghost btn-sm btn-circle absolute top-1 right-1 sm:right-2 sm:top-2 bg-transparent"
@@ -123,7 +128,7 @@ export default function ReviewsModal({ setShowReviewsModal, data }) {
             </div>
           </div>
 
-          <div>
+          <>
             {currentTab === 1 && (
               <section className="rounded-2xl border border-white/10 section-colors-medium p-4 shadow-inner shadow-slate-900/30">
                 <div className="flex flex-col">
@@ -262,7 +267,17 @@ export default function ReviewsModal({ setShowReviewsModal, data }) {
                 </div>
               </section>
             )}
-          </div>
+            {currentTab === 2 && (
+              <section className="rounded-2xl border border-white/10 section-colors-medium p-4 shadow-inner shadow-slate-900/30">
+                <div className="w-full grid grid-cols-1 xs:grid-cols-3 min-h-36">
+                  <div id="reviewBody" className="col-span-1 xs:col-span-2 bg-rose-500">
+                    <TextAreaToolBox textAreaData={textAreaData} setTextAreaData={setTextAreaData} insertTextStyle={insertTextStyle} />
+                  </div>
+                  <div id="reviewMeta" className="col-span-1 bg-emerald-500"></div>
+                </div>
+              </section>
+            )}
+          </>
         </div>
       </div>
     </div>

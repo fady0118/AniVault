@@ -19,14 +19,15 @@ import EpisodesModal from "../../components/anime/EpisodesModal";
 import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
 import LoaderComponent from "../../components/LoaderComponent";
-import { useUserItemModal } from "../../components/useUserItemModal";
+import { useUserItemModal } from "../../components/userItemModal/useUserItemModal";
 import ReviewsModal from "../../components/ReviewsModal";
+import UserItemModal from "../../components/userItemModal/UserItemModal";
 
 export default function AnimePage() {
   let { id } = useParams();
   const { windowWidth } = useContext(RootContext);
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
-  const { setShowUserItemModal, showUserItemModal, setUserItemData, userItemData, UserItemModal } = useUserItemModal();
+  const { setShowUserItemModal, showUserItemModal, setUserItemData, userItemData } = useUserItemModal();
   const [showReviewsModal, setShowReviewsModal] = useState(false);
 
   const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, videosQ, newsQ] = useQueries({

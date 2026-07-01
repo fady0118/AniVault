@@ -6,7 +6,7 @@ import { RootContext } from "../../App";
 import { Link } from "react-router";
 import LoaderComponent from "../LoaderComponent";
 import EmptyDataFallback from "../EmptyDataFallback";
-import { useUserItemModal } from "../useUserItemModal";
+import { useUserItemModal } from "../userItemModal/useUserItemModal";
 
 const classes = { chevron: "p-0.5 rounded-md box-content duration-200 scale-80 md:scale-100" };
 export default function AnimeMangaContainer({ searchParams, itemType, useritemModal }) {

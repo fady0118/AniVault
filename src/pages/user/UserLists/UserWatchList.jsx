@@ -1,21 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import { useUserItemModal } from "../../../components/useUserItemModal";
+import { useUserItemModal } from "../../../components/userItemModal/useUserItemModal";
+import { NotebookPen } from "lucide-react";
+import UserItemModal from "../../../components/userItemModal/UserItemModal";
 
 const animeTypes = ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"];
 const statuses = { anime: ["all", "unwatched", "watching", "plan_to_watch", "completed", "dropped"], manga: ["all", "unread", "reading", "plan_to_read", "completed", "dropped"] };
 export default function UserWatchList({ data }) {
-  const [userItems, setUserItems] = useState(null);
+  const [userItems, setUserItems] = useState(null); // orgainzed watchList items
   const [selectedTab, setSelectedTab] = useState("anime"); // anime, manga
   const [animeStatus, setAnimeStatus] = useState("all"); // all, unwatched, watching, plan to watch, completed, dropped
   const [mangaStatus, setMangaStatus] = useState("all"); // all, unread, reading, plan to read, completed, dropped
 
   const [updatedItemData, setUpdatedItemData] = useState(null);
-  const { setShowUserItemModal, showUserItemModal, UserItemModal } = useUserItemModal();
+  const { setShowUserItemModal, showUserItemModal } = useUserItemModal();
 
   useEffect(() => {
-    const animeItems = data?.rows?.filter((item) => item.media_type === "anime") ?? [];
-    const mangaItems = data?.rows?.filter((item) => item.media_type === "manga") ?? [];
+    const animeItems = data?.rows?.filter((item) => item.mediaType === "anime") ?? [];
+    const mangaItems = data?.rows?.filter((item) => item.mediaType === "manga") ?? [];
     setUserItems({ animeItems, mangaItems });
   }, [data]);
 
@@ -122,9 +124,10 @@ export default function UserWatchList({ data }) {
 function GridItem({ item, setShowUserItemModal, setUpdatedItemData }) {
   return (
     <div className="group relative rounded-md overflow-hidden">
-      <Link to={`/${item?.media_type}/${item?.mal_id}`}>
+      <Link to={`/${item?.mediaType}/${item?.mal_id}`}>
         <img className="w-full h-full object-cover" src={item?.cached_img} alt={item?.title} />
       </Link>
+
       <div className="absolute bottom-0 left-0 translate-y-0 md:translate-y-full  group-hover:translate-y-0 w-full flex flex-row justify-center items-center box-colors-lighter duration-200">
         <button
           onClick={() => {

@@ -4,27 +4,28 @@ import { account, tablesDB } from "../../appwrite";
 import { redirect, useNavigate, useOutletContext } from "react-router";
 import LoaderComponent from "../../components/LoaderComponent";
 import { delay } from "../../utility/utils";
+import useTextAreaToolBox from "../../components/textareaToolbox/useTextAreaToolBox";
+import TextAreaToolBox from "../../components/textareaToolbox/TextAreaToolBox";
 
 export default function UserProfileEditPage() {
   const { loggedInUser, userData, setUserData, avatarImg } = useAuth();
   const navigate = useNavigate();
+  // tab switch
   const [currentTab, setCurrentTab] = useState(1);
+  // status handling
   const [status, setStatus] = useState("idle"); // "idle", "editing", "uploading", "success", "fail"
   const [error, setError] = useState(null);
-  const [personalData, setPersonalData] = useState({ gender: userData?.gender || "", age: userData?.age || "", bio: userData?.bio || "" });
+  // gender, age local states
+  const [personalData, setPersonalData] = useState({ gender: userData?.gender || "", age: userData?.age || "" });
+  // bio body customhook
+
+  const { textAreaData, setTextAreaData, insertTextStyle } = useTextAreaToolBox(userData?.bio || "");
+  // editPage context shows/hides edit button in title
   const { setIsEditPage } = useOutletContext();
+  // show hide delete modal
   const [showAccountDeleteModal, setShowAccountDeleteModal] = useState(false);
-  const bioTextareaRef = null;
 
-  const insertTextStyle = (before, after = "") => {
-    const textarea = document.getElementById("bioInput");
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = personalData.bio.substring(start, end);
-    const newText = personalData.bio.substring(0, start) + before + selectedText + after + personalData.bio.substring(end);
-    setPersonalData((s) => ({ ...s, bio: newText }));
-  };
-
+  // handle personal data update function
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus("uploading");
@@ -32,7 +33,7 @@ export default function UserProfileEditPage() {
       const res = await tablesDB.updateRow(import.meta.env.VITE_APPWRITE_DATABASE_ID, import.meta.env.VITE_TABLE_ID_USER_PROFILE, loggedInUser.$id, {
         gender: personalData.gender || null,
         age: Number(personalData.age) || null,
-        bio: personalData.bio || null,
+        bio: textAreaData,
       });
       console.log(res);
       setUserData(res);
@@ -43,12 +44,18 @@ export default function UserProfileEditPage() {
       setError(error);
     }
   }
-
-  useEffect(() => {}, []);
-
+// update IsEditPage value on mount
   useEffect(() => {
     setIsEditPage(true);
   }, []);
+
+  // sync data local states with userData
+  useEffect(() => {
+    if (!userData) return;
+    setPersonalData({ gender: userData?.gender || "", age: userData?.age || "" });
+    setTextAreaData(userData?.bio || "");
+  }, [userData]);
+
   return (
     <>
       <div role="tablist" id="listTabs" className="tabs tabs-box flex flex-row items-center gap-2">
@@ -107,40 +114,9 @@ export default function UserProfileEditPage() {
                   }}
                 />
               </div>
-              <div className="form-control w-full flex flex-col gap-y-1">
-                <label className="font-light text-xs capitalize" htmlFor="bioInput">
-                  bio
-                </label>
-                <div className="flex gap-1 mb-1">
-                  <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("**", "**")} title="Bold">
-                    <strong>B</strong>
-                  </button>
-                  <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("*", "*")} title="Italic">
-                    <em>I</em>
-                  </button>
-                  <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("__", "__")} title="Underline">
-                    <u>U</u>
-                  </button>
-                  <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("~~", "~~")} title="Strikethrough">
-                    <s>S</s>
-                  </button>
-                  <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("`", "`")} title="Code">
-                    &lt;/&gt;
-                  </button>
-                </div>
-                <textarea
-                  name="bioInput"
-                  id="bioInput"
-                  placeholder="Tell us about yourself..."
-                  className="textarea textarea-primary bg-transparent select-xs outline-0"
-                  rows="4"
-                  value={personalData.bio}
-                  onChange={(e) => {
-                    setPersonalData((s) => ({ ...s, bio: e.target.value }));
-                    setStatus("editing");
-                  }}
-                />
-              </div>
+
+              <TextAreaToolBox textAreaData={textAreaData} setTextAreaData={setTextAreaData} insertTextStyle={insertTextStyle} />
+
               {status === "editing" && !error && (
                 <button className="btn btn-primary capitalize" type="submit">
                   update info
