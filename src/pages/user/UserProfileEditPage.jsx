@@ -44,7 +44,7 @@ export default function UserProfileEditPage() {
       setError(error);
     }
   }
-// update IsEditPage value on mount
+  // update IsEditPage value on mount
   useEffect(() => {
     setIsEditPage(true);
   }, []);
@@ -74,7 +74,7 @@ export default function UserProfileEditPage() {
           <div id="editSection" className="relative w-full flex flex-col gap-3">
             <form className="flex flex-col gap-2 items-start" onSubmit={handleSubmit}>
               <div className="form-control w-full flex flex-col gap-y-1">
-                <label className="font-light text-xs capitalize" htmlFor="ageInput">
+                <label className="font-semibold text-sm capitalize" htmlFor="ageInput">
                   gender
                 </label>
                 <select
@@ -96,7 +96,7 @@ export default function UserProfileEditPage() {
                 </select>
               </div>
               <div className="form-control w-full flex flex-col gap-y-1">
-                <label className="font-light text-xs capitalize" htmlFor="ageInput">
+                <label className="font-semibold text-sm capitalize" htmlFor="ageInput">
                   age
                 </label>
                 <input
@@ -115,7 +115,7 @@ export default function UserProfileEditPage() {
                 />
               </div>
 
-              <TextAreaToolBox textAreaData={textAreaData} setTextAreaData={setTextAreaData} insertTextStyle={insertTextStyle} />
+              <TextAreaToolBox metaData={{ title: "bio", placeholder: "Tell us about yourself..." }} textAreaData={textAreaData} setTextAreaData={setTextAreaData} insertTextStyle={insertTextStyle} />
 
               {status === "editing" && !error && (
                 <button className="btn btn-primary capitalize" type="submit">

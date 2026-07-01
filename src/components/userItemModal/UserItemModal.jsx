@@ -6,6 +6,7 @@ import { RootContext } from "../../App";
 import { jikanFetchWithCache } from "../../utility/jikanApi";
 import UserItemStatusComponent from "./UserItemStatusComponent";
 import UserItemListsComponent from "./UserItemListsComponent";
+import UserItemReviewModal from "./UserItemReviewModal";
 
 const animeTypes = ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv special"];
 // data is passed from the caller component
@@ -17,8 +18,6 @@ export default function UserItemModal({ data = undefined, setShowUserItemModal, 
   const [jikanData, setJikanData] = useState(data ?? null);
   // derived mediatype needed in both tabs & in adding rows to appwrite tables (if userItemTableData & data are null set mediaType as null and derive it in UserItemStatusComponent)
   const [mediaType, setMediaType] = useState(userItemTableData?.mediaType ?? (data ? (animeTypes.includes(data?.type?.toLowerCase()) ? "anime" : "manga") : null));
-
-  const displayData = jikanData ?? data ?? userItemTableData ?? null; // remove later
 
   // item form-states
   const [currentTab, setCurrentTab] = useState("status");
@@ -76,6 +75,9 @@ export default function UserItemModal({ data = undefined, setShowUserItemModal, 
               <button onClick={() => setCurrentTab("lists")} role="tab" className={`tab ${currentTab === "lists" ? "tab-active text-indigo-500" : "text-text-light/50 dark:text-text-dark/50"}`}>
                 Lists
               </button>
+              <button onClick={() => setCurrentTab("review")} role="tab" className={`tab ${currentTab === "review" ? "tab-active text-indigo-500" : "text-text-light/50 dark:text-text-dark/50"}`}>
+                Review
+              </button>
             </div>
           </div>
 
@@ -84,6 +86,7 @@ export default function UserItemModal({ data = undefined, setShowUserItemModal, 
           )}
 
           {currentTab === "lists" && <UserItemListsComponent jikanData={jikanData} mediaType={mediaType} userItemTableData={userItemTableData} />}
+          {currentTab === "review" && <UserItemReviewModal jikanData={jikanData} mediaType={mediaType} />}
         </div>
       </div>
     </div>

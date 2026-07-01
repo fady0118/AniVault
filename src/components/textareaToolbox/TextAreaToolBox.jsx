@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-export default function TextAreaToolBox({ textAreaData, setTextAreaData, insertTextStyle }) {
+export default function TextAreaToolBox({ metaData, textAreaData, setTextAreaData, insertTextStyle }) {
   return (
     <>
       <div className="form-control w-full flex flex-col gap-y-1">
-        <label className="font-light text-xs capitalize" htmlFor="bodyInput">
-          bio
+        <label className="font-semibold text-sm capitalize" htmlFor="bodyInput">
+          {metaData?.title||"bio"}
         </label>
         <div className="flex gap-1 mb-1">
           <button type="button" className="btn btn-xs btn-outline" onClick={() => insertTextStyle("**", "**")} title="Bold">
@@ -27,12 +27,11 @@ export default function TextAreaToolBox({ textAreaData, setTextAreaData, insertT
         <textarea
           name="bodyInput"
           id="bodyInput"
-          placeholder="Tell us about yourself..."
+          placeholder={metaData?.placeholder||"Tell us about yourself..."}
           className="textarea textarea-primary bg-transparent select-xs outline-0"
           rows="4"
           value={textAreaData}
           onChange={(e) => {
-            a;
             setTextAreaData(e.target.value);
           }}
         />

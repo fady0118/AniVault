@@ -14,7 +14,6 @@ import Reviews from "../../components/anime/Reviews";
 import { jikanFetch } from "../../utility/jikanApi";
 import LoaderComponent from "../../components/LoaderComponent";
 import { useUserItemModal } from "../../components/userItemModal/useUserItemModal";
-import ReviewsModal from "../../components/ReviewsModal";
 import UserItemModal from "../../components/userItemModal/UserItemModal";
 
 export default function MangaPage() {
@@ -509,7 +508,7 @@ export default function MangaPage() {
         />
       )}
       {showUserItemModal && <UserItemModal data={userItemData} setShowUserItemModal={setShowUserItemModal} />}
-      {showReviewsModal && <ReviewsModal setShowReviewsModal={setShowReviewsModal} data={mangaQ?.data} />}
+      {/* {showReviewsModal && <ReviewsModal setShowReviewsModal={setShowReviewsModal} data={mangaQ?.data} />} */}
     </>
   );
 }

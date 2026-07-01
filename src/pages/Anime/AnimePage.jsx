@@ -20,7 +20,6 @@ import { jikanFetch } from "../../utility/jikanApi";
 import { Link } from "react-router";
 import LoaderComponent from "../../components/LoaderComponent";
 import { useUserItemModal } from "../../components/userItemModal/useUserItemModal";
-import ReviewsModal from "../../components/ReviewsModal";
 import UserItemModal from "../../components/userItemModal/UserItemModal";
 
 export default function AnimePage() {
@@ -28,7 +27,7 @@ export default function AnimePage() {
   const { windowWidth } = useContext(RootContext);
   const [showEpisodesModal, setShowEpisodesModal] = useState(false);
   const { setShowUserItemModal, showUserItemModal, setUserItemData, userItemData } = useUserItemModal();
-  const [showReviewsModal, setShowReviewsModal] = useState(false);
+  // const [showReviewsModal, setShowReviewsModal] = useState(false);
 
   const [animeQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, videosQ, newsQ] = useQueries({
     queries: [
@@ -646,7 +645,7 @@ export default function AnimePage() {
           )}
           {showEpisodesModal && <EpisodesModal setShowEpisodesModal={setShowEpisodesModal} />}
           {showUserItemModal && <UserItemModal data={userItemData} setShowUserItemModal={setShowUserItemModal} />}
-          {showReviewsModal && <ReviewsModal setShowReviewsModal={setShowReviewsModal} data={animeQ?.data}/>}
+          {/* {showReviewsModal && <ReviewsModal setShowReviewsModal={setShowReviewsModal} data={animeQ?.data}/>} */}
         </>
       )}
     </>
