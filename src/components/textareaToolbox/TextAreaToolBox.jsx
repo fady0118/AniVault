@@ -4,7 +4,7 @@ export default function TextAreaToolBox({ metaData, textAreaData, setTextAreaDat
   return (
     <>
       <div className="form-control w-full flex flex-col gap-y-1">
-        <label className="font-semibold text-sm capitalize" htmlFor="bodyInput">
+        <label className="font-semibold capitalize text-[1em]" htmlFor="bodyInput">
           {metaData?.title||"bio"}
         </label>
         <div className="flex gap-1 mb-1">
@@ -29,6 +29,7 @@ export default function TextAreaToolBox({ metaData, textAreaData, setTextAreaDat
           id="bodyInput"
           placeholder={metaData?.placeholder||"Tell us about yourself..."}
           className="textarea textarea-primary bg-transparent select-xs outline-0"
+          style={{width: "clamp(3rem, 26rem, 100%)"}}
           rows="4"
           value={textAreaData}
           onChange={(e) => {

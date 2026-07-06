@@ -72,9 +72,9 @@ export default function UserProfileEditPage() {
         />
         <div className="tab-content">
           <div id="editSection" className="relative w-full flex flex-col gap-3">
-            <form className="flex flex-col gap-2 items-start" onSubmit={handleSubmit}>
+            <form className="flex flex-col gap-2 items-start text-sm" onSubmit={handleSubmit}>
               <div className="form-control w-full flex flex-col gap-y-1">
-                <label className="font-semibold text-sm capitalize" htmlFor="ageInput">
+                <label className="font-semibold text-[1em] capitalize" htmlFor="ageInput">
                   gender
                 </label>
                 <select

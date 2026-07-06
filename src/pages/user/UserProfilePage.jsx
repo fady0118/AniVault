@@ -6,7 +6,7 @@ import { Link, useOutletContext } from "react-router";
 import { marked } from "marked";
 import UserProfileData from "./UserProfileData";
 import UserWatchList from "./UserLists/UserWatchList";
-import UserLists from "./UserLists/UserLIsts";
+import UserLists from "./UserLists/UserLists";
 
 export default function UserProfilePage() {
   const { loggedInUser, userData } = useAuth();

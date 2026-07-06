@@ -12,7 +12,7 @@ import Gallery from "../../components/character/Gallery";
 import { useQueries } from "@tanstack/react-query";
 import Video from "../../components/anime/Video";
 import { useVideoModal } from "../../utility/useVideoModal";
-import VideoModal from "../../components/videoModal";
+import VideoModal from "../../components/VideoModal"
 import News from "../../components/anime/News";
 import Reviews from "../../components/anime/Reviews";
 import EpisodesModal from "../../components/anime/EpisodesModal";

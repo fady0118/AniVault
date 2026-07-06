@@ -7,6 +7,9 @@
   --font-inter: "Inter", sans-serif;
 
 
+  --container-2cxs: 16px;
+  --container-cxs: 20px;
+
   --breakpoint-3xs: 18rem;
   --breakpoint-2xs: 24rem;
   --breakpoint-xs: 30rem;

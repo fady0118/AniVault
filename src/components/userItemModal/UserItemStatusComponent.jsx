@@ -7,11 +7,9 @@ import LoaderComponent from "../LoaderComponent";
 import { delay } from "../../utility/utils";
 
 const statusEnum = { anime: ["unwatched", "plan_to_watch", "watching", "completed", "dropped"], manga: ["unread", "plan_to_read", "reading", "completed", "dropped"] };
-export default function UserItemStatusComponent({ jikanData, userItemTableData, mediaType, setMediaType, setUserItems }) {
+export default function UserItemStatusComponent({ jikanData, mediaType, setMediaType, setUserItems, userItemData, setUserItemData }) {
   // auth state to get the user_id
   const { loggedInUser } = useAuth();
-  // item data from user_item table in the DB
-  const [userItemData, setUserItemData] = useState(null);
   // item form-states
   const [itemStatus, setItemStatus] = useState(null); // unwatched, plan_to_watch, watching, completed, dropped
   const [progress, setProgress] = useState(null);
@@ -20,24 +18,6 @@ export default function UserItemStatusComponent({ jikanData, userItemTableData, 
 
   // form status
   const { status, setStatus, error, setError } = useFormStatusHandling();
-
-  // fetch the item data from user_item table in the DB
-  async function fetchItemFromDb() {
-    if (userItemTableData) return setUserItemData(userItemTableData);
-    try {
-      const res = await tablesDB.listRows({
-        databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
-        tableId: import.meta.env.VITE_TABLE_ID_USER_ITEM,
-        queries: [Query.equal("user_id", loggedInUser.$id), Query.equal("mal_id", jikanData?.mal_id), Query.limit(1)],
-      });
-      if (!mediaType) {
-        setMediaType(res?.rows[0]?.mediaType);
-      }
-      setUserItemData(res?.rows[0]);
-    } catch (error) {
-      setError(error);
-    }
-  }
 
   // update userItem data in the DB
   async function updateData() {
@@ -103,10 +83,7 @@ export default function UserItemStatusComponent({ jikanData, userItemTableData, 
     }
   }
 
-  // call fetchItemFromDb on component mount to populate userItemData state
-  useEffect(() => {
-    fetchItemFromDb();
-  }, []);
+
 
   // sync form states with fetched data
   useEffect(() => {

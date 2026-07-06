@@ -3,10 +3,10 @@ import { useRef, useState } from "react";
 import { delay } from "../../utility/utils";
 import { jikanFetch } from "../../utility/jikanApi";
 import { ChevronLeft, ChevronRight, Info } from "lucide-react";
-import MangaPopup from "./mangaPopup";
 import { Link } from "react-router";
 import EmptyDataFallback from "../EmptyDataFallback";
 import RecentPlaceHolder from "./RecentPlaceHolder";
+import MangaPopup from "./MangaPopup";
 
 export default function RecentManga() {
   const [recent, setRecent] = useState("manga");
