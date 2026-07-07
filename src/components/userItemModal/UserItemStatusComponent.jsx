@@ -1,6 +1,6 @@
 import { useState, useEffect, useLayoutEffect } from "react";
 import { tablesDB } from "../../appwrite";
-import { Query } from "appwrite";
+import { ID, Query } from "appwrite";
 import useFormStatusHandling from "./useFormStatusHandling";
 import { useAuth } from "../../Contexts/AuthContext";
 import LoaderComponent from "../LoaderComponent";
@@ -121,7 +121,7 @@ export default function UserItemStatusComponent({ jikanData, mediaType, setMedia
 
   // update form status when the user makes changes
   useLayoutEffect(() => {
-    if (!userItemData) return;
+    // if (!userItemData) return;
     const initialStatus = userItemData?.status ?? null;
     const initialProgress = userItemData?.progress ?? null;
     const initialTimesWatched = userItemData?.times_watched ?? null;
@@ -129,7 +129,7 @@ export default function UserItemStatusComponent({ jikanData, mediaType, setMedia
     const initialMangaChaps = userItemData?.manga_chaps ?? null;
     const hasChanges =
       itemStatus != initialStatus || progress != initialProgress || timesWatched != initialTimesWatched || mangaProgress?.vols != initialMangaVols || mangaProgress?.chaps != initialMangaChaps;
-
+console.log({hasChanges})
     setStatus(hasChanges ? "modified" : "idle");
   }, [userItemData, itemStatus, progress, timesWatched, mangaProgress]);
 

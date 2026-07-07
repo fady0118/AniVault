@@ -102,7 +102,7 @@ export default function AnimeMangaContainer({ searchParams, itemType, useritemMo
         pageStateRef.current.queries[key] = { hasNext: false };
       }
       // update last_visible_page value
-      if (!last_visible_page || last_visible_page < q.data.pagination?.last_visible_page) last_visible_page = q.data.pagination.last_visible_page;
+      if (!last_visible_page || last_visible_page < q?.data?.pagination?.last_visible_page) last_visible_page = q?.data?.pagination?.last_visible_page;
     });
     // update states
     setLastIndexPage(last_visible_page);

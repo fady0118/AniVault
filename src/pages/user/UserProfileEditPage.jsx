@@ -260,7 +260,7 @@ function UserAccountDeleteModal({
     if (res) {
       try {
         const execution = await functions.createExecution({
-          functionId: "6a4ccdc90024d24198d2",
+          functionId: import.meta.env.VITE_FUNCTIONS_DELETE_ACCOUNT,
           method: "POST",
         });
         const result = JSON.parse(execution.responseBody);
