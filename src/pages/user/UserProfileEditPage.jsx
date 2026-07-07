@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../Contexts/AuthContext";
-import { account, tablesDB } from "../../appwrite";
+import { account, functions, tablesDB } from "../../appwrite";
 import { redirect, useNavigate, useOutletContext } from "react-router";
 import LoaderComponent from "../../components/LoaderComponent";
 import { delay } from "../../utility/utils";
@@ -8,7 +8,8 @@ import useTextAreaToolBox from "../../components/textareaToolbox/useTextAreaTool
 import TextAreaToolBox from "../../components/textareaToolbox/TextAreaToolBox";
 
 export default function UserProfileEditPage() {
-  const { loggedInUser, userData, setUserData, avatarImg } = useAuth();
+  const { loggedInUser, userData, setUserData, avatarImg } =
+    useAuth();
   const navigate = useNavigate();
   // tab switch
   const [currentTab, setCurrentTab] = useState(1);
@@ -16,10 +17,15 @@ export default function UserProfileEditPage() {
   const [status, setStatus] = useState("idle"); // "idle", "editing", "uploading", "success", "fail"
   const [error, setError] = useState(null);
   // gender, age local states
-  const [personalData, setPersonalData] = useState({ gender: userData?.gender || "", age: userData?.age || "" });
+  const [personalData, setPersonalData] = useState({
+    gender: userData?.gender || "",
+    age: userData?.age || "",
+  });
   // bio body customhook
 
-  const { textAreaData, setTextAreaData, insertTextStyle } = useTextAreaToolBox(userData?.bio || "");
+  const { textAreaData, setTextAreaData, insertTextStyle } = useTextAreaToolBox(
+    userData?.bio || "",
+  );
   // editPage context shows/hides edit button in title
   const { setIsEditPage } = useOutletContext();
   // show hide delete modal
@@ -30,11 +36,16 @@ export default function UserProfileEditPage() {
     e.preventDefault();
     setStatus("uploading");
     try {
-      const res = await tablesDB.updateRow(import.meta.env.VITE_APPWRITE_DATABASE_ID, import.meta.env.VITE_TABLE_ID_USER_PROFILE, loggedInUser.$id, {
-        gender: personalData.gender || null,
-        age: Number(personalData.age) || null,
-        bio: textAreaData,
-      });
+      const res = await tablesDB.updateRow(
+        import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        import.meta.env.VITE_TABLE_ID_USER_PROFILE,
+        loggedInUser.$id,
+        {
+          gender: personalData.gender || null,
+          age: Number(personalData.age) || null,
+          bio: textAreaData,
+        },
+      );
       console.log(res);
       setUserData(res);
       setStatus("success");
@@ -52,13 +63,20 @@ export default function UserProfileEditPage() {
   // sync data local states with userData
   useEffect(() => {
     if (!userData) return;
-    setPersonalData({ gender: userData?.gender || "", age: userData?.age || "" });
+    setPersonalData({
+      gender: userData?.gender || "",
+      age: userData?.age || "",
+    });
     setTextAreaData(userData?.bio || "");
   }, [userData]);
 
   return (
     <>
-      <div role="tablist" id="listTabs" className="tabs tabs-box flex flex-row items-center gap-2">
+      <div
+        role="tablist"
+        id="listTabs"
+        className="tabs tabs-box flex flex-row items-center gap-2"
+      >
         <input
           type="radio"
           name="profileTabs"
@@ -72,9 +90,15 @@ export default function UserProfileEditPage() {
         />
         <div className="tab-content">
           <div id="editSection" className="relative w-full flex flex-col gap-3">
-            <form className="flex flex-col gap-2 items-start text-sm" onSubmit={handleSubmit}>
+            <form
+              className="flex flex-col gap-2 items-start text-sm"
+              onSubmit={handleSubmit}
+            >
               <div className="form-control w-full flex flex-col gap-y-1">
-                <label className="font-semibold text-[1em] capitalize" htmlFor="ageInput">
+                <label
+                  className="font-semibold text-[1em] capitalize"
+                  htmlFor="ageInput"
+                >
                   gender
                 </label>
                 <select
@@ -96,7 +120,10 @@ export default function UserProfileEditPage() {
                 </select>
               </div>
               <div className="form-control w-full flex flex-col gap-y-1">
-                <label className="font-semibold text-sm capitalize" htmlFor="ageInput">
+                <label
+                  className="font-semibold text-sm capitalize"
+                  htmlFor="ageInput"
+                >
                   age
                 </label>
                 <input
@@ -115,7 +142,15 @@ export default function UserProfileEditPage() {
                 />
               </div>
 
-              <TextAreaToolBox metaData={{ title: "bio", placeholder: "Tell us about yourself..." }} textAreaData={textAreaData} setTextAreaData={setTextAreaData} insertTextStyle={insertTextStyle} />
+              <TextAreaToolBox
+                metaData={{
+                  title: "bio",
+                  placeholder: "Tell us about yourself...",
+                }}
+                textAreaData={textAreaData}
+                setTextAreaData={setTextAreaData}
+                insertTextStyle={insertTextStyle}
+              />
 
               {status === "editing" && !error && (
                 <button className="btn btn-primary capitalize" type="submit">
@@ -133,7 +168,10 @@ export default function UserProfileEditPage() {
                 </div>
               )}
               {error && (
-                <div role="alert" className="text-rose-600 dark:text-rose-400 bg-rose-600/5 rounded-sm px-1.5 py-1 text-[0.8em]">
+                <div
+                  role="alert"
+                  className="text-rose-600 dark:text-rose-400 bg-rose-600/5 rounded-sm px-1.5 py-1 text-[0.8em]"
+                >
                   <span>{error}</span>
                 </div>
               )}
@@ -155,7 +193,10 @@ export default function UserProfileEditPage() {
         <div className="tab-content">
           <div className="flex flex-col gap-3.5 text-xs md:text-sm">
             <div className="flex flex-col gap-1.5 items-start">
-              <p>If you wish to update the email or password associated with your account you can do that by clicking the button below.</p>
+              <p>
+                If you wish to update the email or password associated with your
+                account you can do that by clicking the button below.
+              </p>
               <button
                 onClick={() => {
                   navigate("edit_email_password");
@@ -166,7 +207,10 @@ export default function UserProfileEditPage() {
               </button>
             </div>
             <div className="flex flex-col gap-1.5 items-start">
-              <p>If you wish to delete your account you can click the button below to start the deletion process.</p>
+              <p>
+                If you wish to delete your account you can click the button
+                below to start the deletion process.
+              </p>
               <button
                 onClick={() => {
                   setShowAccountDeleteModal(true);
@@ -179,12 +223,20 @@ export default function UserProfileEditPage() {
           </div>
         </div>
       </div>
-      {showAccountDeleteModal && <UserAccountDeleteModal loggedInUser={loggedInUser} setShowAccountDeleteModal={setShowAccountDeleteModal} />}
+      {showAccountDeleteModal && (
+        <UserAccountDeleteModal
+          loggedInUser={loggedInUser}
+          etShowAccountDeleteModal={setShowAccountDeleteModal}
+        />
+      )}
     </>
   );
 }
 
-function UserAccountDeleteModal({ loggedInUser, setShowAccountDeleteModal }) {
+function UserAccountDeleteModal({
+  loggedInUser,
+  setShowAccountDeleteModal,
+}) {
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
@@ -201,19 +253,27 @@ function UserAccountDeleteModal({ loggedInUser, setShowAccountDeleteModal }) {
   }
 
   async function handleDeleteAccount(e) {
-    // appwrite account-deletion requires server-side Users api
-    // instead we will use Account api updateStatus to block the user account instead
+    // account-deletion by executing an appwrite function to completely remove the user account instead of the previous soft delete
     e.preventDefault();
     setStatus("loading");
-    const res = await verifyPassword();
+    const res = await verifyPassword(); // re-confirms the user's identity
     if (res) {
       try {
-        const result = await account.updateStatus();
-        setStatus("success");
-        await delay(2000);
-        window.location.href = "/profile";
+        const execution = await functions.createExecution({
+          functionId: "6a4ccdc90024d24198d2",
+          method: "POST",
+        });
+        const result = JSON.parse(execution.responseBody);
+        if (result?.success) {
+          setStatus("success");
+          await delay(2000);
+          window.location.href = "/profile";
+        } else {
+          setError("failed to delete account");
+          setStatus("error");
+        }
       } catch (error) {
-        setError("failed to delete account");
+        setError(error.message);
         setStatus("error");
       }
     } else {
@@ -230,7 +290,8 @@ function UserAccountDeleteModal({ loggedInUser, setShowAccountDeleteModal }) {
       }
     };
     document.documentElement.addEventListener("keydown", handleKeyDown);
-    return () => document.documentElement.removeEventListener("keydown", handleKeyDown);
+    return () =>
+      document.documentElement.removeEventListener("keydown", handleKeyDown);
   }, []);
   return (
     <>
@@ -261,9 +322,15 @@ function UserAccountDeleteModal({ loggedInUser, setShowAccountDeleteModal }) {
           ) : (
             <>
               <div className="flex flex-col w-full gap-2 text-sm items-center">
-                <p className="text-[1.6em] uppercase font-semibold tracking-widest text-rose-600 dark:text-rose-500">Delete Account</p>
-                <p className="text-[0.95em] text-dark-amethyst-smoke-200 dark:text-amethyst-smoke-300">Are you sure you want to delete your account</p>
-                <p className="text-[0.9em] font-light text-dark-amethyst-smoke-200/80 dark:text-amethyst-smoke-300/80">{loggedInUser?.email}</p>
+                <p className="text-[1.6em] uppercase font-semibold tracking-widest text-rose-600 dark:text-rose-500">
+                  Delete Account
+                </p>
+                <p className="text-[0.95em] text-dark-amethyst-smoke-200 dark:text-amethyst-smoke-300">
+                  Are you sure you want to delete your account
+                </p>
+                <p className="text-[0.9em] font-light text-dark-amethyst-smoke-200/80 dark:text-amethyst-smoke-300/80">
+                  {loggedInUser?.email}
+                </p>
               </div>
 
               <form className="w-full space-y-3" onSubmit={handleDeleteAccount}>
@@ -271,17 +338,41 @@ function UserAccountDeleteModal({ loggedInUser, setShowAccountDeleteModal }) {
                 <div className="form-control">
                   <p className="capitalize">current password</p>
                   <label className="input bg-transparent outline-0 dark:border-amethyst-smoke-200/50 border-dark-amethyst-smoke-100/50 ">
-                    <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                      <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
+                    <svg
+                      className="h-[1em] opacity-50"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                    >
+                      <g
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        strokeWidth="2.5"
+                        fill="none"
+                        stroke="currentColor"
+                      >
                         <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
-                        <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                        <circle
+                          cx="16.5"
+                          cy="7.5"
+                          r=".5"
+                          fill="currentColor"
+                        ></circle>
                       </g>
                     </svg>
-                    <input value={password} onChange={(e) => setPassword(e.target.value.trim())} type="password" required placeholder="Current Password" />
+                    <input
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value.trim())}
+                      type="password"
+                      required
+                      placeholder="Current Password"
+                    />
                   </label>
                 </div>
                 <div className="w-full flex flex-row gap-x-2">
-                  <button type="submit" className="btn border-0 bg-rose-600 dark:bg-rose-500 text-text-dark w-fit">
+                  <button
+                    type="submit"
+                    className="btn border-0 bg-rose-600 dark:bg-rose-500 text-text-dark w-fit"
+                  >
                     Delete Account
                   </button>
                   {status === "loading" && (
@@ -291,7 +382,11 @@ function UserAccountDeleteModal({ loggedInUser, setShowAccountDeleteModal }) {
                   )}
                 </div>
               </form>
-              {status === "error" && <p className="mt-1.5 text-rose-600 dark:text-rose-500">{error}</p>}
+              {status === "error" && (
+                <p className="mt-1.5 text-rose-600 dark:text-rose-500">
+                  {error}
+                </p>
+              )}
             </>
           )}
         </div>

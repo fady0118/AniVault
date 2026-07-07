@@ -38,7 +38,7 @@ export default function AuthModal({ setShowAuthModal }) {
       try {
         //signup
         const user = await register(email, password, name);
-        const res = await tablesDB.createRow({
+        await tablesDB.createRow({
           databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
           tableId: import.meta.env.VITE_TABLE_ID_USER_PROFILE,
           rowId: user.$id,
@@ -46,9 +46,10 @@ export default function AuthModal({ setShowAuthModal }) {
             username: user.name,
           },
         });
+        setStatus("idle");
       } catch (error) {
         if (error.code === 409) {
-          setError("A user with the same email already exists in this project");
+          setError("A user with the same email already exists");
         } else {
           setError(error.message);
         }
@@ -81,15 +82,23 @@ export default function AuthModal({ setShowAuthModal }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 box-colors-lighter text-[0.75em] text-text-dark backdrop-blur-sm">
       <div className="relative w-full max-w-md rounded-3xl box-colors-medium border border-base-200/60 p-8">
-        <button onClick={() => setShowAuthModal(false)} className="btn btn-ghost btn-sm btn-circle absolute right-4 top-4 bg-transparent" aria-label="Close authentication modal">
+        <button
+          onClick={() => setShowAuthModal(false)}
+          className="btn btn-ghost btn-sm btn-circle absolute right-4 top-4 bg-transparent"
+          aria-label="Close authentication modal"
+        >
           ✕
         </button>
 
         {loggedInUser ? (
           <div className="space-y-6 text-center">
-            <div className="uppercase tracking-[0.35em] text-primary">Welcome back</div>
+            <div className="uppercase tracking-[0.35em] text-primary">
+              Welcome back
+            </div>
             <h2 className="text-[1.75em] font-semibold">{loggedInUser.name}</h2>
-            <p className=" text-base-content/70">You are currently signed in. Use the button below to logout.</p>
+            <p className=" text-base-content/70">
+              You are currently signed in. Use the button below to logout.
+            </p>
             {status === "loading" ? (
               <div className="flex justify-center scale-75">
                 <LoaderComponent />
@@ -99,37 +108,79 @@ export default function AuthModal({ setShowAuthModal }) {
                 Logout
               </button>
             )}
-            {status === "error" && <p className="text-rose-500 dark:text-rose-400 capitalize">{error}</p>}
+            {status === "error" && (
+              <p className="text-rose-500 dark:text-rose-400 capitalize">
+                {error}
+              </p>
+            )}
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="flex flex-col gap-y-3">
             <div className="space-y-2 text-center">
-              <h2 className="text-[1.75em] font-semibold">{isLogin ? "Login to your account" : "Create a new account"}</h2>
-              <p className=" text-base-content/70">Securely login or register to save your favorites and personalize your experience.</p>
+              <h2 className="text-[1.75em] font-semibold">
+                {isLogin ? "Login to your account" : "Create a new account"}
+              </h2>
+              <p className=" text-base-content/70">
+                Securely login or register to save your favorites and
+                personalize your experience.
+              </p>
             </div>
 
             <form className="space-y-4" onSubmit={handleSubmit}>
               {/* email field */}
               <div className="form-control">
                 <label class="input validator bg-transparent w-full">
-                  <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
+                  <svg
+                    class="h-[1em] opacity-50"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                  >
+                    <g
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                      strokeWidth="2.5"
+                      fill="none"
+                      stroke="currentColor"
+                    >
                       <rect width="20" height="16" x="2" y="4" rx="2"></rect>
                       <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                     </g>
                   </svg>
-                  <input type="email" placeholder="mail@site.com" required value={email} onChange={(e) => setEmail(e.target.value.trim())} />
+                  <input
+                    type="email"
+                    placeholder="mail@site.com"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value.trim())}
+                  />
                 </label>
-                <div class="validator-hint hidden">Enter valid email address</div>
+                <div class="validator-hint hidden">
+                  Enter valid email address
+                </div>
               </div>
 
               {/* password field */}
               <div className="form-control">
                 <label class="input validator bg-transparent w-full">
-                  <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
+                  <svg
+                    class="h-[1em] opacity-50"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                  >
+                    <g
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                      strokeWidth="2.5"
+                      fill="none"
+                      stroke="currentColor"
+                    >
                       <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
-                      <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                      <circle
+                        cx="16.5"
+                        cy="7.5"
+                        r=".5"
+                        fill="currentColor"
+                      ></circle>
                     </g>
                   </svg>
                   <input
@@ -142,15 +193,27 @@ export default function AuthModal({ setShowAuthModal }) {
                     title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
                   />
                 </label>
-                <p class="validator-hint hidden">Must be more than 8 characters</p>
+                <p class="validator-hint hidden">
+                  Must be more than 8 characters
+                </p>
               </div>
 
               {/* username field */}
               {!isLogin && (
                 <div className="form-control">
                   <label class="input validator bg-transparent w-full">
-                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                      <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
+                    <svg
+                      class="h-[1em] opacity-50"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                    >
+                      <g
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        strokeWidth="2.5"
+                        fill="none"
+                        stroke="currentColor"
+                      >
                         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                       </g>
@@ -183,16 +246,34 @@ export default function AuthModal({ setShowAuthModal }) {
                   {isLogin ? "Login" : "Sign Up"}
                 </button>
               )}
-              {status === "error" && <p className="text-rose-500 dark:text-rose-400 capitalize">{error}</p>}
+              {status === "error" && (
+                <p className="text-rose-500 dark:text-rose-400 capitalize">
+                  {error}
+                </p>
+              )}
             </form>
-
-            <div className="flex items-center justify-between space-3 rounded-full border border-base-200/70 bg-base-200/50 px-4 py-3  text-base-content/70">
-              <span className="font-medium">Switch mode</span>
-              <label htmlFor="operationType" className="swap swap-rotate cursor-pointer">
-                <input type="checkbox" name="operationType" id="operationType" hidden checked={isLogin} onChange={() => setIsLogin((prev) => !prev)} />
-                <span className="swap-on btn btn-sm btn-outline">Login</span>
-                <span className="swap-off btn btn-sm btn-outline">Sign Up</span>
-              </label>
+            <div className="flex items-center justify-start gap-1">
+              {isLogin ? (
+                <>
+                  <span className="font-medium">
+                    Don't have an account yet?
+                  </span>
+                  <span onClick={()=>{setIsLogin(false)}}
+                  className="font-medium underline cursor-pointer text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 duration-200 ">
+                    sign up instead
+                  </span>
+                </>
+              ) : (
+                <>
+                <span className="font-medium">
+                    Already have an account?
+                  </span>
+                  <span onClick={()=>{setIsLogin(true)}}
+                  className="font-medium underline cursor-pointer text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 duration-200 ">
+                    login instead
+                  </span>
+                </>
+              )}
             </div>
           </div>
         )}

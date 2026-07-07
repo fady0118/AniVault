@@ -103,7 +103,12 @@ export default function UserItemReviewModal({
     e.preventDefault();
     setSubmitted(true);
     const validationErrors = validate();
-    if (validationErrors?.body || validationErrors?.rating || validationErrors?.tag || validationErrors?.spoilers) {
+    if (
+      validationErrors?.body ||
+      validationErrors?.rating ||
+      validationErrors?.tag ||
+      validationErrors?.spoilers
+    ) {
       setStatus("error");
       setError("Please fill all required fields.");
       return;
@@ -142,7 +147,7 @@ export default function UserItemReviewModal({
       }
       setStatus("success");
       setError(null);
-      setModified(false)
+      setModified(false);
     } catch (error) {
       setStatus("error");
       setError(error?.message || "Failed to save review");

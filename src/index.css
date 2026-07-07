@@ -151,7 +151,6 @@
 }
 
 @layer components {
-
   /* loader css */
   #AniVault path {
     --stroke-dashes: 710;
@@ -160,11 +159,8 @@
     stroke-dasharray: var(--stroke-dashes);
     stroke-dashoffset: var(--stroke-dashes);
   }
-
   .gallery-image-animation {
     animation: imageZoomIn 0.4s ease-out;
-    color: #4f39f6;
-    color: #4f39f64d;
   }
 
   .fill-to-right {
