@@ -84,34 +84,30 @@ export default function AvatarModal ({ avatarImg, setShowAvatarModal }) {
           reject(new Error('Failed to create cropped image blob'))
           return
         }
-
         const croppedFile = new File([blob], selectedFile.name, {
           type: selectedFile.type
         })
-        const formData = new FormData()
-        formData.append('file', croppedFile)
-        resolve(formData)
+        resolve(croppedFile)
       }, selectedFile.type)
     })
   }
 
   // upload to backend
   async function fileUploader () {
-    const formData = await getCroppedBlob(completedCrop)
-    if (!formData) {
+    const croppedFile = await getCroppedBlob(completedCrop)
+    if (!croppedFile) {
       setStatus("error")
       setError('Unable to crop image')
       return
     }
     setStatus('uploading')
-    const uploadFile = formData.get('file')
 
     const fileId = ID.unique()
     try {
       const uploaded = await storage.createFile({
         bucketId: import.meta.env.VITE_APPWRITE_BUCKET_ID,
         fileId: fileId,
-        file: uploadFile
+        file: croppedFile
       })
 
       const user = await tablesDB.updateRow(
@@ -121,16 +117,14 @@ export default function AvatarModal ({ avatarImg, setShowAvatarModal }) {
         { avatarId: fileId }
       )
       // instead of fetching the image from the storage we just set its state locally (more efficient)
-      if (uploadFile instanceof File) {
-        setAvatarImg(URL.createObjectURL(uploadFile))
+      if (croppedFile instanceof File) {
+        setAvatarImg(URL.createObjectURL(croppedFile))
       }
       setShowAvatarModal(false)
     } catch (e) {
       setStatus("error")
       setError(e.message)
-    } finally {
-      setStatus('idle')
-    }
+    } 
   }
 
   return (
