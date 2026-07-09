@@ -247,22 +247,6 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
                   <polygon points='400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49' />
                 </svg>
               </label>
-
-              {/* <label className='swap swap-rotate'>
-                <input type='checkbox' className='hidden' />
-                <Menu
-                  className='swap-off p-0'
-                  size={16}
-                  onClick={() => setShowNav(!showNav)}
-                  className='hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200'
-                />
-                <X
-                  className='swap-on p-0'
-                  size={16}
-                  onClick={() => setShowNav(!showNav)}
-                  className='hover:stroke-indigo-600 dark:hover:stroke-indigo-300 duration-200'
-                />
-              </label> */}
             </>
           )}
         </div>
@@ -292,6 +276,12 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
                   to='/profile?tab=2'
                 >
                   Your custom lists
+                </Link>
+                <Link
+                  className='opacity-65 hover:cursor-pointer hover:opacity-100 duration-200'
+                  to='/profile?tab=3'
+                >
+                  Your reviews
                 </Link>
                 <Link
                   className='opacity-65 hover:cursor-pointer hover:opacity-100 duration-200'

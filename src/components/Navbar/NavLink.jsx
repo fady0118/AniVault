@@ -60,6 +60,9 @@ export default function NavLink({ classes, LinkTitle, data, ref }) {
                   <Link className="text-nowrap opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile?tab=2">
                     Your custom lists
                   </Link>
+                  <Link className="text-nowrap opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile?tab=3">
+                    Your reviews
+                  </Link>
                   <Link className="text-nowrap opacity-65 hover:cursor-pointer hover:opacity-100 duration-200" to="/profile/profile_edit">
                     edit profile
                   </Link>
