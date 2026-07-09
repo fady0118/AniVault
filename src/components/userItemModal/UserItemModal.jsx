@@ -26,6 +26,7 @@ export default function UserItemModal({
   setShowUserItemModal,
   userItemTableData = undefined,
   setUserItems = undefined,
+  refetchReviews = undefined,
 }) {
   const { windowWidth } = useContext(RootContext);
   // auth state to get the user_id
@@ -171,6 +172,7 @@ export default function UserItemModal({
               jikanData={jikanData}
               mediaType={mediaType}
               userItemData={userItemData}
+              refetchReviews={refetchReviews}
             />
           )}
         </div>

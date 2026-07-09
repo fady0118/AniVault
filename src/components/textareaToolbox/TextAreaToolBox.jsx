@@ -28,7 +28,7 @@ export default function TextAreaToolBox({ metaData, textAreaData, setTextAreaDat
           name="bodyInput"
           id="bodyInput"
           placeholder={metaData?.placeholder||"Tell us about yourself..."}
-          className="textarea textarea-primary bg-transparent select-xs outline-0"
+          className="textarea textarea-primary bg-transparent select-xs text-sm outline-0"
           style={{width: "clamp(3rem, 26rem, 100%)"}}
           rows="4"
           value={textAreaData}

@@ -31,6 +31,15 @@ export default function UserCustomListPage() {
         >
           user custom lists
         </button>
+        <button
+          className="tab"
+          aria-label="user reviews"
+          onClick={() => {
+            navigate("/profile?tab=3");
+          }}
+        >
+          user reviews
+        </button>
       </div>
       <UserCustomListComp loggedInUser={loggedInUser} id={id} state={state} />
     </>

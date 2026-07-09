@@ -411,7 +411,7 @@ function ListItemDeleteModal({ listItem, setShowListItemDeleteModal, setList }) 
   async function handleDelete() {
     try {
       setStatus("loading");
-      const res = await tablesDB.deleteRow({
+      await tablesDB.deleteRow({
         databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
         tableId: import.meta.env.VITE_TABLE_ID_LIST_ITEM,
         rowId: listItem.$id,

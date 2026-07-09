@@ -11,6 +11,7 @@ export default function UserItemReviewModal({
   jikanData,
   mediaType,
   userItemData,
+  refetchReviews
 }) {
   const { loggedInUser } = useAuth();
   // data local states
@@ -148,6 +149,7 @@ export default function UserItemReviewModal({
       setStatus("success");
       setError(null);
       setModified(false);
+      refetchReviews()
     } catch (error) {
       setStatus("error");
       setError(error?.message || "Failed to save review");

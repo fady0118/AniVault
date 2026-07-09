@@ -1,12 +1,12 @@
 import { useParams } from "react-router";
-import UserLists from "../UserLists/UserLists";
+import UserPageTabs from "../UserLists/UserPageTabs";
 
 export default function OtherUserProfilePage() {
   const { userId } = useParams();
 
   return (
     <>
-      <UserLists user={{ $id: userId }} />
+      <UserPageTabs user={{ $id: userId }} />
     </>
   );
 }

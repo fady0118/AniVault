@@ -58,15 +58,16 @@ export default function UserCustomLists({ data }) {
 
   return (
     <>
-      <div className="w-full grid grid-cols-1 lg:grid-cols-2 auto-rows-fr gap-4">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4">
         {filteredLists?.length ? (
           <>
             {filteredLists?.map((list) => (
               <Link
                 to={`userList/${list?.$id}`}
                 key={list?.$id}
-                className="w-full flex flex-row flex-wrap items-start gap-4 p-4 rounded-lg bg-amethyst-smoke-400/80 dark:bg-dark-amethyst-smoke-200/80 border border-amethyst-smoke-600/30 hover:bg-indigo-500/10 hover:cursor-pointer hover:shadow-[0px_5px_10px_#4f39f64d] duration-200"
+                className="relative w-full h-fit flex flex-row flex-wrap items-start gap-4 p-4 rounded-lg bg-amethyst-smoke-400/80 dark:bg-dark-amethyst-smoke-200/80 border border-amethyst-smoke-600/30 hover:bg-indigo-500/10 hover:cursor-pointer hover:shadow-[0px_5px_10px_#4f39f64d] duration-200"
               >
+                {/* list 3d book-like cover img component */}
                 <div className="relative w-36 h-28 shrink-0">
                   {(() => {
                     const items = list?.listItem_id?.slice(0, 3) ?? [];
@@ -105,7 +106,7 @@ export default function UserCustomLists({ data }) {
                   <div className="flex flex-col gap-1">
                     <div className="flex flex-row justify-between">
                       <h3 className="text-lg font-semibold">{list?.name}</h3>
-                      <div className="text-[0.75em] text-text-light/70 dark:text-text-dark/70">
+                      <div className="absolute top-0 right-0 m-1 px-1 py-0.5 rounded-sm bg-dark-amethyst-smoke-700/5 dark:bg-amethyst-smoke-500/5 text-[0.75em] text-text-light/70 dark:text-text-dark/70">
                         {list?.is_public ? (
                           <div className="flex flex-row items-center gap-1">
                             <Eye size={14} /> Public list

@@ -6,7 +6,7 @@ import UserItemModal from "../../../components/userItemModal/UserItemModal";
 
 const animeTypes = ["tv", "movie", "ova", "special", "ona", "music", "cm", "pv", "tv_special"];
 const statuses = { anime: ["all", "unwatched", "watching", "plan_to_watch", "completed", "dropped"], manga: ["all", "unread", "reading", "plan_to_read", "completed", "dropped"] };
-export default function UserWatchList({ data }) {
+export default function UserWatchList({ data, refetchReviews }) {
   const [userItems, setUserItems] = useState(null); // orgainzed watchList items
   const [selectedTab, setSelectedTab] = useState("anime"); // anime, manga
   const [animeStatus, setAnimeStatus] = useState("all"); // all, unwatched, watching, plan to watch, completed, dropped
@@ -116,7 +116,7 @@ export default function UserWatchList({ data }) {
           )}
         </div>
       </div>
-      {showUserItemModal && <UserItemModal userItemTableData={updatedItemData} setShowUserItemModal={setShowUserItemModal} setUserItems={setUserItems} />}
+      {showUserItemModal && <UserItemModal userItemTableData={updatedItemData} setShowUserItemModal={setShowUserItemModal} setUserItems={setUserItems} refetchReviews={refetchReviews}/>}
     </>
   );
 }
