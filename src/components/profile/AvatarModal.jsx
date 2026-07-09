@@ -22,15 +22,7 @@ export default function AvatarModal ({ avatarImg, setShowAvatarModal }) {
     aspect: 1
   })
   const [completedCrop, setCompletedCrop] = useState(null)
-  const [previewSrc, setPreviewSrc] = useState(null)
   const imgRef = useRef(null)
-
-  async function updatePreview (crop) {
-    if (!imgRef.current) {
-      return
-    }
-    setPreviewSrc(await cropToImg(imgRef.current, crop))
-  }
 
   // modal close eventListener
   useEffect(() => {
@@ -55,11 +47,11 @@ export default function AvatarModal ({ avatarImg, setShowAvatarModal }) {
     } else if (file.size / 1024 > 500) {
       error = 'Max size is 500kb'
     }
-
+    
     if (error) {
+      setStatus("error")
       setError(error)
       setSelectedFile(null)
-      setSrc(null)
       return
     }
 
@@ -107,12 +99,13 @@ export default function AvatarModal ({ avatarImg, setShowAvatarModal }) {
   async function fileUploader () {
     const formData = await getCroppedBlob(completedCrop)
     if (!formData) {
+      setStatus("error")
       setError('Unable to crop image')
       return
     }
-
     setStatus('uploading')
     const uploadFile = formData.get('file')
+
     const fileId = ID.unique()
     try {
       const uploaded = await storage.createFile({
@@ -133,6 +126,7 @@ export default function AvatarModal ({ avatarImg, setShowAvatarModal }) {
       }
       setShowAvatarModal(false)
     } catch (e) {
+      setStatus("error")
       setError(e.message)
     } finally {
       setStatus('idle')
@@ -164,9 +158,7 @@ export default function AvatarModal ({ avatarImg, setShowAvatarModal }) {
               onChange={handleFileChange}
               className='w-fit overflow-clip p-1 rounded-sm border border-dark-amethyst-smoke-50/20 dark:border-amethyst-smoke-50/20'
             />
-            {src && (
-              <>
-                {error && (
+            {status === 'error' && error && (
                   <div
                     role='alert'
                     className='text-rose-600 dark:text-rose-400 bg-rose-600/5 rounded-sm px-1 py-0.5 text-[1em]'
@@ -174,7 +166,9 @@ export default function AvatarModal ({ avatarImg, setShowAvatarModal }) {
                     <span>{error}</span>
                   </div>
                 )}
-
+            {src && (
+              <>
+                
                 {status !== 'uploading' && !error && (
                   <>
                     <div>
@@ -183,7 +177,6 @@ export default function AvatarModal ({ avatarImg, setShowAvatarModal }) {
                         onChange={(_, percentCrop) => setCrop(percentCrop)}
                         onComplete={c => {
                           setCompletedCrop(c)
-                          void updatePreview(c)
                         }}
                       >
                         <img ref={imgRef} alt='Crop me' src={src} />
