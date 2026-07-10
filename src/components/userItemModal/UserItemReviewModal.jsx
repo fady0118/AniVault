@@ -125,7 +125,10 @@ export default function UserItemReviewModal ({
         user_id_str: loggedInUser?.$id,
         item_mal_id: jikanData?.mal_id || userItemData?.mal_id,
         userProfile: loggedInUser?.$id,
-        userItem: userItemData?.$id
+        userItem: userItemData?.$id,
+        anime_progress: userItemData?.progress || null,
+        manga_vols: userItemData?.manga_vols || null,
+        manga_chaps: userItemData?.manga_chaps || null,
       }
       console.log('Saving review:', payload)
       let res
@@ -204,7 +207,7 @@ export default function UserItemReviewModal ({
                   aria-label={`Rate ${i}`}
                   className={`@container w-1/10 aspect-square flex justify-center items-center rounded-sm border duration-150 cursor-pointer px-2 py-1 ${
                     rating === i
-                      ? 'bg-amethyst-smoke-800 text-white border-amethyst-smoke-700'
+                      ? 'bg-indigo-500 text-white border-indigo-500'
                       : 'bg-transparent border-amethyst-smoke-800/20 hover:border-indigo-500'
                   }`}
                 >
@@ -291,7 +294,7 @@ export default function UserItemReviewModal ({
           <div className='flex flex-row items-center gap-2'>
             <button
               type='submit'
-              className='btn btn-primary btn-sm w-fit'
+              className='btn btn-primary btn-sm w-fit disabled:bg-amethyst-smoke-400/25 disabled:border-amethyst-smoke-600/60 disabled:text-amethyst-smoke-700'
               disabled={!modified}
             >
               {reviewData ? 'Update Review' : 'Save Review'}

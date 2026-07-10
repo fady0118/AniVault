@@ -94,9 +94,11 @@ function ReviewCard ({
 }) {
   const { windowWidth } = useContext(RootContext)
   if (!review) return
-  const item = review.userItem || {}
+  const item = review?.userItem || {}
   const tags =
-    typeof review?.tags === 'string' ? review?.tags.split(',') : review?.tags || []
+    typeof review?.tags === 'string'
+      ? review?.tags.split(',')
+      : review?.tags || []
 
   function handleEdit (review) {
     setSelectedReview(review)
@@ -108,13 +110,14 @@ function ReviewCard ({
     openReviewDeleteModal()
   }
 
-    // parse markdown bio
-    useEffect(() => {
-      if (!review) return;
-      if (review?.review_body) {
-        document.getElementById(`reviewBodyText-${review?.$id}`).innerHTML = marked.parse(review?.review_body);
-      }
-    }, [review]);
+  // parse markdown bio
+  useEffect(() => {
+    if (!review) return
+    if (review?.review_body) {
+      document.getElementById(`reviewBodyText-${review?.$id}`).innerHTML =
+        marked.parse(review?.review_body)
+    }
+  }, [review])
 
   return (
     <div className='w-full rounded-xl border border-amethyst-smoke-400/25 dark:border-amethyst-smoke-800/25 box-colors-lighter p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-md  dark:bg-dark-amethyst-smoke-950/80'>
@@ -168,16 +171,31 @@ function ReviewCard ({
                 )}
                 <span className='opacity-60'>•</span>
                 <span>
-                  {item?.progress
-                    ? `Episode ${item?.progress}`
-                    : 'Progress not set'}
+                  {review?.mediaType === 'anime' ? (
+                    <>
+                      {review?.anime_progress
+                        ? `Episode ${review?.anime_progress}`
+                        : 'Progress not set'}
+                    </>
+                  ) : review?.mediaType === 'manga' ? (
+                    <>
+                      {(review?.manga_vols || review?.manga_chaps) && (
+                        <>
+                          {review?.manga_vols} vols - {review?.manga_chaps}{' '}
+                          chaps
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </span>
                 <span className='opacity-60'>•</span>
                 <span className='flex items-center gap-1'>
                   <Star size={12} /> {review?.overall_rating}/10
                 </span>
                 <span className='opacity-60'>•</span>
-                <span>{formatDate(review?.$createdAt)}</span>
+                <span>{formatDate(review?.$updatedAt)}</span>
               </div>
             </div>
 
@@ -197,14 +215,20 @@ function ReviewCard ({
             </div>
           </div>
           {windowWidth >= 640 && (
-            <p id={`reviewBodyText-${review?.$id}`} className='mt-3 grow whitespace-pre-wrap rounded-lg px-3 py-2.5 text-sm leading-6 bg-amethyst-smoke-500/15 text-dark-amethyst-smoke-600 dark:bg-amethyst-smoke-950/15 dark:text-amethyst-smoke-300'>
+            <p
+              id={`reviewBodyText-${review?.$id}`}
+              className='mt-3 grow whitespace-pre-wrap rounded-lg px-3 py-2.5 text-sm leading-6 bg-amethyst-smoke-500/15 text-dark-amethyst-smoke-600 dark:bg-amethyst-smoke-950/15 dark:text-amethyst-smoke-300'
+            >
               {review?.review_body || 'No review content provided.'}
             </p>
           )}
         </div>
       </div>
       {windowWidth < 640 && (
-        <p id={`reviewBodyText-${review?.$id}`} className='mt-3 grow whitespace-pre-wrap rounded-lg px-3 py-2.5 text-sm leading-6 bg-amethyst-smoke-500/15 text-dark-amethyst-smoke-600 dark:bg-amethyst-smoke-950/15 dark:text-amethyst-smoke-300'>
+        <p
+          id={`reviewBodyText-${review?.$id}`}
+          className='mt-3 grow whitespace-pre-wrap rounded-lg px-3 py-2.5 text-sm leading-6 bg-amethyst-smoke-500/15 text-dark-amethyst-smoke-600 dark:bg-amethyst-smoke-950/15 dark:text-amethyst-smoke-300'
+        >
           {review?.review_body || 'No review content provided.'}
         </p>
       )}
