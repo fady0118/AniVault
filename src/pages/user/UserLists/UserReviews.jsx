@@ -4,6 +4,7 @@ import { RootContext } from '../../../App'
 import UserReviewDeleteModal from '../../../components/userItemModal/UserReviewDeleteModal'
 import UserReviewEditModal from '../../../components/userItemModal/UserReviewEditModal'
 import { marked } from 'marked'
+import { Link } from 'react-router'
 
 function formatDate (iso) {
   return new Date(iso).toLocaleDateString()
@@ -123,20 +124,25 @@ function ReviewCard ({
     <div className='w-full rounded-xl border border-amethyst-smoke-400/25 dark:border-amethyst-smoke-800/25 box-colors-lighter p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-md  dark:bg-dark-amethyst-smoke-950/80'>
       <div className='flex flex-row gap-4'>
         {item?.cached_img && (
-          <img
-            src={item?.cached_img}
-            alt={item?.title}
-            className='h-28 w-20 shrink-0 rounded-lg object-cover ring-1 ring-black/5 sm:h-32 sm:w-24'
-          />
+          <Link to={`/${review?.mediaType}/${review?.item_mal_id}`}>
+            <img
+              src={item?.cached_img}
+              alt={item?.title}
+              className='h-28 w-20 shrink-0 rounded-lg object-cover ring-1 ring-black/5 sm:h-32 sm:w-24 hover:brightness-75 duration-200'
+            />
+          </Link>
         )}
 
         <div className='min-w-0 flex-1'>
           <div className='flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3'>
             <div className='flex flex-col gap-1.5'>
               <div className='flex flex-wrap items-center gap-x-2'>
-                <h3 className='text-base font-semibold text-dark-amethyst-smoke-900 dark:text-amethyst-smoke-100'>
+                <Link
+                  to={`/${review?.mediaType}/${review?.item_mal_id}`}
+                  className='text-base font-semibold text-dark-amethyst-smoke-900 dark:text-amethyst-smoke-100 hover:text-amethyst-smoke-700 duration-200'
+                >
                   {item?.title}
-                </h3>
+                </Link>
                 {tags?.length > 0 && (
                   <div className='flex flex-wrap gap-2 text-[0.7em]'>
                     {tags.map((t, i) => (
