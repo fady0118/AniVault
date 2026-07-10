@@ -116,7 +116,7 @@ export default function UserWatchList({ data, refetchReviews }) {
           )}
         </div>
       </div>
-      {showUserItemModal && <UserItemModal userItemTableData={updatedItemData} setShowUserItemModal={setShowUserItemModal} setUserItems={setUserItems} refetchReviews={refetchReviews}/>}
+      {showUserItemModal && <UserItemModal userItemTableData={updatedItemData} setShowUserItemModal={setShowUserItemModal} setUserItems={setUserItems} refetchReviews={refetchReviews} />}
     </>
   );
 }

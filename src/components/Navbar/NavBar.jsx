@@ -99,7 +99,7 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
                   size={12}
                   className='group-hover:stroke-indigo-600 dark:group-hover:stroke-indigo-300 duration-200'
                 />
-                <span>Ctrl+K</span>
+                <span className='font-normal group-hover:text-indigo-600 dark:group-hover:text-indigo-300  duration-200'>Ctrl+K</span>
               </div>
 
               <div className='flex flex-row items-center gap-x-2'>

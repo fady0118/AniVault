@@ -11,7 +11,7 @@ import ExtraFilters from "../components/anime/filters/ExtraFilters/ExtraFilters"
 import AnimeMangaContainer from "../components/anime/AnimeMangaContainer";
 import { RootContext } from "../App";
 
-export default function RootComponent({ Root, filterData, genresData, sortData, useritemModal }) {
+export default function RootComponent({ Root, filterData, genresData, sortData, setUserItemModalStates }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFiltersSideHeader, setShowFiltersSideHeader] = useState(false);
   const filterSideBarStateRef = useRef(false);
@@ -165,7 +165,7 @@ export default function RootComponent({ Root, filterData, genresData, sortData, 
               </>
             )}
           </div>
-          <AnimeMangaContainer searchParams={effectiveSearchParams} itemType={Root} useritemModal={useritemModal}/>
+          <AnimeMangaContainer searchParams={effectiveSearchParams} itemType={Root} setUserItemModalStates={setUserItemModalStates}/>
         </div>
         <div id="backgroundImage" className="-z-50 absolute top-0 left-0 w-screen h-full min-h-screen overflow-hidden">
           <img src="/photo-bg.png" alt="" className="w-full h-full object-cover bg-no-repeat opacity-30 contrast-125" />
