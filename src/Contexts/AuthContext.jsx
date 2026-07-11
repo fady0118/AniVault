@@ -108,6 +108,32 @@ export default function AuthProvider ({ children }) {
     })
   }
 
+  async function updateUserName (newName) {
+    const trimmedName = newName?.trim()
+    if (!trimmedName) {
+      throw new Error('Username cannot be empty')
+    }
+
+    const result = await account.updateName({
+      name: trimmedName
+    })
+
+    const userId = loggedInUser?.$id || result?.$id
+
+    const profileResult = await tablesDB.updateRow({
+      databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+      tableId: import.meta.env.VITE_TABLE_ID_USER_PROFILE,
+      rowId: userId,
+      data: {
+        username: trimmedName
+      }
+    })
+
+    setLoggedInUser(result)
+    setUserData(prev => (prev ? { ...prev, ...profileResult } : profileResult))
+    return profileResult
+  }
+
   return (
     <AuthContext
       value={{
@@ -122,7 +148,8 @@ export default function AuthProvider ({ children }) {
         avatarImg,
         setAvatarImg,
         createOAuthSession,
-        createUserProfile
+        createUserProfile,
+        updateUserName
       }}
     >
       {children}

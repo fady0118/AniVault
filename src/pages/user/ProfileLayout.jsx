@@ -13,7 +13,7 @@ export default function ProfileLayout() {
       <div className="relative w-full px-[2.5vw] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark">
         {loggedInUser ? (
           <>
-            <div className="flex flex-row items-start flex-wrap gap-3 mt-3">
+            <div className="flex flex-row items-end flex-wrap-reverse gap-3 mt-3">
               <div className="flex flex-col gap-y-3 h-fit w-1/7 min-w-24 max-w-48">
                 <div
                   onClick={() => {

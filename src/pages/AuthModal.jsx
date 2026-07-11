@@ -264,7 +264,7 @@ export default function AuthModal ({ setShowAuthModal }) {
             >
               <img
                 className='w-5 h-5 object-cover'
-                src='https://raw.githubusercontent.com/dennisivy/apple-signin/refs/heads/google-signin/final/google2.png'
+                src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/3840px-Google_%22G%22_logo.svg.png'
                 alt='google logo'
               />
               Signup / Login with Google
