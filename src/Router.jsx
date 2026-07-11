@@ -21,6 +21,7 @@ import UserCustomListPage from "./pages/user/UserLists/UserCustomListPage";
 import OtherUserCustomListPage from "./pages/user/OtherUser/OtherUserCustomListPage";
 import OtherProfileLayout from "./pages/user/OtherUser/OtherProfileLayout";
 import UserProfileEditEmailPasswordPage from "./pages/user/ProfileEditEmailPassword/UserProfileEditEmailPasswordPage";
+import OAuthRedirect from "./pages/OAuthRedirect";
 
 export const router = createBrowserRouter([
   {
@@ -96,6 +97,10 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "OAuthRedirect",
+        Component: OAuthRedirect,
+      }
     ],
   },
 ]);

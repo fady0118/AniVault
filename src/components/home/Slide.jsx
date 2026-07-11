@@ -82,7 +82,7 @@ export default function Slide({ animeData, openModal }) {
           </div>
         </div>
         <img
-          className="min-h-screen w-full sm:w-1/2 aspect-auto object-top object-cover pointer-events-none"
+          className="min-h-screen w-full sm:w-1/2 aspect-auto object-top object-cover pointer-events-none animate-slide"
           src={animeData.images.jpg.large_image_url || animeData.images.webp.large_image_url}
           alt={animeData.title}
         />

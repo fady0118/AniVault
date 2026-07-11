@@ -1,275 +1,298 @@
-import { useContext, useEffect, useState } from "react";
-import { account, tablesDB, ID } from "../appwrite";
-import { useAuth } from "../Contexts/AuthContext";
-import LoaderComponent from "../components/LoaderComponent";
+import { useContext, useEffect, useState } from 'react'
+import { account, tablesDB, ID } from '../appwrite'
+import { useAuth } from '../Contexts/AuthContext'
+import LoaderComponent from '../components/LoaderComponent'
 
-export default function AuthModal({ setShowAuthModal }) {
-  const { loggedInUser, login, register, logout, init } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [isLogin, setIsLogin] = useState(true);
-  const [status, setStatus] = useState("idle");
-  const [error, setError] = useState(null);
+export default function AuthModal ({ setShowAuthModal }) {
+  const {
+    loggedInUser,
+    login,
+    register,
+    logout,
+    init,
+    createOAuthSession,
+    createUserProfile
+  } = useAuth()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
+  const [isLogin, setIsLogin] = useState(true)
+  const [status, setStatus] = useState('idle')
+  const [error, setError] = useState(null)
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setStatus("loading");
+  async function handleSubmit (e) {
+    e.preventDefault()
+    setStatus('loading')
     if (isLogin) {
       try {
         //login
-        await login(email, password);
-        setStatus("idle");
-        setEmail("");
-        setPassword("");
-        setName("");
+        await login(email, password)
+        setStatus('idle')
+        setEmail('')
+        setPassword('')
+        setName('')
       } catch (error) {
         if (error.code === 403) {
-          setError("This account has been deleted / blocked");
+          setError('This account has been deleted / blocked')
         } else if (error.code === 401) {
-          setError("Please check your email and password and try again.");
-        } 
-        else {
-          setError(error.message);
+          setError('Please check your email and password and try again.')
+        } else {
+          setError(error.message)
         }
-        setStatus("error");
+        setStatus('error')
       }
     } else {
       try {
         //signup
-        const user = await register(email, password, name);
-        await tablesDB.createRow({
-          databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
-          tableId: import.meta.env.VITE_TABLE_ID_USER_PROFILE,
-          rowId: user.$id,
-          data: {
-            username: user.name,
-          },
-        });
-        setStatus("idle");
+        const user = await register(email, password, name)
+        // create a new userProfile table row for the created user
+        createUserProfile(user)
+        setStatus('idle')
       } catch (error) {
         if (error.code === 409) {
-          setError("A user with the same email already exists");
+          setError('A user with the same email already exists')
         } else {
-          setError(error.message);
+          setError(error.message)
         }
-        setStatus("error");
+        setStatus('error')
       }
     }
   }
 
-  async function handleLogout() {
+  async function handleLogout () {
     try {
-      setStatus("loading");
-      await logout();
-      setStatus("idle");
+      setStatus('loading')
+      await logout()
+      setStatus('idle')
     } catch (error) {
-      setError(error.message);
-      setStatus("error");
+      setError(error.message)
+      setStatus('error')
     }
   }
 
   useEffect(() => {
-    function handleKeyDown(e) {
-      if (e.key === "Escape") {
-        setShowAuthModal(false);
+    function handleKeyDown (e) {
+      if (e.key === 'Escape') {
+        setShowAuthModal(false)
       }
     }
-    document.documentElement.addEventListener("keydown", handleKeyDown);
-    return () => document.documentElement.removeEventListener("keydown", handleKeyDown);
-  }, []);
+    document.documentElement.addEventListener('keydown', handleKeyDown)
+    return () =>
+      document.documentElement.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 box-colors-lighter text-[0.75em] text-text-dark backdrop-blur-sm">
-      <div className="relative w-full max-w-md rounded-3xl box-colors-medium border border-base-200/60 p-8">
+    <div className='fixed inset-0 z-50 bg-dark-amethyst-smoke-50/40 backdrop-blur-lg flex items-center justify-center p-4 text-[0.75em]'>
+      <div className='relative w-full max-w-md rounded-3xl box-colors-semi-medium border border-base-200/60 p-8'>
         <button
           onClick={() => setShowAuthModal(false)}
-          className="btn btn-ghost btn-sm btn-circle absolute right-4 top-4 bg-transparent"
-          aria-label="Close authentication modal"
+          className='btn btn-ghost btn-sm btn-circle absolute right-4 top-4 bg-transparent'
+          aria-label='Close authentication modal'
         >
           ✕
         </button>
 
         {loggedInUser ? (
-          <div className="space-y-6 text-center">
-            <div className="uppercase tracking-[0.35em] text-primary">
+          <div className='space-y-6 text-center'>
+            <div className='uppercase tracking-[0.35em] text-primary'>
               Welcome back
             </div>
-            <h2 className="text-[1.75em] font-semibold">{loggedInUser.name}</h2>
-            <p className=" text-base-content/70">
+            <h2 className='text-[1.75em] font-semibold'>{loggedInUser.name}</h2>
+            <p className='text-text-light/80 dark:text-text-dark/80'>
               You are currently signed in. Use the button below to logout.
             </p>
-            {status === "loading" ? (
-              <div className="flex justify-center scale-75">
+            {status === 'loading' ? (
+              <div className='flex justify-center scale-75'>
                 <LoaderComponent />
               </div>
             ) : (
-              <button onClick={handleLogout} className="btn btn-primary w-full">
+              <button onClick={handleLogout} className='btn btn-primary w-full'>
                 Logout
               </button>
             )}
-            {status === "error" && (
-              <p className="text-rose-500 dark:text-rose-400 capitalize">
+            {status === 'error' && (
+              <p className='text-rose-500 dark:text-rose-400 capitalize'>
                 {error}
               </p>
             )}
           </div>
         ) : (
-          <div className="flex flex-col gap-y-3">
-            <div className="space-y-2 text-center">
-              <h2 className="text-[1.75em] font-semibold">
-                {isLogin ? "Login to your account" : "Create a new account"}
+          <div className='flex flex-col gap-y-3'>
+            <div className='space-y-2 text-center'>
+              <h2 className='text-[1.75em] font-semibold'>
+                {isLogin ? 'Login to your account' : 'Create a new account'}
               </h2>
-              <p className=" text-base-content/70">
+              <p className='text-text-light/80 dark:text-text-dark/80'>
                 Securely login or register to save your favorites and
                 personalize your experience.
               </p>
             </div>
 
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            <form className='space-y-4' onSubmit={handleSubmit}>
               {/* email field */}
-              <div className="form-control">
-                <label class="input validator bg-transparent w-full">
+              <div className='form-control'>
+                <label class='input validator bg-transparent w-full outline-0 border-text-light/25 dark:border-text-dark/25'>
                   <svg
-                    class="h-[1em] opacity-50"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
+                    class='h-[1.25em] opacity-50'
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 24 24'
                   >
                     <g
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                      strokeWidth="2.5"
-                      fill="none"
-                      stroke="currentColor"
+                      strokeLinejoin='round'
+                      strokeLinecap='round'
+                      strokeWidth='2.5'
+                      fill='none'
+                      stroke='currentColor'
                     >
-                      <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                      <rect width='20' height='16' x='2' y='4' rx='2'></rect>
+                      <path d='m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7'></path>
                     </g>
                   </svg>
                   <input
-                    type="email"
-                    placeholder="mail@site.com"
+                    className='placeholder:text-text-light/60 dark:placeholder:text-text-dark/60'
+                    type='email'
+                    placeholder='mail@site.com'
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value.trim())}
+                    onChange={e => setEmail(e.target.value.trim())}
                   />
                 </label>
-                <div class="validator-hint hidden">
+                <div class='validator-hint hidden'>
                   Enter valid email address
                 </div>
               </div>
 
               {/* password field */}
-              <div className="form-control">
-                <label class="input validator bg-transparent w-full">
+              <div className='form-control'>
+                <label class='input validator bg-transparent w-full outline-0 border-text-light/25 dark:border-text-dark/25'>
                   <svg
-                    class="h-[1em] opacity-50"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
+                    class='h-[1.25em] opacity-50'
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 24 24'
                   >
                     <g
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                      strokeWidth="2.5"
-                      fill="none"
-                      stroke="currentColor"
+                      strokeLinejoin='round'
+                      strokeLinecap='round'
+                      strokeWidth='2.5'
+                      fill='none'
+                      stroke='currentColor'
                     >
-                      <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
+                      <path d='M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z'></path>
                       <circle
-                        cx="16.5"
-                        cy="7.5"
-                        r=".5"
-                        fill="currentColor"
+                        cx='16.5'
+                        cy='7.5'
+                        r='.5'
+                        fill='currentColor'
                       ></circle>
                     </g>
                   </svg>
                   <input
+                    className='placeholder:text-text-light/60 dark:placeholder:text-text-dark/60'
                     value={password}
-                    onChange={(e) => setPassword(e.target.value.trim())}
-                    type="password"
+                    onChange={e => setPassword(e.target.value.trim())}
+                    type='password'
                     required
-                    placeholder="Password"
-                    minLength="8"
-                    title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
+                    placeholder='Password'
+                    minLength='8'
+                    title='Must be more than 8 characters, including number, lowercase letter, uppercase letter'
                   />
                 </label>
-                <p class="validator-hint hidden">
+                <p class='validator-hint hidden'>
                   Must be more than 8 characters
                 </p>
               </div>
 
               {/* username field */}
               {!isLogin && (
-                <div className="form-control">
-                  <label class="input validator bg-transparent w-full">
+                <div className='form-control'>
+                  <label class='input validator bg-transparent w-full outline-0 border-text-light/25 dark:border-text-dark/25'>
                     <svg
-                      class="h-[1em] opacity-50"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
+                      class='h-[1.25em] opacity-50'
+                      xmlns='http://www.w3.org/2000/svg'
+                      viewBox='0 0 24 24'
                     >
                       <g
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
-                        strokeWidth="2.5"
-                        fill="none"
-                        stroke="currentColor"
+                        strokeLinejoin='round'
+                        strokeLinecap='round'
+                        strokeWidth='2.5'
+                        fill='none'
+                        stroke='currentColor'
                       >
-                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
+                        <path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'></path>
+                        <circle cx='12' cy='7' r='4'></circle>
                       </g>
                     </svg>
                     <input
+                      className='placeholder:text-text-light/60 dark:placeholder:text-text-dark/60'
                       value={name}
-                      onChange={(e) => setName(e.target.value.trim())}
-                      type="text"
+                      onChange={e => setName(e.target.value.trim())}
+                      type='text'
                       required
-                      placeholder="Username"
-                      pattern="[A-Za-z][A-Za-z0-9\-]*"
-                      minLength="3"
-                      maxLength="30"
-                      title="Only letters, numbers or dash"
+                      placeholder='Username'
+                      pattern='[A-Za-z][A-Za-z0-9\-]*'
+                      minLength='3'
+                      maxLength='30'
+                      title='Only letters, numbers or dash'
                     />
                   </label>
-                  <p class="validator-hint hidden">
+                  <p class='validator-hint hidden'>
                     Must be 3 to 30 characters
                     <br />
                     containing only letters, numbers or dash
                   </p>
                 </div>
               )}
-              {status === "loading" ? (
-                <div className="flex justify-center scale-75">
+              {status === 'loading' ? (
+                <div className='flex justify-center scale-75'>
                   <LoaderComponent />
                 </div>
               ) : (
-                <button type="submit" className="btn btn-primary w-full">
-                  {isLogin ? "Login" : "Sign Up"}
+                <button type='submit' className='btn btn-primary w-full'>
+                  {isLogin ? 'Login' : 'Sign Up'}
                 </button>
               )}
-              {status === "error" && (
-                <p className="text-rose-500 dark:text-rose-400 capitalize">
+              {status === 'error' && (
+                <p className='text-rose-500 dark:text-rose-400 capitalize'>
                   {error}
                 </p>
               )}
             </form>
-            <div className="flex items-center justify-start gap-1">
+            {/* google OAuth */}
+            <button
+              onClick={createOAuthSession}
+              class='btn bg-amethyst-smoke-200 hover:bg-amethyst-smoke-50 text-black border-[#e5e5e5]'
+            >
+              <img
+                className='w-5 h-5 object-cover'
+                src='https://raw.githubusercontent.com/dennisivy/apple-signin/refs/heads/google-signin/final/google2.png'
+                alt='google logo'
+              />
+              Signup / Login with Google
+            </button>
+            <div className='flex items-center justify-start gap-1'>
               {isLogin ? (
                 <>
-                  <span className="font-medium">
+                  <span className='font-medium'>
                     Don't have an account yet?
                   </span>
-                  <span onClick={()=>{setIsLogin(false)}}
-                  className="font-medium underline cursor-pointer text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 duration-200 ">
+                  <span
+                    onClick={() => {
+                      setIsLogin(false)
+                    }}
+                    className='font-medium underline cursor-pointer text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 duration-200 '
+                  >
                     sign up instead
                   </span>
                 </>
               ) : (
                 <>
-                <span className="font-medium">
-                    Already have an account?
-                  </span>
-                  <span onClick={()=>{setIsLogin(true)}}
-                  className="font-medium underline cursor-pointer text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 duration-200 ">
+                  <span className='font-medium'>Already have an account?</span>
+                  <span
+                    onClick={() => {
+                      setIsLogin(true)
+                    }}
+                    className='font-medium underline cursor-pointer text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 duration-200 '
+                  >
                     login instead
                   </span>
                 </>
@@ -279,5 +302,5 @@ export default function AuthModal({ setShowAuthModal }) {
         )}
       </div>
     </div>
-  );
+  )
 }
