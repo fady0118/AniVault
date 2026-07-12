@@ -758,7 +758,7 @@ export default function MangaPage () {
                 </div>
               </div>
 
-              <Reviews data={reviewsQ?.data} />
+              <Reviews data={reviewsQ?.data} item_id={id} mediaType='manga' />
 
               {recommendationsQ?.data?.recommendations?.length ? (
                 <div

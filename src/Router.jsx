@@ -1,116 +1,122 @@
-import { createBrowserRouter, useRouteError } from "react-router";
-import App from "./App";
-import HomePage from "./pages/HomePage";
-import AnimePage from "./pages/Anime/AnimePage";
-import CharacterPage from "./pages/CharacterPage";
-import PeoplePage from "./pages/PeoplePage";
-import MangaPage from "./pages/Manga/MangaPage";
-import MangaRootPage from "./pages/Manga/MangaRootPage";
-import MagazinesRootPage from "./pages/Manga/MagazinesRootPage";
-import MagazinePage from "./pages/Manga/MagazinePage";
-import ProducerPage from "./pages/ProducerPage";
-import UserPage from "./pages/user/UserPage";
-import AnimeRootPage from "./pages/Anime/AnimeRootPage";
-import AnimeSeasonPage from "./pages/Anime/AnimeSeasonPage";
-import ErrorComponent from "./components/ErrorComponent";
-import UserProfilePage from "./pages/user/UserProfilePage";
-import UserProfileEditPage from "./pages/user/UserProfileEditPage";
-import ProfileLayout from "./pages/user/ProfileLayout";
-import OtherUserProfilePage from "./pages/user/OtherUser/OtherUserProfilePage";
-import UserCustomListPage from "./pages/user/UserLists/UserCustomListPage";
-import OtherUserCustomListPage from "./pages/user/OtherUser/OtherUserCustomListPage";
-import OtherProfileLayout from "./pages/user/OtherUser/OtherProfileLayout";
-import UserProfileEditEmailPasswordPage from "./pages/user/ProfileEditEmailPassword/UserProfileEditEmailPasswordPage";
-import OAuthRedirect from "./pages/OAuthRedirect";
+import { createBrowserRouter, useRouteError } from 'react-router'
+import App from './App'
+import HomePage from './pages/HomePage'
+import AnimePage from './pages/Anime/AnimePage'
+import CharacterPage from './pages/CharacterPage'
+import PeoplePage from './pages/PeoplePage'
+import MangaPage from './pages/Manga/MangaPage'
+import MangaRootPage from './pages/Manga/MangaRootPage'
+import MagazinesRootPage from './pages/Manga/MagazinesRootPage'
+import MagazinePage from './pages/Manga/MagazinePage'
+import ProducerPage from './pages/ProducerPage'
+import UserPage from './pages/user/UserPage'
+import AnimeRootPage from './pages/Anime/AnimeRootPage'
+import AnimeSeasonPage from './pages/Anime/AnimeSeasonPage'
+import ErrorComponent from './components/ErrorComponent'
+import UserProfilePage from './pages/user/UserProfilePage'
+import UserProfileEditPage from './pages/user/UserProfileEditPage'
+import ProfileLayout from './pages/user/ProfileLayout'
+import OtherUserProfilePage from './pages/user/OtherUser/OtherUserProfilePage'
+import UserCustomListPage from './pages/user/UserLists/UserCustomListPage'
+import OtherUserCustomListPage from './pages/user/OtherUser/OtherUserCustomListPage'
+import OtherProfileLayout from './pages/user/OtherUser/OtherProfileLayout'
+import UserProfileEditEmailPasswordPage from './pages/user/ProfileEditEmailPassword/UserProfileEditEmailPasswordPage'
+import OAuthRedirect from './pages/OAuthRedirect'
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     Component: App,
     ErrorBoundary: RootErrorBoundary,
     children: [
       { index: true, Component: HomePage },
       {
-        path: "anime",
+        path: 'anime',
         children: [
           { index: true, Component: AnimeRootPage },
           {
-            path: ":id",
-            children: [{ index: true, Component: AnimePage }],
+            path: ':id',
+            children: [{ index: true, Component: AnimePage }]
           },
           {
-            path: "seasons",
-            children: [{ path: ":year/:season", Component: AnimeSeasonPage }],
-          },
-        ],
+            path: 'seasons',
+            children: [{ path: ':year/:season', Component: AnimeSeasonPage }]
+          }
+        ]
       },
 
       {
-        path: "manga",
+        path: 'manga',
         children: [
           { index: true, Component: MangaRootPage },
           {
-            path: "magazine",
+            path: 'magazine',
             children: [
               { index: true, Component: MagazinesRootPage },
-              { path: ":id", Component: MagazinePage },
-            ],
+              { path: ':id', Component: MagazinePage }
+            ]
           },
-          { path: ":id", Component: MangaPage },
-        ],
+          { path: ':id', Component: MangaPage }
+        ]
       },
-      { path: "character/:id", Component: CharacterPage },
-      { path: "people/:id", Component: PeoplePage },
-      { path: "producer", children: [{ path: ":id", Component: ProducerPage }] },
-      { path: "user", children: [{ path: ":username", Component: UserPage }] },
+      { path: 'character/:id', Component: CharacterPage },
+      { path: 'people/:id', Component: PeoplePage },
       {
-        path: "profile",
+        path: 'producer',
+        children: [{ path: ':id', Component: ProducerPage }]
+      },
+      { path: 'user', children: [{ path: ':username', Component: UserPage }] },
+      {
+        path: 'profile',
         Component: ProfileLayout,
         children: [
           { index: true, Component: UserProfilePage },
           {
-            path: "profile_edit",
+            path: 'profile_edit',
             children: [
               { index: true, Component: UserProfileEditPage },
-              { path: "edit_email_password", Component: UserProfileEditEmailPasswordPage },
-            ],
+              {
+                path: 'edit_email_password',
+                Component: UserProfileEditEmailPasswordPage
+              }
+            ]
           },
           {
-            path: "userList/:id",
-            children: [{ index: true, Component: UserCustomListPage }],
-          },
-        ],
+            path: 'userList/:id',
+            children: [{ index: true, Component: UserCustomListPage }]
+          }
+        ]
       },
       {
-        path: "userProfile",
+        path: 'userProfile',
         children: [
           {
-            path: ":userId",
+            path: ':userId',
             Component: OtherProfileLayout,
             children: [
               { index: true, Component: OtherUserProfilePage },
               {
-                path: "userList/:id",
-                children: [{ index: true, Component: OtherUserCustomListPage }],
-              },
-            ],
-          },
-        ],
+                path: 'userList/:id',
+                children: [{ index: true, Component: OtherUserCustomListPage }]
+              }
+            ]
+          }
+        ]
       },
       {
-        path: "OAuthRedirect",
-        Component: OAuthRedirect,
+        path: 'OAuthRedirect',
+        Component: OAuthRedirect
       }
-    ],
-  },
-]);
+    ]
+  }
+])
 
-function RootErrorBoundary() {
-  let error = useRouteError();
-  const message = error?.statusText || error?.message || "Unknown error";
+function RootErrorBoundary () {
+  let error = useRouteError()
+  const message = error?.statusText || error?.message || 'Unknown error'
   return (
     <>
       <ErrorComponent error={message} />
     </>
-  );
+  )
 }

@@ -958,7 +958,7 @@ export default function AnimePage () {
                   </div>
                 </div>
 
-                <Reviews data={reviewsQ?.data} />
+                <Reviews data={reviewsQ?.data} item_id={id} mediaType="anime"/>
 
                 {recommendationsQ?.data?.recommendations?.length ? (
                   <div

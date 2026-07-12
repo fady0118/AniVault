@@ -5,10 +5,8 @@ import UserReviewDeleteModal from '../../../components/userItemModal/UserReviewD
 import UserReviewEditModal from '../../../components/userItemModal/UserReviewEditModal'
 import { marked } from 'marked'
 import { Link } from 'react-router'
+import { dateFormatter } from '../../../utility/utils'
 
-function formatDate (iso) {
-  return new Date(iso).toLocaleDateString()
-}
 const classes = {
   tag_classes: {
     recommended:
@@ -95,6 +93,7 @@ function ReviewCard ({
 }) {
   const { windowWidth } = useContext(RootContext)
   if (!review) return
+  const date = review?.$updatedAt || review?.$createdAt
   const item = review?.userItem || {}
   const tags =
     typeof review?.tags === 'string'
@@ -201,7 +200,7 @@ function ReviewCard ({
                   <Star size={12} /> {review?.overall_rating}/10
                 </span>
                 <span className='opacity-60'>•</span>
-                <span>{formatDate(review?.$updatedAt)}</span>
+                <span>{dateFormatter(date)}</span>
               </div>
             </div>
 
