@@ -9,19 +9,21 @@ import MangaRootPage from './pages/Manga/MangaRootPage'
 import MagazinesRootPage from './pages/Manga/MagazinesRootPage'
 import MagazinePage from './pages/Manga/MagazinePage'
 import ProducerPage from './pages/ProducerPage'
-import UserPage from './pages/user/UserPage'
+import UserPage from './pages/user/userProfile/UserPage'
 import AnimeRootPage from './pages/Anime/AnimeRootPage'
 import AnimeSeasonPage from './pages/Anime/AnimeSeasonPage'
 import ErrorComponent from './components/ErrorComponent'
-import UserProfilePage from './pages/user/UserProfilePage'
-import UserProfileEditPage from './pages/user/UserProfileEditPage'
-import ProfileLayout from './pages/user/ProfileLayout'
+import UserProfilePage from './pages/user/userProfile/UserProfilePage'
+import UserProfileEditPage from './pages/user/userProfile/UserProfileEditPage'
+import ProfileLayout from './pages/user/userProfile/ProfileLayout'
 import OtherUserProfilePage from './pages/user/OtherUser/OtherUserProfilePage'
 import UserCustomListPage from './pages/user/UserLists/UserCustomListPage'
 import OtherUserCustomListPage from './pages/user/OtherUser/OtherUserCustomListPage'
 import OtherProfileLayout from './pages/user/OtherUser/OtherProfileLayout'
 import UserProfileEditEmailPasswordPage from './pages/user/ProfileEditEmailPassword/UserProfileEditEmailPasswordPage'
 import OAuthRedirect from './pages/OAuthRedirect'
+import EmailVerificationRedirect from './pages/user/userProfile/EmailVerificationRedirect'
+import ProfileVerification from './pages/user/userProfile/ProfileVerification'
 
 export const router = createBrowserRouter([
   {
@@ -84,6 +86,10 @@ export const router = createBrowserRouter([
           {
             path: 'userList/:id',
             children: [{ index: true, Component: UserCustomListPage }]
+          },
+          {
+            path: 'verify',
+            Component: ProfileVerification
           }
         ]
       },
@@ -106,6 +112,10 @@ export const router = createBrowserRouter([
       {
         path: 'OAuthRedirect',
         Component: OAuthRedirect
+      },
+      {
+        path: 'emailVerification',
+        Component: EmailVerificationRedirect
       }
     ]
   }

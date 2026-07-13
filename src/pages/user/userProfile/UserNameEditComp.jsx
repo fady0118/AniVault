@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import LoaderComponent from '../../components/LoaderComponent'
-import useFormStatusHandling from '../../components/userItemModal/useFormStatusHandling'
-import { useAuth } from '../../Contexts/AuthContext'
+import LoaderComponent from '../../../components/LoaderComponent'
+import useFormStatusHandling from '../../../components/userItemModal/useFormStatusHandling'
+import { useAuth } from '../../../Contexts/AuthContext'
 
 export default function UserNameEditComp () {
   const { userData, updateUserName } = useAuth()

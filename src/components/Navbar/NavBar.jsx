@@ -196,7 +196,7 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
               {/* smallscreens user Navlink */}
               {loggedInUser ? (
                 <div
-                  className='w-4 aspect-square cursor-pointer'
+                  className='w-4 aspect-square cursor-pointer relative'
                   onClick={() => setShowProfileMenu(s => !s)}
                 >
                   <img
@@ -204,6 +204,9 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
                     src={avatarImg || '/favicon-sq.png'}
                     alt={userData?.username}
                   />
+                  {!loggedInUser?.emailVerification && (
+                <div className='absolute bottom-0 right-0 w-1 h-1 rounded-full bg-rose-600 dark:bg-rose-500'></div>
+              )}
                 </div>
               ) : (
                 <label className='swap swap-rotate w-4 aspect-square'>
@@ -265,6 +268,14 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
                 >
                   Your Account
                 </Link>
+                <Link
+                  className='opacity-65 hover:cursor-pointer hover:opacity-100 duration-200'
+                  to='/profile/verify'
+                >
+                  Verify Account
+                  {!loggedInUser?.emailVerification&&<span className='text-rose-600 dark:text-rose-500'> *</span>}
+                </Link>
+
                 <Link
                   className='opacity-65 hover:cursor-pointer hover:opacity-100 duration-200'
                   to='/profile?tab=1'

@@ -23,7 +23,7 @@ export default function UserProfileData({ userData }) {
           </div>
           <div id="bio" className="w-4/5 max-w-fit h-fit min-h-32 rounded-lg overflow-hidden box-colors">
             <div className="border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize">bio</div>
-            <div id="bioText" className="flex flex-col px-3 py-2 min-w-2xs">
+            <div id="bioText" className="flex flex-col px-3 py-2">
               this user left his bio blank
             </div>
           </div>

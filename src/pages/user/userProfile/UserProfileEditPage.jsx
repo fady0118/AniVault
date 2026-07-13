@@ -1,22 +1,21 @@
 import { useEffect, useState } from 'react'
-import { useAuth } from '../../Contexts/AuthContext'
-import { account, functions, tablesDB } from '../../appwrite'
+import { useAuth } from '../../../Contexts/AuthContext'
+import { account, functions, tablesDB } from '../../../appwrite'
 import { redirect, useNavigate, useOutletContext } from 'react-router'
-import LoaderComponent from '../../components/LoaderComponent'
-import { delay } from '../../utility/utils'
-import useTextAreaToolBox from '../../components/textareaToolbox/useTextAreaToolBox'
-import TextAreaToolBox from '../../components/textareaToolbox/TextAreaToolBox'
-import useFormStatusHandling from '../../components/userItemModal/useFormStatusHandling'
+import LoaderComponent from '../../../components/LoaderComponent'
+import { delay } from '../../../utility/utils'
+import useTextAreaToolBox from '../../../components/textareaToolbox/useTextAreaToolBox'
+import TextAreaToolBox from '../../../components/textareaToolbox/TextAreaToolBox'
+import useFormStatusHandling from '../../../components/userItemModal/useFormStatusHandling'
 import UserNameEditComp from './UserNameEditComp'
 
 export default function UserProfileEditPage () {
-  const { loggedInUser, userData, setUserData, avatarImg } =
-    useAuth()
+  const { loggedInUser, userData, setUserData, avatarImg } = useAuth()
   const navigate = useNavigate()
   // tab switch
   const [currentTab, setCurrentTab] = useState(1)
   // status handling
-  const { status, setStatus, error, setError } = useFormStatusHandling();
+  const { status, setStatus, error, setError } = useFormStatusHandling()
 
   // gender, age local states
   const [personalData, setPersonalData] = useState({
@@ -104,7 +103,7 @@ export default function UserProfileEditPage () {
         <div className='tab-content'>
           <UserNameEditComp />
         </div>
-        
+
         <input
           type='radio'
           name='profileTabs'
@@ -178,10 +177,14 @@ export default function UserProfileEditPage () {
                 insertTextStyle={insertTextStyle}
               />
 
-                <button className='btn btn-primary capitalize' type='submit' disabled={!(status === 'editing' && !error)}>
-                  update info
-                </button>
-              
+              <button
+                className='btn btn-primary capitalize'
+                type='submit'
+                disabled={!(status === 'editing' && !error)}
+              >
+                update info
+              </button>
+
               {status === 'uploading' && (
                 <div className='scale-75 py-2'>
                   <LoaderComponent />
