@@ -193,6 +193,9 @@
   .box-colors-medium {
     @apply bg-amethyst-smoke-300/90 dark:bg-dark-amethyst-smoke-200/90
   }
+  .box-colors-solid {
+    @apply bg-amethyst-smoke-300 dark:bg-dark-amethyst-smoke-200
+  }
 
   .section-colors-medium {
     @apply bg-amethyst-smoke-300/40 dark:bg-dark-amethyst-smoke-200/40
@@ -352,6 +355,20 @@
   .small-header-box {
     @apply rounded-md flex flex-row items-center justify-between px-1.5 py-1 hover:brightness-110 duration-200
   }
+
+.loader-progress {
+  height: 4px;
+  width: 130px;
+  --c:no-repeat linear-gradient(#605dff 0 0);
+  background: var(--c),var(--c),#d7b8fc;
+  background-size: 60% 100%;
+  animation: l16 3s infinite;
+}
+@keyframes l16 {
+  0%   {background-position:-150% 0,-150% 0}
+  66%  {background-position: 250% 0,-150% 0}
+  100% {background-position: 250% 0, 250% 0}
+}
 
   .loader {
     display: inline-flex;

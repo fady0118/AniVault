@@ -22,11 +22,9 @@ export default function EmailVerificationRedirect () {
       setStatus('loading')
       await account.updateEmailVerification({ userId, secret })
       setStatus('success')
-      setTimeout(() => navigate('/profile'), 900)
     } catch (err) {
       setStatus('error')
       setError(err?.message || 'Failed to verify account.')
-      console.log(err?.message || 'failed to verify account')
     }
   }
 
@@ -37,7 +35,7 @@ export default function EmailVerificationRedirect () {
   return (
     <div className='relative w-full px-[2.5vw] flex flex-col items-center pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark'>
       <div className='w-full max-w-xl min-h-[50vh] flex items-center justify-center'>
-        <div className='w-full p-6 rounded-lg bg-white/80 dark:bg-gray-800/60 border border-amethyst-smoke-200 dark:border-gray-700 shadow-sm text-center'>
+        <div className='w-full p-6 rounded-lg bg-amethyst-smoke-100/80 dark:bg-gray-800/60 border border-amethyst-smoke-500 dark:border-gray-700  shadow-sm text-center'>
           {status === 'idle' || status === 'loading' ? (
             <div className='flex flex-col items-center gap-3'>
               <svg

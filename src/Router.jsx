@@ -22,8 +22,9 @@ import OtherUserCustomListPage from './pages/user/OtherUser/OtherUserCustomListP
 import OtherProfileLayout from './pages/user/OtherUser/OtherProfileLayout'
 import UserProfileEditEmailPasswordPage from './pages/user/ProfileEditEmailPassword/UserProfileEditEmailPasswordPage'
 import OAuthRedirect from './pages/OAuthRedirect'
-import EmailVerificationRedirect from './pages/user/userProfile/EmailVerificationRedirect'
+import EmailVerificationRedirect from './pages/user/Redirects/EmailVerificationRedirect'
 import ProfileVerification from './pages/user/userProfile/ProfileVerification'
+import PasswordResetRedirect from './pages/user/Redirects/PasswordResetRedirect'
 
 export const router = createBrowserRouter([
   {
@@ -116,6 +117,10 @@ export const router = createBrowserRouter([
       {
         path: 'emailVerification',
         Component: EmailVerificationRedirect
+      },
+      {
+        path: 'passwordReset',
+        Component: PasswordResetRedirect
       }
     ]
   }
