@@ -23,6 +23,23 @@ export default function AuthModal ({ setShowAuthModal }) {
   const [status, setStatus] = useState('idle')
   const [error, setError] = useState(null)
 
+  const rules = useMemo(
+    () => [
+      { test: v => v.length >= 8, message: 'at least 8 characters' },
+      { test: v => /[a-z]/.test(v), message: 'a lowercase letter' },
+      { test: v => /[A-Z]/.test(v), message: 'an uppercase letter' },
+      { test: v => /[0-9]/.test(v), message: 'a number' }
+    ],
+    []
+  )
+
+  const failed = rules.filter(r => !r.test(password))
+
+  const hintText = failed.length
+    ? `Must include ${failed.map(r => r.message).join(', ')}`
+    : ''
+
+
   async function handleSubmit (e) {
     e.preventDefault()
     setStatus('loading')
@@ -217,12 +234,13 @@ export default function AuthModal ({ setShowAuthModal }) {
                         required
                         placeholder='Password'
                         minLength='8'
+                        pattern='(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}'
                         title='Must be more than 8 characters, including number, lowercase letter, uppercase letter'
                       />
                     </label>
-                    <p class='validator-hint hidden'>
-                      Must be more than 8 characters
-                    </p>
+                    {failed.length > 0 && (
+                      <p className='validator-hint'>{hintText}</p>
+                    )}
                     {isLogin && !forgotPassword && (
                       <p
                         onClick={() => {
