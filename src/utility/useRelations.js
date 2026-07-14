@@ -5,7 +5,7 @@ import { jikanFetch } from "./jikanApi";
 
 // fetch single image
 const getImage = async ({ mal_id, type }) => {
-  const res = await jikanFetch(`https://api.jikan.moe/v4/${type}/${mal_id}/full`);
+  const res = await jikanFetch(`https://api.jikan.moe/v4/${type}/${mal_id}`);
   const { data } = await res.json();
   const image = data?.images.jpg.large_image_url;
   return {
@@ -18,11 +18,11 @@ export function useRelations(data) {
   const [showAllRelations, setShowAllRelations] = useState(false);
 
   const relations = data?.flattenedRelations ?? [];
-  const visibleRelations = showAllRelations ? relations : relations.slice(0, 6);
+  const visibleRelations = showAllRelations ? relations : relations.slice(0, 3);
 
   const relationsQ = useQueries({
     queries: visibleRelations.map((rel) => ({
-      queryKey: ["relation", rel.mal_id, rel.type],
+      queryKey: ["relation", rel?.mal_id, rel?.type],
       queryFn: async () => {
         await delay(350);
         const image = await getImage(rel);

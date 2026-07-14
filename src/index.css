@@ -5,10 +5,14 @@
 
 @theme {
   --font-inter: "Inter", sans-serif;
---tab-radius-grad: none;
+  --tab-radius-grad: none;
 
   --container-2cxs: 16px;
   --container-cxs: 20px;
+
+  --container-csm: 9rem;
+  --container-cmd: 11rem;
+  --container-clg:13rem;
 
   --breakpoint-3xs: 18rem;
   --breakpoint-2xs: 24rem;

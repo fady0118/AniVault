@@ -128,13 +128,13 @@ function GridItem({ item, setShowUserItemModal, setUpdatedItemData }) {
         <img className="w-full h-full object-cover" src={item?.cached_img} alt={item?.title} />
       </Link>
 
-      <div className="absolute bottom-0 left-0 translate-y-0 md:translate-y-full  group-hover:translate-y-0 w-full flex flex-row justify-center items-center box-colors-lighter duration-200">
+      <div className="@container absolute bottom-0 left-0 translate-y-0 md:translate-y-full  group-hover:translate-y-0 w-full flex flex-row justify-center items-center box-colors-lighter duration-200">
         <button
           onClick={() => {
             setUpdatedItemData(item);
             setShowUserItemModal(true);
           }}
-          className="btn btn-soft btn-primary my-8 border-0 bg-amethyst-smoke-300 hover:bg-indigo-500 font-bold capitalize"
+          className="btn btn-soft btn-primary my-8 w-3/4 text-[0.8em] @csm:text-[1em] @cmd:text-[1.2em] border-0 bg-amethyst-smoke-300 hover:bg-indigo-500 font-bold capitalize"
         >
           update item
         </button>

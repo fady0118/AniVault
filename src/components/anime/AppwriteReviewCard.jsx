@@ -79,7 +79,7 @@ export default function AppwriteReviewCard ({ review }) {
             <p className='text-2xs/snug font-light'>{dateFormatter(date)}</p>
           </div>
 
-          <div className='flex flex-row flex-wrap items-center gap-2'>
+          <div className='flex flex-row flex-wrap items-center gap-2 text-xs sm:text-sm'>
             {tags.map((tag, index) => (
               <span
                 key={index}
@@ -98,7 +98,7 @@ export default function AppwriteReviewCard ({ review }) {
                 Spoiler warning
               </span>
             )}
-            <div className='flex flex-row flex-wrap items-center justify-between gap-2 text-2xs text-amethyst-smoke-700 dark:text-amethyst-smoke-300/80'>
+            <div className='flex flex-row flex-wrap items-center justify-between gap-2 text-[0.85em] text-amethyst-smoke-700 dark:text-amethyst-smoke-300/80'>
               <div className='flex flex-row flex-wrap items-center gap-x-2'>
                 {review?.userItem?.status && (
                   <span

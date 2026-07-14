@@ -4,7 +4,6 @@ import LoaderComponent from "../../../components/LoaderComponent";
 
 export default function EmailEditForm() {
   const [email, setEmail] = useState("");
-  const [confirmEmail, setConfirmEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
@@ -13,14 +12,9 @@ export default function EmailEditForm() {
   async function handleChangeEmail(e) {
     e.preventDefault();
     setStatus("loading");
-    if (!password || !email || !confirmEmail) {
+    if (!email || !password || !confirmEmail) {
       setStatus("error");
       setError("all fields are required");
-      return;
-    }
-    if (email !== confirmEmail) {
-      setStatus("error");
-      setError("Email & ConfirmEmail fields must match");
       return;
     }
     try {
@@ -43,7 +37,7 @@ export default function EmailEditForm() {
     // reset status
     setStatus("idle");
     setError(null);
-  }, [email, confirmEmail, password]);
+  }, [email, password]);
 
   return (
     <div className="flex flex-col items-start gap-y-3">
@@ -77,20 +71,7 @@ export default function EmailEditForm() {
           </label>
           <div className="validator-hint hidden">Enter valid email address</div>
         </div>
-        {/* confirm email field */}
-        <div className="form-control">
-          <p className="capitalize">confirm new email</p>
-          <label className="input validator border-base-300/15 dark:border-white/15 bg-amethyst-smoke-300 dark:bg-transparent outline-0">
-            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
-                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-              </g>
-            </svg>
-            <input type="email" placeholder="mail@site.com" required value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value.trim())} />
-          </label>
-          <div className="validator-hint hidden">Enter valid email address</div>
-        </div>
+       
 
         <div className="w-full flex flex-row gap-x-2">
           <button type="submit" className="btn btn-primary w-fit">
