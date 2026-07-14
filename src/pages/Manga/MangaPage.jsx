@@ -284,15 +284,18 @@ export default function MangaPage () {
                         <Bookmark
                           className='h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors'
                           onClick={() => {
-                            setUserItemData(mangaQ?.data)
-                            setShowUserItemModal(true)
-                          }}
+                              setUserItemData(mangaQ?.data)
+                              setUserItemModalTab('lists')
+                              setShowUserItemModal(true)
+                            }}
                         />
                         <div
                           id='reviewModalBtn'
                           onClick={() => {
-                            setShowReviewsModal(true)
-                          }}
+                              setUserItemData(mangaQ?.data)
+                              setUserItemModalTab('review')
+                              setShowUserItemModal(true)
+                            }}
                           className='flex items-center gap-x-1 text-xs sm:text-sm rounded-sm p-1 box-colors bookmark-colors'
                         >
                           <NotebookPen size={14} />

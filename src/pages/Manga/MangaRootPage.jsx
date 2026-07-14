@@ -11,7 +11,7 @@ export default function MangaRootPage() {
    const { showUserItemModal, setShowUserItemModal, setUserItemData, userItemData } = useUserItemModal();
   return (
     <>
-      <RootComponent Root="manga" filterData={filterData} genresData={genresData} sortData={sortData} useritemModal={{setShowUserItemModal, setUserItemData}}  />
+      <RootComponent Root="manga" filterData={filterData} genresData={genresData} sortData={sortData} setUserItemModalStates={{setShowUserItemModal, setUserItemData}}  />
       {showUserItemModal && <UserItemModal data={userItemData} setShowUserItemModal={setShowUserItemModal} />}
     </>
   );

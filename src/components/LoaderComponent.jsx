@@ -1,5 +1,4 @@
 export default function LoaderComponent ({ type }) {
-  console.log({type})
   return (
     <>
       {type==="progress" ? (

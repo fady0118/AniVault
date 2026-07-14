@@ -43,7 +43,7 @@ export default function EpisodesModal({ setShowEpisodesModal }) {
   });
 
   const sortData = useMemo(() => {
-    if (!episodesQ?.data) return [];
+    if (!episodesQ?.data?.data) return [];
     let sortedData;
     if (sortBy === "aired") {
       if (order === "ascending") {
@@ -59,7 +59,7 @@ export default function EpisodesModal({ setShowEpisodesModal }) {
       }
     }
     return sortedData;
-  }, [episodesQ.data, sortBy, order]);
+  }, [episodesQ, sortBy, order]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
