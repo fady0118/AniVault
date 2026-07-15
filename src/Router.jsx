@@ -9,7 +9,6 @@ import MangaRootPage from './pages/Manga/MangaRootPage'
 import MagazinesRootPage from './pages/Manga/MagazinesRootPage'
 import MagazinePage from './pages/Manga/MagazinePage'
 import ProducerPage from './pages/ProducerPage'
-import UserPage from './pages/user/userProfile/UserPage'
 import AnimeRootPage from './pages/Anime/AnimeRootPage'
 import AnimeSeasonPage from './pages/Anime/AnimeSeasonPage'
 import ErrorComponent from './components/ErrorComponent'
@@ -68,7 +67,6 @@ export const router = createBrowserRouter([
         path: 'producer',
         children: [{ path: ':id', Component: ProducerPage }]
       },
-      { path: 'user', children: [{ path: ':username', Component: UserPage }] },
       {
         path: 'profile',
         Component: ProfileLayout,

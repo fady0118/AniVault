@@ -28,7 +28,7 @@ export default function Reviews ({ data, mediaType, item_id }) {
         const res = await tablesDB.listRows({
           databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
           tableId: import.meta.env.VITE_TABLE_ID_REVIEWS,
-          queries,
+          queries
         })
         return res || { rows: [] }
       } catch (error) {
@@ -133,25 +133,19 @@ export default function Reviews ({ data, mediaType, item_id }) {
                   <div key={review.mal_id} className='bottom-border'>
                     <div className='flex flex-col xs:flex-row'>
                       <div className='flex flex-col ml-3 xs:m-0 justify-start w-[5%] min-w-10'>
-                        <Link
-                          to={`/user/${review.user.username}`}
-                          className='w-full aspect-square'
-                        >
+                        <div className='w-full aspect-square'>
                           <img
                             className='w-full h-full object-cover'
                             src={review.user.images.webp.image_url}
                             alt={`${review.user.username}-picture`}
                           />
-                        </Link>
+                        </div>
                       </div>
                       <div className='flex flex-col w-[95%] px-3'>
                         <div className='flex flex-row justify-between items-center'>
-                          <Link
-                            to={`/user/${review.user.username}`}
-                            className='blue-link font-semibold'
-                          >
+                          <div className='blue-link font-semibold'>
                             {review.user.username}
-                          </Link>
+                          </div>
                           <p className='text-2xs/snug font-light'>
                             {dateFormatter(review.date)}
                           </p>
