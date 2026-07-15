@@ -53,7 +53,7 @@ export default function AppwriteReviewCard ({ review }) {
     <div className='bottom-border pb-2'>
       <div className='flex flex-row'>
         <div className='flex flex-col justify-start w-[5%] min-w-10'>
-          {review?.userItem?.cached_img ? (
+          {reviewerAvatar || review?.userItem?.cached_img ? (
             <Link
               to={`/userProfile/${review?.userProfile?.$id}`}
               className='w-full aspect-square rounded-sm overflow-hidden'
