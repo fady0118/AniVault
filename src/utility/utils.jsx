@@ -102,10 +102,13 @@ export function renderInfoArr(title, arr, path = null) {
 export function renderIcon(name) {
   if (name.toLowerCase().includes("wikipedia")) {
     return <img className="h-3" alt="Wikipedia icon" src="https://cdn.myanimelist.net/img/common/external_links/202.png" />;
-  } else if (name.toLowerCase().startsWith("@") || name.toLowerCase().includes("x.com")) {
-    return <img className="h-3" alt="twitter icon" src="https://cdn.myanimelist.net/img/common/external_links/101.png" />;
-  }
+  } 
+  // else if (name.toLowerCase().startsWith("@") || name.toLowerCase().includes("x.com")) {
+  //   return <img className="h-3" alt="twitter icon" src="https://cdn.myanimelist.net/img/common/external_links/101.png" />;
+  // }
   switch (name) {
+    case "Twitter":
+      return <img className="h-3" alt="twitter icon" src="https://cdn.myanimelist.net/img/common/external_links/101.png" />;
     case "YouTube":
       return <img alt="YouTube icon" className="h-3" src="https://cdn.myanimelist.net/img/common/external_links/102.png" />;
     case "Facebook":
@@ -118,6 +121,8 @@ export function renderIcon(name) {
       );
     case "AniDB":
       return <img className="h-3" alt="AniDB icon" src="https://cdn.myanimelist.net/img/common/external_links/200.png" />;
+    case "TikTok":
+      return <img className="h-3" alt="TikTok icon" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOW2E8-w-ydD3F1kcM398-zLztBQitShBV0bsDzjplBg&s=10" />;
     case "ANN":
       return <img className="h-3" alt="ANN icon" src="https://cdn.myanimelist.net/img/common/external_links/201.png" />;
     case "Syoboi":
@@ -181,4 +186,13 @@ export function getYouTubeThumbnail(embedUrl, quality = "hqdefault") {
   }
   const videoId = match[1];
   return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
+}
+
+// get thumbnail & embedUrl from yt videoId
+export function getYouTubeUrls (videoId, quality = 'hqdefault') {
+  if (!videoId) return
+  return {
+    thumbnail: `https://img.youtube.com/vi/${videoId}/${quality}.jpg`,
+    embedUrl: `https://www.youtube.com/embed/${videoId}`
+  }
 }

@@ -1,19 +1,36 @@
-import { Link, useNavigate } from "react-router";
+import { Link } from 'react-router'
+import { memo } from 'react'
 
-export default function Box({ dataObj, classes, image_class }) {
-  if (dataObj.data == null) return;
-  const { role, path, ...rest } = dataObj.data;
-  if (!Object.entries(rest).length) return;
-  const { images, name, mal_id } = rest;
+function Box ({ dataObj, classes, image_class }) {
+  const data = dataObj?.data
+  if (!data) return null
+  const { role, path, images, name, mal_id } = data
+  if (!images?.jpg?.image_url || !mal_id || !name || !path) return null
+  
   return (
-    <>
-      <div className="relative w-full">
-        <Link className="inline-block w-full box-border " to={`/${path}/${mal_id}`}>
-          <img style={{height:"100%"}} className={image_class} src={images.jpg.image_url} alt={name} />
-          <div className={`${classes.responsive_text} ${classes.name_class}`}>{name}</div>
-          {role ? <div className={`${classes.responsive_text} ${classes.role_class}`}>{role}</div> : ""}
-        </Link>
-      </div>
-    </>
-  );
+    <div className='relative w-full'>
+      <Link
+        className='inline-block w-full box-border'
+        to={`/${path}/${mal_id}`}
+      >
+        <img
+          className={image_class}
+          style={{ height: '100%' }}
+          src={images.jpg.image_url}
+          alt={name}
+          loading='lazy'
+        />
+        <div className={`${classes.responsive_text} ${classes.name_class}`}>
+          {name}
+        </div>
+        {role && (
+          <div className={`${classes.responsive_text} ${classes.role_class}`}>
+            {role}
+          </div>
+        )}
+      </Link>
+    </div>
+  )
 }
+
+export default memo(Box)

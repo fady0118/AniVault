@@ -14,14 +14,13 @@ import Gallery from '../../components/character/Gallery'
 import Pictures from '../../components/character/Pictures'
 import CardBox from '../../components/CardBox/CardBox'
 import { useRelations } from '../../utility/useRelations'
-import { useQueries } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Bookmark, ChevronRight, NotebookPen, Star } from 'lucide-react'
-import News from '../../components/anime/News'
 import Reviews from '../../components/anime/Reviews'
-import { jikanFetch } from '../../utility/jikanApi'
 import LoaderComponent from '../../components/LoaderComponent'
 import { useUserItemModal } from '../../components/userItemModal/useUserItemModal'
 import UserItemModal from '../../components/userItemModal/UserItemModal'
+import { getMangaDetailPage } from '../../anilist/pages/getMangaDetailPage'
 
 export default function MangaPage () {
   let { id } = useParams()
@@ -34,149 +33,18 @@ export default function MangaPage () {
   } = useUserItemModal()
   const [userItemModalTab, setUserItemModalTab] = useState(null)
 
-  const [mangaQ, charactersQ, reviewsQ, picturesQ, recommendationsQ, newsQ] =
-    useQueries({
-      queries: [
-        {
-          queryKey: ['manga', id],
-          queryFn: async () => {
-            const res = await jikanFetch(
-              `https://api.jikan.moe/v4/manga/${id}/full`
-            )
-            if (!res.ok) throw new Error(`${res.status} - ${res.statusText}`)
-            const manga_Data = await res.json()
-            return {
-              ...manga_Data.data,
-              flattenedRelations: manga_Data.data?.relations.flatMap(
-                ({ relation, entry }) =>
-                  entry.map(item => ({ ...item, relation }))
-              )
-            }
-          }
-        },
-        {
-          queryKey: ['characters', id],
-          queryFn: async () => {
-            const res = await jikanFetch(
-              `https://api.jikan.moe/v4/manga/${id}/characters`
-            )
-            const characters_Data = await res.json()
-            const charactersDataArr = characters_Data?.data?.map(
-              ({ role, character }) => ({
-                character: { path: 'character', role, ...character }
-              })
-            )
-            return {
-              characters: [characters_Data.data],
-              dataArr: charactersDataArr
-            }
-          }
-        },
-        {
-          queryKey: ['reviews', id],
-          queryFn: async () => {
-            const res = await jikanFetch(
-              `https://api.jikan.moe/v4/manga/${id}/reviews`
-            )
-            const reviews_Data = await res.json()
-            const allReviews = reviews_Data?.data ?? []
-            const featured = [
-              allReviews?.find(r =>
-                r.tags.some(tag => tag.toLowerCase() === 'recommended')
-              ),
-              allReviews?.find(r =>
-                r.tags.some(tag => tag.toLowerCase() === 'mixed feelings')
-              ),
-              allReviews?.find(r =>
-                r.tags.some(tag => tag.toLowerCase() === 'not recommended')
-              )
-            ].filter(Boolean)
-            const rest = allReviews?.filter(
-              r => !featured.map(f => f.mal_id).includes(r.mal_id)
-            )
-            return {
-              ...reviews_Data,
-              featured,
-              rest,
-              stats: {
-                all: allReviews.length,
-                recommended: allReviews.reduce(
-                  (c, r) =>
-                    r.tags.some(t => t.toLowerCase() == 'recommended')
-                      ? c + 1
-                      : c,
-                  0
-                ),
-                mixedFeelings: allReviews.reduce(
-                  (c, r) =>
-                    r.tags.some(t => t.toLowerCase() == 'mixed feelings')
-                      ? c + 1
-                      : c,
-                  0
-                ),
-                notRecommended: allReviews.reduce(
-                  (c, r) =>
-                    r.tags.some(t => t.toLowerCase() == 'not recommended')
-                      ? c + 1
-                      : c,
-                  0
-                ),
-                avgScore:
-                  allReviews.reduce((c, r) => c + r.score, 0) /
-                  reviews_Data.data?.length
-              }
-            }
-          }
-        },
-        {
-          queryKey: ['pictures', id],
-          queryFn: async () => {
-            const res = await jikanFetch(
-              `https://api.jikan.moe/v4/manga/${id}/pictures`
-            )
-            const pictures_Data = await res.json()
-            return pictures_Data.data ?? []
-          }
-        },
-        {
-          queryKey: ['recommendations', id],
-          queryFn: async () => {
-            const res = await jikanFetch(
-              `https://api.jikan.moe/v4/manga/${id}/recommendations`
-            )
-            const recommendations_Data = await res.json()
-            // recommendationsDataArr data array
-            const recommendationsDataArr =
-              recommendations_Data?.data?.map(recommendation => ({
-                anime: {
-                  path: 'anime',
-                  ...recommendation.entry,
-                  name: recommendation.entry.title,
-                  votes: recommendation.votes
-                }
-              })) || []
-            return {
-              recommendations: recommendations_Data.data || [],
-              recommendationsDataArr
-            }
-          }
-        },
-        {
-          queryKey: ['news', id],
-          queryFn: async () => {
-            const res = await jikanFetch(
-              `https://api.jikan.moe/v4/manga/${id}/news`
-            )
-            const news_Data = await res.json()
-            return news_Data.data ?? []
-          }
-        }
-      ]
-    })
+  const mangaQ = useQuery({
+    queryKey: ['manga', id],
+    queryFn: async () => {
+      const res = await getMangaDetailPage(id)
+      return res || {}
+    },
+    throwOnError: false
+  })
 
   // Gallery section
   const { dispatch, showModal, openGallery, closeGallery, activeIndex } =
-    useGallery(picturesQ?.data ?? [])
+    useGallery(mangaQ?.data?.pictures ?? [])
 
   // Relations section
   const { relationsImgs, showAllRelations, setShowAllRelations } = useRelations(
@@ -200,9 +68,20 @@ export default function MangaPage () {
   }
   return (
     <>
-      {mangaQ.isLoading ? (
+      {mangaQ.isPending ? (
         <div className='fixed top-1/2 left-1/2 -translate-1/2'>
           <LoaderComponent />
+        </div>
+      ) : mangaQ.isError ? (
+        <div className='fixed top-1/2 left-1/2 -translate-1/2'>
+          <div className='p-4 text-center'>
+            <p>
+              {mangaQ.error?.status} -
+              {mangaQ.error?.status === 404
+                ? 'This manga item does not exist.'
+                : mangaQ.error?.message || 'Failed to load manga details.'}
+            </p>
+          </div>
         </div>
       ) : (
         <div className='relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark'>
@@ -284,18 +163,18 @@ export default function MangaPage () {
                         <Bookmark
                           className='h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors'
                           onClick={() => {
-                              setUserItemData(mangaQ?.data)
-                              setUserItemModalTab('lists')
-                              setShowUserItemModal(true)
-                            }}
+                            setUserItemData(mangaQ?.data)
+                            setUserItemModalTab('lists')
+                            setShowUserItemModal(true)
+                          }}
                         />
                         <div
                           id='reviewModalBtn'
                           onClick={() => {
-                              setUserItemData(mangaQ?.data)
-                              setUserItemModalTab('review')
-                              setShowUserItemModal(true)
-                            }}
+                            setUserItemData(mangaQ?.data)
+                            setUserItemModalTab('review')
+                            setShowUserItemModal(true)
+                          }}
                           className='flex items-center gap-x-1 text-xs sm:text-sm rounded-sm p-1 box-colors bookmark-colors'
                         >
                           <NotebookPen size={14} />
@@ -360,7 +239,7 @@ export default function MangaPage () {
                             >
                               {mangaQ?.data?.type}
                             </Link>
-                            <div className='flex flex-row flex-wrap gap-x-0.5 items-center text-[1.2em] w-fit'>
+                            {/* <div className='flex flex-row flex-wrap gap-x-0.5 items-center text-[1.2em] w-fit'>
                               {mangaQ?.data?.serializations?.map((s, i) => (
                                 <Link
                                   key={i}
@@ -370,27 +249,29 @@ export default function MangaPage () {
                                   {s.name}
                                 </Link>
                               ))}
-                            </div>
+                            </div> */}
                             <div className='flex flex-row flex-wrap items-center text-[1.2em] w-fit'>
-                              {mangaQ?.data?.authors?.map((s, i, arr) => (
-                                <p key={i}>
-                                  <Link
-                                    className='blue-link'
-                                    to={`/${s.type}/${s.mal_id}`}
-                                  >
-                                    {s.name}
-                                  </Link>
-                                  <span className='mr-1.5'>
-                                    {i < arr.length - 1 ? ',' : ''}
-                                  </span>
-                                </p>
-                              ))}
+                              {mangaQ?.data?.authors
+                                ?.slice(0, 2)
+                                .map((s, i, arr) => (
+                                  <p key={i}>
+                                    <Link
+                                      className='blue-link'
+                                      to={`/${s.type}/${s.mal_id}`}
+                                    >
+                                      {s.name}
+                                    </Link>
+                                    <span className='mr-1.5'>
+                                      {i < arr.length - 1 ? ',' : ''}
+                                    </span>
+                                  </p>
+                                ))}
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    {windowWidth > 480 ? (
+                    {/* {windowWidth > 480 ? (
                       <div className='w-full rounded-lg box-colors order-2 overflow-hidden'>
                         <div id='background' className='pt-0.5'>
                           <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
@@ -424,10 +305,10 @@ export default function MangaPage () {
                       </div>
                     ) : (
                       ''
-                    )}
+                    )} */}
                   </div>
                 </div>
-                {windowWidth <= 480 ? (
+                {/* {windowWidth <= 480 ? (
                   <div className='w-full rounded-lg box-colors order-2 overflow-hidden'>
                     <div id='background'>
                       <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
@@ -460,7 +341,7 @@ export default function MangaPage () {
                   </div>
                 ) : (
                   ''
-                )}
+                )} */}
               </div>
               <div className='order-2 w-full flex flex-col sm:flex-row gap-3'>
                 <div className='w-fit sm:w-1/3 md:w-1/4 max-w-sm flex flex-col justify-between h-fit gap-y-2 md:gap-y-8 rounded-lg box-colors'>
@@ -508,11 +389,11 @@ export default function MangaPage () {
                           'demographics',
                           mangaQ?.data?.demographics
                         )}
-                        {renderInfoArr(
+                        {/* {renderInfoArr(
                           'serializations',
                           mangaQ?.data?.serializations,
                           '/manga/magazine/'
-                        )}
+                        )} */}
                         {renderInfoArr(
                           'authors',
                           mangaQ?.data?.authors,
@@ -605,27 +486,27 @@ export default function MangaPage () {
                   </div>
 
                   <div
-                    id='synopsis'
+                    id='description'
                     className='rounded-lg box-colors h-fit w-full order-2 pt-0.5'
                   >
                     <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
-                      synopsis
+                      description
                     </div>
                     <div className='flex flex-col space-y-1.5 px-3 py-2 items-end'>
                       <div className='peer'>
                         <input
                           className='hidden '
                           type='checkbox'
-                          name='synopsisCheckbox'
-                          id='synopsisCheckbox'
+                          name='descriptionCheckbox'
+                          id='descriptionCheckbox'
                         />
                       </div>
                       <p className='w-full text-xs font-light overflow-hidden max-lines-4 cutoff-text'>
-                        {mangaQ?.data?.synopsis || 'synopsis missing..'}
+                        {mangaQ?.data?.description || 'description missing..'}
                       </p>
-                      {mangaQ?.data?.synopsis ? (
+                      {mangaQ?.data?.description ? (
                         <label
-                          htmlFor='synopsisCheckbox'
+                          htmlFor='descriptionCheckbox'
                           className="text-xs capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
                               before:content-['see_more'] peer-has-checked:before:content-['see_less']"
                         ></label>
@@ -637,13 +518,13 @@ export default function MangaPage () {
 
                   <div id='Pictures' className='box-colors rounded-md order-3'>
                     <Pictures
-                      pictures={picturesQ?.data}
+                      pictures={mangaQ?.data?.pictures}
                       openGallery={openGallery}
                       cols={2}
                     />
                   </div>
 
-                  {charactersQ?.data?.dataArr?.length ? (
+                  {mangaQ?.data?.characters?.dataArr?.length ? (
                     <div
                       id='characters'
                       className='flex justify-center w-full h-fit order-4'
@@ -652,7 +533,10 @@ export default function MangaPage () {
                         <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
                           Characters
                         </div>
-                        <CardBox dataArr={charactersQ.data.dataArr} num={7} />
+                        <CardBox
+                          dataArr={mangaQ.data.characters.dataArr}
+                          num={9}
+                        />
                       </div>
                     </div>
                   ) : (
@@ -668,91 +552,86 @@ export default function MangaPage () {
                         <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
                           Related Entries
                         </div>
-
                         <div className='grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2'>
-                          {mangaQ?.data?.flattenedRelations
-                            .slice(0, 3)
-                            .map((entry, i) => (
-                              <div key={i} className='flex flex-row w-full'>
-                                <Link
-                                  className='w-1/4 max-w-14 h-full aspect-2/3 '
-                                  to={`/${entry.type}/${entry.mal_id}`}
-                                >
-                                  <img
-                                    data-mal-id={entry.mal_id}
-                                    className='w-full h-full object-cover'
-                                    src={
-                                      relationsImgs?.find(
-                                        r => r.mal_id === entry.mal_id
-                                      )?.image ?? null
-                                    }
-                                    alt={entry.name}
-                                  />
-                                </Link>
-                                <div className='w-3/4 flex flex-col gap-y-1 px-2'>
+                            {mangaQ?.data?.flattenedRelations
+                              ?.slice(0, 3)
+                              .map((entry, i) => (
+                                <div key={i} className='flex flex-row w-full'>
                                   <Link
+                                    className='w-1/4 max-w-20 h-full aspect-2/3 '
                                     to={`/${entry.type}/${entry.mal_id}`}
-                                    className='blue-link'
                                   >
-                                    {entry.name}
+                                    <img
+                                      data-mal-id={entry.mal_id}
+                                      className='w-full h-full object-cover text-[0.75em]'
+                                      src={entry.images.jpg.image_url}
+                                      alt={entry.name}
+                                    />
                                   </Link>
-                                  <p>
-                                    {entry.relation} ({entry.type})
-                                  </p>
-                                </div>
-                              </div>
-                            ))}
-                          {!showAllRelations &&
-                          mangaQ?.data?.flattenedRelations?.length > 3 ? (
-                            <div
-                              onClick={() => {
-                                setShowAllRelations(true)
-                              }}
-                              className='flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20'
-                            >
-                              +{mangaQ?.data?.flattenedRelations.length - 3}
-                            </div>
-                          ) : (
-                            ''
-                          )}
-                          {showAllRelations
-                            ? mangaQ?.data?.flattenedRelations
-                                .slice(3)
-                                .map((entry, i) => (
-                                  <div
-                                    key={i + 3}
-                                    className='flex flex-row w-full'
-                                  >
+                                  <div className='w-3/4 flex flex-col gap-y-1 px-2'>
                                     <Link
-                                      className='w-1/4 max-w-14 h-full aspect-2/3 '
                                       to={`/${entry.type}/${entry.mal_id}`}
+                                      className='blue-link'
                                     >
-                                      <img
-                                        className='w-full h-full object-cover'
-                                        data-mal-id={entry.mal_id}
-                                        src={
-                                          relationsImgs?.find(
-                                            r => r.mal_id === entry.mal_id
-                                          )?.image ?? null
-                                        }
-                                        alt={entry.name}
-                                      />
+                                      {entry.title}
                                     </Link>
-                                    <div className='w-3/4 flex flex-col gap-y-1 px-2'>
-                                      <Link
-                                        to={`/${entry.type}/${entry.mal_id}`}
-                                        className='blue-link'
-                                      >
-                                        {entry.name}
-                                      </Link>
-                                      <p>
-                                        {entry.relation} ({entry.type})
-                                      </p>
-                                    </div>
+                                    <p className='text-[0.8em] capitalize'>
+                                      {entry.relation.toLowerCase()} ({entry.type.toLowerCase()})
+                                    </p>
                                   </div>
-                                ))
-                            : ''}
-                        </div>
+                                </div>
+                              ))}
+                            {!showAllRelations &&
+                            mangaQ?.data?.flattenedRelations?.length >
+                              3 ? (
+                              <div
+                                onClick={() => {
+                                  setShowAllRelations(true)
+                                }}
+                                className='flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20'
+                              >
+                                +
+                                {mangaQ?.data?.flattenedRelations
+                                  ?.length - 3}
+                              </div>
+                            ) : (
+                              ''
+                            )}
+                            {showAllRelations
+                              ? mangaQ?.data?.flattenedRelations
+                                  .slice(3)
+                                  .map((entry, i) => (
+                                    <div
+                                      key={i + 3}
+                                      className='flex flex-row w-full'
+                                    >
+                                      <Link
+                                        className='w-1/4 max-w-20 h-full aspect-2/3 '
+                                        to={`/${entry.type}/${entry.mal_id}`}
+                                      >
+                                        <img
+                                          className='w-full h-full object-cover text-[0.75em]'
+                                          data-mal-id={entry.mal_id}
+                                          src={entry.images.jpg.image_url}
+                                          alt={entry.name}
+                                        />
+                                      </Link>
+                                      <div className='w-3/4 flex flex-col gap-y-1 px-2'>
+                                        <Link
+                                          to={`/${entry.type}/${entry.mal_id}`}
+                                          className='blue-link'
+                                        >
+                                          {entry.title}
+                                        </Link>
+                                        <p className='text-[0.8em] capitalize'>
+                                          {entry.relation.toLowerCase()} ({entry.type.toLowerCase()})
+                                        </p>
+                                      </div>
+                                    </div>
+                                  ))
+                              : ''}
+                          </div>
+
                       </div>
                     </div>
                   ) : (
@@ -761,9 +640,13 @@ export default function MangaPage () {
                 </div>
               </div>
 
-              <Reviews data={reviewsQ?.data} item_id={id} mediaType='manga' />
+              <Reviews
+                data={mangaQ?.data?.reviews}
+                item_id={id}
+                mediaType='manga'
+              />
 
-              {recommendationsQ?.data?.recommendations?.length ? (
+              {mangaQ?.data?.recommendations?.recommendationsDataArr?.length ? (
                 <div
                   id='recommendations'
                   className='order-4 rounded-lg box-colors w-full py-1'
@@ -772,7 +655,9 @@ export default function MangaPage () {
                     recommendations
                   </div>
                   <CardBox
-                    dataArr={recommendationsQ?.data?.recommendationsDataArr}
+                    dataArr={
+                      mangaQ?.data?.recommendations?.recommendationsDataArr
+                    }
                     num={9}
                     aspect='2/3'
                   />
@@ -780,7 +665,7 @@ export default function MangaPage () {
               ) : (
                 ''
               )}
-              <News data={newsQ.data} />
+              {/* <News data={mangaQ?.data?.news ?? []} /> */}
             </div>
 
             <div
@@ -798,8 +683,8 @@ export default function MangaPage () {
       )}
       {showModal && (
         <Gallery
-          name={mangaQ?.name}
-          pictures={picturesQ?.data}
+          name={mangaQ?.data?.title}
+          pictures={mangaQ?.data?.pictures}
           activeIndex={activeIndex}
           closeGallery={closeGallery}
           onNext={() => dispatch({ type: 'next' })}

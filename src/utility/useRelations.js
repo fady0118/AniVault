@@ -1,36 +1,16 @@
-import { useEffect, useRef, useState } from "react";
-import { delay } from "./utils";
-import { useQueries } from "@tanstack/react-query";
-import { jikanFetch } from "./jikanApi";
+import { useState } from 'react'
 
-// fetch single image
-const getImage = async ({ mal_id, type }) => {
-  const res = await jikanFetch(`https://api.jikan.moe/v4/${type}/${mal_id}`);
-  const { data } = await res.json();
-  const image = data?.images.jpg.large_image_url;
-  return {
-    mal_id,
-    image,
-  };
-};
+export function useRelations (data) {
+  const [showAllRelations, setShowAllRelations] = useState(false)
 
-export function useRelations(data) {
-  const [showAllRelations, setShowAllRelations] = useState(false);
+  const relations = data?.flattenedRelations ?? []
+  const visibleRelations = showAllRelations ? relations : relations.slice(0, 3)
 
-  const relations = data?.flattenedRelations ?? [];
-  const visibleRelations = showAllRelations ? relations : relations.slice(0, 3);
+  const relationsImgs = relations.map(rel => ({
+    mal_id: rel.mal_id,
+    image:
+      rel.images?.jpg?.image_url || rel.images?.jpg?.large_image_url || null
+  }))
 
-  const relationsQ = useQueries({
-    queries: visibleRelations.map((rel) => ({
-      queryKey: ["relation", rel?.mal_id, rel?.type],
-      queryFn: async () => {
-        await delay(350);
-        const image = await getImage(rel);
-        return { ...rel, ...image };
-      },
-    })),
-  });
-  const relationsImgs = relationsQ?.filter((q) => q.status === "success").map((r) => r.data);
-
-  return { relationsImgs, showAllRelations, setShowAllRelations };
+  return { relationsImgs, showAllRelations, setShowAllRelations }
 }

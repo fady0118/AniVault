@@ -1,5 +1,5 @@
 import { ChevronRight, Star } from 'lucide-react'
-import { renderReactions } from '../../utility/utils'
+import { dateFormatter, renderReactions } from '../../utility/utils'
 import { Link } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { storage, tablesDB } from '../../appwrite'
@@ -7,7 +7,7 @@ import { Query } from 'appwrite'
 import { useEffect, useState } from 'react'
 import AppwriteReviewCard from './AppwriteReviewCard'
 
-export default function Reviews ({ data, mediaType, item_id }) {
+export default function Reviews ({ data, item_id, mediaType }) {
   const [reviewsTab, setReviewTab] = useState(1)
 
   const anivaultReviewsQ = useQuery({
@@ -42,19 +42,20 @@ export default function Reviews ({ data, mediaType, item_id }) {
   const appwriteReviews = Array.isArray(anivaultReviewsQ?.data?.rows)
     ? anivaultReviewsQ.data.rows
     : []
+
   const hasAppwriteReviews = appwriteReviews.length > 0
-  const hasMyAnimeListReviews = data?.featured?.length > 0
+  const hasAniListReviews = data?.featured?.length > 0
 
   return (
     <>
-      {(hasMyAnimeListReviews || hasAppwriteReviews) && (
+      {(hasAniListReviews || hasAppwriteReviews) && (
         <div id='reviews' className='order-3 rounded-lg w-full py-1'>
           <div class='tabs tabs-box rounded-md box-colors overflow-hidden'>
             <input
               type='radio'
               name='reviewTabs'
               class='tab text-text-light/80 checked:text-text-light dark:text-text-dark/80 dark:checked:text-text-dark checked:bg-amethyst-smoke-400/75 checked:dark:bg-dark-amethyst-smoke-200/75 border-amethyst-smoke-600 dark:border-dark-amethyst-smoke-300 duration-200'
-              aria-label='MyAnimeList'
+              aria-label='AniList'
               checked={reviewsTab === 1}
               readOnly
               onClick={() => {
@@ -68,7 +69,7 @@ export default function Reviews ({ data, mediaType, item_id }) {
                   <div className='flex flex-row items-center gap-x-1 py-1 px-3 bg-amethyst-smoke-700/30 text-2xs'>
                     <p>Avg Score</p>
                     <p className=''>
-                      {data?.stats?.avgScore?.toFixed(2) ?? '0.00'}
+                      {data?.stats.avgScore?.toFixed(2) ?? '0.00'}
                     </p>
                     <Star size={14} color='yellow' />
                   </div>
@@ -79,7 +80,7 @@ export default function Reviews ({ data, mediaType, item_id }) {
                           size={12}
                           className='stroke-blue-800 dark:stroke-blue-400'
                         />
-                        <p>{data?.stats?.recommended ?? 0}</p>
+                        <p>{data?.stats.recommended ?? 0}</p>
                         <p>recommended</p>
                       </div>
                       <div className='flex flex-row items-center capitalize gap-x-1 gray-link'>
@@ -87,7 +88,7 @@ export default function Reviews ({ data, mediaType, item_id }) {
                           size={12}
                           className='stroke-gray-800 dark:stroke-gray-400'
                         />
-                        <p>{data?.stats?.mixedFeelings ?? 0}</p>
+                        <p>{data?.stats.mixedFeelings ?? 0}</p>
                         <p>mixed feelings</p>
                       </div>
                       <div className='flex flex-row items-center capitalize gap-x-1 rose-link'>
@@ -95,30 +96,30 @@ export default function Reviews ({ data, mediaType, item_id }) {
                           size={12}
                           className='stroke-rose-800 dark:stroke-rose-400'
                         />
-                        <p>{data?.stats?.notRecommended ?? 0}</p>
+                        <p>{data?.stats.notRecommended ?? 0}</p>
                         <p>not recommended</p>
                       </div>
                     </div>
                     <div
                       style={{
                         backgroundImage: `linear-gradient(90deg, var(--color-blue-400) ${
-                          (((data?.stats?.recommended ?? 0) - 1.5) * 100) /
-                          (data?.stats?.all || 1)
+                          (((data?.stats.recommended ?? 0) - 1.5) * 100) /
+                          (data?.stats.all || 1)
                         }%, var(--color-gray-400) ${
-                          (((data?.stats?.recommended ?? 0) + 1.5) * 100) /
-                          (data?.stats?.all || 1)
+                          (((data?.stats.recommended ?? 0) + 1.5) * 100) /
+                          (data?.stats.all || 1)
                         }%, var(--color-gray-400) ${
-                          (((data?.stats?.recommended ?? 0) +
-                            (data?.stats?.mixedFeelings ?? 0) -
+                          (((data?.stats.recommended ?? 0) +
+                            (data?.stats.mixedFeelings ?? 0) -
                             1.5) *
                             100) /
-                          (data?.stats?.all || 1)
+                          (data?.stats.all || 1)
                         }%, var(--color-rose-400) ${
-                          (((data?.stats?.recommended ?? 0) +
-                            (data?.stats?.mixedFeelings ?? 0) +
+                          (((data?.stats.recommended ?? 0) +
+                            (data?.stats.mixedFeelings ?? 0) +
                             1.5) *
                             100) /
-                          (data?.stats?.all || 1)
+                          (data?.stats.all || 1)
                         }%)`
                       }}
                       className='h-1 w-full px-3'
@@ -126,17 +127,17 @@ export default function Reviews ({ data, mediaType, item_id }) {
                   </div>
                   <div className='flex flex-row items-center gap-x-1 text-2xs'>
                     <ChevronRight size={12} />
-                    <p>All reviews ({data?.stats?.all ?? 0})</p>
+                    <p>All reviews ({data?.stats.all ?? 0})</p>
                   </div>
                 </div>
                 {data?.featured.map(review => (
-                  <div key={review.mal_id} className='bottom-border'>
+                  <div key={review.id} className='bottom-border'>
                     <div className='flex flex-col xs:flex-row'>
                       <div className='flex flex-col ml-3 xs:m-0 justify-start w-[5%] min-w-10'>
                         <div className='w-full aspect-square'>
                           <img
                             className='w-full h-full object-cover'
-                            src={review.user.images.webp.image_url}
+                            src={review.user.avatarImg}
                             alt={`${review.user.username}-picture`}
                           />
                         </div>
@@ -151,42 +152,39 @@ export default function Reviews ({ data, mediaType, item_id }) {
                           </p>
                         </div>
                         <div className='flex flex-row justify-between items-start gap-x-2.5'>
-                          {review.tags.map((t, i) => (
-                            <div
-                              key={i}
+                          <div
                               className='flex flex-row items-center gap-x-1 px-1.5 border border-dark-amethyst-smoke-50/20 dark:border-amethyst-smoke-400/20'
                             >
                               <Star
                                 size={14}
                                 className={`${
-                                  t === 'Recommended'
+                                  review.tags?.toLowerCase() === 'recommended'
                                     ? 'stroke-blue-800 dark:stroke-blue-400'
-                                    : t === 'Not Recommended'
-                                    ? 'stroke-rose-800 dark:stroke-rose-400 '
+                                    : review.tags?.toLowerCase() === 'not recommended'
+                                    ? 'stroke-rose-800 dark:stroke-rose-400'
                                     : 'stroke-gray-800 dark:stroke-gray-400'
                                 }`}
                               />
                               <p
                                 className={`${
-                                  t === 'Recommended'
+                                  review.tags?.toLowerCase() === 'recommended'
                                     ? 'text-blue-800 dark:text-blue-400'
-                                    : t === 'Not Recommended'
+                                    : review.tags?.toLowerCase() === 'not recommended'
                                     ? 'text-rose-800 dark:text-rose-400'
                                     : 'text-gray-800 dark:text-gray-400'
                                 }`}
                               >
-                                {t}
+                                {review.tags}
                               </p>
                             </div>
-                          ))}
                         </div>
                         <div className='flex flex-col gap-y-2 w-full py-3'>
                           <div className='peer'>
                             <input
                               type='checkbox'
                               className='hidden'
-                              name={`review-${review.mal_id}`}
-                              id={`review-${review.mal_id}`}
+                              name={`review-${review.id}`}
+                              id={`review-${review.id}`}
                             />
                           </div>
                           <p className='w-full whitespace-pre-wrap max-lines-4 cutoff-text'>
@@ -194,16 +192,17 @@ export default function Reviews ({ data, mediaType, item_id }) {
                           </p>
 
                           <div className='w-[97%] flex flex-row gap-x-2 items-center justify-between'>
-                            <div className='flex flex-row flex-wrap space-x-1 items-center'>
+                            {/* <div className='flex flex-row flex-wrap space-x-1 items-center'>
                               {renderReactions(review.reactions)}
                               <p>{review.reactions.overall}</p>
-                            </div>
+                            </div> */}
                             <label
-                              htmlFor={`review-${review.mal_id}`}
+                              htmlFor={`review-${review.id}`}
                               className="text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
                                                               before:content-['see_more'] peer-has-checked:before:content-['see_less']"
                             ></label>
                           </div>
+
                         </div>
                       </div>
                     </div>

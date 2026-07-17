@@ -1,149 +1,268 @@
-import { useEffect, useMemo, useState } from "react";
-import { useQueries } from "@tanstack/react-query";
-import { useParams } from "react-router";
-import { ChevronDown, ChevronUp, Search } from "lucide-react";
-import { dateFormatter } from "../../utility/utils";
-import EmptyDataFallback from "../EmptyDataFallback";
+import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { ChevronDown, ChevronUp, Search, X } from 'lucide-react'
+import { dateFormatter } from '../../utility/utils'
+import EmptyDataFallback from '../EmptyDataFallback'
+import LoaderComponent from '../LoaderComponent'
+import { getTmdbEpisodes } from '../../anilist/TMDB/tmdb'
 
-export default function EpisodesModal({ setShowEpisodesModal }) {
-  const { id } = useParams();
-  const [sortBy, setSortBy] = useState("mal_id"); // mal_id, aired, score
-  const [order, setOrder] = useState("ascending"); // ascending, descending
+const SORT_OPTIONS = [
+  { key: 'episode_number', label: 'Episode' },
+  { key: 'air_date', label: 'Air date' },
+  { key: 'vote_average', label: 'Rating' }
+]
 
-  const sorting = (sortTerm) => {
-    if (sortTerm === sortBy) {
-      switch (order) {
-        case "ascending":
-          setOrder("descending");
-          break;
-        case "descending":
-          setOrder("ascending");
-          break;
-        default:
-          setOrder("ascending");
-          break;
-      }
-    } else {
-      setOrder("ascending");
-      setSortBy(sortTerm);
+export default function EpisodesModal ({ title, malId, setShowEpisodesModal }) {
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortBy, setSortBy] = useState('episode_number')
+  const [order, setOrder] = useState('ascending')
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['tmdbEpisodes', malId, title],
+    queryFn: async () =>
+      getTmdbEpisodes(title, malId, import.meta.env.VITE_TMDB_KEY),
+    enabled: Boolean(title && malId),
+    staleTime: 1000 * 60 * 5
+  })
+
+  const episodes = data?.details?.episodes ?? []
+  const seasonName =
+    data?.details?.name || `Season ${data?.details?.season_number ?? '?'}`
+  const seasonAirDate = data?.details?.air_date
+
+  const toggleSort = key => {
+    if (sortBy === key) {
+      setOrder(prev => (prev === 'ascending' ? 'descending' : 'ascending'))
+      return
     }
-  };
+    setSortBy(key)
+    setOrder('ascending')
+  }
 
-  const [episodesQ] = useQueries({
-    queries: [
-      {
-        queryKey: ["episodes", id],
-        queryFn: async () => {
-          const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/episodes`);
-          const anime_Data = await res.json();
-          return anime_Data;
-        },
-      },
-    ],
-  });
+  const filteredEpisodes = useMemo(() => {
+    if (!episodes.length) return []
+    const normalizedSearch = searchTerm.trim().toLowerCase()
 
-  const sortData = useMemo(() => {
-    if (!episodesQ?.data?.data) return [];
-    let sortedData;
-    if (sortBy === "aired") {
-      if (order === "ascending") {
-        sortedData = [...episodesQ?.data?.data].sort((a, b) => new Date(a[sortBy]) - new Date(b[sortBy]));
-      } else {
-        sortedData = [...episodesQ?.data?.data].sort((a, b) => new Date(b[sortBy]) - new Date(a[sortBy]));
-      }
-    } else {
-      if (order === "ascending") {
-        sortedData = [...episodesQ?.data?.data].sort((a, b) => a[sortBy] - b[sortBy]);
-      } else {
-        sortedData = [...episodesQ?.data?.data].sort((a, b) => b[sortBy] - a[sortBy]);
-      }
+    const matchesSearch = episode => {
+      if (!normalizedSearch) return true
+      return [episode.name, episode.overview].some(text =>
+        text?.toLowerCase()?.includes(normalizedSearch)
+      )
     }
-    return sortedData;
-  }, [episodesQ, sortBy, order]);
+
+    const sorted = [...episodes].filter(matchesSearch)
+    sorted.sort((a, b) => {
+      const valueA = a[sortBy]
+      const valueB = b[sortBy]
+
+      if (sortBy === 'air_date') {
+        return order === 'ascending'
+          ? new Date(valueA || 0) - new Date(valueB || 0)
+          : new Date(valueB || 0) - new Date(valueA || 0)
+      }
+
+      const numericA = Number(valueA ?? 0)
+      const numericB = Number(valueB ?? 0)
+      return order === 'ascending' ? numericA - numericB : numericB - numericA
+    })
+
+    return sorted
+  }, [episodes, searchTerm, sortBy, order])
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        setShowEpisodesModal(false);
+    const handleKeyDown = e => {
+      if (e.key === 'Escape') {
+        setShowEpisodesModal(false)
       }
-    };
-    document.documentElement.addEventListener("keydown", handleKeyDown);
-    return () => document.documentElement.removeEventListener("keydown", handleKeyDown);
-  }, []);
+    }
+    document.documentElement.addEventListener('keydown', handleKeyDown)
+    return () =>
+      document.documentElement.removeEventListener('keydown', handleKeyDown)
+  }, [setShowEpisodesModal])
+
   return (
-    <>
-      <div className="z-50 flex flex-col rounded-lg fixed top-1/2 left-1/2 transform -translate-1/2 w-6/7 h-6/7 sm:w-3/4 sm:h-4/5 max-w-3xl">
-        <div className="flex justify-between items-center p-2">
-          <div className="w-full flex flex-row-reverse">
-            <button
-              onClick={() => {
-                setShowEpisodesModal(false);
-              }}
-              className=" w-fit flex items-center text-xs px-1 rounded-sm border border-amethyst-smoke-800/70 dark:border-amethyst-smoke-500/40  hover:cursor-pointer"
-            >
-              esc
-            </button>
+    <div className='fixed inset-0 z-50 flex items-center justify-center px-4 py-6'>
+      <div className='absolute inset-0 bg-dark-amethyst-smoke-50/90' />
+
+      <div className='relative py-2 z-10 w-full max-w-5xl overflow-hidden rounded-xl border border-amethyst-smoke-800/40 box-colors shadow-2xl'>
+        <div className='flex flex-col gap-4 border-b border-amethyst-smoke-800/20 px-5 py-2 sm:flex-row sm:items-start sm:justify-between sm:gap-6'>
+          <div className='space-y-1'>
+            <p className='text-xs uppercase tracking-[0.24em] text-amethyst-smoke-950 dark:text-amethyst-smoke-500'>
+              Season details
+            </p>
+            <div className='flex items-center gap-x-3'>
+              <h2 className='text-xl font-semibold tracking-tight text-amethyst-smoke-950 dark:text-amethyst-smoke-500'>
+                {seasonName}
+              </h2>
+              <p className='text-sm text-amethyst-smoke-950/80 dark:text-amethyst-smoke-500/80'>
+                {episodes.length} episode{episodes.length === 1 ? '' : 's'}
+                {seasonAirDate ? ` · ${dateFormatter(seasonAirDate)}` : ''}
+              </p>
+            </div>
+          </div>
+
+          <button
+            type='button'
+            onClick={() => setShowEpisodesModal(false)}
+            className='inline-flex h-10 w-10 items-center justify-center rounded-full border border-amethyst-smoke-700/30 dark:border-amethyst-smoke-400/30 text-amethyst-smoke-800 dark:text-amethyst-smoke-200 box-colors hover:cursor-pointer hover:bg-amethyst-smoke-700/40 dark:hover:bg-amethyst-smoke-800/65 duration-200'
+            aria-label='Close episodes modal'
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className='space-y-2 p-3 sm:px-6'>
+          {data?.details?.overview ? (
+            <p className='text-sm leading-6 text-amethyst-smoke-900 dark:text-amethyst-smoke-400'>
+              {data.details.overview}
+            </p>
+          ) : (
+            <p className='text-sm leading-6 text-amethyst-smoke-900 dark:text-amethyst-smoke-400'>
+              No season overview available.
+            </p>
+          )}
+
+          <div className='grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center'>
+            <div className='relative w-full max-w-lg'>
+              <Search className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amethyst-smoke-900 dark:text-amethyst-smoke-400' />
+              <input
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                placeholder='Search episodes by title or synopsis'
+                className='w-full rounded-md border border-amethyst-smoke-500/20 box-colors bg-amethyst-smoke-200/20 dark:bg-dark-amethyst-smoke-600/25 py-3 pl-10 pr-4 text-sm text-amethyst-smoke-900 outline-0 transition focus:border-amethyst-400 dark:text-amethyst-smoke-100 dark:focus:border-amethyst-smoke-300'
+              />
+            </div>
+
+            <div className='flex flex-wrap gap-2'>
+              {SORT_OPTIONS.map(option => {
+                const active = sortBy === option.key
+                return (
+                  <button
+                    key={option.key}
+                    type='button'
+                    onClick={() => toggleSort(option.key)}
+                    className={`flex items-center gap-1 rounded-sm border px-3 py-2 text-xs font-medium transition duration-300 ${
+                      active
+                        ? 'border-amethyst-smoke-800 dark:border-amethyst-smoke-300 bg-amethyst-smoke-800/65 dark:bg-amethyst-smoke-800/65 text-amethyst-smoke-300 dark:text-amethyst-smoke-100'
+                        : 'border-amethyst-smoke-500/20 box-colors bg-amethyst-smoke-200/20 dark:bg-dark-amethyst-smoke-600/25 text-amethyst-smoke-800 hover:border-amethyst-smoke-400 dark:text-amethyst-smoke-300'
+                    }`}
+                  >
+                    <span>{option.label}</span>
+                    {active ? (
+                      order === 'ascending' ? (
+                        <ChevronDown size={14} />
+                      ) : (
+                        <ChevronUp size={14} />
+                      )
+                    ) : null}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
-        <div className="w-full box-colors overflow-y-scroll rounded-lg">
-          {!sortData.length ? (
-            <EmptyDataFallback string="no episodes found"/>
+
+        <div className='max-h-[60vh] overflow-y-auto px-5 pb-5 sm:px-6'>
+          {isLoading ? (
+            <div className='flex h-64 items-center justify-center'>
+              <LoaderComponent type='progress' />
+            </div>
+          ) : isError ? (
+            <div className='py-8'>
+              <EmptyDataFallback
+                string={error?.message || 'Unable to load episodes.'}
+              />
+            </div>
+          ) : !filteredEpisodes.length ? (
+            <div className='py-8'>
+              <EmptyDataFallback
+                string={
+                  episodes.length
+                    ? 'No matching episodes.'
+                    : 'No episodes found.'
+                }
+              />
+            </div>
           ) : (
-            <table className="w-full text-start capitalize text-sm border-spacing-3">
-              <thead className="sticky top-0 box-colors backdrop-blur-sm bg-neutral-secondary-soft border-b border-dark-amethyst-smoke-500/20 dark:border-amethyst-smoke-500/20">
-                <tr className="px-5">
-                  <th className="text-start w-1/20 min-w-12 py-3 pl-2 font-medium">
-                    <div
-                      onClick={() => sorting("mal_id")}
-                      className="flex flex-row items-center gap-x-0.5 group border-dark-amethyst-smoke-500/50 dark:border-amethyst-smoke-500/50 rounded-sm hover:cursor-pointer hover:border hover:-translate-y-0.5 duration-200"
-                    >
-                      # {sortBy === "mal_id" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : "-"}
-                    </div>
-                  </th>
-                  <th className="text-start py-3 pl-2 font-medium">Episode Title</th>
-                  <th className="text-start w-1/10 min-w-15 py-3 pl-2 font-medium">
-                    <div
-                      onClick={() => sorting("aired")}
-                      className="flex flex-row items-center gap-x-0.5 group border-dark-amethyst-smoke-500/50 dark:border-amethyst-smoke-500/50 rounded-sm hover:cursor-pointer hover:border hover:-translate-y-0.5 duration-200"
-                    >
-                      Aired {sortBy === "aired" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : "-"}
-                    </div>
-                  </th>
-                  <th className="text-start w-1/10 min-w-15 py-3 pl-2 font-medium">
-                    <div
-                      onClick={() => sorting("score")}
-                      className="flex flex-row items-center gap-x-0.5 group border-dark-amethyst-smoke-500/50 dark:border-amethyst-smoke-500/50 rounded-sm hover:cursor-pointer hover:border hover:-translate-y-0.5 duration-200"
-                    >
-                      Score {sortBy === "score" ? order === "ascending" ? <ChevronDown size={16} /> : <ChevronUp size={16} /> : "-"}
-                    </div>
-                  </th>
-                  <th className="text-start w-1/10 min-w-15 py-3 pl-2 font-medium">type</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortData?.map((ep, i) => (
-                  <tr key={`${ep.mal_id}-${i}`} className="font-light ">
-                    <td className="pl-2 pt-3">{String(ep.mal_id).padStart(2, "0")}</td>
-                    <td className="pl-2 pt-3">{ep.title}</td>
-                    <td className="pl-2 pt-3">{dateFormatter(ep.aired)}</td>
-                    <td className="pl-2 pt-3">{ep.score || "-"}</td>
-                    <td className="pl-2 pt-3">
-                      {ep.filler ? (
-                        <div className="text-indigo-500 rounded-sm">filler</div>
-                      ) : ep.recap ? (
-                        <div className="text-blue-500 rounded-sm">recap</div>
+            <div className='space-y-4 pb-4'>
+              {filteredEpisodes.map(episode => (
+                <article
+                  key={
+                    episode.id || `${episode.episode_number}-${episode.name}`
+                  }
+                  className='grid gap-4 rounded-lg border border-amethyst-smoke-500/10 bg-amethyst-smoke-200/20 dark:bg-dark-amethyst-smoke-600/25 text-amethyst-smoke-800 dark:text-amethyst-smoke-300 p-4 shadow-sm'
+                >
+                  <div className='grid gap-4 sm:grid-cols-[280px_1fr] sm:items-start'>
+                    <div className='relative w-full'>
+                      <div className='absolute top-2 left-2 z-10 flex items-center justify-center rounded-md border border-amethyst-smoke-300/40 bg-amethyst-smoke-200/75 dark:bg-dark-amethyst-smoke-600/75 px-2 py-1 text-sm font-semibold text-amethyst-smoke-900 dark:text-amethyst-smoke-100'>
+                        {String(episode.episode_number ?? '?').padStart(2, '0')}
+                      </div>
+                      {episode.still_path ? (
+                        <img
+                          src={`https://image.tmdb.org/t/p/w500${episode.still_path}`}
+                          alt={`Episode ${episode.episode_number} still`}
+                          className='aspect-video w-full rounded-lg object-cover sm:h-full'
+                        />
                       ) : (
-                        <div className="text-emerald-500 rounded-sm">canon</div>
+                        <div className='aspect-video w-full rounded-lg bg-amethyst-smoke-100 flex items-center justify-center text-sm dark:bg-amethyst-smoke-700'>
+                          No image available
+                        </div>
                       )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+
+                    <div className='space-y-3'>
+                      <div className='flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between'>
+                        <div className='space-y-1'>
+                          <h3 className='text-base font-semibold text-amethyst-smoke-900 dark:text-amethyst-smoke-100'>
+                            {episode.name || 'Untitled episode'}
+                          </h3>
+                          <p className='text-sm text-amethyst-smoke-800 dark:text-amethyst-smoke-300'>
+                            {episode.episode_type
+                              ? `${episode.episode_type} · `
+                              : ''}
+                            {episode.air_date
+                              ? dateFormatter(episode.air_date)
+                              : 'Air date unknown'}
+                          </p>
+                        </div>
+
+                        <div className='flex flex-wrap gap-2 text-xs'>
+                          {episode.runtime ? (
+                            <span>{episode.runtime} min</span>
+                          ) : null}
+                          {episode.vote_average ? (
+                            <span>⭐ {episode.vote_average.toFixed(1)}</span>
+                          ) : null}
+                          {episode.vote_count ? (
+                            <span>({episode.vote_count} votes)</span>
+                          ) : null}
+                        </div>
+                      </div>
+
+                      <p className='text-sm leading-6 '>
+                        {episode.overview || 'No episode synopsis available.'}
+                      </p>
+
+                      <div className='flex flex-wrap gap-2 text-xs'>
+                        {episode.production_code ? (
+                          <span className='rounded-full border border-amethyst-smoke-300/50 px-2 py-1'>
+                            {episode.production_code}
+                          </span>
+                        ) : null}
+                        {episode.crew?.length ? (
+                          <span className='rounded-full border border-amethyst-smoke-300/50 px-2 py-1'>
+                            {episode.crew[0].job}: {episode.crew[0].name}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
           )}
         </div>
       </div>
-      <div className="z-40 fixed top-0 w-screen h-screen bg-dark-amethyst-smoke-50/90"></div>
-    </>
-  );
+    </div>
+  )
 }

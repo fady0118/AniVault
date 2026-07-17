@@ -5,8 +5,8 @@ export default function Pictures({ pictures, openGallery, cols }) {
   const classes = {
     pictures: "aspect-2/3 hover:cursor-pointer hover:scale-105 hover:border-4 hover:border-amethyst-smoke-400/30 transition-transform duration-200",
     columnsMap: {
-      2: `grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 lg:grid-cols-6`,
-      3: "grid-cols-3 2xs:grid-cols-4 xs:grid-cols-5 sm:grid-cols-6 lg:grid-cols-7",
+      2: `grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7`,
+      3: "grid-cols-3 2xs:grid-cols-4 xs:grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8",
     },
   };
   return (
