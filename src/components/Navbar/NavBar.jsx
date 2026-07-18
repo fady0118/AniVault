@@ -115,15 +115,6 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
                   data={data.manga.genres}
                   ref={navBarRef}
                 />
-                <div className='group flex flex-row items-center'>
-                  <Link
-                    to='/manga/magazine'
-                    className={` ${classes.navListLinkText}`}
-                  >
-                    Magazine
-                    <div className='w-full h-0.5 absolute bottom-0 left-1/2 -translate-x-1/2 bg-pink-500/50 targetBar'></div>
-                  </Link>
-                </div>
                 {/* register/login */}
                 {loggedInUser ? (
                   <NavLink

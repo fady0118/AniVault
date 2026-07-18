@@ -12,7 +12,7 @@ export function AniListFailedQueryComponent ({ message }) {
         onClick={() => {
           navigate('/')
         }}
-        className='flex flex-row gap-4 items-center py-2 px-4 rounded-md border magazine-border-colors hover:cursor-pointer hover:bg-amethyst-smoke-400/75 dark:hover:bg-dark-amethyst-smoke-300/75 duration-200'
+        className='flex flex-row gap-4 items-center py-2 px-4 rounded-md border subtle-border-colors hover:cursor-pointer hover:bg-amethyst-smoke-400/75 dark:hover:bg-dark-amethyst-smoke-300/75 duration-200'
       >
         <p>Return</p> <CornerDownLeft size={15} />
       </div>

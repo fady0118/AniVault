@@ -232,17 +232,6 @@ export default function MangaPage () {
                             >
                               {mangaQ?.data?.type}
                             </Link>
-                            {/* <div className='flex flex-row flex-wrap gap-x-0.5 items-center text-[1.2em] w-fit'>
-                              {mangaQ?.data?.serializations?.map((s, i) => (
-                                <Link
-                                  key={i}
-                                  className='blue-link'
-                                  to={`/manga/magazine/${s.mal_id}`}
-                                >
-                                  {s.name}
-                                </Link>
-                              ))}
-                            </div> */}
                             <div className='flex flex-row flex-wrap items-center text-[1.2em] w-fit'>
                               {mangaQ?.data?.authors
                                 ?.slice(0, 2)
@@ -382,11 +371,6 @@ export default function MangaPage () {
                           'demographics',
                           mangaQ?.data?.demographics
                         )}
-                        {/* {renderInfoArr(
-                          'serializations',
-                          mangaQ?.data?.serializations,
-                          '/manga/magazine/'
-                        )} */}
                         {renderInfoArr(
                           'authors',
                           mangaQ?.data?.authors,

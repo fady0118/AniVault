@@ -281,7 +281,7 @@
     @apply hover:bg-indigo-600/10 dark:hover:bg-indigo-400/10 border-transparent dark:hover:border-indigo-400 hover:border-indigo-600
   }
 
-  .magazine-border-colors {
+  .subtle-border-colors {
     @apply border-dark-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10
   }
 
