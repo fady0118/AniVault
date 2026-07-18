@@ -19,9 +19,7 @@ async function findTmdbShowId (title, apiKey) {
 }
 // get TMDB url
 async function getdTmdbMappings (title, malId, apiKey) {
-  console.log({ title, malId })
   const mappingData = data[`mal:${malId}`]
-  console.log({ mappingData })
   let tmdbKey = Object.keys(mappingData)?.find(k => k.startsWith('tmdb_show'))
   let url
   if (tmdbKey) {

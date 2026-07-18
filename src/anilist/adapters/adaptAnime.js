@@ -181,14 +181,52 @@ export function adaptRecommendations (media) {
   return { recommendationsDataArr }
 }
 
+function formatFilename (filename) {
+  const parts = filename.split('-')
+  const title = parts[0]
+  const suffix = parts.slice(1).join('-')
+  const formattedTitle = title.replace(/([A-Z])/g, ' $1').trim()
+  return suffix ? `${formattedTitle} - ${suffix}` : formattedTitle
+}
 export function adaptAnimeThemes (data) {
-  const path = data?.findAnimeByExternalSite[0]
+  const openings = []
+  const endings = []
+  const rest = []
+  data?.findAnimeByExternalSite[0]?.animethemes.forEach(m => {
+    m.type?.toLowerCase() === 'op'
+      ? openings.push({
+          type: m.type,
+          audio: {
+            filename: formatFilename(
+              m.animethemeentries[0].videos.nodes[0].audio.filename
+            ),
+            link: m.animethemeentries[0].videos.nodes[0].audio.link
+          }
+        })
+      : m.type?.toLowerCase() === 'ed'
+      ? endings.push({
+          type: m.type,
+          audio: {
+            filename: formatFilename(
+              m.animethemeentries[0].videos.nodes[0].audio.filename
+            ),
+            link: m.animethemeentries[0].videos.nodes[0].audio.link
+          }
+        })
+      : rest.push({
+          type: m.type,
+          audio: {
+            filename: formatFilename(
+              m.animethemeentries[0].videos.nodes[0].audio.filename
+            ),
+            link: m.animethemeentries[0].videos.nodes[0].audio.link
+          }
+        })
+  })
   const adaptedThemes = {
-    anime: path?.name,
-    animethemes: path?.animethemes.map(t => ({
-      type: t.type,
-      audio: t.animethemeentries[0].videos.nodes[0].audio
-    }))
+    openings,
+    endings,
+    rest
   }
   return adaptedThemes
 }

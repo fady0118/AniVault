@@ -28,9 +28,9 @@ export async function getMangaDetailPage (malId) {
       pictures: tmdbResult?.pictures ?? [],
     }
   } catch (error) {
-    if (error.status === 404) {
-      error.message = 'This manga item does not exist.'
-    }
-    throw error
+    const message = getFriendlyErrorMessage(error)
+    const customError = new Error(message)
+    customError.status = error?.status || 500
+    throw customError
   }
 }

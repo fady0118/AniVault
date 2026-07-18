@@ -21,6 +21,7 @@ import LoaderComponent from '../../components/LoaderComponent'
 import { useUserItemModal } from '../../components/userItemModal/useUserItemModal'
 import UserItemModal from '../../components/userItemModal/UserItemModal'
 import { getMangaDetailPage } from '../../anilist/pages/getMangaDetailPage'
+import { AniListFailedQueryComponent } from '../../components/anime/AniListFailedQueryComponent'
 
 export default function MangaPage () {
   let { id } = useParams()
@@ -41,6 +42,7 @@ export default function MangaPage () {
     },
     throwOnError: false
   })
+  const errorMessage = mangaQ.error?.message || 'Failed to load anime details.'
 
   // Gallery section
   const { dispatch, showModal, openGallery, closeGallery, activeIndex } =
@@ -73,16 +75,7 @@ export default function MangaPage () {
           <LoaderComponent />
         </div>
       ) : mangaQ.isError ? (
-        <div className='fixed top-1/2 left-1/2 -translate-1/2'>
-          <div className='p-4 text-center'>
-            <p>
-              {mangaQ.error?.status} -
-              {mangaQ.error?.status === 404
-                ? 'This manga item does not exist.'
-                : mangaQ.error?.message || 'Failed to load manga details.'}
-            </p>
-          </div>
-        </div>
+        <AniListFailedQueryComponent message={errorMessage} />
       ) : (
         <div className='relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark'>
           <div className='w-[95vw] flex flex-col space-y-3'>
@@ -553,85 +546,83 @@ export default function MangaPage () {
                           Related Entries
                         </div>
                         <div className='grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2'>
-                            {mangaQ?.data?.flattenedRelations
-                              ?.slice(0, 3)
-                              .map((entry, i) => (
-                                <div key={i} className='flex flex-row w-full'>
+                          {mangaQ?.data?.flattenedRelations
+                            ?.slice(0, 3)
+                            .map((entry, i) => (
+                              <div key={i} className='flex flex-row w-full'>
+                                <Link
+                                  className='w-1/4 max-w-20 h-full aspect-2/3 '
+                                  to={`/${entry.type}/${entry.mal_id}`}
+                                >
+                                  <img
+                                    data-mal-id={entry.mal_id}
+                                    className='w-full h-full object-cover text-[0.75em]'
+                                    src={entry.images.jpg.image_url}
+                                    alt={entry.name}
+                                  />
+                                </Link>
+                                <div className='w-3/4 flex flex-col gap-y-1 px-2'>
                                   <Link
-                                    className='w-1/4 max-w-20 h-full aspect-2/3 '
                                     to={`/${entry.type}/${entry.mal_id}`}
+                                    className='blue-link'
                                   >
-                                    <img
-                                      data-mal-id={entry.mal_id}
-                                      className='w-full h-full object-cover text-[0.75em]'
-                                      src={entry.images.jpg.image_url}
-                                      alt={entry.name}
-                                    />
+                                    {entry.title}
                                   </Link>
-                                  <div className='w-3/4 flex flex-col gap-y-1 px-2'>
-                                    <Link
-                                      to={`/${entry.type}/${entry.mal_id}`}
-                                      className='blue-link'
-                                    >
-                                      {entry.title}
-                                    </Link>
-                                    <p className='text-[0.8em] capitalize'>
-                                      {entry.relation.toLowerCase()} ({entry.type.toLowerCase()})
-                                    </p>
-                                  </div>
+                                  <p className='text-[0.8em] capitalize'>
+                                    {entry.relation.toLowerCase()} (
+                                    {entry.type.toLowerCase()})
+                                  </p>
                                 </div>
-                              ))}
-                            {!showAllRelations &&
-                            mangaQ?.data?.flattenedRelations?.length >
-                              3 ? (
-                              <div
-                                onClick={() => {
-                                  setShowAllRelations(true)
-                                }}
-                                className='flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20'
-                              >
-                                +
-                                {mangaQ?.data?.flattenedRelations
-                                  ?.length - 3}
                               </div>
-                            ) : (
-                              ''
-                            )}
-                            {showAllRelations
-                              ? mangaQ?.data?.flattenedRelations
-                                  .slice(3)
-                                  .map((entry, i) => (
-                                    <div
-                                      key={i + 3}
-                                      className='flex flex-row w-full'
+                            ))}
+                          {!showAllRelations &&
+                          mangaQ?.data?.flattenedRelations?.length > 3 ? (
+                            <div
+                              onClick={() => {
+                                setShowAllRelations(true)
+                              }}
+                              className='flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20'
+                            >
+                              +{mangaQ?.data?.flattenedRelations?.length - 3}
+                            </div>
+                          ) : (
+                            ''
+                          )}
+                          {showAllRelations
+                            ? mangaQ?.data?.flattenedRelations
+                                .slice(3)
+                                .map((entry, i) => (
+                                  <div
+                                    key={i + 3}
+                                    className='flex flex-row w-full'
+                                  >
+                                    <Link
+                                      className='w-1/4 max-w-20 h-full aspect-2/3 '
+                                      to={`/${entry.type}/${entry.mal_id}`}
                                     >
+                                      <img
+                                        className='w-full h-full object-cover text-[0.75em]'
+                                        data-mal-id={entry.mal_id}
+                                        src={entry.images.jpg.image_url}
+                                        alt={entry.name}
+                                      />
+                                    </Link>
+                                    <div className='w-3/4 flex flex-col gap-y-1 px-2'>
                                       <Link
-                                        className='w-1/4 max-w-20 h-full aspect-2/3 '
                                         to={`/${entry.type}/${entry.mal_id}`}
+                                        className='blue-link'
                                       >
-                                        <img
-                                          className='w-full h-full object-cover text-[0.75em]'
-                                          data-mal-id={entry.mal_id}
-                                          src={entry.images.jpg.image_url}
-                                          alt={entry.name}
-                                        />
+                                        {entry.title}
                                       </Link>
-                                      <div className='w-3/4 flex flex-col gap-y-1 px-2'>
-                                        <Link
-                                          to={`/${entry.type}/${entry.mal_id}`}
-                                          className='blue-link'
-                                        >
-                                          {entry.title}
-                                        </Link>
-                                        <p className='text-[0.8em] capitalize'>
-                                          {entry.relation.toLowerCase()} ({entry.type.toLowerCase()})
-                                        </p>
-                                      </div>
+                                      <p className='text-[0.8em] capitalize'>
+                                        {entry.relation.toLowerCase()} (
+                                        {entry.type.toLowerCase()})
+                                      </p>
                                     </div>
-                                  ))
-                              : ''}
-                          </div>
-
+                                  </div>
+                                ))
+                            : ''}
+                        </div>
                       </div>
                     </div>
                   ) : (

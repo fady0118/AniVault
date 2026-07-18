@@ -37,10 +37,13 @@ import LoaderComponent from '../../components/LoaderComponent'
 import { useUserItemModal } from '../../components/userItemModal/useUserItemModal'
 import UserItemModal from '../../components/userItemModal/UserItemModal'
 import { getAnimeDetailPage } from '../../anilist/pages/getAnimeDetailPage'
+import { AniListFailedQueryComponent } from '../../components/anime/AniListFailedQueryComponent'
+import AnimeThemes from '../../components/anime/animeThemes/AnimeThemes'
 
 export default function AnimePage () {
   let { id } = useParams()
   const { windowWidth } = useContext(RootContext)
+
   const [showEpisodesModal, setShowEpisodesModal] = useState(false)
   const {
     setShowUserItemModal,
@@ -59,11 +62,7 @@ export default function AnimePage () {
     throwOnError: false
   })
 
-  const errorStatus = animeQ.error?.status
-  const errorMessage =
-    errorStatus === 404
-      ? 'This anime item does not exist.'
-      : animeQ.error?.message || 'Failed to load anime details.'
+  const errorMessage = animeQ.error?.message || 'Failed to load anime details.'
 
   // Gallery hook
   const { dispatch, showModal, openGallery, closeGallery, activeIndex } =
@@ -93,11 +92,7 @@ export default function AnimePage () {
           <LoaderComponent />
         </div>
       ) : animeQ.isError ? (
-        <div className='fixed top-1/2 left-1/2 -translate-1/2'>
-          <div className='p-4 text-center'>
-            <p>{errorStatus} - {errorMessage}</p>
-          </div>
-        </div>
+        <AniListFailedQueryComponent message={errorMessage} />
       ) : (
         <>
           <div className='relative z-10 w-full  flex justify-center min-h-screen pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark'>
@@ -518,6 +513,7 @@ export default function AnimePage () {
                         </div>
                       </div>
                     </div>
+                    {/* description */}
                     <div
                       id='description'
                       className='rounded-lg box-colors h-fit w-full order-2'
@@ -549,6 +545,7 @@ export default function AnimePage () {
                         )}
                       </div>
                     </div>
+                    {/* pictures */}
                     <div
                       id='Pictures'
                       className='box-colors rounded-md order-3'
@@ -559,7 +556,7 @@ export default function AnimePage () {
                         cols={2}
                       />
                     </div>
-
+                    {/* characters */}
                     {animeQ?.data?.characters.dataArr.length ? (
                       <div
                         id='characters'
@@ -578,6 +575,7 @@ export default function AnimePage () {
                     ) : (
                       ''
                     )}
+                    {/* videos */}
                     <div
                       id='videos'
                       className='flex justify-center w-full h-fit order-4'
@@ -601,7 +599,10 @@ export default function AnimePage () {
                         </div>
                       </div>
                     </div>
-
+                    {/* themes */}
+                    <AnimeThemes themes={animeQ?.data?.themes} />
+                    
+                    {/* related entries */}
                     {animeQ?.data?.anime?.flattenedRelations?.length ? (
                       <div
                         id='relations'
@@ -636,7 +637,8 @@ export default function AnimePage () {
                                       {entry.title}
                                     </Link>
                                     <p className='text-[0.8em] capitalize'>
-                                      {entry.relation.toLowerCase()} ({entry.type.toLowerCase()})
+                                      {entry.relation.toLowerCase()} (
+                                      {entry.type.toLowerCase()})
                                     </p>
                                   </div>
                                 </div>
@@ -684,7 +686,8 @@ export default function AnimePage () {
                                           {entry.title}
                                         </Link>
                                         <p className='text-[0.8em] capitalize'>
-                                          {entry.relation.toLowerCase()} ({entry.type.toLowerCase()})
+                                          {entry.relation.toLowerCase()} (
+                                          {entry.type.toLowerCase()})
                                         </p>
                                       </div>
                                     </div>
@@ -696,69 +699,7 @@ export default function AnimePage () {
                     ) : (
                       ''
                     )}
-
-                    {animeQ?.data?.anime?.theme?.openings?.length ||
-                    animeQ?.data?.anime?.theme?.endings?.length ? (
-                      <div
-                        id='theme'
-                        className='flex justify-center w-full h-fit text-2xs lg:text-[11px] order-6'
-                      >
-                        <div className='rounded-lg box-colors w-full grid grid-cols-2 gap-4 py-1'>
-                          {animeQ?.data?.anime?.theme?.openings?.length ? (
-                            <div id='openings'>
-                              <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
-                                openings
-                              </div>
-                              <div className='flex flex-col w-full gap-y-2 p-2'>
-                                {animeQ?.data?.anime?.theme?.openings?.map(
-                                  (opening, i) => (
-                                    <div
-                                      key={i}
-                                      className='w-full flex flex-row items-center gap-x-2'
-                                    >
-                                      <Music4Icon
-                                        className='w-[10%]'
-                                        size={16}
-                                      />
-                                      <p className='w-[90%]'>{opening}</p>
-                                    </div>
-                                  )
-                                )}
-                              </div>
-                            </div>
-                          ) : (
-                            ''
-                          )}
-                          {animeQ?.data?.anime?.theme?.endings?.length ? (
-                            <div id='endings'>
-                              <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
-                                endings
-                              </div>
-                              <div className='flex flex-col w-full gap-y-2 p-2'>
-                                {animeQ?.data?.anime?.theme?.endings?.map(
-                                  (ending, i) => (
-                                    <div
-                                      key={i}
-                                      className='w-full flex flex-row items-center gap-x-2'
-                                    >
-                                      <Music4Icon
-                                        className='w-[10%]'
-                                        size={16}
-                                      />
-                                      <p className='w-[90%]'>{ending}</p>
-                                    </div>
-                                  )
-                                )}
-                              </div>
-                            </div>
-                          ) : (
-                            ''
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      ''
-                    )}
+                    
                   </div>
                 </div>
 
@@ -818,7 +759,11 @@ export default function AnimePage () {
             />
           )}
           {showEpisodesModal && (
-            <EpisodesModal title={animeQ?.data?.anime.title.english} malId={animeQ?.data?.anime.mal_id} setShowEpisodesModal={setShowEpisodesModal} />
+            <EpisodesModal
+              title={animeQ?.data?.anime.title.english}
+              malId={animeQ?.data?.anime.mal_id}
+              setShowEpisodesModal={setShowEpisodesModal}
+            />
           )}
           {showUserItemModal && (
             <UserItemModal

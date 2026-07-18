@@ -1,12 +1,21 @@
-import { adaptAnimeDetail, adaptAnimeThemes, adaptCharacters, adaptRecommendations, adaptReviews } from "../adapters/adaptAnime"
-import { fetchAnimeThemesByMalId } from "../AnimeThemes/animeThemes"
-import { queryAniList } from "../client"
-import { ANIME_DETAIL_QUERY } from "../queries/animeDetail"
-import { getTmdbImagesAndVideos } from "../TMDB/tmdb"
+import { getFriendlyErrorMessage } from '../../utility/errorMapping'
+import {
+  adaptAnimeDetail,
+  adaptAnimeThemes,
+  adaptCharacters,
+  adaptRecommendations,
+  adaptReviews
+} from '../adapters/adaptAnime'
+import { fetchAnimeThemesByMalId } from '../AnimeThemes/animeThemes'
+import { queryAniList } from '../client'
+import { ANIME_DETAIL_QUERY } from '../queries/animeDetail'
+import { getTmdbImagesAndVideos } from '../TMDB/tmdb'
 
-export async function getAnimeDetailPage(malId) {
+export async function getAnimeDetailPage (malId) {
   try {
-    const aniListResult = await queryAniList(ANIME_DETAIL_QUERY, { id: Number(malId) })
+    const aniListResult = await queryAniList(ANIME_DETAIL_QUERY, {
+      id: Number(malId)
+    })
     const tmdbResult = await getTmdbImagesAndVideos(
       aniListResult?.Media.title.english,
       Number(malId),
@@ -25,11 +34,9 @@ export async function getAnimeDetailPage(malId) {
     }
     return adaptedData
   } catch (error) {
-    if(error.status === 404) {
-      const customError = new Error("This anime item does not exist")
-      error.status = 404
-      error.message = "This anime item does not exist"
-    } 
-    throw error
+    const message = getFriendlyErrorMessage(error)
+    const customError = new Error(message)
+    customError.status = error?.status || 500
+    throw customError
   }
 }
