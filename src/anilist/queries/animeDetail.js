@@ -124,6 +124,7 @@ query ($id: Int) {
                 mediaRecommendation {
                     id
                     idMal
+                    type
                     title {
                         romaji
                         english

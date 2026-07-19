@@ -253,77 +253,8 @@ export default function MangaPage () {
                         </div>
                       </div>
                     </div>
-                    {/* {windowWidth > 480 ? (
-                      <div className='w-full rounded-lg box-colors order-2 overflow-hidden'>
-                        <div id='background' className='pt-0.5'>
-                          <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
-                            background
-                          </div>
-                          <div className='flex flex-col px-3 py-2'>
-                            <div className='peer'>
-                              <input
-                                type='checkbox'
-                                name='background-text-checkbox'
-                                id='background-text-checkbox'
-                                className='hidden'
-                              />
-                            </div>
-                            <p className='text-xs font-light max-lines-3 cutoff-text min-h-8'>
-                              {mangaQ?.data?.background ||
-                                'No background found.'}
-                            </p>
-                            {mangaQ?.data?.background ? (
-                              <div className='w-full flex flex-row justify-end text-xs capitalize'>
-                                <label
-                                  htmlFor='background-text-checkbox'
-                                  className=" hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                                ></label>
-                              </div>
-                            ) : (
-                              ''
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      ''
-                    )} */}
                   </div>
                 </div>
-                {/* {windowWidth <= 480 ? (
-                  <div className='w-full rounded-lg box-colors order-2 overflow-hidden'>
-                    <div id='background'>
-                      <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
-                        background
-                      </div>
-                      <div className='flex flex-col px-3 py-2'>
-                        <div className='peer'>
-                          <input
-                            type='checkbox'
-                            name='background-text-checkbox'
-                            id='background-text-checkbox'
-                            className='hidden'
-                          />
-                        </div>
-                        <p className='text-xs font-light max-lines-4 cutoff-text min-h-8'>
-                          {mangaQ?.data?.background || 'No background found.'}
-                        </p>
-                        {mangaQ?.data?.background ? (
-                          <div className='w-full flex flex-row justify-end text-xs capitalize'>
-                            <label
-                              htmlFor='background-text-checkbox'
-                              className=" hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300 before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                            ></label>
-                          </div>
-                        ) : (
-                          ''
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  ''
-                )} */}
               </div>
               <div className='order-2 w-full flex flex-col sm:flex-row gap-3'>
                 <div className='w-fit sm:w-1/3 md:w-1/4 max-w-sm flex flex-col justify-between h-fit gap-y-2 md:gap-y-8 rounded-lg box-colors'>
@@ -640,7 +571,6 @@ export default function MangaPage () {
               ) : (
                 ''
               )}
-              {/* <News data={mangaQ?.data?.news ?? []} /> */}
             </div>
 
             <div

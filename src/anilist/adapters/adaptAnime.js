@@ -166,7 +166,7 @@ export function adaptRecommendations (media) {
   const recommendationsDataArr = (media.recommendations?.nodes ?? []).map(
     n => ({
       recommendation: {
-        path: 'anime',
+        path: n.mediaRecommendation?.type.toLowerCase(),
         mal_id: n.mediaRecommendation?.idMal,
         name:
           n.mediaRecommendation?.title?.english ||

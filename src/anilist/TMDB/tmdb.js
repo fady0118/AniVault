@@ -11,23 +11,27 @@ async function tmdbFetch (path, apiKey) {
 
 // find the id by title.
 async function findTmdbShowId (title, apiKey) {
-  const data = await tmdbFetch(
-    `/search/tv?query=${encodeURIComponent(title)}`,
-    apiKey
-  )
-  return data.results?.[0]?.id ?? null
+  try {
+    const data = await tmdbFetch(
+      `/search/tv?query=${encodeURIComponent(title)}`,
+      apiKey
+    )
+    return data?.results?.[0]?.id ?? null
+  } catch (error) {
+    return null
+  }
 }
 // get TMDB url
 async function getdTmdbMappings (title, malId, apiKey) {
-  const mappingData = data[`mal:${malId}`]
-  let tmdbKey = Object.keys(mappingData)?.find(k => k.startsWith('tmdb_show'))
+  const mappingData = data[`mal:${malId}`] || {}
+  let tmdbKey = Object.keys(mappingData)?.find(k => k?.startsWith('tmdb_show'))
   let url
   if (tmdbKey) {
     const [_, tmdbId, seasonPart] = tmdbKey.split(':')
     const seasonNum = parseInt(seasonPart.slice(1))
     return { tmdbId, seasonNum }
   } else {
-    const tmdbId = await findTmdbtmdbId(title, apiKey)
+    const tmdbId = await findTmdbShowId(title, apiKey)
     if (!tmdbId) return { pictures: [], videos: [], matched: false }
     return { tmdbId }
   }

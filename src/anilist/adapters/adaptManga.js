@@ -171,8 +171,8 @@ export function adaptReviews (media) {
 export function adaptRecommendations (media) {
   const recommendationsDataArr = (media.recommendations?.nodes ?? []).map(
     n => ({
-      anime: {
-        path: 'anime',
+      recommendation: {
+        path: n.mediaRecommendation?.type.toLowerCase(),
         mal_id: n.mediaRecommendation?.idMal,
         name:
           n.mediaRecommendation?.title?.english ||
@@ -185,4 +185,8 @@ export function adaptRecommendations (media) {
     })
   )
   return { recommendationsDataArr }
+}
+
+export function adaptPictureResults(pictures) {
+  return pictures.map(picture=>({jpg:{image_url:picture}}))||[]
 }
