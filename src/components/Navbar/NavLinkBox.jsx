@@ -26,10 +26,10 @@ export default function NavLinkBox({ ref, LinkTitle, data }) {
         <div className="w-full font-bold capitalize p-1">
           <div className=" w-full font-bold capitalize py-1">Genres</div>
           <div className="w-full grid grid-cols-3 gap-1 py-1 text-[0.65em]">
-            {data.map((item) => (
+            {data.map((item, i) => (
               <Link
-                key={item.mal_id}
-                to={`/${LinkTitle}?genres=${item?.mal_id}`}
+                key={i}
+                to={`/${LinkTitle}?genres=${item}`}
                 className="w-full font-bold capitalize p-1 rounded-sm hover:bg-amethyst-smoke-100/25 dark:hover:bg-dark-amethyst-smoke-300/25 hover:text-pink-500/75 dark:hover:text-pink-400/75 duration-200"
               >
                 {item.name}

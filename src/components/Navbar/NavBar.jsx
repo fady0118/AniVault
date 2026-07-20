@@ -15,7 +15,7 @@ import { Link, useNavigate } from 'react-router'
 import { useState, useEffect, useContext, useRef } from 'react'
 import SearchModal from '../searchModal/SearchModal'
 import { RootContext } from '../../App'
-import data from '../../utility/data.json'
+import genresData from '../../anilist/genresData.json'
 import NavLink from './NavLink'
 import SmallNavLink from './SmallNavLink'
 import { useAuth } from '../../Contexts/AuthContext'
@@ -106,13 +106,13 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
                 <NavLink
                   classes={classes}
                   LinkTitle='anime'
-                  data={data.anime.genres}
+                  data={genresData.genres}
                   ref={navBarRef}
                 />
                 <NavLink
                   classes={classes}
                   LinkTitle='manga'
-                  data={data.manga.genres}
+                  data={genresData.genres}
                   ref={navBarRef}
                 />
                 {/* register/login */}

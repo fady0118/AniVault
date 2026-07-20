@@ -1,7 +1,7 @@
 export const ANIME_DETAIL_QUERY = 
 `
 query ($id: Int) {
-    Media(idMal: $id, type: ANIME) {
+    Media(id: $id, type: ANIME) {
         id
         idMal
         type

@@ -57,6 +57,7 @@ async function findMangaDexId (mangaMeta) {
 }
 
 async function getMangaDexCovers (mangaDexId) {
+  console.log(`getting covers for ${mangaDexId}`)
   const url = `${MANGADEX_BASE}/cover?manga[]=${mangaDexId}&limit=100`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`MangaDex covers failed: ${res.status}`)
@@ -67,6 +68,7 @@ async function getMangaDexCovers (mangaDexId) {
 }
 
 export async function getGalleryForManga (mangaMeta) {
+  console.log({mangaMeta})
   try {
     const mdId = await findMangaDexId(mangaMeta)
     if (!mdId) {

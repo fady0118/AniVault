@@ -12,10 +12,11 @@ async function tmdbFetch (path, apiKey) {
 // find the id by title.
 async function findTmdbShowId (title, apiKey) {
   try {
-    const data = await tmdbFetch(
+    const res = await tmdbFetch(
       `/search/tv?query=${encodeURIComponent(title)}`,
       apiKey
     )
+    const data = await res.json()
     return data?.results?.[0]?.id ?? null
   } catch (error) {
     return null
@@ -32,7 +33,6 @@ async function getdTmdbMappings (title, malId, apiKey) {
     return { tmdbId, seasonNum }
   } else {
     const tmdbId = await findTmdbShowId(title, apiKey)
-    if (!tmdbId) return { pictures: [], videos: [], matched: false }
     return { tmdbId }
   }
 }
@@ -40,6 +40,7 @@ async function getdTmdbMappings (title, malId, apiKey) {
 // get images & videos
 export async function getTmdbImagesAndVideos (title, malId, apiKey) {
   const { tmdbId } = await getdTmdbMappings(title, malId, apiKey)
+  if (!tmdbId) return { pictures: [], videos: [], matched: false }
   const details = await tmdbFetch(
     `/tv/${tmdbId}?append_to_response=images,videos`,
     apiKey

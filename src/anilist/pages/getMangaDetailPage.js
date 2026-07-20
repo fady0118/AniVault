@@ -26,7 +26,6 @@ export async function getMangaDetailPage (malId) {
       recommendations: adaptRecommendations(aniListResult?.Media),
       pictures: adaptPictureResults(mangaDexResults ?? [])
     }
-    // console.log(adaptedData)
     return adaptedData
   } catch (error) {
     console.log({ error })
