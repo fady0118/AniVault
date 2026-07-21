@@ -11,7 +11,7 @@ export default function SortItem ({ item, localState, handleChange }) {
       className={`w-full flex flex-row items-center justify-between px-1 rounded-xs hover:cursor-pointer ${
         localState.order_by === value
           ? 'bg-emerald-500/50 hover:bg-emerald-400/75'
-          : 'hover:bg-amethyst-smoke-500/50 dark:hover:bg-dark-amethyst-smoke-50/75'
+          : 'hover:bg-amethyst-smoke-500/50 dark:hover:bg-dark-amethyst-smoke-50/50'
       }`}
     >
       <div className='flex flex-row items-center gap-x-0.5'>

@@ -59,10 +59,11 @@ export default function ScoreFilter ({ registerCollector, view }) {
   return (
     <>
       {!view ? (
+        // larger screens
         <div id='score' className='relative'>
           <label className='group peer w-full header-box box-colors-stronger hover:cursor-pointer'>
             <input ref={checkboxRef} type='checkbox' className='hidden' />
-            <p className='text-text-light/70 dark:text-text-dark/70 group-hover:text-text-light dark:group-hover:text-text-dark'>
+            <p className='text-[1em] text-text-light/80 dark:text-text-dark/80 group-hover:text-text-light dark:group-hover:text-text-dark'>
               Score
             </p>
             <ChevronDown
@@ -70,7 +71,7 @@ export default function ScoreFilter ({ registerCollector, view }) {
               className='group-has-checked:rotate-180 duration-200'
             />
           </label>
-          <div className='w-max absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 p-2 text-2xs/loose'>
+          <div className='w-max absolute top-9 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 p-2 text-[0.9em]/loose'>
             <label htmlFor='max-score-input' className='w-fit'>
               <p className='text-nowrap'>max score {localState.max_score}</p>
               <input
@@ -80,7 +81,7 @@ export default function ScoreFilter ({ registerCollector, view }) {
                 max='100'
                 step={5}
                 value={localState.max_score}
-                className='range range-xs w-[200%] origin-left scale-50 range-primary'
+                className='range range-xs scale-65 w-[154%] origin-left range-primary'
               />
             </label>
             <label htmlFor='min-score-input' className='w-fit'>
@@ -92,7 +93,7 @@ export default function ScoreFilter ({ registerCollector, view }) {
                 max='100'
                 step={5}
                 value={localState.min_score}
-                className='range range-xs w-[200%] origin-left scale-50 range-primary'
+                className='range range-xs scale-65 w-[154%] origin-left range-primary'
               />
             </label>
           </div>
@@ -101,7 +102,7 @@ export default function ScoreFilter ({ registerCollector, view }) {
         <div id='score' className='relative w-full text-2xs/loose'>
           <label className='group peer w-full small-header-box smallHeaderBox-colors hover:cursor-pointer'>
             <input ref={checkboxRef} type='checkbox' className='hidden' />
-            <p className='text-text-light/70 dark:text-text-dark/70 group-hover:text-text-light dark:group-hover:text-text-dark capitalize'>
+            <p className='text-text-light/80 dark:text-text-dark/80 group-hover:text-text-light dark:group-hover:text-text-dark capitalize'>
               Score
             </p>
             <ChevronDown

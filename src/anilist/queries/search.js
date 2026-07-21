@@ -5,6 +5,9 @@ query (
     $search: String
     $genre_in: [String]
     $genre_not_in: [String]
+    $tag_in: [String]
+    $tag_not_in: [String]
+    
     $minScore: Int
     $maxScore: Int
     $season: MediaSeason
@@ -30,6 +33,8 @@ query (
             search: $search
             genre_in: $genre_in
             genre_not_in: $genre_not_in
+            tag_in: $tag_in               
+            tag_not_in: $tag_not_in
             averageScore_greater: $minScore
             averageScore_lesser: $maxScore
             season: $season

@@ -12,7 +12,7 @@ export default function FilterItem ({ item, localState, handleChange }) {
       className={`w-full flex flex-row items-center justify-between px-1 rounded-xs hover:cursor-pointer ${
         localState.split(',').includes(filterValue)
           ? 'bg-emerald-500/50 hover:bg-emerald-400/75'
-          : 'hover:bg-amethyst-smoke-500/50 dark:hover:bg-dark-amethyst-smoke-50/75'
+          : 'hover:bg-amethyst-smoke-500/50 dark:hover:bg-dark-amethyst-smoke-50/50'
       }`}
     >
       <div className='flex flex-row items-center gap-x-0.5'>
@@ -26,7 +26,11 @@ export default function FilterItem ({ item, localState, handleChange }) {
             <Square className='stroke-0 fill-amethyst-smoke-200' size={12} />
           )}
         </>
-        <p className={`${filterKey.length > 3 ? 'capitalize' : 'uppercase'}`}>
+        <p
+          className={`text-nowrap ${
+            filterKey.length > 3 ? 'capitalize' : 'uppercase'
+          }`}
+        >
           {filterKey}
         </p>
       </div>

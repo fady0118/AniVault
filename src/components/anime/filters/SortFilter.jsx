@@ -78,7 +78,7 @@ export default function SortFilter ({ registerCollector, data, view = null }) {
           <div id='orderBy' className='group relative max-w-28'>
             <label className='group peer w-full header-box box-colors-stronger hover:cursor-pointer'>
               <input ref={checkboxRef} type='checkbox' className='hidden' />
-              <p className='text-nowrap text-text-light/70 dark:text-text-dark/70 group-hover:text-text-light dark:group-hover:text-text-dark'>
+              <p className='text-nowrap text-text-light/80 dark:text-text-dark/80 group-hover:text-text-light dark:group-hover:text-text-dark'>
                 {heading || 'order by'}
               </p>
               <ChevronDown
@@ -86,7 +86,7 @@ export default function SortFilter ({ registerCollector, data, view = null }) {
                 className='group-has-checked:rotate-180 duration-200 ml-1'
               />
             </label>
-            <div className='absolute top-6 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-28 p-2 text-2xs/loose'>
+            <div className='absolute top-7.5 md:top-8.5 left-0 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-28 p-2 text-nowrap text-[0.9em]/loose'>
               {data.map((item, i) => (
                 <SortItem
                   key={i}
@@ -115,7 +115,7 @@ export default function SortFilter ({ registerCollector, data, view = null }) {
           <div id='orderBy' className='group relative max-w-28'>
             <label className='group peer w-full small-header-box smallHeaderBox-colors hover:cursor-pointer'>
               <input type='checkbox' className='hidden' />
-              <p className='capitalize text-text-light/70 dark:text-text-dark/70 group-hover:text-text-light dark:group-hover:text-text-dark'>
+              <p className='capitalize text-text-light/80 dark:text-text-dark/80 group-hover:text-text-light dark:group-hover:text-text-dark'>
                 {heading || 'order by'}
               </p>
               <ChevronDown
@@ -123,7 +123,7 @@ export default function SortFilter ({ registerCollector, data, view = null }) {
                 className='group-has-checked:rotate-180 duration-200 ml-1'
               />
             </label>
-            <div className='mt-1 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-28 p-2 text-2xs/loose'>
+            <div className='mt-1 hidden peer-has-checked:grid rounded-md box-colors-stronger grid-cols-1 gap-1 w-28 p-2 text-[0.625em]/loose'>
               {data.map((item, i) => (
                 <SortItem
                   key={i}

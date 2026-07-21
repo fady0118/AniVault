@@ -121,21 +121,21 @@ export default function RootComponent ({
 
   return (
     <>
-      <div className='relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3'>
+      <div className='relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3 text-sm'>
         <div className='w-[95vw] flex flex-col '>
           <div
             id='title'
-            className='order-1 mt-5 px-3 py-1 uppercase font-bold text-xl'
+            className='order-1 mt-5 px-3 py-1 uppercase font-bold text-[1.6em]'
           >
             Browse {Root}
           </div>
 
-          <div className='order-2 px-3 py-1'>
+          <div className='order-2 px-3 py-1 text-[0.8em] md:text-[1em]'>
             {windowWidth > 600 ? (
               <>
                 <div
                   id='disclaimer'
-                  className='w-full mb-2 flex flex-row items-center gap-x-2 py-1.5 px-2.5 box-colors-stronger border border-indigo-600/60 rounded-r-md text-3xs xs:text-2xs'
+                  className='w-full mb-2 flex flex-row items-center gap-x-2 py-1.5 px-2.5 box-colors-stronger border border-indigo-600/60 rounded-r-md text-[0.5em] xs:text-[0.625em]'
                 >
                   <p className='flex flex-row flex-wrap items-center gap-1.5'>
                     <span className='font-medium flex flex-row items-center gap-x-1.5'>
@@ -151,14 +151,13 @@ export default function RootComponent ({
                 </div>
                 <div
                   id='header'
-                  className='z-30 relative w-full flex flex-row items-center justify-between sm:justify-start sm:gap-x-4 capitalize text-2xs font-light'
+                  className='z-30 relative w-full flex flex-wrap flex-row items-center justify-start gap-2 md:gap-3 capitalize font-medium'
                 >
                   <KeywordFilter
                     registerCollector={fn =>
                       (collectorStore.current.keyword = fn)
                     }
                   />
-
                   {Object.keys(filterData).map((key, i) => (
                     <FilterComponent
                       key={i}
@@ -208,7 +207,7 @@ export default function RootComponent ({
                   onClick={() => {
                     setShowFiltersSideHeader(true)
                   }}
-                  className='flex flex-row gap-x-1 py-0.5 px-1.5 items-center text-[0.75em] box-colors-stronger rounded-sm w-fit hover:cursor-pointer hover:brightness-115 dark:hover:brightness-125 duration-200'
+                  className='flex flex-row gap-x-1 py-0.5 px-1.5 items-center text-[1.25em] box-colors-stronger rounded-sm w-fit hover:cursor-pointer hover:brightness-115 dark:hover:brightness-125 duration-200'
                 >
                   <Settings2 size={14} />
                   <span>Filters</span>
@@ -250,7 +249,7 @@ export default function RootComponent ({
               </div>
               <div
                 id='disclaimer'
-                className='w-full mb-2 flex flex-row items-center py-1.5 px-1.5 box-colors border border-indigo-600/60 rounded-r-md text-3xs'
+                className='w-full mb-2 flex flex-row items-center py-1.5 px-1.5 box-colors border border-indigo-600/60 rounded-r-md text-[0.5em]'
               >
                 <p className='flex flex-row flex-wrap items-center gap-0.5'>
                   <span className='font-medium flex flex-row items-center gap-x-1.5'>
@@ -306,7 +305,7 @@ export default function RootComponent ({
               />
               <div
                 id='filterBtn'
-                className='text-xs capitalize small-header-box smallHeaderBox-colors w-fit hover:cursor-pointer'
+                className='text-[0.75em] capitalize small-header-box smallHeaderBox-colors w-fit hover:cursor-pointer'
                 onClick={handleApplyFilter}
               >
                 <p className='px-2'>filter</p>

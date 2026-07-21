@@ -85,7 +85,7 @@ export default function AnimeMangaContainer ({
   const uniqueData = data?.data || []
 
   return (
-    <div className='relative order-3 px-3 py-1 min-h-32 text-xs'>
+    <div className='relative order-3 px-3 py-1 min-h-32 text-[1em]'>
       {isLoading ? (
         <>
           <div className='absolute top-full left-1/2 -translate-1/2'>
@@ -101,7 +101,7 @@ export default function AnimeMangaContainer ({
       ) : (
         <>
           {/* Pagination Controls */}
-          <div className='w-fit flex flex-row items-center py-0.5 px-2 text-[0.8em] md:text-[1em] box-colors-stronger rounded-lg'>
+          <div className='w-fit flex flex-row items-center py-1 px-2 text-[0.8em] md:text-[1em] box-colors-stronger rounded-lg'>
             <p
               className='px-2 py-0.5 rounded-md hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20 duration-200'
               onClick={() => setCurrentPage(1)}
