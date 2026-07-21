@@ -1,7 +1,7 @@
 import RootComponent from '../../components/RootComponent'
 import UserItemModal from '../../components/userItemModal/UserItemModal'
 import { useUserItemModal } from '../../components/userItemModal/useUserItemModal'
-import genresData from '../../anilist/genresData.json'
+import data from '../../anilist/genresData.json'
 
 const filterData = {
   type: {
@@ -18,21 +18,6 @@ const filterData = {
   }
 }
 
-const sortData = [
-  'mal_id',
-  'title',
-  'start_date',
-  'end_date',
-  'chapters',
-  'volumes',
-  'score',
-  'scored_by',
-  'rank',
-  'popularity',
-  'members',
-  'favorites'
-]
-
 export default function MangaRootPage () {
   const {
     showUserItemModal,
@@ -40,13 +25,15 @@ export default function MangaRootPage () {
     setUserItemData,
     userItemData
   } = useUserItemModal()
+  const genresData = data.genresData
+  const sortData = data.sortData
   return (
     <>
       <RootComponent
         Root='manga'
         filterData={filterData}
         genresData={genresData}
-        sortData={sortData}
+        sortData={sortData.manga}
         setUserItemModalStates={{ setShowUserItemModal, setUserItemData }}
       />
       {showUserItemModal && (

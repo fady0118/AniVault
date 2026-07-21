@@ -3,7 +3,12 @@ import { useSearchParams } from 'react-router'
 import GenreItem from './GenreItem'
 import { ChevronDown, Info, RotateCcw } from 'lucide-react'
 
-export default function GenresFilter ({ keyName, data, registerCollector, view = null }) {
+export default function GenresFilter ({
+  keyName,
+  data,
+  registerCollector,
+  view = null
+}) {
   const [searchParams] = useSearchParams()
   const [heading, setHeading] = useState(`${keyName}`)
 
@@ -45,7 +50,7 @@ export default function GenresFilter ({ keyName, data, registerCollector, view =
 
   // update heading/title of the component
   function filterComponentTitle () {
-    let heading = keyName;
+    let heading = keyName
     const selectedGenresArr = localRef.current[keyName].concat(
       localRef.current[`${keyName}_exclude`]
     )
@@ -55,9 +60,9 @@ export default function GenresFilter ({ keyName, data, registerCollector, view =
       return
     }
     selectedGenresArr.length > 1
-      ? (heading = `${
-          data.find(item => item == selectedGenresArr[0])
-        } + [${selectedGenresArr.length - 1}]`)
+      ? (heading = `${data.find(item => item == selectedGenresArr[0])} + [${
+          selectedGenresArr.length - 1
+        }]`)
       : (heading = data.find(item => item == selectedGenresArr[0]))
     setHeading(heading)
   }
@@ -100,8 +105,7 @@ export default function GenresFilter ({ keyName, data, registerCollector, view =
     ref.current = { [keyName]: [], [`${keyName}_exclude`]: [] }
     Object.entries(localState).forEach(([key, value]) => {
       if (value === 1) localRef.current[keyName].push(key)
-      else if (value === -1)
-        localRef.current[`${keyName}_exclude`].push(key)
+      else if (value === -1) localRef.current[`${keyName}_exclude`].push(key)
     })
   }
   function resetGenres () {
@@ -169,10 +173,9 @@ export default function GenresFilter ({ keyName, data, registerCollector, view =
             </label>
             <div className='mt-1 hidden peer-has-checked:flex flex-col rounded-md box-colors-stronger w-full p-1.5 pb-5 text-2xs/relaxed'>
               <div className='w-full grid grid-cols-1 2xs:grid-cols-2 xs:grid-cols-3 gap-1'>
-                {data.slice(0, 17).map((item, i) => (
+                {data.slice(0, 17).map((name, i) => (
                   <GenreItem
                     key={i}
-                    mal_id={item.mal_id}
                     name={name}
                     localState={localState}
                     handleClick={handleClick}

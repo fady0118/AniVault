@@ -15,7 +15,7 @@ import { Link, useNavigate } from 'react-router'
 import { useState, useEffect, useContext, useRef } from 'react'
 import SearchModal from '../searchModal/SearchModal'
 import { RootContext } from '../../App'
-import genresData from '../../anilist/genresData.json'
+import data from '../../anilist/genresData.json'
 import NavLink from './NavLink'
 import SmallNavLink from './SmallNavLink'
 import { useAuth } from '../../Contexts/AuthContext'
@@ -61,7 +61,7 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
   useEffect(() => {
     init()
   }, [])
-
+  const genresData = data.genresData
   return (
     <>
       <nav
@@ -99,7 +99,9 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
                   size={12}
                   className='group-hover:stroke-indigo-600 dark:group-hover:stroke-indigo-300 duration-200'
                 />
-                <span className='font-normal group-hover:text-indigo-600 dark:group-hover:text-indigo-300  duration-200'>Ctrl+K</span>
+                <span className='font-normal group-hover:text-indigo-600 dark:group-hover:text-indigo-300  duration-200'>
+                  Ctrl+K
+                </span>
               </div>
 
               <div className='flex flex-row items-center gap-x-2'>
@@ -196,8 +198,8 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
                     alt={userData?.username}
                   />
                   {!loggedInUser?.emailVerification && (
-                <div className='absolute bottom-0 right-0 w-1 h-1 rounded-full bg-rose-600 dark:bg-rose-500'></div>
-              )}
+                    <div className='absolute bottom-0 right-0 w-1 h-1 rounded-full bg-rose-600 dark:bg-rose-500'></div>
+                  )}
                 </div>
               ) : (
                 <label className='swap swap-rotate w-4 aspect-square'>
@@ -264,7 +266,9 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
                   to='/profile/verify'
                 >
                   Verify Account
-                  {!loggedInUser?.emailVerification&&<span className='text-rose-600 dark:text-rose-500'> *</span>}
+                  {!loggedInUser?.emailVerification && (
+                    <span className='text-rose-600 dark:text-rose-500'> *</span>
+                  )}
                 </Link>
 
                 <Link

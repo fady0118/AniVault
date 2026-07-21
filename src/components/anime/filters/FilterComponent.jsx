@@ -129,9 +129,9 @@ export default function FilterComponent ({
               {Object.entries(data).map(([key, value], i) => (
                 <FilterItem
                   key={i}
-                  item={value}
-                  localState={localState}
-                  handleChange={handleChange}
+                item={{ [key]: value }}
+                localState={localState}
+                handleChange={handleChange}
                 />
               ))}
             </div>

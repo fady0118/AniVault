@@ -41,7 +41,7 @@ export default function RootComponent ({
     genres_exclude: '',
     tags: '',
     tags_exclude: '',
-    order_by: 'popularity',
+    order_by: 'POPULARITY',
     sort: 'desc',
     min_score: 0,
     max_score: 100,
@@ -82,8 +82,8 @@ export default function RootComponent ({
       q: keyword || '',
       genres: genres.genres.join(','),
       genres_exclude: genres.genres_exclude.join(','),
-      tags:tags.tags.join(','),
-      tags_exclude:tags.tags_exclude.join(','),
+      tags: tags.tags.join(','),
+      tags_exclude: tags.tags_exclude.join(','),
       order_by: sort.order_by,
       sort: sort.sort,
       min_score: score.min_score,
@@ -118,6 +118,7 @@ export default function RootComponent ({
   useEffect(() => {
     filterSideBarStateRef.current = showFiltersSideHeader
   }, [showFiltersSideHeader])
+
   return (
     <>
       <div className='relative left-1/2 -translate-x-1/2 z-10 w-full flex justify-center space-y-3 pt-15 pb-3'>
@@ -170,43 +171,28 @@ export default function RootComponent ({
                   ))}
 
                   <GenresFilter
-                    keyName="genres"
+                    keyName='genres'
                     data={genresData.genres}
                     registerCollector={fn =>
                       (collectorStore.current.genres = fn)
                     }
                   />
                   <GenresFilter
-                    keyName="tags"
+                    keyName='tags'
                     data={genresData.tags}
-                    registerCollector={fn =>
-                      (collectorStore.current.tags = fn)
-                    }
+                    registerCollector={fn => (collectorStore.current.tags = fn)}
                   />
 
                   <SortFilter
                     data={sortData}
                     registerCollector={fn => (collectorStore.current.sort = fn)}
                   />
-                  {Root === 'anime' ? (
-                    <ExtraFilters
-                      registerCollectors={{
-                        scoreCollector: fn =>
-                          (collectorStore.current.score = fn),
-                        dateCollector: fn => (collectorStore.current.date = fn),
-                        ratingCollector: fn =>
-                          (collectorStore.current.rating = fn)
-                      }}
-                    />
-                  ) : (
-                    <ExtraFilters
-                      registerCollectors={{
-                        scoreCollector: fn =>
-                          (collectorStore.current.score = fn),
-                        dateCollector: fn => (collectorStore.current.date = fn)
-                      }}
-                    />
-                  )}
+                  <ExtraFilters
+                    registerCollectors={{
+                      scoreCollector: fn => (collectorStore.current.score = fn),
+                      dateCollector: fn => (collectorStore.current.date = fn)
+                    }}
+                  />
                   <div
                     id='filterBtn'
                     className=' header-box box-colors-stronger hover:cursor-pointer'
@@ -291,35 +277,33 @@ export default function RootComponent ({
                   view='mobile'
                 />
               ))}
+
               <GenresFilter
-                data={genresData}
+                keyName='genres'
+                data={genresData.genres}
                 registerCollector={fn => (collectorStore.current.genres = fn)}
                 view='mobile'
               />
+              <GenresFilter
+                keyName='tags'
+                data={genresData.tags}
+                registerCollector={fn => (collectorStore.current.tags = fn)}
+                view='mobile'
+              />
+
               <SortFilter
                 data={sortData}
                 registerCollector={fn => (collectorStore.current.sort = fn)}
                 view='mobile'
               />
 
-              {Root === 'anime' ? (
-                <ExtraFilters
-                  registerCollectors={{
-                    scoreCollector: fn => (collectorStore.current.score = fn),
-                    dateCollector: fn => (collectorStore.current.date = fn),
-                    ratingCollector: fn => (collectorStore.current.rating = fn)
-                  }}
-                  view='mobile'
-                />
-              ) : (
-                <ExtraFilters
-                  registerCollectors={{
-                    scoreCollector: fn => (collectorStore.current.score = fn),
-                    dateCollector: fn => (collectorStore.current.date = fn)
-                  }}
-                  view='mobile'
-                />
-              )}
+              <ExtraFilters
+                registerCollectors={{
+                  scoreCollector: fn => (collectorStore.current.score = fn),
+                  dateCollector: fn => (collectorStore.current.date = fn)
+                }}
+                view='mobile'
+              />
               <div
                 id='filterBtn'
                 className='text-xs capitalize small-header-box smallHeaderBox-colors w-fit hover:cursor-pointer'

@@ -89,17 +89,8 @@ function buildVariables (searchParams, itemType) {
 
   // Sorting
   const orderBy = searchParams.get('order_by')
-  const sortDir = searchParams.get('sort') === 'asc' ? 'ASC' : 'DESC'
-  const sortMap = {
-    start_date: `START_DATE_${sortDir}`,
-    score: `SCORE_${sortDir}`,
-    popularity: `POPULARITY_${sortDir}`,
-    title: `TITLE_${sortDir}`,
-    trending: `TRENDING_${sortDir}`,
-    updated_at: `UPDATED_TIME_${sortDir}`
-  }
-
-  const anilistSort = sortMap[orderBy] || `POPULARITY_${sortDir}`
+  const sortDir = searchParams.get('sort') === 'asc' ? '' : '_DESC'
+  const anilistSort = `${orderBy}${sortDir}` || `POPULARITY${sortDir}`
   vars.sort = [anilistSort]
 
   // Adult content filter
