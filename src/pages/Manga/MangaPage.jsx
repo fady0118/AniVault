@@ -239,7 +239,7 @@ export default function MangaPage () {
                                   <p key={i}>
                                     <Link
                                       className='blue-link'
-                                      to={`/${s.type}/${s.mal_id}`}
+                                      to={`/${s.type}/${s.id}`}
                                     >
                                       {s.name}
                                     </Link>
@@ -467,10 +467,10 @@ export default function MangaPage () {
                               <div key={i} className='flex flex-row w-full'>
                                 <Link
                                   className='w-1/4 max-w-20 h-full aspect-2/3 '
-                                  to={`/${entry.type}/${entry.mal_id}`}
+                                  to={`/${entry.type}/${entry.id}`}
                                 >
                                   <img
-                                    data-mal-id={entry.mal_id}
+                                    data-mal-id={entry.id}
                                     className='w-full h-full object-cover text-[0.75em]'
                                     src={entry.images.jpg.image_url}
                                     alt={entry.name}
@@ -478,7 +478,7 @@ export default function MangaPage () {
                                 </Link>
                                 <div className='w-3/4 flex flex-col gap-y-1 px-2'>
                                   <Link
-                                    to={`/${entry.type}/${entry.mal_id}`}
+                                    to={`/${entry.type}/${entry.id}`}
                                     className='blue-link'
                                   >
                                     {entry.title}
@@ -513,18 +513,18 @@ export default function MangaPage () {
                                   >
                                     <Link
                                       className='w-1/4 max-w-20 h-full aspect-2/3 '
-                                      to={`/${entry.type}/${entry.mal_id}`}
+                                      to={`/${entry.type}/${entry.id}`}
                                     >
                                       <img
                                         className='w-full h-full object-cover text-[0.75em]'
-                                        data-mal-id={entry.mal_id}
+                                        data-mal-id={entry.id}
                                         src={entry.images.jpg.image_url}
                                         alt={entry.name}
                                       />
                                     </Link>
                                     <div className='w-3/4 flex flex-col gap-y-1 px-2'>
                                       <Link
-                                        to={`/${entry.type}/${entry.mal_id}`}
+                                        to={`/${entry.type}/${entry.id}`}
                                         className='blue-link'
                                       >
                                         {entry.title}

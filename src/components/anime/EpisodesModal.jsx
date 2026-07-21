@@ -12,17 +12,18 @@ const SORT_OPTIONS = [
   { key: 'vote_average', label: 'Rating' }
 ]
 
-export default function EpisodesModal ({ title, malId, setShowEpisodesModal }) {
+export default function EpisodesModal ({ title, id, setShowEpisodesModal }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('episode_number')
   const [order, setOrder] = useState('ascending')
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['tmdbEpisodes', malId, title],
+    queryKey: ['tmdbEpisodes', id, title],
     queryFn: async () =>
-      getTmdbEpisodes(title, malId, import.meta.env.VITE_TMDB_KEY),
-    enabled: Boolean(title && malId),
-    staleTime: 1000 * 60 * 5
+      getTmdbEpisodes(title, id, import.meta.env.VITE_TMDB_KEY),
+    enabled: Boolean(title && id),
+    staleTime: 1000 * 60 * 5,
+    throwOnError: false
   })
 
   const episodes = data?.details?.episodes ?? []
@@ -170,7 +171,7 @@ export default function EpisodesModal ({ title, malId, setShowEpisodesModal }) {
           ) : isError ? (
             <div className='py-8'>
               <EmptyDataFallback
-                string={error?.message || 'Unable to load episodes.'}
+                string={'Unable to load episodes.'}
               />
             </div>
           ) : !filteredEpisodes.length ? (

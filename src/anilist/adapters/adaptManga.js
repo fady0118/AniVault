@@ -35,7 +35,7 @@ function formatAniListMediaDate (dateObj) {
 export function adaptMangaDetail (media) {
   const flattenedRelations = (media.relations?.edges ?? []).map(edge => ({
     relation: edge.relationType,
-    mal_id: edge.node.idMal,
+    id: edge.node.id,
     title: edge.node.title?.english || edge.node.title?.romaji,
     type: edge.node.type?.toLowerCase(),
     images: { jpg: { image_url: edge.node.coverImage?.medium } }
@@ -107,7 +107,7 @@ export function adaptMangaDetail (media) {
     authors:
       media.staff?.edges?.map(edge => ({
         name: edge.node.name?.full,
-        mal_id: edge.node.id,
+        id: edge.node.id,
         role: edge.role,
         type: 'people'
       })) ?? [],
@@ -120,7 +120,7 @@ export function adaptCharacters (media) {
     character: {
       path: 'character',
       role: edge.role.toLowerCase(),
-      mal_id: edge.node.id,
+      id: edge.node.id,
       name: edge.node.name.full,
       images: { jpg: { image_url: edge.node.image?.large } }
     }
@@ -173,7 +173,7 @@ export function adaptRecommendations (media) {
     n => ({
       recommendation: {
         path: n.mediaRecommendation?.type.toLowerCase(),
-        mal_id: n.mediaRecommendation?.idMal,
+        id: n.mediaRecommendation?.id,
         name:
           n.mediaRecommendation?.title?.english ||
           n.mediaRecommendation?.title?.romaji,

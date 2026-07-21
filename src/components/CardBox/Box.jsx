@@ -4,14 +4,14 @@ import { memo } from 'react'
 function Box ({ dataObj, classes, image_class }) {
   const data = dataObj?.data
   if (!data) return null
-  const { role, path, images, name, mal_id } = data
-  if (!images?.jpg?.image_url || !mal_id || !name || !path) return null
+  const { role, path, images, name, id } = data
+  if (!images?.jpg?.image_url || !id || !name || !path) return null
   
   return (
     <div className='relative w-full'>
       <Link
         className='inline-block w-full box-border'
-        to={`/${path}/${mal_id}`}
+        to={`/${path}/${id}`}
       >
         <img
           className={image_class}

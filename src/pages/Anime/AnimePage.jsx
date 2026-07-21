@@ -433,28 +433,6 @@ export default function AnimePage () {
                         </div>
                       </div>
                     </div>
-                    {/* {animeQ?.data?.anime?.streaming?.length ? (
-                      <div id='streaming' className='w-ful'>
-                        <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
-                          Streaming Platforms
-                        </div>
-                        <div className='flex flex-col gap-y-2.5 px-3 py-2 text-xs font-light'>
-                          {animeQ?.data?.anime?.streaming.map((stream, i) => (
-                            <div
-                              key={i}
-                              className='flex flex-row gap-x-2 items-center'
-                            >
-                              {renderIcon(stream.name)}
-                              <Link className='blue-link' to={stream.url}>
-                                {stream.name}
-                              </Link>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      ''
-                    )} */}
                   </div>
                   <div className='w-full md:w-3/4 flex flex-col md:flex-row flex-wrap gap-3 h-fit'>
                     <div className='flex flex-col md:flex-row gap-3 w-full order-1'>
@@ -761,7 +739,7 @@ export default function AnimePage () {
           {showEpisodesModal && (
             <EpisodesModal
               title={animeQ?.data?.anime.title.english}
-              malId={animeQ?.data?.anime.mal_id}
+              id={animeQ?.data?.anime.id}
               setShowEpisodesModal={setShowEpisodesModal}
             />
           )}

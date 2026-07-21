@@ -1,6 +1,6 @@
 const ANIME_THEMES_QUERY = `
-query ($malId: [Int!]) {
-    findAnimeByExternalSite(site: MAL, id: $malId) {
+query ($id: [Int!]) {
+    findAnimeByExternalSite(site: ANILIST, id: $id) {
         name
         animethemes {
             type
@@ -17,10 +17,9 @@ query ($malId: [Int!]) {
         }
     }
 }
-
 `
 
-export async function fetchAnimeThemesByMalId (malId) {
+export async function fetchAnimeThemesById (id) {
   try {
     const res = await fetch('https://graphql.animethemes.moe/', {
       method: 'POST',
@@ -29,7 +28,7 @@ export async function fetchAnimeThemesByMalId (malId) {
       },
       body: JSON.stringify({
         query: ANIME_THEMES_QUERY,
-        variables: { malId: malId }
+        variables: { id: id }
       })
     })
     if (!res.ok) throw new Error(`AniList ${res.status} - ${res.statusText}`)

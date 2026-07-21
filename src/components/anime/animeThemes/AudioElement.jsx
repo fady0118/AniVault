@@ -80,7 +80,7 @@ export default function AudioElement ({ src }) {
 
   return (
     <div
-      className={`scale-115 rounded-xl box-colors-medium py-1 px-1 mx-1.5 shadow-sm text-[1em] sm:text-[1.05em] md:text-[1.1em] lg:text-[1.125em] xl:text-[1.15em] ${colors.text}`}
+      className={`scale-115 rounded-xl bg-amethyst-smoke-300/30 dark:bg-dark-amethyst-smoke-200/90 py-1 px-1 mx-1.5 shadow-sm text-[1em] sm:text-[1.05em] md:text-[1.1em] lg:text-[1.125em] xl:text-[1.15em] ${colors.text}`}
     >
       <audio ref={audioRef} src={src} preload='metadata' />
       {isSmallScreen ? (

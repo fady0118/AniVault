@@ -12,19 +12,18 @@ async function tmdbFetch (path, apiKey) {
 // find the id by title.
 async function findTmdbShowId (title, apiKey) {
   try {
-    const res = await tmdbFetch(
+    const data = await tmdbFetch(
       `/search/tv?query=${encodeURIComponent(title)}`,
       apiKey
     )
-    const data = await res.json()
     return data?.results?.[0]?.id ?? null
   } catch (error) {
     return null
   }
 }
 // get TMDB url
-async function getdTmdbMappings (title, malId, apiKey) {
-  const mappingData = data[`mal:${malId}`] || {}
+async function getdTmdbMappings (title, id, apiKey) {
+  const mappingData = data[`anilist:${id}`] || {}
   let tmdbKey = Object.keys(mappingData)?.find(k => k?.startsWith('tmdb_show'))
   let url
   if (tmdbKey) {
@@ -38,14 +37,14 @@ async function getdTmdbMappings (title, malId, apiKey) {
 }
 
 // get images & videos
-export async function getTmdbImagesAndVideos (title, malId, apiKey) {
-  const { tmdbId } = await getdTmdbMappings(title, malId, apiKey)
+export async function getTmdbImagesAndVideos (title, id, apiKey) {
+  const { tmdbId } = await getdTmdbMappings(title, id, apiKey)
   if (!tmdbId) return { pictures: [], videos: [], matched: false }
+
   const details = await tmdbFetch(
     `/tv/${tmdbId}?append_to_response=images,videos`,
     apiKey
   )
-
   const pictures = (details.images?.backdrops ?? [])
     .concat(details.images?.posters ?? [])
     .map(img => ({
@@ -65,8 +64,10 @@ export async function getTmdbImagesAndVideos (title, malId, apiKey) {
 }
 
 // get episodes data
-export async function getTmdbEpisodes (title, malId, apiKey) {
-  const { tmdbId, seasonNum } = await getdTmdbMappings(title, malId, apiKey)
-  const details = await tmdbFetch(`/tv/${tmdbId}/season/${seasonNum}`, apiKey)
-  return { details }
+export async function getTmdbEpisodes (title, id, apiKey) {
+  try {
+    const { tmdbId, seasonNum } = await getdTmdbMappings(title, id, apiKey)
+    const details = await tmdbFetch(`/tv/${tmdbId}/season/${seasonNum}`, apiKey)
+    return { details }
+  } catch (error) {}
 }

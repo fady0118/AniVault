@@ -6,22 +6,23 @@ import {
   adaptRecommendations,
   adaptReviews
 } from '../adapters/adaptAnime'
-import { fetchAnimeThemesByMalId } from '../AnimeThemes/animeThemes'
+import { fetchAnimeThemesById } from '../AnimeThemes/animeThemes'
 import { queryAniList } from '../client'
 import { ANIME_DETAIL_QUERY } from '../queries/animeDetail'
 import { getTmdbImagesAndVideos } from '../TMDB/tmdb'
 
-export async function getAnimeDetailPage (malId) {
+export async function getAnimeDetailPage (id) {
   try {
     const aniListResult = await queryAniList(ANIME_DETAIL_QUERY, {
-      id: Number(malId)
+      id: Number(id)
     })
     const tmdbResult = await getTmdbImagesAndVideos(
       aniListResult?.Media.title.english,
-      Number(malId),
+      Number(id),
       import.meta.env.VITE_TMDB_KEY
     )
-    const animeThemes = await fetchAnimeThemesByMalId(Number(malId))
+    console.log({tmdbResult})
+    const animeThemes = await fetchAnimeThemesById(Number(id))
 
     const adaptedData = {
       anime: adaptAnimeDetail(aniListResult?.Media),

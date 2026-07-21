@@ -102,14 +102,14 @@ export function adaptCharacters (media) {
     character: {
       path: 'character',
       role: edge.role.toLowerCase(),
-      mal_id: edge.node.id,
+      id: edge.node.id,
       name: edge.node.name.full,
       images: { jpg: { image_url: edge.node.image?.large } }
     },
     voice_actor: edge.voiceActors?.[0]
       ? {
           path: 'people',
-          mal_id: edge.voiceActors[0].id,
+          id: edge.voiceActors[0].id,
           name: edge.voiceActors[0].name.full,
           images: { jpg: { image_url: edge.voiceActors[0].image?.large } }
         }
@@ -143,9 +143,7 @@ export function adaptReviews (media) {
     .map(tag => allReviews.find(r => r.tags.includes(tag)))
     .filter(Boolean)
 
-  const rest = allReviews.filter(
-    r => !featured.map(f => f.mal_id).includes(r.mal_id)
-  )
+  const rest = allReviews.filter(r => !featured.some(f => f.id === r.id))
 
   const stats = {
     all: allReviews.length,
@@ -167,7 +165,7 @@ export function adaptRecommendations (media) {
     n => ({
       recommendation: {
         path: n.mediaRecommendation?.type.toLowerCase(),
-        mal_id: n.mediaRecommendation?.idMal,
+        id: n.mediaRecommendation?.id,
         name:
           n.mediaRecommendation?.title?.english ||
           n.mediaRecommendation?.title?.romaji,

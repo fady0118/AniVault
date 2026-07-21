@@ -101,13 +101,17 @@ export default function AnimeMangaContainer ({
       ) : (
         <>
           {/* Pagination Controls */}
-          <div className='w-fit flex flex-row items-center py-1 px-2 text-[0.8em] md:text-[1em] box-colors-stronger rounded-lg'>
-            <p
-              className='px-2 py-0.5 rounded-md hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20 duration-200'
-              onClick={() => setCurrentPage(1)}
-            >
-              1
-            </p>
+          <div className='w-fit flex flex-row items-center gap-x-1 py-1 px-2 text-[0.9em] box-colors-stronger rounded-lg'>
+            {/* Jump to first page — only show once you've moved past it */}
+            {currentPage > 1 && (
+              <p
+                className='px-2 py-0.5 rounded-md hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20 duration-200'
+                onClick={() => setCurrentPage(1)}
+              >
+                1
+              </p>
+            )}
+
             <div className='flex flex-row items-center gap-x-2'>
               <ChevronLeft
                 onClick={() => pageSwap('prev')}
@@ -118,7 +122,12 @@ export default function AnimeMangaContainer ({
                     : 'stroke-text-light/25 dark:stroke-text-dark/25'
                 }`}
               />
-              {currentPage}
+
+              {/* Current page indicator replaces the old "N / lastPage" display */}
+              <p className='px-2 py-0.5 font-medium select-none'>
+                Page {currentPage}
+              </p>
+
               <ChevronLeft
                 onClick={() => pageSwap('next')}
                 size={20}
@@ -129,16 +138,6 @@ export default function AnimeMangaContainer ({
                 }`}
               />
             </div>
-            <p
-              className='px-2 py-0.5 rounded-md hover:cursor-pointer hover:bg-amethyst-smoke-800/20 dark:hover:bg-amethyst-smoke-400/20 duration-200'
-              onClick={() => {
-                if (paginationInfo?.last_visible_page) {
-                  setCurrentPage(paginationInfo.last_visible_page)
-                }
-              }}
-            >
-              {paginationInfo?.last_visible_page || '?'}
-            </p>
           </div>
 
           {/* Grid of Items */}

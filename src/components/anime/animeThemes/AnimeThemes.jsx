@@ -2,10 +2,8 @@ import { Music4Icon } from 'lucide-react'
 import AudioElement from './AudioElement'
 
 export default function AnimeThemes ({ themes }) {
-  console.log({ themes })
   return (
     <>
-      <div>AnimeThemes</div>
       {themes?.openings.length || themes?.endings.length ? (
         <div
           id='theme'
