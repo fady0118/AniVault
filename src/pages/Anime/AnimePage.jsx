@@ -36,7 +36,11 @@ import { Link } from 'react-router'
 import LoaderComponent from '../../components/LoaderComponent'
 import { useUserItemModal } from '../../components/userItemModal/useUserItemModal'
 import UserItemModal from '../../components/userItemModal/UserItemModal'
-import { getAnimeDetailPage } from '../../anilist/pages/getAnimeDetailPage'
+import {
+  getAnimeMetaData,
+  getAnimeThemesData,
+  getItemCharactersData
+} from '../../anilist/aniListFetching/getAnimeDetailPage'
 import { AniListFailedQueryComponent } from '../../components/anime/AniListFailedQueryComponent'
 import AnimeThemes from '../../components/anime/animeThemes/AnimeThemes'
 
@@ -56,10 +60,24 @@ export default function AnimePage () {
   const animeQ = useQuery({
     queryKey: ['anime', id],
     queryFn: async () => {
-      const res = await getAnimeDetailPage(id)
+      const res = await getAnimeMetaData(id)
       return res || {}
     },
     throwOnError: false
+  })
+
+  const charactersQ = useQuery({
+    queryKey: ['animeCharacters', id],
+    queryFn: async () => {
+      return await getItemCharactersData(id, "ANIME")
+    }
+  })
+
+  const animeThemesQ = useQuery({
+    queryKey: ['animeThemes', id],
+    queryFn: async () => {
+      return await getAnimeThemesData(id)
+    }
   })
 
   const errorMessage = animeQ.error?.message || 'Failed to load anime details.'
@@ -259,7 +277,7 @@ export default function AnimePage () {
                                   (studio, i) => (
                                     <Link
                                       key={i}
-                                      to={`/producer/${studio.mal_id}`}
+                                      to={`/producer/${studio.id}`}
                                       className='blue-link duration-200'
                                     >
                                       {studio.name}
@@ -535,7 +553,7 @@ export default function AnimePage () {
                       />
                     </div>
                     {/* characters */}
-                    {animeQ?.data?.characters.dataArr.length ? (
+                    {charactersQ?.data?.characters.dataArr.length ? (
                       <div
                         id='characters'
                         className='flex justify-center w-full h-fit order-4'
@@ -545,7 +563,7 @@ export default function AnimePage () {
                             Characters & Voice Actors
                           </div>
                           <CardBox
-                            dataArr={animeQ?.data?.characters.dataArr}
+                            dataArr={charactersQ?.data?.characters.dataArr}
                             num={9}
                           />
                         </div>
@@ -578,8 +596,8 @@ export default function AnimePage () {
                       </div>
                     </div>
                     {/* themes */}
-                    <AnimeThemes themes={animeQ?.data?.themes} />
-                    
+                    <AnimeThemes themes={animeThemesQ?.data?.themes} />
+
                     {/* related entries */}
                     {animeQ?.data?.anime?.flattenedRelations?.length ? (
                       <div
@@ -598,10 +616,10 @@ export default function AnimePage () {
                                 <div key={i} className='flex flex-row w-full'>
                                   <Link
                                     className='w-1/4 max-w-20 h-full aspect-2/3 '
-                                    to={`/${entry.type}/${entry.mal_id}`}
+                                    to={`/${entry.type}/${entry.id}`}
                                   >
                                     <img
-                                      data-mal-id={entry.mal_id}
+                                      data-mal-id={entry.id}
                                       className='w-full h-full object-cover text-[0.75em]'
                                       src={entry.images.jpg.image_url}
                                       alt={entry.name}
@@ -609,7 +627,7 @@ export default function AnimePage () {
                                   </Link>
                                   <div className='w-3/4 flex flex-col gap-y-1 px-2'>
                                     <Link
-                                      to={`/${entry.type}/${entry.mal_id}`}
+                                      to={`/${entry.type}/${entry.id}`}
                                       className='blue-link'
                                     >
                                       {entry.title}
@@ -647,18 +665,18 @@ export default function AnimePage () {
                                     >
                                       <Link
                                         className='w-1/4 max-w-20 h-full aspect-2/3 '
-                                        to={`/${entry.type}/${entry.mal_id}`}
+                                        to={`/${entry.type}/${entry.id}`}
                                       >
                                         <img
                                           className='w-full h-full object-cover text-[0.75em]'
-                                          data-mal-id={entry.mal_id}
+                                          data-mal-id={entry.id}
                                           src={entry.images.jpg.image_url}
                                           alt={entry.name}
                                         />
                                       </Link>
                                       <div className='w-3/4 flex flex-col gap-y-1 px-2'>
                                         <Link
-                                          to={`/${entry.type}/${entry.mal_id}`}
+                                          to={`/${entry.type}/${entry.id}`}
                                           className='blue-link'
                                         >
                                           {entry.title}
@@ -677,7 +695,6 @@ export default function AnimePage () {
                     ) : (
                       ''
                     )}
-                    
                   </div>
                 </div>
 

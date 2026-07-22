@@ -34,7 +34,7 @@ function formatAniListMediaDate (dateObj) {
 export function adaptAnimeDetail (media) {
   const flattenedRelations = (media.relations?.edges ?? []).map(edge => ({
     relation: edge.relationType,
-    mal_id: edge.node.idMal,
+    id: edge.node.id,
     title: edge.node.title.english || edge.node.title.romaji,
     type: edge.node.type?.toLowerCase(),
     images: { jpg: { image_url: edge.node.coverImage?.medium } }
@@ -97,25 +97,48 @@ export function adaptAnimeDetail (media) {
   }
 }
 
-export function adaptCharacters (media) {
-  const dataArr = (media.characters?.edges ?? []).map(edge => ({
+export function adaptCharacters (allEdges = []) {
+  // anilist does not necessarily order characters by relevance so we need to reorder the array to put main -> supporting -> background
+  const sortedArray = sortCharactersByRole(allEdges)
+  const dataArr = sortedArray.map(edge => ({
     character: {
       path: 'character',
       role: edge.role.toLowerCase(),
       id: edge.node.id,
       name: edge.node.name.full,
-      images: { jpg: { image_url: edge.node.image?.large } }
+      images: {
+        jpg: { image_url: edge.node.image?.large || edge.node.image?.medium }
+      }
     },
     voice_actor: edge.voiceActors?.[0]
       ? {
           path: 'people',
           id: edge.voiceActors[0].id,
           name: edge.voiceActors[0].name.full,
-          images: { jpg: { image_url: edge.voiceActors[0].image?.large } }
+          images: {
+            jpg: {
+              image_url:
+                edge.voiceActors[0].image?.large ||
+                edge.voiceActors[0].image?.medium
+            }
+          }
         }
       : null
   }))
   return { dataArr }
+}
+
+function sortCharactersByRole (edges) {
+  const rolePriorityMap = {
+    MAIN: 0,
+    SUPPORTING: 1,
+    BACKGROUND: 2
+  }
+  return [...edges]?.sort((a, b) => {
+    const priorityA = rolePriorityMap[a.role?.toUpperCase()] ?? 3
+    const priorityB = rolePriorityMap[b.role?.toUpperCase()] ?? 3
+    return priorityA - priorityB
+  })
 }
 
 function bucketReviewTag (score) {
@@ -125,7 +148,9 @@ function bucketReviewTag (score) {
 }
 
 export function adaptReviews (media) {
-  const allReviews = (media.reviews?.nodes ?? []).map(r => ({
+  const reviews = media?.reviews?.nodes??[];
+  const uniqueReviews = [...new Map(reviews.map(r=>[r.id, r])).values()]
+  const allReviews = (uniqueReviews?? []).map(r => ({
     id: r.id,
     review: r.body,
     summary: r.summary,
@@ -140,7 +165,7 @@ export function adaptReviews (media) {
   }))
 
   const featured = ['recommended', 'mixed feelings', 'not recommended']
-    .map(tag => allReviews.find(r => r.tags.includes(tag)))
+    .map(tag => allReviews.find(r => r.tags.toLowerCase() === tag))
     .filter(Boolean)
 
   const rest = allReviews.filter(r => !featured.some(f => f.id === r.id))

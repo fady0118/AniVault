@@ -134,40 +134,6 @@ function bucketReviewTag (score) {
   return 'not recommended'
 }
 
-export function adaptReviews (media) {
-  const allReviews = (media.reviews?.nodes ?? []).map(r => ({
-    id: r.id,
-    review: r.body,
-    summary: r.summary,
-    score: r.score,
-    date: r.updatedAt,
-    tags: bucketReviewTag(r.score),
-    user: {
-      id: r.user?.id,
-      username: r.user?.name,
-      avatarImg: r.user?.avatar?.large
-    }
-  }))
-
-  const featured = ['recommended', 'mixed feelings', 'not recommended']
-    .map(tag => allReviews.find(r => r.tags === tag))
-    .filter(Boolean)
-
-  const rest = allReviews.filter(r => !featured.some(f => f.id === r.id))
-
-  const stats = {
-    all: allReviews.length,
-    recommended: allReviews.filter(r => r.tags === 'recommended').length,
-    mixedFeelings: allReviews.filter(r => r.tags === 'mixed feelings').length,
-    notRecommended: allReviews.filter(r => r.tags === 'not recommended').length,
-    avgScore: allReviews.length
-      ? allReviews.reduce((c, r) => c + r.score, 0) / allReviews.length
-      : null
-  }
-
-  return { featured, rest, stats }
-}
-
 export function adaptRecommendations (media) {
   const recommendationsDataArr = (media.recommendations?.nodes ?? []).map(
     n => ({

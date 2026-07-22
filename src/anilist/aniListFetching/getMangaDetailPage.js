@@ -1,9 +1,9 @@
 import { getFriendlyErrorMessage } from '../../utility/errorMapping'
+import { adaptReviews } from '../adapters/adaptAnime'
 import {
   adaptMangaDetail,
   adaptCharacters,
   adaptRecommendations,
-  adaptReviews,
   adaptPictureResults
 } from '../adapters/adaptManga'
 import { queryAniList } from '../client'
@@ -16,12 +16,10 @@ export async function getMangaDetailPage (malId) {
       id: Number(malId)
     })
     
-    const title = aniListResult?.Media.title.english??aniListResult?.Media.title.native??null
     const mangaDexResults = await getGalleryForManga(aniListResult?.Media)
 
     const adaptedData = {
       ...adaptMangaDetail(aniListResult?.Media),
-      characters: adaptCharacters(aniListResult?.Media),
       reviews: adaptReviews(aniListResult?.Media),
       recommendations: adaptRecommendations(aniListResult?.Media),
       pictures: adaptPictureResults(mangaDexResults ?? [])

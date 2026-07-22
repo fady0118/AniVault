@@ -64,20 +64,6 @@ query ($id: Int) {
         }
       }
     }
-    characters(sort: [RELEVANCE], perPage: 25) {
-      edges {
-        role
-        node {
-          id
-          name {
-            full
-          }
-          image {
-            large
-          }
-        }
-      }
-    }
     reviews(sort: RATING_DESC, limit: 20) {
       nodes {
         id

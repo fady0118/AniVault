@@ -78,29 +78,6 @@ query ($id: Int) {
                 }
             }
         }
-        characters(sort: [RELEVANCE], perPage: 25) {
-            edges {
-                role
-                voiceActors(language: JAPANESE) {
-                    id
-                    name {
-                        full
-                    }
-                    image {
-                        large
-                    }
-                }
-                node {
-                    id
-                    name {
-                        full
-                    }
-                    image {
-                        large
-                    }
-                }
-            }
-        }
         reviews(sort: RATING_DESC, limit: 20) {
             nodes {
                 id

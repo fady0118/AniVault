@@ -130,7 +130,7 @@ export default function RootComponent ({
             Browse {Root}
           </div>
 
-          <div className='order-2 px-3 py-1 text-[0.8em] md:text-[1em]'>
+          <div className='order-2 px-3 py-1 text-[0.8em] md:text-[0.9em]'>
             {windowWidth > 600 ? (
               <>
                 <div

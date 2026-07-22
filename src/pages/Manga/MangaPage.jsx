@@ -20,8 +20,9 @@ import Reviews from '../../components/anime/Reviews'
 import LoaderComponent from '../../components/LoaderComponent'
 import { useUserItemModal } from '../../components/userItemModal/useUserItemModal'
 import UserItemModal from '../../components/userItemModal/UserItemModal'
-import { getMangaDetailPage } from '../../anilist/pages/getMangaDetailPage'
+import { getMangaDetailPage } from '../../anilist/aniListFetching/getMangaDetailPage'
 import { AniListFailedQueryComponent } from '../../components/anime/AniListFailedQueryComponent'
+import { getItemCharactersData } from '../../anilist/aniListFetching/getAnimeDetailPage'
 
 export default function MangaPage () {
   let { id } = useParams()
@@ -42,6 +43,14 @@ export default function MangaPage () {
     },
     throwOnError: false
   })
+
+  const charactersQ = useQuery({
+    queryKey: ['animeCharacters', id],
+    queryFn: async () => {
+      return await getItemCharactersData(id, "MANGA")
+    }
+  })
+
   const errorMessage = mangaQ.error?.message || 'Failed to load anime details.'
 
   // Gallery section
@@ -432,7 +441,7 @@ export default function MangaPage () {
                     />
                   </div>
 
-                  {mangaQ?.data?.characters?.dataArr?.length ? (
+                  {charactersQ?.data?.characters?.dataArr?.length ? (
                     <div
                       id='characters'
                       className='flex justify-center w-full h-fit order-4'
@@ -442,7 +451,7 @@ export default function MangaPage () {
                           Characters
                         </div>
                         <CardBox
-                          dataArr={mangaQ.data.characters.dataArr}
+                          dataArr={charactersQ.data.characters.dataArr}
                           num={9}
                         />
                       </div>

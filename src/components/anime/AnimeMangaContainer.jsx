@@ -6,8 +6,8 @@ import { Link } from 'react-router'
 import LoaderComponent from '../LoaderComponent'
 import EmptyDataFallback from '../EmptyDataFallback'
 import { useUserItemModal } from '../userItemModal/useUserItemModal'
-import { getAniListSearchResults } from '../../anilist/pages/getSearchResults'
 import { adaptSearchResults } from '../../anilist/adapters/adaptSearchResults'
+import { getAniListSearchResults } from '../../anilist/aniListFetching/getSearchResults'
 
 const classes = {
   chevron: 'p-0.5 rounded-md box-content duration-200 scale-80 md:scale-100'
