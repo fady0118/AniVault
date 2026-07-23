@@ -1,3 +1,18 @@
+const ANILIST_TYPE_MAP = {
+  anime: 'anime',
+  manga: 'manga',
+  character: 'character',
+  staff: 'people',
+  studio: 'producer'
+}
+
+function rewriteAniListLinks (markdown) {
+  return markdown.replace(
+    /(?<=\])\(https?:\/\/anilist\.co\/(anime|manga|character|staff|studio)\/(\d+)\/([^)]+)\)/g,
+    (_, type, id, slug) => `(/${ANILIST_TYPE_MAP[type] || type}/${id}/${slug})`
+  )
+}
+
 export function adaptCharacter (data) {
   if (!data) return null
   const character = data.Character
@@ -48,6 +63,11 @@ export function adaptCharacter (data) {
     image: character.image?.large || character.image?.medium,
     about: character.description
       ? character.description
+          .replace(
+            /(?<=\])\(https?:\/\/anilist\.co\/(anime|manga|character|staff|studio)\/(\d+)\/([^)]+)\)/g,
+            (_, type, id, slug) =>
+              `(/${ANILIST_TYPE_MAP[type] || type}/${id}/${slug})`
+          )
           .replace(
             /~!([\s\S]+?)!~/g,
             '<span class="al-spoiler" tabindex="0">$1</span>'

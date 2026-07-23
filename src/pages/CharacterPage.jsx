@@ -44,8 +44,12 @@ export default function CharacterPage () {
 
   useEffect(() => {
     function handleSpoilerClick (e) {
-      if (e.target.classList.contains('al-spoiler')) {
-        e.target.classList.toggle('revealed')
+      const spoiler = e.target.closest('.al-spoiler')
+      if (!spoiler) return
+
+      if (!spoiler.classList.contains('revealed')) {
+        e.preventDefault()
+        spoiler.classList.add('revealed')
       }
     }
     document.addEventListener('click', handleSpoilerClick)
@@ -96,14 +100,14 @@ export default function CharacterPage () {
                 <p id='aboutBody' className='whitespace-pre-wrap'>
                   {character?.about || 'No biography written.'}
                 </p>
-                <p>Member Favorites: {character?.favorites}</p>
+                {/* <p>Member Favorites: {character?.favorites}</p> */}
               </div>
             </div>
           </div>
 
           {/* Details */}
 
-          <div className='order-3 w-fit flex flex-wrap items-stretch gap-x-5 gap-y-3 box-colors rounded-xl px-4 py-3 shadow-sm'>
+          <div className='order-3 w-full sm:w-fit flex flex-wrap justify-evenly sm:justify-center items-stretch gap-x-2 sm:gap-x-8 sm:gap-y-3 box-colors rounded-xl sm:px-6 py-3 shadow-sm'>
             {character?.gender && (
               <div className='flex items-center gap-2'>
                 <User className='w-4 h-4 opacity-50' strokeWidth={2} />

@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, Component: AnimeRootPage },
           {
-            path: ':id',
+            path: ':id/:slug?',
             children: [{ index: true, Component: AnimePage }]
           },
           {
@@ -49,13 +49,13 @@ export const router = createBrowserRouter([
         path: 'manga',
         children: [
           { index: true, Component: MangaRootPage },
-          { path: ':id', Component: MangaPage }
+          { path: ':id/:slug?', Component: MangaPage }
         ]
       },
-      { path: 'character/:id', Component: CharacterPage },
+      { path: 'character/:id/:slug?', Component: CharacterPage },
       { path: 'people/:id', Component: PeoplePage },
       {
-        path: 'producer',
+        path: 'producer/:slug?',
         children: [{ path: ':id', Component: ProducerPage }]
       },
       {
