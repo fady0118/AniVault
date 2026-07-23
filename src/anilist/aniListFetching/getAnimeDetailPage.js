@@ -42,6 +42,7 @@ export async function getAnimeMetaData (id) {
 export async function getItemCharactersData (id, mediaType) {
   try {
     const allEdges = []
+
     for await (const edgesChunk of queryAniListCharactersById(
       id,
       ANIME_MANGA_CHARACTERS_QUERY,

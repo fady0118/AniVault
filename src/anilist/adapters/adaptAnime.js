@@ -52,7 +52,9 @@ export function adaptAnimeDetail (media) {
       english: media.title?.english,
       native: media.title?.native
     },
-    description: media.description,
+    description: media.description
+      ? media.description.replace(/<br\s*\/?>/gi, '\n')
+      : 'No description written.',
     episodes: media.episodes,
     duration: media.duration,
     status: media.status,
@@ -98,8 +100,9 @@ export function adaptAnimeDetail (media) {
 }
 
 export function adaptCharacters (allEdges = []) {
-  // anilist does not necessarily order characters by relevance so we need to reorder the array to put main -> supporting -> background
-  const sortedArray = sortCharactersByRole(allEdges)
+  // aniList characters data require extra work for deduplicating & sorting by role
+  const deduplicatedArray = [... new Map(allEdges.map(e=>[e.node.id, e])).values()]
+  const sortedArray = sortCharactersByRole(deduplicatedArray)
   const dataArr = sortedArray.map(edge => ({
     character: {
       path: 'character',
@@ -148,12 +151,14 @@ function bucketReviewTag (score) {
 }
 
 export function adaptReviews (media) {
-  const reviews = media?.reviews?.nodes??[];
-  const uniqueReviews = [...new Map(reviews.map(r=>[r.id, r])).values()]
-  const allReviews = (uniqueReviews?? []).map(r => ({
+  const reviews = media?.reviews?.nodes ?? []
+  const uniqueReviews = [...new Map(reviews.map(r => [r.id, r])).values()]
+  const allReviews = (uniqueReviews ?? []).map(r => ({
     id: r.id,
-    review: r.body,
-    summary: r.summary,
+    review: r.body.replace(/<br\s*\/?>/gi, '\n'),
+    summary: r.summary
+      ? r.summary.replace(/<br\s*\/?>/gi, '\n')
+      : 'No summary written.',
     score: r.score,
     date: r.updatedAt,
     tags: bucketReviewTag(r.score),
