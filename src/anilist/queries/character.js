@@ -5,6 +5,8 @@ query ($id: Int) {
         name {
             full
             native
+            first
+            last
         }
         image {
             large

@@ -43,11 +43,16 @@ export function adaptCharacter (data) {
 
   return {
     id: character.id,
-    name: character.name?.full,
+    name: character.name,
     nativeName: character.name?.native,
     image: character.image?.large || character.image?.medium,
     about: character.description
-      ? character.description.replace(/<br\s*\/?>/gi, '\n')
+      ? character.description
+          .replace(
+            /~!([\s\S]+?)!~/g,
+            '<span class="al-spoiler" tabindex="0">$1</span>'
+          )
+          .replace(/<br\s*\/?>/gi, '\n')
       : 'No biography written.',
     favorites: character.favourites || 0,
     gender: character.gender,

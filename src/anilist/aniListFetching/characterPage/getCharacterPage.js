@@ -1,6 +1,6 @@
-import { adaptCharacter } from "../adapters/adaptCharacter"
-import { queryAniList } from "../client"
-import { CHARACTER_QUERY } from "../queries/character"
+import { adaptCharacter } from '../../adapters/adaptCharacter'
+import { queryAniList } from '../../client'
+import { CHARACTER_QUERY } from '../../queries/character'
 
 export async function getCharacterData (id) {
   try {
@@ -8,7 +8,7 @@ export async function getCharacterData (id) {
       id: Number(id)
     })
     return {
-        character: adaptCharacter(aniListResult)
+      character: adaptCharacter(aniListResult)
     }
   } catch (error) {
     console.log(error)
