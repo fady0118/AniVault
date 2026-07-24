@@ -60,6 +60,7 @@ export function adaptCharacter (data) {
     id: character.id,
     name: character.name,
     nativeName: character.name?.native,
+    alternativeNames: (character.name?.alternative || []).filter(Boolean),
     image: character.image?.large || character.image?.medium,
     about: character.description
       ? character.description

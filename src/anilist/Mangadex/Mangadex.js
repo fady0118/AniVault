@@ -62,6 +62,7 @@ async function getMangaDexCovers (mangaDexId) {
   const res = await fetch(url)
   if (!res.ok) throw new Error(`MangaDex covers failed: ${res.status}`)
   const json = await res.json()
+console.log({json})
   return json.data.map(
     c => `${MANGADEX_UPLOADS}/covers/${mangaDexId}/${c.attributes.fileName}`
   )

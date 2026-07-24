@@ -7,6 +7,7 @@ query ($id: Int) {
             native
             first
             last
+            alternative
         }
         image {
             large

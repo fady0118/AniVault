@@ -73,7 +73,7 @@ export default function CharacterPage () {
                 {character?.name.full}
               </span>
               {character?.nativeName && (
-                <span className='text-[0.65em] sm:text-[1em] leading-relaxed ml-2 font-normal dark:text-text-dark/65'>
+                <span className='text-[0.65em] sm:text-[0.75em] leading-relaxed ml-2 font-normal dark:text-text-dark/65'>
                   ({character?.nativeName})
                 </span>
               )}
@@ -93,14 +93,13 @@ export default function CharacterPage () {
               id='about'
               className='order-2 w-full sm:w-4/5 pt-1 grow rounded-lg overflow-hidden box-colors'
             >
-              <div className='border-b subtle-border-colors-darker px-3 font-semibold text-[1em] leading-relaxed capitalize'>
+              <div className='border-b subtle-border-colors-darker px-3 font-semibold text-[0.75em] leading-relaxed capitalize'>
                 About
               </div>
               <div className='p-3 text-[0.65em] font-light flex flex-col space-y-2 leading-relaxed'>
                 <p id='aboutBody' className='whitespace-pre-wrap'>
                   {character?.about || 'No biography written.'}
                 </p>
-                {/* <p>Member Favorites: {character?.favorites}</p> */}
               </div>
             </div>
           </div>
@@ -112,13 +111,25 @@ export default function CharacterPage () {
               <div className='flex items-center gap-2'>
                 <User className='w-4 h-4 opacity-50' strokeWidth={2} />
                 <div className='flex flex-col leading-snug'>
-                  <span className='font-semibold text-[0.55em] uppercase tracking-wide opacity-60'>
+                  <span className='font-semibold text-[0.65em] uppercase tracking-wide opacity-60'>
                     Gender
                   </span>
                   <span className='text-[0.65em] font-medium'>
                     {character.gender}
                   </span>
                 </div>
+                {character?.alternativeNames?.length > 0 && (
+                  <div className='flex gap-1.5 overflow-x-auto no-scrollbar mt-1'>
+                    {character.alternativeNames.map((name, i) => (
+                      <span
+                        key={i}
+                        className='text-[0.65em] text-amethyst-smoke-600 dark:text-amethyst-smoke-400 whitespace-nowrap border border-amethyst-smoke-400/30 rounded-full px-2 py-0.5'
+                      >
+                        {name}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -128,7 +139,7 @@ export default function CharacterPage () {
                 <div className='flex items-center gap-2'>
                   <Cake className='w-4 h-4 opacity-50' strokeWidth={2} />
                   <div className='flex flex-col leading-snug'>
-                    <span className='font-semibold text-[0.55em] uppercase tracking-wide opacity-60'>
+                    <span className='font-semibold text-[0.65em] uppercase tracking-wide opacity-60'>
                       Age
                     </span>
                     <span className='text-[0.65em] font-medium'>
@@ -145,7 +156,7 @@ export default function CharacterPage () {
                 <div className='flex items-center gap-2'>
                   <Star className='w-4 h-4 opacity-50' strokeWidth={2} />
                   <div className='flex flex-col leading-snug'>
-                    <span className='font-semibold text-[0.55em] uppercase tracking-wide opacity-60'>
+                    <span className='font-semibold text-[0.65em] uppercase tracking-wide opacity-60'>
                       Favorites
                     </span>
                     <span className='text-[0.65em] font-medium'>
@@ -164,44 +175,47 @@ export default function CharacterPage () {
               cols={3}
             />
           </div>
-
-          <div className='order-4 flex flex-col md:flex-row gap-3'>
+          <div className='order-4 flex flex-col md:flex-row gap-4'>
             {/* Animeography */}
             <div
               id='Animeography'
-              className='box-colors w-full md:w-1/2 rounded-md h-fit'
+              className='box-colors w-full md:w-1/2 rounded-lg border subtle-border-colors h-fit'
             >
-              <div className='border-b subtle-border-colors-darker pt-1 px-3 font-semibold text-[1em] leading-relaxed capitalize'>
+              <div className='border-b subtle-border-colors p-3 font-semibold text-base capitalize'>
                 Animeography
               </div>
-              <div className='flex flex-col pt-2 space-y-2'>
+              <div className='flex flex-col'>
                 {!character?.anime.length ? (
-                  <p className='p-3 text-[0.65em] font-light leading-relaxed'>
+                  <p className='p-4 text-[0.75em] font-light text-amethyst-smoke-950/80 dark:text-amethyst-smoke-300/80'>
                     No anime appearances.
                   </p>
                 ) : (
                   character?.anime.map(entry => (
                     <div
                       key={entry.id}
-                      className='flex w-full px-2 space-x-2 border-b subtle-border-colors-darker'
+                      className='flex items-start gap-3 p-3 border-b subtle-border-colors last:border-b-0'
                     >
                       <Link
-                        className='w-16 sm:w-20 md:w-1/4 max-w-24 shrink-0'
+                        className='group shrink-0 w-16 sm:w-20'
                         to={`/anime/${entry.id}`}
                       >
-                        <img
-                          className='w-full aspect-3/4 object-cover rounded-md overflow-hidden'
-                          src={entry.coverImage}
-                          alt={entry.title}
-                        />
+                        <div className='relative aspect-3/4 overflow-hidden rounded-md shadow-sm'>
+                          <img
+                            className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+                            src={entry.coverImage}
+                            alt={entry.title}
+                          />
+                        </div>
                       </Link>
-                      <div className='flex flex-col w-3/4 space-y-1'>
+                      <div className='flex-1 min-w-0 flex flex-col gap-1'>
                         <Link to={`/anime/${entry.id}`}>
-                          <p className='text-[0.8em] blue-link line-clamp-2'>
+                          <p className='text-[0.75em] font-medium blue-link line-clamp-2'>
                             {entry.title}
                           </p>
                         </Link>
-                        <p className='text-[0.625em]'>{entry.role}</p>
+                        <p className='text-[0.65em] text-amethyst-smoke-950/80 dark:text-amethyst-smoke-300/80'>
+                          {entry.role}
+                        </p>
                       </div>
                     </div>
                   ))
@@ -212,39 +226,43 @@ export default function CharacterPage () {
             {/* Mangaography */}
             <div
               id='Mangaography'
-              className='box-colors w-full md:w-1/2 rounded-md h-fit'
+              className='box-colors w-full md:w-1/2 rounded-lg border subtle-border-colors h-fit'
             >
-              <div className='border-b subtle-border-colors-darker pt-1 px-3 font-semibold text-[1em] leading-relaxed capitalize'>
+              <div className='border-b subtle-border-colors p-3 font-semibold text-base capitalize'>
                 Mangaography
               </div>
-              <div className='flex flex-col pt-2 space-y-2'>
+              <div className='flex flex-col'>
                 {!character?.manga.length ? (
-                  <p className='p-3 text-[0.65em] font-light leading-relaxed'>
+                  <p className='p-4 text-[0.75em] font-light text-amethyst-smoke-950/80 dark:text-amethyst-smoke-300/80'>
                     No manga appearances.
                   </p>
                 ) : (
                   character?.manga.map(entry => (
                     <div
                       key={entry.id}
-                      className='flex w-full px-2 space-x-2 border-b subtle-border-colors-darker'
+                      className='flex items-start gap-3 p-3 border-b subtle-border-colors last:border-b-0'
                     >
                       <Link
-                        className='w-16 sm:w-20 md:w-1/4 max-w-24 shrink-0'
+                        className='group shrink-0 w-16 sm:w-20'
                         to={`/manga/${entry.id}`}
                       >
-                        <img
-                          className='w-full aspect-3/4 object-cover rounded-md overflow-hidden'
-                          src={entry.coverImage}
-                          alt={entry.title}
-                        />
+                        <div className='relative aspect-3/4 overflow-hidden rounded-md shadow-sm'>
+                          <img
+                            className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+                            src={entry.coverImage}
+                            alt={entry.title}
+                          />
+                        </div>
                       </Link>
-                      <div className='flex flex-col w-3/4 space-y-1'>
+                      <div className='flex-1 min-w-0 flex flex-col gap-1'>
                         <Link to={`/manga/${entry.id}`}>
-                          <p className='text-[0.8em] blue-link line-clamp-2'>
+                          <p className='text-[0.75em] font-medium blue-link line-clamp-2'>
                             {entry.title}
                           </p>
                         </Link>
-                        <p className='text-[0.625em]'>{entry.role}</p>
+                        <p className='text-[0.65em] text-amethyst-smoke-950/80 dark:text-amethyst-smoke-300/80'>
+                          {entry.role}
+                        </p>
                       </div>
                     </div>
                   ))
@@ -255,7 +273,7 @@ export default function CharacterPage () {
 
           {/* Voice Actors */}
           <div className='order-5 box-colors rounded-md'>
-            <div className='border-b subtle-border-colors-darker pt-1 px-3 font-semibold text-[1em] leading-relaxed capitalize'>
+            <div className='border-b subtle-border-colors-darker pt-1 px-3 font-semibold text-[0.75em] leading-relaxed capitalize'>
               Voice Actors
             </div>
             <div className='grid grid-cols-1 2xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 pt-2 p-2'>
@@ -281,7 +299,7 @@ export default function CharacterPage () {
                     </Link>
                     <div className='flex flex-col w-3/4 gap-1'>
                       <Link
-                        className='text-[0.8em] blue-link line-clamp-2'
+                        className='text-[0.65em] blue-link line-clamp-2'
                         to={`/people/${actor.id}`}
                       >
                         {actor.name}
