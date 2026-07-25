@@ -3,7 +3,7 @@
  * This mapping bridges AniList's genre names to Jikan's mal_id format
  * for backward compatibility with the existing UI
  */
-const ANILIST_GENRE_MAP = {
+export const ANILIST_GENRE_MAP = {
   Action: 1,
   Adventure: 2,
   Comedy: 4,

@@ -163,6 +163,9 @@
   .max-lines-5 {
     --max-lines: 5;
   }
+  .max-lines-6 {
+    --max-lines: 6;
+  }
 
   .peer:has(:not(:checked))~.cutoff-text {
     display: -webkit-box;

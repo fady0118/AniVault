@@ -10,10 +10,10 @@ import { queryAniList } from '../client'
 import { getGalleryForManga } from '../Mangadex/Mangadex'
 import { MANGA_DETAIL_QUERY } from '../queries/mangaDetail'
 
-export async function getMangaDetailPage (malId) {
+export async function getMangaDetailPage (id) {
   try {
     const aniListResult = await queryAniList(MANGA_DETAIL_QUERY, {
-      id: Number(malId)
+      id: Number(id)
     })
     
     const mangaDexResults = await getGalleryForManga(aniListResult?.Media)

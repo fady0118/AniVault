@@ -1,87 +1,103 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useParams, useSearchParams, Link } from 'react-router'
-import { RootContext } from '../App'
 import { useQueries } from '@tanstack/react-query'
-import { dateFormatter, renderIcon } from '../utility/utils'
 import {
-  Baby,
-  Calendar,
   ChevronLeft,
   ChevronRight,
   Grid3x2,
-  Hash,
+  Heart,
   LucideLayoutGrid,
   LucideLayoutList,
-  Star,
-  User,
-  Videotape
+  Star
 } from 'lucide-react'
-import { jikanFetch } from '../utility/jikanApi'
 import LoaderComponent from '../components/LoaderComponent'
+import {
+  getStudioDetailsData,
+  getStudioMediaData
+} from '../anilist/aniListFetching/studioPage/getStudioData'
 
 const classes = {
   gridClasses: {
     smallGrid:
-      'grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 auto-rows-fr',
+      'grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 auto-rows-fr',
     detailedGrid:
-      'grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 auto-rows-fr ',
+      'grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 auto-rows-fr ',
     tiles: 'grid grid-cols-1 auto-rows-fr '
   }
 }
 
+function formatSeason (season, year) {
+  if (!season && !year) return null
+  const label = season
+    ? season.charAt(0).toUpperCase() + season.slice(1).toLowerCase()
+    : ''
+  return [label, year].filter(Boolean).join(' ')
+}
+
+function stripDescription (html) {
+  if (!html) return ''
+  return html
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\(Source:[^)]*\)/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export default function ProducerPage () {
   const { id } = useParams()
-  const { windowWidth } = useContext(RootContext)
-  const [layout, setLayout] = useState('detailedGrid') // smallGrid, detailedGrid, tiles
+  const [layout, setLayout] = useState('detailedGrid')
   const [searchParams, setSearchParams] = useSearchParams()
 
   const currentPage = Number(searchParams.get('page') ?? 1)
 
-  const pageSwap = newPage => {
-    setSearchParams({ page: newPage })
-  }
+  const pageSwap = useCallback(
+    newPage => {
+      setSearchParams({ page: String(newPage) })
+    },
+    [setSearchParams]
+  )
 
-  const [producerQ, animesQ] = useQueries({
+  const [producerQ, producerMediaQ] = useQueries({
     queries: [
       {
         queryKey: ['producer', id],
         queryFn: async () => {
-          const res = await jikanFetch(
-            `https://api.jikan.moe/v4/producers/${id}/full`
-          )
-          const producer_Data = await res.json()
-          return producer_Data.data || []
+          const data = await getStudioDetailsData(id)
+          return data || {}
         }
       },
       {
-        queryKey: ['animes', id, currentPage],
+        queryKey: ['producerMedia', id, currentPage],
         queryFn: async () => {
-          const res = await jikanFetch(
-            `https://api.jikan.moe/v4/anime?producers=${id}&page=${currentPage}`
-          )
-          const animes_Data = await res.json()
-          return animes_Data || []
+          const data = await getStudioMediaData(id, currentPage)
+          return data || {}
         }
       }
     ]
   })
 
-  useEffect(() => {
-    if (currentPage > animesQ?.data?.pagination?.last_visible_page)
-      pageSwap(animesQ?.data?.pagination?.last_visible_page)
-  }, [animesQ])
+  const studio = producerQ?.data
+  const mediaResult = producerMediaQ?.data || {}
+  const animeList = mediaResult.data || []
+  const pagination = mediaResult.pagination || {}
+  const isMediaLoading = producerMediaQ.isPending
+  const isMediaFetching = producerMediaQ.isFetching
 
-  function currentPageChange (type) {
-    if (type == 'increment') {
-      if (animesQ?.data?.pagination?.has_next_page) {
-        pageSwap(currentPage + 1)
+  const currentPageChange = useCallback(
+    type => {
+      if (type === 'increment') {
+        if (pagination.has_next_page) {
+          pageSwap(currentPage + 1)
+        }
+      } else if (type === 'decrement') {
+        if (currentPage > 1) {
+          pageSwap(currentPage - 1)
+        }
       }
-    } else if (type == 'decrement') {
-      if (currentPage > 1) {
-        pageSwap(currentPage - 1)
-      }
-    }
-  }
+    },
+    [currentPage, pagination.has_next_page, pageSwap]
+  )
 
   return (
     <>
@@ -90,501 +106,370 @@ export default function ProducerPage () {
           <LoaderComponent />
         </div>
       ) : (
-        <>
-          <div className='relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-dark-amethyst-smoke-50 dark:text-text-dark'>
-            <div
-              id='title'
-              className='mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors order-1 flex items-center space-x-2'
-            >
-              <div className='flex flex-row gap-x-2 text-sm/relaxed sm:text-lg/relaxed font-bold dark:text-text-dark'>
-                <p>
-                  {
-                    producerQ?.data?.titles?.find(
-                      t => t.type.toLowerCase() === 'default'
-                    )?.title
-                  }
-                </p>
-              </div>
+        <div className='relative left-1/2 -translate-x-1/2 z-10 w-[95%] flex flex-col space-y-3 pt-15 pb-3 text-md lg:text-lg'>
+          {/* Header */}
+          <div
+            id='title'
+            className='mt-3 min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex items-center space-x-2'
+          >
+            <span className='text-[1em] sm:text-[1.25em] leading-relaxed font-bold'>
+              {
+                studio?.titles?.find(t => t.type.toLowerCase() === 'default')
+                  ?.title
+              }
+            </span>
+            {studio?.url && (
               <Link
                 className='w-7 sm:w-9 rounded-sm overflow-hidden'
-                to={producerQ?.data.url}
+                to={studio.url}
                 target='_blank'
               >
                 <img
                   src='https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png'
-                  alt='MyAnimeList Logo'
+                  alt='AniList'
                   className='w-full aspect-2/1 object-cover object-center hover:brightness-125 duration-300'
                 />
               </Link>
+            )}
+          </div>
+
+          {/* Stats */}
+          <div className='flex flex-wrap gap-4 text-[0.85em] box-colors rounded-md p-3'>
+            <div className='flex items-center gap-2'>
+              <Star size={16} className='opacity-70' />
+              <span className='font-semibold'>Member Favorites:</span>
+              <span className='font-medium'>
+                {studio?.favorites?.toLocaleString() || 0}
+              </span>
             </div>
-            <div className='w-full order-2 flex flex-col sm:justify-start gap-3'>
-              <div className='w-full flex flex-col xs:flex-row gap-3'>
-                <div id='image' className='w-1/5 min-w-24 max-w-48 '>
-                  <img
-                    className='w-full aspect-square object-cover order-1 rounded-lg overflow-hidden'
-                    src={producerQ?.data?.images?.jpg?.image_url}
-                    alt=''
+          </div>
+
+          {/* Animeography */}
+          <div
+            id='anime'
+            className='flex flex-col w-full box-colors rounded-md'
+          >
+            <div className='flex flex-row justify-between border-b subtle-border-colors-darker pt-1 px-3 font-semibold text-[1.1em] leading-relaxed capitalize'>
+              <span>animeography</span>
+              <div id='controls' className='flex flex-row items-center gap-x-2'>
+                <div className='flex flex-row gap-x-1 items-center'>
+                  <ChevronLeft
+                    onClick={() =>
+                      !isMediaFetching && currentPageChange('decrement')
+                    }
+                    size={18}
+                    className={`${
+                      currentPage <= 1 || isMediaFetching
+                        ? 'stroke-text-light/50 dark:stroke-text-dark/50 pointer-events-none cursor-not-allowed'
+                        : 'stroke-text-light dark:stroke-text-dark hover:cursor-pointer hover:bg-amethyst-smoke-500/15'
+                    } stroke-3 p-2 box-content rounded-full duration-200`}
+                  />
+                  <span className='text-[0.85em]'>{currentPage}</span>
+                  <ChevronRight
+                    onClick={() =>
+                      !isMediaFetching && currentPageChange('increment')
+                    }
+                    size={18}
+                    className={`${
+                      !pagination.has_next_page || isMediaFetching
+                        ? 'stroke-text-light/50 dark:stroke-text-dark/50 pointer-events-none cursor-not-allowed'
+                        : 'stroke-text-light dark:stroke-text-dark hover:cursor-pointer hover:bg-amethyst-smoke-500/15'
+                    } stroke-3 p-2 box-content rounded-full duration-200`}
                   />
                 </div>
                 <div
-                  id='info'
-                  className='flex flex-col grow rounded-md box-colors h-fit'
+                  id='layoutControls'
+                  className='flex flex-row items-center gap-x-0.5'
                 >
-                  <div className='border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
-                    About
-                  </div>
-                  <div className='p-3 text-xs font-light whitespace-pre-wrap'>
-                    {producerQ?.data.about
-                      ? producerQ?.data.about
-                      : 'No biography written.'}
-                  </div>
-                </div>
-              </div>
-              <div className='flex flex-col md:flex-row gap-3'>
-                <div className='flex flex-col gap-y-3 w-full h-fit md:w-1/6 min-w-40 text-xs font-light box-colors rounded-md'>
                   <div>
-                    <div className='border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
-                      Details
-                    </div>
-                    <div className='flex flex-col p-2 gap-y-2'>
-                      <div className='flex flex-row flex-wrap gap-x-3 capitalize'>
-                        <p className='font-semibold'>Japanese:</p>
-                        <p>
-                          {producerQ?.data.titles.find(
-                            t => t.type.toLowerCase() === 'japanese'
-                          ).title || ''}
-                        </p>
-                      </div>
-                      <div className='flex flex-row flex-wrap gap-x-3 capitalize'>
-                        <p className='font-semibold'>established:</p>
-                        <p>
-                          {dateFormatter(producerQ?.data.established) || ''}
-                        </p>
-                      </div>
-                      <div className='flex flex-row flex-wrap gap-x-3 capitalize'>
-                        <p className='font-semibold'>Member Favorites:</p>
-                        <p>{producerQ?.data.favorites || ''}</p>
-                      </div>
-                    </div>
+                    <Grid3x2
+                      onClick={() => setLayout('smallGrid')}
+                      size={18}
+                      className={`layout-icon ${
+                        layout === 'smallGrid' ? 'active-layout-icon' : ''
+                      }`}
+                    />
                   </div>
-                  {producerQ?.data.external.length ? (
-                    <div>
-                      <div
-                        id='external'
-                        className='border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize'
-                      >
-                        Available At
-                      </div>
-                      <div className='flex flex-col p-2 gap-y-2'>
-                        {producerQ?.data.external.map((ext, i) => (
-                          <p
-                            className='flex flex-row items-center gap-1.5'
-                            key={i}
-                          >
-                            {renderIcon(ext.name)}
-                            <Link
-                              className='blue-link'
-                              target='_blank'
-                              to={ext.url}
-                            >
-                              {ext.name}
-                            </Link>
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    ''
-                  )}
-                </div>
-
-                <div
-                  id='anime'
-                  className='flex flex-col w-full md:w-5/6 box-colors rounded-md'
-                >
-                  <div className='flex flex-row justify-between border-b border-amethyst-smoke-700/40 dark:border-amethyst-smoke-500/40 pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
-                    <span>animeography</span>
-                    <div
-                      id='controls'
-                      className='flex flex-row justify-between flex-wrap w-fit gap-x-5'
-                    >
-                      <div className='flex flex-row gap-x-1 items-center'>
-                        <ChevronLeft
-                          onClick={() => currentPageChange('decrement')}
-                          size={18}
-                          className={`${
-                            currentPage === 1
-                              ? 'stroke-text-light/50 dark:stroke-text-dark/50'
-                              : 'stroke-text-light dark:stroke-text-dark hover:cursor-pointer hover:bg-amethyst-smoke-500/15'
-                          } stroke-3 p-2 box-content rounded-full duration-200`}
-                        />
-                        <p>{currentPage}</p>
-                        <ChevronRight
-                          onClick={() => currentPageChange('increment')}
-                          size={18}
-                          className={`${
-                            !animesQ?.data?.pagination?.has_next_page
-                              ? 'stroke-text-light/50 dark:stroke-text-dark/50'
-                              : 'stroke-text-light dark:stroke-text-dark hover:cursor-pointer hover:bg-amethyst-smoke-500/15'
-                          } stroke-3 p-2 box-content rounded-full duration-200`}
-                        />
-                      </div>
-                      <div
-                        id='layoutControls'
-                        className='flex flex-row items-center gap-x-0.5'
-                      >
-                        <div>
-                          <Grid3x2
-                            onClick={() => {
-                              setLayout('smallGrid')
-                            }}
-                            size={18}
-                            className={`layout-icon ${
-                              layout === 'smallGrid' ? 'active-layout-icon' : ''
-                            }`}
-                          />
-                        </div>
-                        <div>
-                          <LucideLayoutGrid
-                            onClick={() => {
-                              setLayout('detailedGrid')
-                            }}
-                            size={18}
-                            className={`layout-icon ${
-                              layout === 'detailedGrid'
-                                ? 'active-layout-icon'
-                                : ''
-                            }`}
-                          />
-                        </div>
-
-                        <div>
-                          <LucideLayoutList
-                            onClick={() => {
-                              setLayout('tiles')
-                            }}
-                            size={18}
-                            className={`layout-icon ${
-                              layout === 'tiles' ? 'active-layout-icon' : ''
-                            }`}
-                          />
-                        </div>
-                      </div>
-                    </div>
+                  <div>
+                    <LucideLayoutGrid
+                      onClick={() => setLayout('detailedGrid')}
+                      size={18}
+                      className={`layout-icon ${
+                        layout === 'detailedGrid' ? 'active-layout-icon' : ''
+                      }`}
+                    />
                   </div>
-
-                  <div
-                    className={`w-full text-2xs gap-4 p-3 ${classes.gridClasses[layout]}`}
-                  >
-                    {animesQ?.data?.data?.map(anime => (
-                      <div
-                        key={anime.mal_id}
-                        className='capitalize rounded-md overflow-hidden'
-                      >
-                        {layout === 'smallGrid' ? (
-                          <>
-                            <div className='w-full h-fit flex flex-col gap-y-1'>
-                              <div className='relative w-full h-fit rounded-md overflow-hidden'>
-                                <Link to={`/anime/${anime.mal_id}`}>
-                                  <img
-                                    className='w-full aspect-3/4 object-cover hover:brightness-60 duration-200'
-                                    src={`${
-                                      anime?.images?.webp?.large_image_url ||
-                                      anime?.images?.jpg?.large_image_url
-                                    }`}
-                                    alt={anime.title_english || anime.title}
-                                  />
-                                </Link>
-                                <div className='pointer-events-none absolute bottom-0 left-0 py-2 px-3 gap-1 flex flex-col w-full text-xs font-light bg-linear-45 from-35% from-amethyst-smoke-400 dark:from-dark-amethyst-smoke-200 to-75% to-transparent'>
-                                  <div className='flex items-center gap-2'>
-                                    <Star size={15} />
-                                    <span>{anime.score}</span>
-                                  </div>
-                                  <div className='flex items-center gap-2'>
-                                    <User size={15} />
-                                    <span>
-                                      {anime.members?.toLocaleString() || '?'}
-                                    </span>
-                                  </div>
-                                  <div className='flex items-center gap-2'>
-                                    <Hash size={15} />
-                                    <span>
-                                      {anime.rank?.toLocaleString() || '?'}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                              <Link
-                                to={`/anime/${anime.mal_id}`}
-                                className='font-bold text-[1.25em] blue-link hover:cursor-pointer cutoff-text-abs max-lines-1'
-                              >
-                                {anime.title_english || anime.title}
-                              </Link>
-                            </div>
-                          </>
-                        ) : layout === 'detailedGrid' ? (
-                          <div className='w-full h-full flex flex-col theme-bg-colors'>
-                            <div className='flex flex-col grow-0 items-center justify-center text-center py-1.5 border-b subtle-border-colors'>
-                              <Link
-                                to={`/anime/${anime.mal_id}`}
-                                className='font-bold text-[1.25em] blue-link hover:cursor-pointer'
-                              >
-                                {anime.title_english || anime.title}
-                              </Link>
-                              <p className='text-[0.9em] font-light'>
-                                {anime.title_japanese}
-                              </p>
-                            </div>
-                            <div className='flex flex-row flex-wrap text-center justify-center w-full items-center capitalize border-b subtle-border-colors'>
-                              <div className='flex flex-row gap-x-1.5 p-1.5 justify-center items-center h-full w-[30%] border-r subtle-border-colors'>
-                                <Calendar size={14} />
-                                <p>{dateFormatter(anime.aired.from)}</p>
-                              </div>
-
-                              <div className='flex flex-row gap-x-1.5 p-1.5 justify-center items-center h-full w-[40%]  border-r subtle-border-colors'>
-                                <Baby size={14} />
-                                <p>{anime.rating}</p>
-                              </div>
-
-                              <div className='flex flex-row gap-x-1.5 p-1.5 justify-center items-center h-full w-[30%]'>
-                                <Videotape size={14} />
-                                <span>{anime.type}</span>
-                              </div>
-                            </div>
-                            <div className='flex flex-row justify-evenly items-center py-1.5'>
-                              {anime.genres.slice(0, 4).map((genre, i) => (
-                                <Link
-                                  key={i}
-                                  to={genre.url}
-                                  className='hover-blue-link duration-150'
-                                >
-                                  {genre.name}
-                                </Link>
-                              ))}
-                            </div>
-                            <div className='w-full flex flex-row items-start grow px-1.5'>
-                              <div id='poster' className='w-1/2 md:w-2/5'>
-                                <Link to={`/anime/${anime.mal_id}`}>
-                                  <img
-                                    className='w-full h-full aspect-auto object-cover hover:brightness-60 duration-200'
-                                    src={`${
-                                      anime?.images?.webp?.large_image_url ||
-                                      anime?.images?.jpg?.large_image_url
-                                    }`}
-                                    alt={anime.title_english || anime.title}
-                                  />
-                                </Link>
-                              </div>
-                              <div className='w-1/2 md:w-3/5 flex flex-col gap-y-2 pl-2 pt-2'>
-                                <div className='w-full flex flex-col order-1 gap-y-0.5'>
-                                  <div className='flex flex-row flex-wrap gap-x-1.5'>
-                                    <p className='font-semibold'>Studio</p>
-                                    <div className='flex flex-row flex-wrap gap-x-0 5'>
-                                      {anime.studios.map((studio, i, arr) => (
-                                        <p key={i}>
-                                          <Link
-                                            className='blue-link'
-                                            to={`/producer/${studio.mal_id}`}
-                                          >
-                                            {studio.name}
-                                          </Link>
-                                          <span className='mr-1.5'>
-                                            {i < arr.length - 1 ? ',' : ''}
-                                          </span>
-                                        </p>
-                                      ))}
-                                    </div>
-                                  </div>
-                                  <div className='flex flex-row items-center flex-wrap gap-x-1.5'>
-                                    <p className='font-semibold'>Themes</p>
-                                    <div className='flex flex-row flex-wrap gap-x-1'>
-                                      {anime.themes.length
-                                        ? anime.themes.map((theme, i) => (
-                                            <Link
-                                              to={theme.url}
-                                              key={i}
-                                              className='font-light rounded-full px-1.5 py-0.5 border subtle-border-colors hover-blue-link hover:cursor-pointer duration-200'
-                                            >
-                                              {theme.name}
-                                            </Link>
-                                          ))
-                                        : '-'}
-                                    </div>
-                                  </div>
-
-                                  <div className='flex flex-row flex-wrap gap-x-1.5'>
-                                    <p className='font-semibold'>
-                                      demographics
-                                    </p>
-                                    <div className='flex flex-row flex-wrap gap-x-1'>
-                                      {anime.demographics.length
-                                        ? anime.demographics.map(
-                                            (demographic, i) => (
-                                              <p key={i} className='font-light'>
-                                                {demographic.name}
-                                              </p>
-                                            )
-                                          )
-                                        : '-'}
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className='overflow-y-scroll grow w-full max-h-25 order-2'>
-                                  <div className='flex flex-col gap-y-1.5 items-end'>
-                                    <div className='peer'>
-                                      <input
-                                        className='hidden'
-                                        type='checkbox'
-                                        name={`synopsisCheckbox-${anime.mal_id}`}
-                                        id={`synopsisCheckbox-${anime.mal_id}`}
-                                      />
-                                    </div>
-                                    <p className='w-full h-full text-xs font-light max-lines-4 cutoff-text'>
-                                      {anime.synopsis || 'synopsis missing..'}
-                                    </p>
-                                    {anime.synopsis ? (
-                                      <label
-                                        htmlFor={`synopsisCheckbox-${anime.mal_id}`}
-                                        className="text-xs capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
-                            before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                                      ></label>
-                                    ) : (
-                                      ''
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className='flex flex-row justify-evenly items-center capitalize border-t subtle-border-colors'>
-                              <div className='flex flex-row gap-x-1 py-1.5 w-1/3 justify-center items-center border-r subtle-border-colors'>
-                                <Star size={14} />
-                                <p>{anime.score || '?'}</p>
-                              </div>
-                              <div className='flex flex-row gap-x-1 py-1.5 w-1/3 justify-center items-center border-r subtle-border-colors'>
-                                <User size={14} />
-                                <p>{anime.members?.toLocaleString() || '?'}</p>
-                              </div>
-                              <div className='flex flex-row gap-x-1 py-1.5 w-1/3 justify-center items-center'>
-                                <Hash size={14} />
-                                <p>{anime.rank?.toLocaleString() || '?'}</p>
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className='theme-bg-colors'>
-                            <div className='flex flex-row grow'>
-                              <Link
-                                to={`/anime/${anime.mal_id}`}
-                                className='w-1/10 min-w-22 aspect-auto'
-                              >
-                                <img
-                                  src={
-                                    anime?.images?.webp?.image_url ||
-                                    anime?.images?.jpg?.image_url
-                                  }
-                                  alt={anime.title_english || anime.title}
-                                  className='w-full object-cover hover:brightness-60 duration-200'
-                                />
-                              </Link>
-
-                              <div className='flex-1 flex flex-col gap-1.5 min-w-0'>
-                                <div className='flex flex-wrap items-center px-3 py-1.5 gap-x-2.5 gap-y-0.5 border-b subtle-border-colors'>
-                                  <Link
-                                    to={`/anime/${anime.mal_id}`}
-                                    className='text-[15px] font-medium blue-link hover:underline leading-snug truncate'
-                                  >
-                                    {anime.title_english || anime.title}
-                                  </Link>
-                                  <span className='text-xs font-normal whitespace-pre-wrap'>
-                                    {anime.title_japanese}
-                                  </span>
-                                </div>
-
-                                <div className='px-3 overflow-y-scroll grow w-full max-h-25'>
-                                  <div className='flex flex-col gap-y-1.5 items-end'>
-                                    <div className='peer'>
-                                      <input
-                                        className='hidden'
-                                        type='checkbox'
-                                        name={`synopsisCheckbox-${anime.mal_id}`}
-                                        id={`synopsisCheckbox-${anime.mal_id}`}
-                                      />
-                                    </div>
-                                    <p className='w-full h-full text-xs font-light max-lines-4 cutoff-text'>
-                                      {anime.synopsis || 'synopsis missing..'}
-                                    </p>
-                                    {anime.synopsis ? (
-                                      <label
-                                        htmlFor={`synopsisCheckbox-${anime.mal_id}`}
-                                        className="text-xs capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
-                            before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                                      ></label>
-                                    ) : (
-                                      ''
-                                    )}
-                                  </div>
-                                </div>
-                                <div className='flex flex-wrap gap-1 mt-0.5 px-3'>
-                                  {anime.genres.slice(0, 4).map((genre, i) => (
-                                    <Link
-                                      key={i}
-                                      to={genre.url}
-                                      className='font-light rounded-full px-1.5 py-0.5 border subtle-border-colors hover-blue-link hover:cursor-pointer duration-200'
-                                    >
-                                      {genre.name}
-                                    </Link>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className='flex flex-wrap items-center border-t subtle-border-colors text-[1.1em]'>
-                              <div className='flex flex-row flex-wrap gap-x-1 px-3.5 justify-center items-center h-full border-r subtle-border-colors'>
-                                <Calendar size={14} />
-                                <p>{dateFormatter(anime.aired.from)}</p>
-                              </div>
-
-                              <div className='flex items-center gap-1.5 px-3.5 py-1.5 border-r subtle-border-colors shrink-0'>
-                                <Baby size={14} />
-                                <p>{anime.rating}</p>
-                              </div>
-
-                              <div className='flex items-center gap-1 px-3.5 py-1.5 border-r subtle-border-colors shrink-0'>
-                                <Videotape size={14} />
-                                <span>{anime.type}</span>
-                              </div>
-
-                              <div className='flex items-center gap-3.5 px-3.5 py-1.5 ml-auto shrink-0'>
-                                <div className='flex items-center gap-1'>
-                                  <Star size={13} />
-                                  <span className='font-medium'>
-                                    {anime.score}
-                                  </span>
-                                </div>
-                                <div className='flex items-center gap-1'>
-                                  <User size={13} />
-                                  <span>
-                                    {anime.members?.toLocaleString() || '?'}
-                                  </span>
-                                </div>
-                                <div className='flex items-center gap-1'>
-                                  <Hash size={13} className='' />
-                                  <span>
-                                    {anime.rank?.toLocaleString() || '?'}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                  <div>
+                    <LucideLayoutList
+                      onClick={() => setLayout('tiles')}
+                      size={18}
+                      className={`layout-icon ${
+                        layout === 'tiles' ? 'active-layout-icon' : ''
+                      }`}
+                    />
                   </div>
                 </div>
               </div>
             </div>
+
+            <div
+              key={layout}
+              className={`w-full text-[0.85em] gap-3 p-3 ${classes.gridClasses[layout]}`}
+            >
+              {isMediaLoading ? (
+                <div className='col-span-full flex items-center justify-center py-16'>
+                  <LoaderComponent />
+                </div>
+              ) : (
+                animeList.map((anime, index) => (
+                  <div
+                    key={`${anime.id}-${index}`}
+                    className='capitalize rounded-md overflow-hidden'
+                  >
+                    {layout === 'smallGrid' ? (
+                      <div className='group relative w-full aspect-3/4 rounded-lg overflow-hidden'>
+                        <Link to={`/anime/${anime.id}`}>
+                          <img
+                            className='w-full h-full object-cover transition-transform duration-300 group-hover:scale-105'
+                            src={
+                              anime?.images?.webp?.image_url ||
+                              anime?.images?.jpg?.image_url
+                            }
+                            alt={anime.title_english || anime.title}
+                          />
+                        </Link>
+                        <div className='pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-linear-to-t from-black/90 via-black/50 to-transparent' />
+
+                        <div className='pointer-events-none absolute inset-x-0 bottom-0 p-2.5 flex flex-col gap-1.5'>
+                          <div className='flex items-center gap-1.5'>
+                            <div className='flex items-center gap-1 rounded-full bg-white/10 backdrop-blur-sm px-2 py-0.5 text-[0.75em] font-semibold text-white ring-1 ring-white/15'>
+                              <Star
+                                size={11}
+                                className='fill-amber-400 text-amber-400'
+                              />
+                              <span>{anime.score ?? '—'}</span>
+                            </div>
+                            {anime.episodes && (
+                              <span className='rounded-full bg-white/10 backdrop-blur-sm px-2 py-0.5 text-[0.7em] font-medium text-white/85 ring-1 ring-white/15'>
+                                {anime.episodes} EP
+                              </span>
+                            )}
+                          </div>
+
+                          <Link
+                            to={`/anime/${anime.id}`}
+                            className='pointer-events-auto font-semibold text-[0.95em] leading-snug text-white hover:text-amethyst-smoke-200 transition-colors cutoff-text-abs max-lines-2'
+                          >
+                            {anime.title_english || anime.title}
+                          </Link>
+
+                          <p className='text-[0.75em] font-normal text-white/70 max-lines-1'>
+                            {[
+                              anime.type,
+                              formatSeason(anime.season, anime.seasonYear)
+                            ]
+                              .filter(Boolean)
+                              .join(' • ')}
+                          </p>
+                        </div>
+                      </div>
+                    ) : layout === 'detailedGrid' ? (
+                      <div className='w-full h-full flex flex-col theme-bg-colors'>
+                        {/* Titles */}
+                        <div className='flex flex-col items-center text-center gap-y-0.5 px-2 py-2 border-b subtle-border-colors'>
+                          <Link
+                            to={`/anime/${anime.id}`}
+                            className='font-semibold text-[1em] leading-snug blue-link hover:cursor-pointer max-lines-1'
+                          >
+                            {anime.title_english || anime.title}
+                          </Link>
+                          {anime.title_japanese && (
+                            <p className='text-[0.8em] font-normal opacity-80 max-lines-1'>
+                              {anime.title_japanese}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Facts bar */}
+                        <div className='grid grid-cols-3 text-center border-b subtle-border-colors'>
+                          <div className='flex flex-col gap-y-0.5 py-1.5 border-r subtle-border-colors'>
+                            <span className='text-[0.65em] font-medium uppercase tracking-wide opacity-70'>
+                              Format
+                            </span>
+                            <span className='text-[0.8em] font-medium'>
+                              {anime.type || '?'}
+                            </span>
+                          </div>
+                          <div className='flex flex-col gap-y-0.5 py-1.5 border-r subtle-border-colors'>
+                            <span className='text-[0.65em] font-medium uppercase tracking-wide opacity-70'>
+                              Episodes
+                            </span>
+                            <span className='text-[0.8em] font-medium'>
+                              {anime.episodes ?? '?'}
+                            </span>
+                          </div>
+                          <div className='flex flex-col gap-y-0.5 py-1.5'>
+                            <span className='text-[0.65em] font-medium uppercase tracking-wide opacity-70'>
+                              Season
+                            </span>
+                            <span className='text-[0.8em] font-medium'>
+                              {formatSeason(anime.season, anime.seasonYear) ||
+                                '?'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Genres */}
+                        <div className='flex flex-row flex-wrap justify-center gap-1.5 px-2 py-1.5 border-b subtle-border-colors'>
+                          {anime.genres.slice(0, 3).map((genre, i) => (
+                            <span
+                              key={i}
+                              className='text-[0.75em] font-medium rounded-full px-2 py-0.5 border subtle-border-colors opacity-90'
+                            >
+                              {genre.name}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Poster + description */}
+                        <div className='flex flex-row gap-x-2.5 p-2 grow'>
+                          <div className='w-2/5 h-fit shrink-0 rounded-md overflow-hidden'>
+                            <Link to={`/anime/${anime.id}`}>
+                              <img
+                                className='w-full aspect-2/3 object-cover hover:scale-105 transition-transform duration-200'
+                                src={
+                                  anime?.images?.webp?.image_url ||
+                                  anime?.images?.jpg?.image_url
+                                }
+                                alt={anime.title_english || anime.title}
+                              />
+                            </Link>
+                          </div>
+                          <div className='flex flex-col gap-2 h-fit'>
+                            <div className='peer'>
+                              <input
+                                type='checkbox'
+                                className='hidden'
+                                name={`${anime.id}-${index}-checkbox`}
+                                id={`${anime.id}-${index}-checkbox`}
+                              />
+                            </div>
+
+                            <div
+                              className='flex-1 min-w-0 h-fit text-[0.8em] font-normal leading-relaxed opacity-90 cutoff-text'
+                              style={{ '--max-lines': 4 }}
+                            >
+                              {stripDescription(anime.description) ||
+                                'No description available.'}
+                            </div>
+
+                            <label
+                              htmlFor={`${anime.id}-${index}-checkbox`}
+                              className="before:content-['see_more'] peer-has-checked:before:content-['see_less'] text-[0.85em] cursor-pointer opacity-85 hover:text-amethyst-smoke-600 duration-200"
+                            ></label>
+                          </div>
+                        </div>
+
+                        {/* Community stats */}
+                        <div className='flex flex-row items-center border-t subtle-border-colors'>
+                          <div className='flex flex-row gap-x-1 py-1.5 w-1/2 justify-center items-center border-r subtle-border-colors'>
+                            <Star size={14} className='opacity-70' />
+                            <p className='text-[0.8em] font-medium'>
+                              {anime.score || '?'}
+                            </p>
+                          </div>
+                          <div className='flex flex-row gap-x-1 py-1.5 w-1/2 justify-center items-center'>
+                            <Heart size={14} className='opacity-70' />
+                            <p className='text-[0.8em] font-medium'>
+                              {anime.members?.toLocaleString() || '?'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className='theme-bg-colors'>
+                        <div className='flex flex-row'>
+                          <Link
+                            to={`/anime/${anime.id}`}
+                            className='w-28 sm:w-32 shrink-0 aspect-2/3 overflow-hidden'
+                          >
+                            <img
+                              src={
+                                anime?.images?.webp?.image_url ||
+                                anime?.images?.jpg?.image_url
+                              }
+                              alt={anime.title_english || anime.title}
+                              className='w-full h-full object-cover hover:scale-105 transition-transform duration-200'
+                            />
+                          </Link>
+                          <div className='flex-1 flex flex-col gap-1.5 min-w-0 py-2 px-3'>
+                            <div className='flex flex-wrap items-baseline gap-x-2 gap-y-0.5'>
+                              <Link
+                                to={`/anime/${anime.id}`}
+                                className='font-semibold text-[1.05em] blue-link hover:underline leading-snug'
+                              >
+                                {anime.title_english || anime.title}
+                              </Link>
+                              {anime.title_japanese && (
+                                <span className='text-[0.85em] font-normal opacity-75'>
+                                  {anime.title_japanese}
+                                </span>
+                              )}
+                            </div>
+                            <p className='text-[0.85em] font-normal leading-relaxed opacity-85 normal-case line-clamp-5'>
+                              {stripDescription(anime.description) ||
+                                'No description available.'}
+                            </p>
+                            <div className='flex flex-wrap gap-1 mt-auto'>
+                              {anime.genres.slice(0, 4).map((genre, i) => (
+                                <span
+                                  key={i}
+                                  className='text-[0.8em] font-medium rounded-full px-1.5 py-0.5 border subtle-border-colors opacity-90'
+                                >
+                                  {genre.name}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div className='flex flex-wrap items-center border-t subtle-border-colors'>
+                          <div className='px-3 py-1.5 border-r subtle-border-colors'>
+                            <p className='text-[0.75em] font-medium'>
+                              {anime.type || '?'}
+                            </p>
+                          </div>
+                          <div className='px-3 py-1.5 border-r subtle-border-colors'>
+                            <p className='text-[0.75em] font-medium'>
+                              {anime.episodes ? `${anime.episodes} ep` : '?'}
+                            </p>
+                          </div>
+                          <div className='px-3 py-1.5 border-r subtle-border-colors'>
+                            <p className='text-[0.75em] font-medium'>
+                              {formatSeason(anime.season, anime.seasonYear) ||
+                                '?'}
+                            </p>
+                          </div>
+                          <div className='flex items-center gap-1.5 px-3 py-1.5 border-r subtle-border-colors shrink-0'>
+                            <Star size={14} className='opacity-70' />
+                            <p className='text-[0.75em] font-medium'>
+                              {anime.score || '?'}
+                            </p>
+                          </div>
+                          <div className='flex items-center gap-1.5 px-3 py-1.5 ml-auto shrink-0'>
+                            <Heart size={14} className='opacity-70' />
+                            <p className='text-[0.75em] font-medium'>
+                              {anime.members?.toLocaleString() || '?'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-        </>
+        </div>
       )}
     </>
   )

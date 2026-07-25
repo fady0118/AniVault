@@ -55,8 +55,8 @@ export const router = createBrowserRouter([
       { path: 'character/:id/:slug?', Component: CharacterPage },
       { path: 'people/:id', Component: PeoplePage },
       {
-        path: 'producer/:slug?',
-        children: [{ path: ':id', Component: ProducerPage }]
+        path: 'producer',
+        children: [{ path: ':id/:slug?', Component: ProducerPage }]
       },
       {
         path: 'profile',

@@ -364,7 +364,7 @@ export default function PeoplePage () {
                                 src={show.coverImage}
                                 alt={show.title}
                               />
-                              <div className='absolute inset-x-0 bottom-0 h-12 translate-y-full transition-transform duration-300 ease-out p-1 box-colors-medium flex items-center justify-center group-hover:translate-y-0'>
+                              <div className='absolute inset-x-0 bottom-0 h-15 translate-y-full transition-transform duration-300 ease-out p-1 box-colors-medium flex items-center justify-center group-hover:translate-y-0'>
                                 <p className='text-[0.65em] font-medium text-center blue-link w-full mx-auto leading-tight group-hover:brightness-110 line-clamp-2'>
                                   {show.title}
                                 </p>
@@ -384,7 +384,7 @@ export default function PeoplePage () {
                     onClick={() => {
                       setShowAllVoiceActingRoles(true)
                     }}
-                    className='w-1/2 bg-amethyst-smoke-400/50 dark:bg-dark-amethyst-smoke-200/50 text-amethyst-smoke-950 dark:text-amethyst-smoke-100 flex items-center justify-center py-3 text-[0.85em] font-semibold rounded-md border border-amethyst-smoke-950/10 dark:border-amethyst-smoke-200/10 hover:bg-amethyst-smoke-400/75 dark:hover:bg-dark-amethyst-smoke-200/75 hover:scale-[1.02] hover:shadow-md active:scale-[0.98] transition-all duration-200'
+                    className='cursor-pointer w-1/2 bg-amethyst-smoke-400/50 dark:bg-dark-amethyst-smoke-200/50 text-amethyst-smoke-950 dark:text-amethyst-smoke-100 flex items-center justify-center py-3 text-[0.85em] font-semibold rounded-md border border-amethyst-smoke-950/10 dark:border-amethyst-smoke-200/10 hover:bg-amethyst-smoke-400/75 dark:hover:bg-dark-amethyst-smoke-200/75 hover:scale-[1.02] hover:shadow-md active:scale-[0.98] transition-all duration-200'
                   >
                     Show more (+ {personRoles?.voiceRoles?.length})
                   </button>
