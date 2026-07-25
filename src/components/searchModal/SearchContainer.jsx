@@ -1,261 +1,250 @@
-import { useQueries } from "@tanstack/react-query";
-import { jikanFetch } from "../../utility/jikanApi";
-import { Link } from "react-router";
-import { useEffect, useState } from "react";
-import LoaderComponent from "../LoaderComponent";
-import { X } from "lucide-react";
+import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router'
+import { useEffect, useState } from 'react'
+import LoaderComponent from '../LoaderComponent'
+import { X } from 'lucide-react'
+import { getSearchModalResults } from '../../anilist/aniListFetching/searchModal/getSearchModalResults'
 
-export default function SearchContainer({ searchInput, category, closeModal }) {
-  const [recentSearches, setRecentSearches] = useState([]);
-  const [animeSearchQ, mangaSearchQ, charactersSearchQ, producersSearchQ, peopleSearchQ] = useQueries({
-    queries: [
-      {
-        queryKey: ["animeSearch", searchInput, category],
-        queryFn: async () => {
-          if (!searchInput) return;
-          const res = await jikanFetch(`https://api.jikan.moe/v4/anime?q=${searchInput}&order_by=favorites&sort=desc`);
-          const animeData = await res.json();
-          const uniqueAnimeData = [...new Map(animeData?.data?.map((item) => [item.mal_id, item])).values()];
-          return { data: uniqueAnimeData, pagination: animeData.pagination };
-        },
-        enabled: Boolean(searchInput) && (category === "all" || category === "anime"),
-      },
-      {
-        queryKey: ["mangaSearch", searchInput, category],
-        queryFn: async () => {
-          if (!searchInput) return;
-          const res = await jikanFetch(`https://api.jikan.moe/v4/manga?q=${searchInput}&order_by=favorites&sort=desc`);
-          const mangaData = await res.json();
-          const uniqueMangaData = [...new Map(mangaData?.data?.map((item) => [item.mal_id, item])).values()];
-          return { data: uniqueMangaData, pagination: mangaData.pagination };
-        },
-        enabled: Boolean(searchInput) && (category === "all" || category === "manga"),
-      },
-      {
-        queryKey: ["charactersSearch", searchInput, category],
-        queryFn: async () => {
-          if (!searchInput) return;
-          const res = await jikanFetch(`https://api.jikan.moe/v4/characters?q=${searchInput}&order_by=favorites&sort=desc`);
-          const charactersData = await res.json();
-          const uniqueCharactersData = [...new Map(charactersData?.data?.map((item) => [item.mal_id, item])).values()];
-          return { data: uniqueCharactersData, pagination: charactersData.pagination };
-        },
-        enabled: Boolean(searchInput) && (category === "all" || category === "characters"),
-      },
-      {
-        queryKey: ["producersSearch", searchInput, category],
-        queryFn: async () => {
-          if (!searchInput) return;
-          const res = await jikanFetch(`https://api.jikan.moe/v4/producers?q=${searchInput}&order_by=favorites&sort=desc`);
-          const producersData = await res.json();
-          const uniqueProducersData = [...new Map(producersData?.data?.map((item) => [item.mal_id, item])).values()];
-          return { data: uniqueProducersData, pagination: producersData.pagination };
-        },
-        enabled: Boolean(searchInput) && (category === "all" || category === "producers"),
-      },
-      {
-        queryKey: ["peopleSearch", searchInput, category],
-        queryFn: async () => {
-          if (!searchInput) return;
-          const res = await jikanFetch(`https://api.jikan.moe/v4/people?q=${searchInput}&order_by=favorites&sort=desc`);
-          const peopleData = await res.json();
-          const uniquePeopleData = [...new Map(peopleData?.data?.map((item) => [item.mal_id, item])).values()];
-          return { data: uniquePeopleData, pagination: peopleData.pagination };
-        },
-        enabled: Boolean(searchInput) && (category === "all" || category === "people"),
-      },
-    ],
-  });
-  const queries = [animeSearchQ, mangaSearchQ, charactersSearchQ, producersSearchQ, peopleSearchQ];
-  const isLoading = queries.every((q) => q.isLoading);
-  const anyFetched = queries.some((q) => q.isFetched);
+const CATEGORY_LABELS = {
+  anime: 'Anime',
+  manga: 'Manga',
+  characters: 'Characters',
+  staff: 'People',
+  studio: 'Studios'
+}
 
-  // arrow navigation with enter selection
+export default function SearchContainer ({ keyword, type, closeModal }) {
+  const [recentSearches, setRecentSearches] = useState(() => {
+    const savedSearches =
+      JSON.parse(localStorage.getItem('recentSearches')) || []
+    return savedSearches
+  })
+
+  const searchQ = useQuery({
+    queryKey: ['querySearch', keyword, type],
+    queryFn: async () => {
+      if (!keyword) return null
+      const searchType = type === 'all' ? null : type
+      return (await getSearchModalResults(keyword, searchType)) || []
+    },
+    enabled: !!keyword
+  })
+
   useEffect(() => {
-    if (!anyFetched) return;
+    if (!searchQ?.isFetched) return
 
-    const searchResultsCont = document.getElementById("searchResults");
-    if (!searchResultsCont) return;
+    const searchResultsCont = document.getElementById('searchResults')
+    if (!searchResultsCont) return
 
-    const searchResults = Array.from(searchResultsCont.querySelectorAll("a"));
-    if (searchResults.length === 0) return;
+    const searchResults = Array.from(searchResultsCont.querySelectorAll('a'))
+    if (searchResults.length === 0) return
 
-    let index = 0;
-    searchResults[index].classList.add("searchResult-hovered"); // highlight first element automatically
-    function handleArrows(event) {
-      switch (event.keyCode) {
-        case 38: // Up arrow
-          event.preventDefault();
-          searchResults[index]?.classList.remove("searchResult-hovered");
-          index = index > 0 ? --index : searchResults.length - 1;
-          searchResults[index]?.classList.add("searchResult-hovered");
-          searchResults[index]?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
-          break;
-        case 40: // Down arrow
-          event.preventDefault();
-          searchResults[index]?.classList.remove("searchResult-hovered");
-          index = index < searchResults.length - 1 ? ++index : 0;
-          searchResults[index]?.classList.add("searchResult-hovered");
-          searchResults[index]?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
-          break;
-        case 13: // Enter
-          searchResults[index]?.click();
-          break;
+    let index = 0
+    searchResults[index]?.classList.add('searchResult-hovered')
+
+    function handleArrows (event) {
+      switch (event.key) {
+        case 'ArrowUp':
+          event.preventDefault()
+          searchResults[index]?.classList.remove('searchResult-hovered')
+          index = index > 0 ? --index : searchResults.length - 1
+          searchResults[index]?.classList.add('searchResult-hovered')
+          searchResults[index]?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'center'
+          })
+          break
+        case 'ArrowDown':
+          event.preventDefault()
+          searchResults[index]?.classList.remove('searchResult-hovered')
+          index = index < searchResults.length - 1 ? ++index : 0
+          searchResults[index]?.classList.add('searchResult-hovered')
+          searchResults[index]?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'center'
+          })
+          break
+        case 'Enter':
+          event.preventDefault()
+          searchResults[index]?.click()
+          break
         default:
-          break;
+          break
       }
     }
-    const searchModal = searchResultsCont?.parentElement;
-    searchModal.addEventListener("keydown", handleArrows);
-    return () => {
-      if (searchModal) searchModal.removeEventListener("keydown", handleArrows);
-    };
-  }, [anyFetched, queries]);
 
-  // add clicked item to localStorage then closeModal
-  function handleClick(mal_id, image_url, name, link) {
-    const savedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
-    const existingItem = savedSearches.find((item) => item.mal_id === mal_id);
-    if (existingItem) {
-      // re-order arr
-      const rest = savedSearches.filter((item) => item.mal_id !== mal_id);
-      const reorderedSearches = [existingItem, ...rest].slice(0, 25);
-      localStorage.setItem("recentSearches", JSON.stringify(reorderedSearches));
-      setRecentSearches(reorderedSearches);
-      closeModal();
-      return;
+    const searchModal = searchResultsCont.parentElement
+    searchModal.addEventListener('keydown', handleArrows)
+    return () => {
+      if (searchModal) searchModal.removeEventListener('keydown', handleArrows)
     }
-    // push new item to the start
-    const newSavedSearches = [{ mal_id, image_url, name, link }, ...savedSearches].slice(0, 25);
-    localStorage.setItem("recentSearches", JSON.stringify(newSavedSearches));
-    setRecentSearches(newSavedSearches);
-    closeModal();
+  }, [searchQ, keyword, type])
+
+  function handleClick (id, image_url, name, link) {
+    const savedSearches =
+      JSON.parse(localStorage.getItem('recentSearches')) || []
+    const existingItem = savedSearches.find(item => item.id === id)
+    if (existingItem) {
+      const rest = savedSearches.filter(item => item.id !== id)
+      const reorderedSearches = [existingItem, ...rest].slice(0, 25)
+      localStorage.setItem('recentSearches', JSON.stringify(reorderedSearches))
+      setRecentSearches(reorderedSearches)
+      closeModal()
+      return
+    }
+    const newSavedSearches = [
+      { id, image_url, name, link },
+      ...savedSearches
+    ].slice(0, 25)
+    localStorage.setItem('recentSearches', JSON.stringify(newSavedSearches))
+    setRecentSearches(newSavedSearches)
+    closeModal()
   }
-  // remove item from recent searches
-  function removeRecentSearch(mal_id) {
-    const savedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
-    const rest = savedSearches.filter((item) => item.mal_id !== mal_id);
-    localStorage.setItem("recentSearches", JSON.stringify(rest));
-    setRecentSearches(rest);
+
+  function removeRecentSearch (id) {
+    const savedSearches =
+      JSON.parse(localStorage.getItem('recentSearches')) || []
+    const rest = savedSearches.filter(item => item.id !== id)
+    localStorage.setItem('recentSearches', JSON.stringify(rest))
+    setRecentSearches(rest)
   }
-  // fetch recentSearches from localStorge then update the localState
-  useEffect(() => {
-    const savedSearches = JSON.parse(localStorage.getItem("recentSearches")) || [];
-    setRecentSearches(savedSearches);
-  }, []);
+
+  const categoryOrder =
+    type === 'all'
+      ? ['anime', 'manga', 'characters', 'staff', 'studio']
+      : [type]
+
   return (
     <>
-      {/* show recentSearches if no query is fetched */}
-      {!anyFetched ? (
-        <div id="recentSearches" className="flex flex-col">
-          <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">Recent</div>
+      {!searchQ?.isFetched && !keyword ? (
+        <div id='recentSearches' className='flex flex-col'>
+          <div className='font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3'>
+            Recent
+          </div>
           {recentSearches.length ? (
-            <>
-              {recentSearches.map((item, i) => (
-                <div className="w-full flex flex-row items-center justify-between rounded-md searchResult-hover durations-200">
-                  <Link
-                    onClick={() => handleClick(item.mal_id, item.image_url, item.name, item.link)}
-                    to={item.link}
-                    key={`${item.mal_id}-${i}`}
-                    className="w-full flex flex-row items-center justify-start rounded-md gap-x-3 px-4 py-2 lg:py-3 searchResult-hover durations-200"
-                  >
-                    <img src={item.image_url || ""} alt={item.name} className="w-1/12 min-w-4 max-w-7 aspect-square rounded-full object-cover" />
-                    <p>{item.name}</p>
-                  </Link>
-                  <X
-                    onClick={() => {
-                      removeRecentSearch(item.mal_id);
-                    }}
-                    size={20}
-                    className="mx-3 rounded-sm hover:cursor-pointer hover:bg-amethyst-smoke-600/20 duration-200"
+            recentSearches.map((item, i) => (
+              <div
+                key={`${item.id}-${i}`}
+                className='w-full flex flex-row items-center justify-between rounded-md searchResult-hover durations-200'
+              >
+                <Link
+                  onClick={() =>
+                    handleClick(item.id, item.image_url, item.name, item.link)
+                  }
+                  to={item.link}
+                  className='w-full flex flex-row items-center justify-start rounded-md gap-x-3 px-4 py-2 lg:py-3 searchResult-hover durations-200'
+                >
+                  <img
+                    src={item.image_url || ''}
+                    alt={item.name}
+                    className='w-1/12 min-w-4 max-w-7 aspect-square rounded-full object-cover'
                   />
-                </div>
-              ))}
-            </>
+                  <p>{item.name}</p>
+                </Link>
+                <X
+                  onClick={() => removeRecentSearch(item.id)}
+                  size={20}
+                  className='mx-3 rounded-sm hover:cursor-pointer hover:bg-amethyst-smoke-600/20 duration-200'
+                />
+              </div>
+            ))
           ) : (
-            ""
+            <div className='px-4 py-6 text-center text-[0.85em] opacity-60'>
+              No recent searches
+            </div>
           )}
         </div>
       ) : (
-        ""
-      )}
-      {/* show search results */}
-      <div id="searchResults" tabIndex={0} className="w-full grid grid-cols-1 max-h-full overflow-y-auto">
-        {isLoading ? (
-          <>
-            <div className="absolute top-1/2 left-1/2 -translate-1/2">
+        <div
+          id='searchResults'
+          tabIndex={0}
+          className='w-full grid grid-cols-1 max-h-full overflow-y-auto'
+        >
+          {searchQ?.isPending ? (
+            <div className='absolute top-1/2 left-1/2 -translate-1/2'>
               <LoaderComponent />
             </div>
-          </>
-        ) : (
-          <>
-            {animeSearchQ?.isEnabled && animeSearchQ?.data?.data?.length ? (
-              <>
-                <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">anime</div>
-                {animeSearchQ?.data?.data?.map((item, i) =>
-                  useSearchResult({ handleClick, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title, link: `/anime/${item.mal_id}` }),
-                )}
-              </>
-            ) : (
-              ""
-            )}
-            {mangaSearchQ?.isEnabled && mangaSearchQ?.data?.data?.length ? (
-              <>
-                <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">manga</div>
-                {mangaSearchQ?.data?.data?.map((item, i) =>
-                  useSearchResult({ handleClick, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.title, link: `/manga/${item.mal_id}` }),
-                )}
-              </>
-            ) : (
-              ""
-            )}
-            {charactersSearchQ?.isEnabled && charactersSearchQ?.data?.data?.length ? (
-              <>
-                <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">characters</div>
-                {charactersSearchQ?.data?.data?.map((item) =>
-                  useSearchResult({ handleClick, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name, link: `/character/${item.mal_id}` }),
-                )}
-              </>
-            ) : (
-              ""
-            )}
-            {producersSearchQ?.isEnabled && producersSearchQ?.data?.data?.length ? (
-              <>
-                <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">producers</div>
-                {producersSearchQ?.data?.data?.map((item) =>
-                  useSearchResult({ handleClick, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.titles[0]?.title, link: `/producer/${item.mal_id}` }),
-                )}
-              </>
-            ) : (
-              ""
-            )}
-            {peopleSearchQ?.isEnabled && peopleSearchQ?.data?.data?.length ? (
-              <>
-                <div className="font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3">people</div>
-                {peopleSearchQ?.data?.data?.map((item) =>
-                  useSearchResult({ handleClick, mal_id: item.mal_id, image_url: item?.images?.jpg?.image_url, name: item?.name, link: `/people/${item.mal_id}` }),
-                )}
-              </>
-            ) : (
-              ""
-            )}
-          </>
-        )}
-      </div>
+          ) : (
+            categoryOrder.map(searchType => {
+              const items = searchQ.data[searchType] || []
+              if (!items.length) return null
+
+              return (
+                <div key={searchType}>
+                  <div className='font-bold text-[1.35em] capitalize px-4 py-2 lg:py-3'>
+                    {CATEGORY_LABELS[searchType] || searchType}
+                  </div>
+                  {items.map(item => (
+                    <SearchResultItem
+                      key={item.id}
+                      item={item}
+                      searchType={searchType}
+                      handleClick={handleClick}
+                    />
+                  ))}
+                </div>
+              )
+            })
+          )}
+        </div>
+      )}
     </>
-  );
+  )
 }
 
-function useSearchResult({ handleClick, mal_id, image_url, name, link = "" }) {
+function SearchResultItem ({ item, searchType, handleClick }) {
+  const imageUrl = item.images?.jpg?.image_url || item.image || ''
+  const name = item.title || item.name || 'Unknown'
+  const link = item.url || `/${searchType}/${item.id}`
+
+  const getInitials = name => {
+    return name
+      .split(' ')
+      .slice(0, 2)
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+  }
+
   return (
     <Link
-      onClick={() => handleClick(mal_id, image_url, name, link)}
+      onClick={() => handleClick(item.id, imageUrl, name, link)}
       to={link}
-      key={mal_id}
-      className="w-full flex flex-row items-center justify-start gap-x-3 rounded-md px-4 py-2 lg:py-3 searchResult-hover durations-200"
+      className='w-full flex flex-row items-center justify-start gap-x-3 rounded-md px-4 py-2 lg:py-3 searchResult-hover durations-200'
     >
-      <img src={image_url || ""} alt={name} className="w-1/12 min-w-4 max-w-7 aspect-square rounded-full object-cover" />
-      <p>{name}</p>
+      {/* Image / Placeholder */}
+      <div className='w-1/12 min-w-9 max-w-15 aspect-square rounded-full overflow-hidden shrink-0'>
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={name}
+            className='w-full h-full object-cover'
+          />
+        ) : (
+          <div className='w-full h-full bg-amethyst-smoke-200 dark:bg-amethyst-smoke-700 flex items-center justify-center text-amethyst-smoke-600 dark:text-amethyst-smoke-300 font-semibold text-sm'>
+            {getInitials(name)}
+          </div>
+        )}
+      </div>
+
+      <div className='flex flex-col'>
+        <p className='text-[1.1em] font-semibold'>{name}</p>
+        {item.format && (
+          <p className='text-[0.85em] font-medium opacity-60 capitalize'>
+            {item.format}
+          </p>
+        )}
+        {item.status && (
+          <p className='text-[0.85em] font-medium opacity-60 capitalize'>
+            {item.status.replace(/_/g, ' ')}
+          </p>
+        )}
+        {item.year && (
+          <p className='text-[0.85em] font-medium opacity-60'>{item.year}</p>
+        )}
+      </div>
     </Link>
-  );
+  )
 }

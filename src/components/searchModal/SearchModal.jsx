@@ -1,5 +1,5 @@
-import { ChevronDown, Search } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { ChevronDown, Search } from 'lucide-react'
 import SearchContainer from './SearchContainer'
 import { useDebounce } from '../../utility/useDebounce'
 
@@ -8,7 +8,7 @@ const categories = [
   'anime',
   'manga',
   'characters',
-  'producers',
+  'studio',
   'people'
 ]
 export default function SearchModal ({ setShowSearchModal }) {
@@ -103,8 +103,8 @@ export default function SearchModal ({ setShowSearchModal }) {
           </button>
         </div>
         <SearchContainer
-          searchInput={debouncedSearchValue}
-          category={category}
+          keyword={debouncedSearchValue}
+          type={category}
           closeModal={() => setShowSearchModal(false)}
         />
       </div>
