@@ -63,7 +63,7 @@ export default function SearchModal ({ setShowSearchModal }) {
               />
             </div>
 
-            <div className='relative py-0.5 capitalize w-20 text-[0.75em] mr-3'>
+            <div className='relative py-0.5 capitalize w-30 text-[1em] font-medium mr-3'>
               <label
                 className='group peer flex flex-row justify-between items-center p-1 w-full rounded-sm searchModal-box-colors border border-amethyst-smoke-50/10 dark:border-amethyst-smoke-50/10 hover:cursor-pointer duration-200'
                 htmlFor='searchCategory'

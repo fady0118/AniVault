@@ -196,3 +196,23 @@ export function getYouTubeUrls (videoId, quality = 'hqdefault') {
     embedUrl: `https://www.youtube.com/embed/${videoId}`
   }
 }
+
+export function getCurrentSeason() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const currentDate = date.toLocaleDateString("en-US", {
+    month: "numeric",
+    day: "numeric",
+  });
+  const [month, day] = currentDate.split("/").map((i) => Number(i));
+  if ((month === 3 && day >= 21) || month === 4 || month === 5 || (month === 6 && day < 21)) {
+    return {season:"Spring", year};
+  }
+  if ((month === 6 && day >= 21) || month === 7 || month === 8 || (month === 9 && day < 21)) {
+    return {season:"Summer", year};
+  }
+  if ((month === 9 && day >= 21) || month === 10 || month === 11 || (month === 12 && day < 21)) {
+    return {season:"Fall", year};
+  }
+  return {season:"Winter", year};
+}

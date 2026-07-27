@@ -67,12 +67,12 @@ export default function HomeSlider({ season }) {
   return (
     <>
       <div className="w-fit h-fit">
-        <div id="slider" className="relative w-full rounded-xl left-1/2 -translate-x-1/2 h-[90vh] flex overflow-y-hidden overflow-x-scroll no-scrollbar" ref={sliderRef}>
+        <div id="slider" className="relative w-full rounded-xl left-1/2 -translate-x-1/2 h-screen flex overflow-y-hidden overflow-x-scroll no-scrollbar" ref={sliderRef}>
           {season.map((animeData, i) => (
             <Slide key={i} animeData={animeData} openModal={openModal} />
           ))}
         </div>
-        <div className="hidden sm:block absolute z-40 w-screen h-[90vh] top-0 bg-[linear-gradient(0deg,#e7e6ee_0%,transparent_5%)] dark:bg-[linear-gradient(0deg,#1b1e1f_0%,transparent_5%)] pointer-events-none"></div>
+        <div className="hidden sm:block absolute z-40 w-screen h-screen top-0 bg-[linear-gradient(0deg,#e7e6ee_0%,transparent_5%)] dark:bg-[linear-gradient(0deg,#1b1e1f_0%,transparent_5%)] pointer-events-none"></div>
       </div>
       <div
         id="manualControls"
