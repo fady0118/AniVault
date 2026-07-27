@@ -3,7 +3,7 @@ import { Link } from "react-router";
 
 const gradientStyles = `bg-[linear-gradient(0deg,#e7e6ee_20%,#e7e6eea8_50%,transparent_65%)] dark:bg-[linear-gradient(0deg,#1b1e1f_20%,#1b1e1fab_50%,transparent_65%)] sm:bg-[linear-gradient(90deg,#e7e6ee_25%,#e7e6eea8_60%,transparent_100%)] sm:dark:bg-[linear-gradient(90deg,#1b1e1f_25%,#1b1e1fab_60%,transparent_100%)]`;
 
-export default function Slide({ animeData, openModal }) {
+export default function Slide({ animeData, index, openModal }) {
   const title = animeData.title?.english || animeData.title?.romaji || animeData.title?.native;
 
   return (
@@ -103,7 +103,7 @@ export default function Slide({ animeData, openModal }) {
         </div>
 
         <img
-          className="min-h-screen w-full sm:w-3/4 aspect-auto object-center object-cover pointer-events-none animate-slide"
+          className={`img min-h-screen w-full sm:w-3/4 aspect-auto object-center object-cover pointer-events-none ${index===0?'animate-slide':''}`}
           src={animeData.coverImage?.extraLarge || animeData.coverImage?.large || animeData.bannerImage}
           alt={title}
         />

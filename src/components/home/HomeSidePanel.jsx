@@ -6,22 +6,22 @@ import { Link } from "react-router";
 import LoaderComponent from "../LoaderComponent";
 
 export default function HomeSidePanel() {
-  const [TrendingAnimeQ] = useQueries({
-    queries: [
-      {
-        queryKey: ["recentMangaData"],
-        queryFn: async () => {
-          const res = await jikanFetch("https://api.jikan.moe/v4/anime?type=tv&sfw=true&status=airing&order_by=popularity&sort=asc&limit=15");
-          const trendingAnimeData = await res.json();
-          const uniqueTrendingAnimeData = [...new Map(trendingAnimeData.data.map((item) => [item.mal_id, item])).values()];
-          return uniqueTrendingAnimeData;
-        },
-      },
-    ],
-  });
+  // const [TrendingAnimeQ] = useQueries({
+  //   queries: [
+  //     {
+  //       queryKey: ["recentMangaData"],
+  //       queryFn: async () => {
+  //         const res = await jikanFetch("https://api.jikan.moe/v4/anime?type=tv&sfw=true&status=airing&order_by=popularity&sort=asc&limit=15");
+  //         const trendingAnimeData = await res.json();
+  //         const uniqueTrendingAnimeData = [...new Map(trendingAnimeData.data.map((item) => [item.mal_id, item])).values()];
+  //         return uniqueTrendingAnimeData;
+  //       },
+  //     },
+  //   ],
+  // });
   return (
     <div className="w-full md:w-1/3 lg:w-1/4 min-w-0 h-fit flex flex-col xs:flex-row md:flex-col mt-3 gap-4">
-      <div id="Trending" className="w-full xs:w-1/2 md:w-full flex flex-col rounded-lg box-colors-lighter py-2 gap-y-2 text-[1.1em]">
+      {/* <div id="Trending" className="w-full xs:w-1/2 md:w-full flex flex-col rounded-lg box-colors-lighter py-2 gap-y-2 text-[1.1em]">
         <div className="flex flex-row gap-x-3 items-center px-3">
           <Trophy size={20} />
           <p className="uppercase font-extrabold text-sm/loose sm:text-lg/loose">Trending</p>
@@ -54,7 +54,7 @@ export default function HomeSidePanel() {
             </>
           )}
         </div>
-      </div>
+      </div> */}
       <Schedual />
     </div>
   );

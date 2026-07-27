@@ -1,5 +1,4 @@
 export async function* queryPersonRolesById (query, mediaId) {
-  const allEdges = []
   let page = 2 // getPersonPage queries first page
   let hasNextPage = true
   while (hasNextPage) {

@@ -335,7 +335,7 @@ export default function PeoplePage () {
                     className='flex items-start gap-4 p-3 border subtle-border-colors box-colors rounded-lg'
                   >
                     <Link
-                      className='group relative w-24 sm:w-28 shrink-0 transition-transform hover:scale-105 duration-300'
+                      className='group relative w-24 sm:w-30 shrink-0 transition-transform hover:scale-105 duration-300'
                       to={`/character/${roleEntry.character.id}`}
                     >
                       <img
@@ -347,16 +347,16 @@ export default function PeoplePage () {
                         {roleEntry.character.name}
                       </p>
                     </Link>
-                    <div className='flex-1 min-w-0 flex flex-col gap-2'>
-                      <p className='text-xs sm:text-sm text-amethyst-smoke-950/80 dark:text-amethyst-smoke-300/80 font-medium capitalize truncate'>
+                    <div className='flex-1 min-w-0 flex flex-col'>
+                      <p className='text-xs sm:text-sm h-5 sm:h-6 text-amethyst-smoke-950/80 dark:text-amethyst-smoke-300/80 font-medium capitalize truncate'>
                         {roleEntry.role}
                       </p>
-                      <div className='flex flex-nowrap gap-2 overflow-x-auto pb-2 snap-x'>
+                      <div className='flex flex-nowrap gap-2 overflow-x-auto snap-x'>
                         {roleEntry.media.map(show => (
                           <Link
                             key={show.id}
                             to={`/${show.type}/${show.id}`}
-                            className='group shrink-0 w-20 sm:w-24 snap-start'
+                            className='group shrink-0 w-23.25 sm:w-29.25 snap-start'
                           >
                             <div className='relative aspect-3/4 overflow-hidden rounded-md shadow-sm'>
                               <img

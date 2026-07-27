@@ -23,9 +23,9 @@ export default function MediaPop ({
         width: '256px', // w-64
         zIndex: 50
       }}
-      className='rounded-lg bg-amethyst-smoke-200 dark:bg-dark-amethyst-smoke-200 animate-opacity shadow-lg'
+      className='rounded-lg box-colors-medium backdrop-blur-md animate-opacity shadow-xl shadow-dark-amethyst-smoke-100/75'
     >
-      <div className='w-full h-full p-3 flex flex-col gap-y-2 text-xs text-dark-amethyst-smoke-400 dark:text-amethyst-smoke-400'>
+      <div className='w-full h-full p-3 flex flex-col gap-y-2 text-sm text-dark-amethyst-smoke-400 dark:text-amethyst-smoke-400'>
         <div
           id='titles'
           className='flex flex-col gap-y-1 grow-0 items-start justify-center pb-1 capitalize'
@@ -33,7 +33,7 @@ export default function MediaPop ({
           <p className='font-bold text-[1.2em]'>{data.title}</p>
           <p className='text-[0.9em]'>{data.titleNative}</p>
         </div>
-        <div className='text-[0.75em] flex flex-row flex-wrap gap-x-1.5 justify-start items-center'>
+        <div className='text-[0.7em] font-semibold flex flex-row flex-wrap gap-x-1.5 justify-start items-center'>
           <div
             className={`flex flex-row gap-x-1 items-center px-2 py-1 rounded-xl border transition-colors duration-200 ${
               data.isAdult
@@ -50,11 +50,11 @@ export default function MediaPop ({
           </div>
         </div>
         <div id='synopsis'>
-          <p className='font-light max-lines-4 cutoff-text-abs text-[0.8em]'>
+          <p className='font-normal line-clamp-3 text-[0.9em]'>
             {data.description || 'No description found.'}
           </p>
         </div>
-        <div className='flex flex-col gap-y-0.5 text-[0.8em]'>
+        <div className='flex flex-col gap-y-0.5 text-[0.9em]'>
           <div className='flex flex-row gap-x-1 items-center'>
             <p className='font-light'>Aired:</p>
             <p className='font-medium'>{data.aired}</p>
@@ -79,7 +79,7 @@ export default function MediaPop ({
         </div>
         <Link id='details' to={`/anime/${data.id}`}>
           <div className='w-full px-3 py-1.5 mt-1 flex flex-row items-center justify-between rounded-3xl text-dark-amethyst-smoke-300 dark:text-amethyst-smoke-300 bg-pink-400 dark:bg-pink-500 group hover:cursor-pointer'>
-            <p className='font-extrabold text-[1.25em] dark:group-hover:text-dark-amethyst-smoke-200 group-hover:text-amethyst-smoke-200'>
+            <p className='font-extrabold text-[1.1em] dark:group-hover:text-dark-amethyst-smoke-200 group-hover:text-amethyst-smoke-200'>
               More Details
             </p>
             <Play

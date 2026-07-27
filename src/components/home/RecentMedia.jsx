@@ -163,7 +163,7 @@ export default function RecentMedia ({ varsMap }) {
         </div>
 
         {/* items' Grid */}
-        <div className='w-full max-h-[65vh] grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 overflow-y-scroll snap-y snap-mandatory overflow-x-clip gap-5'>
+        <div className='w-full max-h-[65vh] grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 overflow-y-scroll snap-y snap-mandatory overflow-x-clip gap-5'>
           {currentData.isPending ? (
             <RecentPlaceHolder />
           ) : currentData?.data?.media?.length ? (
@@ -173,14 +173,14 @@ export default function RecentMedia ({ varsMap }) {
                 key={item.id}
                 onMouseEnter={(e)=>handleItemMouseEnter(e, item)}
                 onMouseLeave={handleItemMouseLeave}
-                className='snap-start scroll-m-10 wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3 hover:-translate-y-1.5 duration-200'
+                className='snap-start scroll-m-10 wrapper relative flex flex-col gap-y-1.5 justify-start items-center w-full aspect-2/3'
               >
                 <Link
                   to={`/${path}/${item.id}`}
-                  className='w-full aspect-3/4 rounded-lg overflow-hidden hover:brightness-75 duration-200'
+                  className='relative group w-full aspect-3/4 rounded-lg overflow-hidden'
                 >
                   <img
-                    className='w-full h-full object-cover'
+                    className='w-full h-full object-cover group-hover:scale-105 duration-300'
                     src={item.cover}
                     onError={e => {
                       e.currentTarget.onerror = null
@@ -188,6 +188,7 @@ export default function RecentMedia ({ varsMap }) {
                     }}
                     alt={item.title}
                   />
+                  <div className="absolute top-0 bottom-0 w-full h-full bg-linear-180 from-transparent from-15% to-transparent group-hover:to-amethyst-smoke-300 dark:group-hover:to-dark-amethyst-smoke-50 duration-300"></div>
                 </Link>
                 <div className='w-full grow text-sm xs:text-xs lg:text-sm'>
                   <Link
