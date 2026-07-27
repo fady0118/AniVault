@@ -1,6 +1,6 @@
 // Schedual.jsx
 import { useQuery } from '@tanstack/react-query'
-import { ChevronDown, ChevronLeft } from 'lucide-react'
+import { CalendarDays, ChevronDown, ChevronLeft } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import LoaderComponent from '../LoaderComponent'
@@ -84,23 +84,27 @@ export default function Schedual() {
   }, [currentIndex])
 
   return (
-    <div className="w-full xs:w-1/2 md:w-full rounded-2xl box-colors-brighter backdrop-blur-md shadow-xl border border-white/20 dark:border-amethyst-smoke-700/30 p-3 sm:p-4 transition-all">
+    <div className="w-full xs:w-1/2 md:w-full box-colors-brighter backdrop-blur-md rounded-lg shadow-xl border border-white/20 dark:border-amethyst-smoke-700/30 py-3 sm:py-4 transition-all">
       
       {/* Header */}
-      <div className="flex items-center justify-between gap-2 mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold uppercase tracking-wider text-amethyst-smoke-800 dark:text-amethyst-smoke-400">
+      <div className="flex items-center justify-between text-sm gap-2 px-3 sm:px-4 mb-3">
+        <div className="flex items-center gap-2 text-[1.1em]">
+          <CalendarDays
+              size={20}
+              className='text-amethyst-smoke-700 dark:text-amethyst-smoke-400'
+            />
+          <span className="text[0.8em] font-semibold uppercase tracking-wider text-amethyst-smoke-800 dark:text-amethyst-smoke-400">
             Schedule
           </span>
           <span className="h-4 w-px bg-amethyst-smoke-800 dark:bg-amethyst-smoke-400" />
-          <span className="text-[0.6rem] text-amethyst-smoke-700 dark:text-amethyst-smoke-500">
+          <span className="text-[0.75em] text-amethyst-smoke-700 dark:text-amethyst-smoke-500">
             {Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_', ' ')}
           </span>
         </div>
       </div>
 
       {/* Day selector */}
-      <div className="flex items-center gap-1 mb-4">
+      <div className="flex items-center gap-1 px-3 sm:px-4 mb-4">
         <button
           onClick={() => shift(-1)}
           className="p-1 rounded-full hover:bg-amethyst-smoke-50 dark:hover:bg-amethyst-smoke-600/40 transition-colors duration-200"
@@ -149,13 +153,12 @@ export default function Schedual() {
             <LoaderComponent />
           </div>
         ) : filtered.length ? (
-          <div className="space-y-1.5">
-            {/* First 10 items */}
+          <div className="">
             {filtered.slice(0, 10).map((item) => (
               <Link
                 to={`/anime/${item.id}`}
                 key={item.id}
-                className="group flex items-center gap-3 py-2 px-3 rounded-xl bg-amethyst-smoke-50/60 dark:bg-amethyst-smoke-500/10 hover:bg-amethyst-smoke-50 dark:hover:bg-amethyst-smoke-500/25 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.01]"
+                className="group flex items-center gap-3 px-3 sm:px-4 py-1.5 hover:bg-blue-600/5 dark:hover:bg-blue-300/5 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.01]"
               >
                 <img
                   src={item.image}

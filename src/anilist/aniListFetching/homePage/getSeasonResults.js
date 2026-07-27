@@ -11,12 +11,8 @@ export async function getSeasonResults () {
       page: 1,
       perPage: 15
     })
-    return adaptSeason(aniListResult)
+    return aniListResult?.Page?.media
   } catch (error) {
     console.log(error)
   }
-}
-
-function adaptSeason(data) {
-    return data?.Page?.media
 }

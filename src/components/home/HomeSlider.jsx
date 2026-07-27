@@ -25,6 +25,7 @@ export default function HomeSlider ({ season }) {
       container.clientWidth / 2 +
       nodeRect.width / 2
     container.scrollTo({ left, behavior: 'smooth' })
+    slideNodes[(index+1)%season.length].querySelector('img.img').classList.remove('animate-slide')
     slideNode.querySelector('img.img').classList.add('animate-slide')
     setIndexState(index + 1)
   }
