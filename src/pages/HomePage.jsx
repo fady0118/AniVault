@@ -42,7 +42,7 @@ export default function HomePage () {
               <div className='text-md/relaxed sm:text-xl/relaxed font-extrabold uppercase'>
                 Latest Updates
               </div>
-              {/* <RecentMedia
+              <RecentMedia
                 varsMap={{
                   anime: recentQueriesVars.anime
                 }}
@@ -51,11 +51,11 @@ export default function HomePage () {
                 varsMap={{
                   manga: recentQueriesVars.manga
                 }}
-              /> */}
+              />
             </div>
             <HomeSidePanel />
           </div>
-          {/* <AnimeCollections /> */}
+          <AnimeCollections />
         </>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getTrendingMedia } from '../../anilist/aniListFetching/homePage/getTrendingMedia'
+import { getAnimeCollectionsData } from '../../anilist/aniListFetching/homePage/getAnimeCollectionsData'
 import { Trophy } from 'lucide-react'
 import LoaderComponent from '../LoaderComponent'
 import { Link } from 'react-router'
@@ -8,7 +8,13 @@ export default function TrendingSection () {
   const TrendingAnimeQ = useQuery({
     queryKey: ['trendingAnime'],
     queryFn: async () => {
-      return await getTrendingMedia()
+      return await getAnimeCollectionsData({
+        page: 1,
+        perPage: 20,
+        formatIn: ['TV', 'MOVIE'],
+        sort: 'TRENDING_DESC',
+        status_in: ['FINISHED', 'RELEASING']
+      })
     }
   })
   return (
@@ -16,17 +22,17 @@ export default function TrendingSection () {
       {/* Header */}
       <div className='text-sm px-3 sm:px-4 mb-3'>
         <div className='flex items-center gap-2 text-[1.1em]'>
-            <Trophy
-              size={20}
-              className='text-amethyst-smoke-700 dark:text-amethyst-smoke-400'
-            />
-            <span className='text[0.8em] font-semibold uppercase tracking-wider text-amethyst-smoke-800 dark:text-amethyst-smoke-400'>
-              Trending
-            </span>
-            <span className='h-4 w-px bg-amethyst-smoke-800/30 dark:bg-amethyst-smoke-400/30' />
-            <span className='text-[0.75em] text-amethyst-smoke-700 dark:text-amethyst-smoke-500'>
-              TV & Movies
-        </span>
+          <Trophy
+            size={20}
+            className='text-amethyst-smoke-700 dark:text-amethyst-smoke-400'
+          />
+          <span className='text[0.8em] font-semibold uppercase tracking-wider text-amethyst-smoke-800 dark:text-amethyst-smoke-400'>
+            Trending
+          </span>
+          <span className='h-4 w-px bg-amethyst-smoke-800/30 dark:bg-amethyst-smoke-400/30' />
+          <span className='text-[0.75em] text-amethyst-smoke-700 dark:text-amethyst-smoke-500'>
+            TV & Movies
+          </span>
         </div>
       </div>
 
