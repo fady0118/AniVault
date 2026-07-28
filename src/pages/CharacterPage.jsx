@@ -160,7 +160,7 @@ export default function CharacterPage () {
                       Favorites
                     </span>
                     <span className='text-[0.65em] font-medium'>
-                      {character.favorites}
+                      {character.favorites?.toLocaleString()}
                     </span>
                   </div>
                 </div>

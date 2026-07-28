@@ -318,12 +318,12 @@ export default function NavBar ({ themeSelect, theme, setTheme }) {
           <SmallNavLink
             classes={classes.smallNavLink}
             LinkTitle='anime'
-            data={data.anime.genres}
+            data={genresData.genres}
           />
           <SmallNavLink
             classes={classes.smallNavLink}
             LinkTitle='manga'
-            data={data.manga.genres}
+            data={genresData.genres}
           />
         </div>
       )}

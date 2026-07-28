@@ -5,19 +5,19 @@ export default function NavLinkBox({ ref, LinkTitle, data }) {
       <div className="w-full h-full p-2 flex flex-col">
         <div className="flex flex-row items-center justify-between">
           <Link
-            to={`/${LinkTitle}?order_by=score&sort=desc`}
+            to={`/${LinkTitle}?order_by=SCORE&sort=desc`}
             className="w-full font-bold capitalize p-1 rounded-sm hover:bg-amethyst-smoke-100/25 dark:hover:bg-dark-amethyst-smoke-300/25 hover:text-pink-500/75 dark:hover:text-pink-400/75 duration-200"
           >
             top
           </Link>
           <Link
-            to={`/${LinkTitle}?status=${LinkTitle === "anime" ? "airing" : "publishing"}&order_by=start_date&sort=desc`}
+            to={`/${LinkTitle}?status=RELEASING&order_by=POPULARITY&sort=desc`}
             className="w-full font-bold capitalize p-1 rounded-sm hover:bg-amethyst-smoke-100/25 dark:hover:bg-dark-amethyst-smoke-300/25 hover:text-pink-500/75 dark:hover:text-pink-400/75 duration-200"
           >
             recent
           </Link>
           <Link
-            to={`/${LinkTitle}?status=upcoming&order_by=start_date&sort=desc`}
+            to={`/${LinkTitle}?status=NOT_YET_RELEASED&order_by=POPULARITY&sort=desc`}
             className="w-full font-bold capitalize p-1 rounded-sm hover:bg-amethyst-smoke-100/25 dark:hover:bg-dark-amethyst-smoke-300/25 hover:text-pink-500/75 dark:hover:text-pink-400/75 duration-200"
           >
             upcoming
@@ -29,10 +29,10 @@ export default function NavLinkBox({ ref, LinkTitle, data }) {
             {data.map((item, i) => (
               <Link
                 key={i}
-                to={`/${LinkTitle}?genres=${item}`}
+                to={`/${LinkTitle}?genres=${item}&order_by=POPULARITY&sort=desc`}
                 className="w-full font-bold capitalize p-1 rounded-sm hover:bg-amethyst-smoke-100/25 dark:hover:bg-dark-amethyst-smoke-300/25 hover:text-pink-500/75 dark:hover:text-pink-400/75 duration-200"
               >
-                {item.name}
+                {item}
               </Link>
             ))}
           </div>

@@ -135,7 +135,7 @@ export default function RootComponent ({
               <>
                 <div
                   id='disclaimer'
-                  className='w-full mb-2 flex flex-row items-center gap-x-2 py-1.5 px-2.5 box-colors-stronger border border-indigo-600/60 rounded-r-md text-[0.5em] xs:text-[0.625em]'
+                  className='w-full mb-2 flex flex-row items-center gap-x-2 py-1.5 px-2.5 box-colors-stronger border border-indigo-600/60 rounded-r-md text-[0.75em] xs:text-[0.9em]'
                 >
                   <p className='flex flex-row flex-wrap items-center gap-1.5'>
                     <span className='font-medium flex flex-row items-center gap-x-1.5'>
