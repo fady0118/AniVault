@@ -2,9 +2,10 @@ import { functions } from '../../../appwrite'
 import { adaptCharacterGallery } from '../../adapters/adaptCharacterGallery'
 
 export async function getCharacterGallery (characterName) {
-  if (!characterName || !characterName?.last || !characterName?.first) return
-  console.log({characterName})
-  const characterTag = `${characterName.last}_${characterName.first}`
+  if (!characterName || (!characterName?.last && !characterName?.first)) return
+  const characterTag = characterName?.last
+    ? `${characterName?.last}_${characterName?.first}`
+    : characterName?.first
   const path = `/?tags=${encodeURIComponent(characterTag)}&limit=100`
 
   try {
@@ -21,7 +22,7 @@ export async function getCharacterGallery (characterName) {
       )
     }
     const data = JSON.parse(execution.responseBody)
-    console.log({data})
+    console.log({ data })
     return adaptCharacterGallery(data)
   } catch (err) {
     console.log(err)

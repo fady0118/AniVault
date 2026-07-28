@@ -44,7 +44,7 @@ export default function AnimeCollections () {
       label: 'Top Anime',
       subtitle: 'TV & Movies',
       query: topAnimeQ,
-      viewAllTo: '/anime?type=tv&order_by=score&sort=desc',
+      viewAllTo: '/anime?type=TV%2CMOVIE&order_by=SCORE&sort=desc',
       emptyString: 'no top anime data found'
     },
     {
@@ -53,13 +53,13 @@ export default function AnimeCollections () {
       label: 'Upcoming Anime',
       subtitle: 'TV & Movies',
       query: upcomingAnimeQ,
-      viewAllTo: '/anime?type=tv&status=upcoming&order_by=popularity&sort=asc',
+      viewAllTo: '/anime?type=TV%2CMOVIE&status=NOT_YET_RELEASED&order_by=POPULARITY&sort=desc',
       emptyString: 'no upcoming anime data found',
     }
   ]
 
   return (
-    <div className='mt-5 grid grid-cols-1 xs:grid-cols-2 gap-5 px-5 w-full lg:w-4/5 text-sm sm:text-md md:text-lg'>
+    <div className='mt-5 grid grid-cols-1 xs:grid-cols-2 gap-5 px-5 w-full lg:w-4/5 xl:w-2/3 text-sm sm:text-md md:text-lg'>
       {sections.map(section => {
         const Icon = section.icon
         return (
