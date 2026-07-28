@@ -70,21 +70,24 @@ export default function Schedual() {
     container.scrollTo({ left, behavior: animate ? 'smooth' : 'instant' })
   }
 
-  function shift(dir) {
-    setCurrentIndex(s => s + dir)
-    if (currentIndex >= OFFSET * 2) {
-      setCurrentIndex(s => s - OFFSET)
-    } else if (currentIndex < OFFSET) {
-      setCurrentIndex(s => s + OFFSET)
+function shift(dir) {
+  setCurrentIndex(s => {
+    let next = s + dir
+    if (next >= OFFSET * 2) {
+      next -= OFFSET
+    } else if (next < OFFSET) {
+      next += OFFSET
     }
-  }
+    return next
+  })
+}
 
   useEffect(() => {
     scrollIntoView(currentIndex)
   }, [currentIndex])
 
   return (
-    <div className="w-full xs:w-1/2 md:w-full box-colors-brighter backdrop-blur-md rounded-lg shadow-xl border border-white/20 dark:border-amethyst-smoke-700/30 py-3 sm:py-4 transition-all">
+    <div className="w-full box-colors-brighter backdrop-blur-md rounded-lg shadow-xl border border-white/20 dark:border-amethyst-smoke-700/30 py-3 sm:py-4 transition-all">
       
       {/* Header */}
       <div className="flex items-center justify-between text-sm gap-2 px-3 sm:px-4 mb-3">

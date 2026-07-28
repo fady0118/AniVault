@@ -216,3 +216,14 @@ export function getCurrentSeason() {
   }
   return {season:"Winter", year};
 }
+
+export function formatDate ({ year, month, day } = {}) {
+  if (!year) return null
+  if (!month) return `${year}`
+  const monthName = new Date(
+    Date.UTC(year, month - 1, day || 1)
+  ).toLocaleString('en-US', {
+    month: 'short'
+  })
+  return day ? `${monthName} ${day}, ${year}` : `${monthName} ${year}`
+}

@@ -67,8 +67,7 @@ export default function RecentMedia ({ varsMap }) {
     top = Math.min(top, window.innerHeight - popupHeight)
     top = Math.max(top, 0)
 
-    // Set a delay before SHOWING the popup (e.g., 400ms)
-    // This prevents flashing when moving the mouse quickly over multiple items
+    // delay showing the popup by 400ms to prevent flasing
     showTimeoutRef.current = setTimeout(() => {
       setPopupPosition({ left, top })
       setPopupData(item)

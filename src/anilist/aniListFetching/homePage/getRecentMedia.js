@@ -1,3 +1,4 @@
+import { formatDate } from '../../../utility/utils'
 import { queryAniList } from '../../client'
 import { RECENT_MEDIA } from '../../queries/recentMedia'
 
@@ -73,18 +74,6 @@ function formatStatus (status) {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 }
-
-function formatDate ({ year, month, day } = {}) {
-  if (!year) return null
-  if (!month) return `${year}`
-  const monthName = new Date(
-    Date.UTC(year, month - 1, day || 1)
-  ).toLocaleString('en-US', {
-    month: 'short'
-  })
-  return day ? `${monthName} ${day}, ${year}` : `${monthName} ${year}`
-}
-
 function formatAiredRange (startDate, endDate) {
   const start = formatDate(startDate)
   const end = formatDate(endDate)
@@ -92,7 +81,6 @@ function formatAiredRange (startDate, endDate) {
   if (!end || end === start) return start
   return `${start} - ${end}`
 }
-
 function sanitizeDescription (html) {
   if (!html) return ''
   return html

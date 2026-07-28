@@ -18,7 +18,7 @@ export default function TrendingSection () {
     }
   })
   return (
-    <div className='w-full xs:w-1/2 md:w-full box-colors-brighter backdrop-blur-md rounded-lg shadow-xl border border-white/20 dark:border-amethyst-smoke-700/30 py-3 sm:py-4 transition-all'>
+    <div className='w-full box-colors-brighter backdrop-blur-md rounded-lg shadow-xl border border-white/20 dark:border-amethyst-smoke-700/30 py-3 sm:py-4 transition-all'>
       {/* Header */}
       <div className='text-sm px-3 sm:px-4 mb-3'>
         <div className='flex items-center gap-2 text-[1.1em]'>

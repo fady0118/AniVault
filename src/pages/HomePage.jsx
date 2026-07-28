@@ -38,7 +38,7 @@ export default function HomePage () {
           <HomeSlider season={seasonQ?.data} />
 
           <div className='flex flex-col md:flex-row gap-x-5 px-5'>
-            <div className='w-full md:w-2/3 lg:w-3/4 shrink-0 py-3 gap-y-2 flex flex-col'>
+            <div className='w-full md:w-2/3 lg:w-3/4 shrink-0 py-3 space-y-3 flex flex-col'>
               <div className='text-md/relaxed sm:text-xl/relaxed font-extrabold uppercase'>
                 Latest Updates
               </div>
