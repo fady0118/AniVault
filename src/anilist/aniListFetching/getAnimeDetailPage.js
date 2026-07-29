@@ -8,15 +8,16 @@ import {
 } from '../adapters/adaptAnime'
 import { fetchAnimeThemesById } from '../AnimeThemes/animeThemes'
 import { queryAniList } from '../client'
-import { ANIME_DETAIL_QUERY } from '../queries/animeDetail'
 import { ANIME_MANGA_CHARACTERS_QUERY } from '../queries/animeMangaCharactersQuery'
+import { MEDIA_DETAIL_QUERY } from '../queries/mediaDetail'
 import { getTmdbImagesAndVideos } from '../TMDB/tmdb'
 import { queryAniListCharactersById } from './queryAniListCharactersById'
 
 export async function getAnimeMetaData (id) {
   try {
-    const aniListResult = await queryAniList(ANIME_DETAIL_QUERY, {
-      id: Number(id)
+    const aniListResult = await queryAniList(MEDIA_DETAIL_QUERY, {
+      id: Number(id),
+      mediaType: 'ANIME'
     })
     const tmdbResult = await getTmdbImagesAndVideos(
       aniListResult?.Media.title.english,

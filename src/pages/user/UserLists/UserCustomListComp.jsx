@@ -178,8 +178,8 @@ export default function UserCustomListComp({ loggedInUser, id, state }) {
               <div className="grid grid-cols-1 gap-4">
                 {list?.listItem_id?.map((item) => (
                   <Link
-                    key={item.$id || item.mal_id}
-                    to={`/${item.mediaType || "anime"}/${item.mal_id}`}
+                    key={item.$id || item.aniList_id}
+                    to={`/${item.mediaType || "anime"}/${item.aniList_id}`}
                     className="relative w-full group flex flex-row text-md md:text-lg overflow-hidden rounded-md border border-amethyst-smoke-500/20 bg-amethyst-smoke-500/5 shadow-sm transition duration-200 hover:-translate-y-1 hover:bg-indigo-500/10 hover:shadow-md"
                   >
                     <div className="w-1/10 min-w-20 max-w-32 aspect-3/4 bg-amethyst-smoke-200/80">

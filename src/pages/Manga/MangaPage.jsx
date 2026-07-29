@@ -47,7 +47,7 @@ export default function MangaPage () {
   const charactersQ = useQuery({
     queryKey: ['animeCharacters', id],
     queryFn: async () => {
-      return await getItemCharactersData(id, "MANGA")
+      return await getItemCharactersData(id, 'MANGA')
     }
   })
 
@@ -94,10 +94,10 @@ export default function MangaPage () {
                 className='min-w-1/2 w-fit rounded-md px-3 py-1 box-colors flex flex-col'
               >
                 <div className='flex items-center gap-x-2.5 text-sm/relaxed sm:text-lg/relaxed font-bold'>
-                  {mangaQ?.data?.title}
+                  {mangaQ?.data?.manga?.title.romaji}
                   <Link
                     className='min-w-6 w-7 sm:w-9 rounded-sm overflow-hidden'
-                    to={mangaQ?.data?.url}
+                    to={mangaQ?.data?.manga?.url}
                     target='_blank'
                   >
                     <img
@@ -108,13 +108,13 @@ export default function MangaPage () {
                   </Link>
                 </div>
                 <div className='flex items-center space-x-2.5 text-xs/snug sm:text-md/snug font-normal dark:text-text-dark/65'>
-                  {mangaQ?.data?.title_english ? (
-                    <span>{mangaQ?.data.title_english}</span>
+                  {mangaQ?.data?.manga?.title?.english ? (
+                    <span>{mangaQ?.data?.manga?.title?.english}</span>
                   ) : (
                     ''
                   )}
-                  {mangaQ?.data?.title_japanese ? (
-                    <span>{mangaQ?.data.title_japanese}</span>
+                  {mangaQ?.data?.manga?.title?.native ? (
+                    <span>{mangaQ?.data?.manga?.title?.native}</span>
                   ) : (
                     ''
                   )}
@@ -125,7 +125,7 @@ export default function MangaPage () {
                   <Bookmark
                     className='h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors'
                     onClick={() => {
-                      setUserItemData(mangaQ?.data)
+                      setUserItemData(mangaQ?.data?.manga)
                       setUserItemModalTab('lists')
                       setShowUserItemModal(true)
                     }}
@@ -133,7 +133,7 @@ export default function MangaPage () {
                   <div
                     id='reviewModalBtn'
                     onClick={() => {
-                      setUserItemData(mangaQ?.data)
+                      setUserItemData(mangaQ?.data?.manga)
                       setUserItemModalTab('review')
                       setShowUserItemModal(true)
                     }}
@@ -156,8 +156,16 @@ export default function MangaPage () {
                         <div id='poster' className='w-full h-full'>
                           <img
                             className='h-full w-full object-cover rounded-lg overflow-hidden'
-                            src={mangaQ?.data?.images?.jpg?.large_image_url}
-                            alt={mangaQ?.data?.title}
+                            src={
+                              mangaQ?.data?.manga?.images?.coverImage
+                                ?.extraLarge ||
+                              mangaQ?.data?.manga?.images?.coverImage?.large
+                            }
+                            alt={
+                              mangaQ?.data?.manga?.title?.english ||
+                              mangaQ?.data?.manga?.title?.romaji ||
+                              'unknown'
+                            }
                           />
                         </div>
                       </div>
@@ -165,7 +173,7 @@ export default function MangaPage () {
                         <Bookmark
                           className='h-fit w-auto rounded-sm py-2.5 px-1 box-colors bookmark-colors'
                           onClick={() => {
-                            setUserItemData(mangaQ?.data)
+                            setUserItemData(mangaQ?.data?.manga)
                             setUserItemModalTab('lists')
                             setShowUserItemModal(true)
                           }}
@@ -173,7 +181,7 @@ export default function MangaPage () {
                         <div
                           id='reviewModalBtn'
                           onClick={() => {
-                            setUserItemData(mangaQ?.data)
+                            setUserItemData(mangaQ?.data?.manga)
                             setUserItemModalTab('review')
                             setShowUserItemModal(true)
                           }}
@@ -189,8 +197,16 @@ export default function MangaPage () {
                       <div id='poster' className='w-full h-full'>
                         <img
                           className='h-full w-full object-cover rounded-lg overflow-hidden'
-                          src={mangaQ?.data?.images?.jpg?.large_image_url}
-                          alt={mangaQ?.data?.title}
+                          src={
+                            mangaQ?.data?.manga?.images?.coverImage
+                              ?.extraLarge ||
+                            mangaQ?.data?.manga?.images?.coverImage?.large
+                          }
+                          alt={
+                            mangaQ?.data?.manga?.title?.english ||
+                            mangaQ?.data?.manga?.title?.romaji ||
+                            'unknown'
+                          }
                         />
                       </div>
                     </div>
@@ -206,10 +222,11 @@ export default function MangaPage () {
                             Score
                           </p>
                           <p className='text-[1.35em]/snug font-semibold'>
-                            {mangaQ?.data?.score || 'N/A'}
+                            {mangaQ?.data?.manga?.score || 'N/A'}
                           </p>
                           <p className='font-light'>
-                            {mangaQ?.data?.scored_by?.toLocaleString() || '-'}{' '}
+                            {mangaQ?.data?.manga?.scored_by?.toLocaleString() ||
+                              '-'}{' '}
                             users
                           </p>
                         </div>
@@ -219,30 +236,30 @@ export default function MangaPage () {
                             <div className='flex flex-col w-fit'>
                               <p className='text-[1.35em]'>Ranked</p>
                               <p className='text-[1.1em]'>
-                                # {mangaQ?.data?.rank || '?'}
+                                # {mangaQ?.data?.manga?.rank || '?'}
                               </p>
                             </div>
                             <div className='flex flex-col w-fit'>
                               <p className='text-[1.35em]'>Popularity</p>
                               <p className='text-[1.1em]'>
-                                # {mangaQ?.data?.popularity || '?'}
+                                # {mangaQ?.data?.manga?.popularity || '?'}
                               </p>
                             </div>
                             <div className='flex flex-col w-fit'>
                               <p className='text-[1.35em]'>Members</p>
                               <p className='text-[1.1em]'>
-                                {mangaQ?.data?.members?.toLocaleString()}
+                                {mangaQ?.data?.manga?.members?.toLocaleString()}
                               </p>
                             </div>
 
                             <Link
-                              to={`/manga?type=${mangaQ?.data?.type.toLowerCase()}`}
+                              to={`/manga?type=${mangaQ?.data?.manga?.type?.toLowerCase()}`}
                               className='text-[1.2em] blue-link duration-200 w-fit'
                             >
-                              {mangaQ?.data?.type}
+                              {mangaQ?.data?.manga?.type}
                             </Link>
                             <div className='flex flex-row flex-wrap items-center text-[1.2em] w-fit'>
-                              {mangaQ?.data?.authors
+                              {mangaQ?.data?.manga?.authors
                                 ?.slice(0, 2)
                                 .map((s, i, arr) => (
                                   <p key={i}>
@@ -275,45 +292,45 @@ export default function MangaPage () {
                       <div className='grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]'>
                         {renderInfoStr(
                           'type',
-                          `${mangaQ?.data?.type}`,
-                          `/manga?type=${mangaQ?.data?.type}`
+                          `${mangaQ?.data?.manga?.type}`,
+                          `/manga?type=${mangaQ?.data?.manga?.type}`
                         )}
                         {renderInfoStr(
                           'volumes',
-                          `${mangaQ?.data?.volumes ?? '?'}`
+                          `${mangaQ?.data?.manga?.volumes ?? '?'}`
                         )}
                         {renderInfoStr(
                           'chapters',
-                          `${mangaQ?.data?.chapters ?? '?'}`
+                          `${mangaQ?.data?.manga?.chapters ?? '?'}`
                         )}
                         {renderInfoStr(
                           'status',
-                          `${mangaQ?.data?.status}`,
+                          `${mangaQ?.data?.manga?.status}`,
                           `/manga?status=${getMangaStatus(
-                            mangaQ?.data?.status
+                            mangaQ?.data?.manga?.status
                           )}`
                         )}
                         {renderInfoStr(
                           'published',
-                          `${mangaQ?.data?.published?.string}`
+                          `${mangaQ?.data?.manga?.published?.string}`
                         )}
                         {renderInfoArr(
                           'genres',
-                          mangaQ?.data?.genres,
+                          mangaQ?.data?.manga?.genres,
                           '/manga?genres='
                         )}
                         {renderInfoArr(
                           'themes',
-                          mangaQ?.data?.themes,
+                          mangaQ?.data?.manga?.themes,
                           '/manga?genres='
                         )}
                         {renderInfoArr(
                           'demographics',
-                          mangaQ?.data?.demographics
+                          mangaQ?.data?.manga?.demographics
                         )}
                         {renderInfoArr(
                           'authors',
-                          mangaQ?.data?.authors,
+                          mangaQ?.data?.manga?.authors,
                           '/people/'
                         )}
                       </div>
@@ -328,33 +345,36 @@ export default function MangaPage () {
                         {renderInfoStr(
                           'score',
                           `${
-                            mangaQ?.data?.score
-                          } (scored by ${mangaQ?.data?.scored_by?.toLocaleString()} users) `
+                            mangaQ?.data?.manga?.score
+                          } (scored by ${mangaQ?.data?.manga?.scored_by?.toLocaleString()} users) `
                         )}
-                        {renderInfoStr('ranked', `#${mangaQ?.data?.rank}`)}
+                        {renderInfoStr(
+                          'ranked',
+                          `#${mangaQ?.data?.manga?.rank}`
+                        )}
                         {renderInfoStr(
                           'popularity',
-                          `#${mangaQ?.data?.popularity}`
+                          `#${mangaQ?.data?.manga?.popularity}`
                         )}
                         {renderInfoStr(
                           'members',
-                          `${mangaQ?.data?.members?.toLocaleString()}`
+                          `${mangaQ?.data?.manga?.members?.toLocaleString()}`
                         )}
                         {renderInfoStr(
                           'favorites',
-                          `${mangaQ?.data?.favorites?.toLocaleString()}`
+                          `${mangaQ?.data?.manga?.favorites?.toLocaleString()}`
                         )}
                       </div>
                     </div>
                   </div>
-                  {mangaQ?.data?.external?.length ? (
+                  {mangaQ?.data?.manga?.external?.length ? (
                     <div id='external' className='w-full'>
                       <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
                         Available At
                       </div>
                       <div className='px-3 py-2 text-xs font-light'>
                         <div className='grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]'>
-                          {mangaQ?.data?.external?.map((ext, i) => (
+                          {mangaQ?.data?.manga?.external?.map((ext, i) => (
                             <p
                               className='flex flex-row items-center gap-1.5'
                               key={i}
@@ -386,18 +406,20 @@ export default function MangaPage () {
                       titles
                     </div>
                     <div className='flex flex-col gap-y-1 px-3 py-2 text-xs font-light'>
-                      {mangaQ?.data?.titles?.length
-                        ? mangaQ?.data?.titles.map((title, i) => (
-                            <div
-                              key={i}
-                              className='flex flex-row space-x-1 w-full'
-                            >
-                              <p className='font-semibold min-w-16'>
-                                {title.type}:{' '}
-                              </p>
-                              <p>{title.title}</p>
-                            </div>
-                          ))
+                      {Object.values(mangaQ?.data?.manga?.title).length
+                        ? Object.entries(mangaQ?.data?.manga?.title).map(
+                            ([type, title], i) => (
+                              <div
+                                key={i}
+                                className='flex flex-row space-x-1 w-full'
+                              >
+                                <p className='font-semibold min-w-16'>
+                                  {type}:{' '}
+                                </p>
+                                <p>{title}</p>
+                              </div>
+                            )
+                          )
                         : ''}
                     </div>
                   </div>
@@ -419,9 +441,10 @@ export default function MangaPage () {
                         />
                       </div>
                       <p className='w-full text-xs font-light overflow-hidden max-lines-4 cutoff-text'>
-                        {mangaQ?.data?.description || 'description missing..'}
+                        {mangaQ?.data?.manga?.description ||
+                          'description missing..'}
                       </p>
-                      {mangaQ?.data?.description ? (
+                      {mangaQ?.data?.manga?.description ? (
                         <label
                           htmlFor='descriptionCheckbox'
                           className="text-xs capitalize w-fit hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
@@ -460,7 +483,7 @@ export default function MangaPage () {
                     ''
                   )}
 
-                  {mangaQ?.data?.flattenedRelations?.length ? (
+                  {mangaQ?.data?.manga?.flattenedRelations?.length ? (
                     <div
                       id='relations'
                       className='flex justify-center w-full h-fit text-2xs lg:text-xs order-5'
@@ -470,7 +493,7 @@ export default function MangaPage () {
                           Related Entries
                         </div>
                         <div className='grid grid-cols-1 xs:grid-cols-2 auto-rows-fr gap-y-2 p-2'>
-                          {mangaQ?.data?.flattenedRelations
+                          {mangaQ?.data?.manga?.flattenedRelations
                             ?.slice(0, 3)
                             .map((entry, i) => (
                               <div key={i} className='flex flex-row w-full'>
@@ -500,20 +523,23 @@ export default function MangaPage () {
                               </div>
                             ))}
                           {!showAllRelations &&
-                          mangaQ?.data?.flattenedRelations?.length > 3 ? (
+                          mangaQ?.data?.manga?.flattenedRelations?.length >
+                            3 ? (
                             <div
                               onClick={() => {
                                 setShowAllRelations(true)
                               }}
                               className='flex flex-row justify-center items-center w-full text-2xl border-4 border-amethyst-smoke-400/30 hover:cursor-pointer hover:bg-amethyst-smoke-400/20'
                             >
-                              +{mangaQ?.data?.flattenedRelations?.length - 3}
+                              +
+                              {mangaQ?.data?.manga?.flattenedRelations?.length -
+                                3}
                             </div>
                           ) : (
                             ''
                           )}
                           {showAllRelations
-                            ? mangaQ?.data?.flattenedRelations
+                            ? mangaQ?.data?.manga?.flattenedRelations
                                 .slice(3)
                                 .map((entry, i) => (
                                   <div
@@ -588,8 +614,15 @@ export default function MangaPage () {
             >
               <img
                 className='w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y'
-                src={mangaQ?.data?.images?.jpg?.large_image_url}
-                alt={mangaQ?.data?.title}
+                src={
+                  mangaQ?.data?.manga?.images?.coverImage.extraLarge ||
+                  mangaQ?.data?.manga?.images?.coverImage.large
+                }
+                alt={
+                  mangaQ?.data?.manga?.title?.english ||
+                  mangaQ?.data?.manga?.title?.romaji ||
+                  'unknown'
+                }
               />
             </div>
           </div>
@@ -597,7 +630,11 @@ export default function MangaPage () {
       )}
       {showModal && (
         <Gallery
-          name={mangaQ?.data?.title}
+          name={
+            mangaQ?.data?.manga?.title?.english ||
+            mangaQ?.data?.manga?.title?.romaji ||
+            'unknown'
+          }
           pictures={mangaQ?.data?.pictures}
           activeIndex={activeIndex}
           closeGallery={closeGallery}

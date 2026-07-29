@@ -8,24 +8,20 @@ import useFormStatusHandling from './useFormStatusHandling'
 import LoaderComponent from '../LoaderComponent'
 
 export default function UserItemReviewModal ({
-  jikanData,
+  aniListData,
   mediaType,
   userItemData,
   refetchReviews
 }) {
   const { loggedInUser } = useAuth()
-  // data local states
   const [reviewData, setReviewData] = useState(null)
   const [hasFetched, setHasFetched] = useState(false)
   const [modified, setModified] = useState(false)
 
-  // status handling
   const { status, setStatus, error, setError } = useFormStatusHandling()
-  // review body TextArea
   const { textAreaData, setTextAreaData, insertTextStyle } = useTextAreaToolBox(
     reviewData?.review_body || ''
   )
-  // local form states
   const [rating, setRating] = useState(reviewData?.overall_rating ?? null)
   const [selectedTag, setSelectedTag] = useState(reviewData?.tags ?? '')
   const [spoilers, setSpoilers] = useState(reviewData?.Spoiler_Warning ?? null)
@@ -43,14 +39,16 @@ export default function UserItemReviewModal ({
     { label: 'Mixed Feelings', value: 'Mixed_Feelings' },
     { label: 'Not Recommended', value: 'Not_Recommended' }
   ]
-  // appwrite data fetch
   async function fetchReviewFromDB () {
     try {
       const res = await tablesDB.listRows({
         databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
         tableId: import.meta.env.VITE_TABLE_ID_REVIEWS,
         queries: [
-          Query.equal('item_mal_id', jikanData?.mal_id || userItemData?.mal_id),
+          Query.equal(
+            'item_aniList_id',
+            aniListData?.aniList_id || userItemData?.aniList_id
+          ),
           Query.equal('userProfile', loggedInUser?.$id)
         ]
       })
@@ -62,7 +60,6 @@ export default function UserItemReviewModal ({
     }
   }
 
-  // sync local states with reviewData
   useEffect(() => {
     if (reviewData) {
       setTextAreaData(reviewData?.review_body ?? null)
@@ -72,7 +69,6 @@ export default function UserItemReviewModal ({
     }
   }, [reviewData])
 
-  // check if user made changes
   useEffect(() => {
     if (!hasFetched) return
     const modified =
@@ -83,12 +79,10 @@ export default function UserItemReviewModal ({
     setModified(modified)
   }, [textAreaData, rating, spoilers, selectedTag])
 
-  // fetch review data on mount
   useEffect(() => {
     fetchReviewFromDB()
   }, [])
 
-  // form validation helpers
   const validate = () => {
     const errors = {
       body: !(textAreaData && textAreaData.trim().length > 0),
@@ -102,6 +96,20 @@ export default function UserItemReviewModal ({
 
   async function handleSubmit (e) {
     e.preventDefault()
+    const canWriteReview = !(
+      !userItemData ||
+      userItemData?.status === 'unwatched' ||
+      userItemData?.status === 'plan_to_watch' ||
+      userItemData?.status === 'unread' ||
+      userItemData?.status === 'plan_to_read'
+    )
+    if (!canWriteReview) {
+      setStatus('error')
+      setError(
+        "You can't write a review if you haven't watched/read the item, pls update the status if it's not up-to-date"
+      )
+      return
+    }
     setSubmitted(true)
     const validationErrors = validate()
     if (
@@ -123,17 +131,16 @@ export default function UserItemReviewModal ({
         tags: selectedTag,
         Spoiler_Warning: Boolean(spoilers),
         user_id_str: loggedInUser?.$id,
-        item_mal_id: jikanData?.mal_id || userItemData?.mal_id,
+        item_aniList_id: aniListData?.aniList_id || userItemData?.aniList_id,
         userProfile: loggedInUser?.$id,
         userItem: userItemData?.$id,
         anime_progress: userItemData?.progress || null,
         manga_vols: userItemData?.manga_vols || null,
-        manga_chaps: userItemData?.manga_chaps || null,
+        manga_chaps: userItemData?.manga_chaps || null
       }
       console.log('Saving review:', payload)
       let res
       if (reviewData?.$id) {
-        // update existing row
         res = await tablesDB.updateRow({
           databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
           tableId: import.meta.env.VITE_TABLE_ID_REVIEWS,
@@ -141,7 +148,6 @@ export default function UserItemReviewModal ({
           data: payload
         })
       } else {
-        // create new row
         res = await tablesDB.createRow({
           databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
           tableId: import.meta.env.VITE_TABLE_ID_REVIEWS,

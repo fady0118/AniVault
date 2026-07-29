@@ -124,7 +124,7 @@ export default function UserWatchList({ data, refetchReviews }) {
 function GridItem({ item, setShowUserItemModal, setUpdatedItemData }) {
   return (
     <div className="group relative rounded-md overflow-hidden">
-      <Link to={`/${item?.mediaType}/${item?.mal_id}`}>
+      <Link to={`/${item?.mediaType}/${item?.aniList_id}`}>
         <img className="w-full h-full object-cover" src={item?.cached_img} alt={item?.title} />
       </Link>
 

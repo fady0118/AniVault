@@ -1,26 +1,50 @@
-import { useContext, useEffect, useLayoutEffect, useState } from 'react'
+// UserItemModal.jsx
+import { useEffect, useState } from 'react'
 import { tablesDB } from '../../appwrite'
 import { useAuth } from '../../Contexts/AuthContext'
-import { CheckCircle, Circle } from 'lucide-react'
-import { RootContext } from '../../App'
-import { jikanFetchWithCache } from '../../utility/jikanApi'
+import { queryAniList } from '../../anilist/client'
+import { USER_ITEM_MODAL_QUERY } from '../../anilist/queries/userItemModalQuery'
 import UserItemStatusComponent from './UserItemStatusComponent'
 import UserItemListsComponent from './UserItemListsComponent'
 import UserItemReviewModal from './UserItemReviewModal'
+import LoaderComponent from '../LoaderComponent'
 import { Query } from 'appwrite'
 
-const animeTypes = [
-  'tv',
-  'movie',
-  'ova',
-  'special',
-  'ona',
-  'music',
-  'cm',
-  'pv',
-  'tv special'
-]
-// data is passed from the caller component
+function normalizeModalData (data) {
+  if (!data) return null
+
+  const aniListId = Number(data.aniList_id ?? data.id) || null
+  const title =
+    data?.title?.english ||
+    data?.title?.romaji ||
+    data?.title?.native ||
+    'Unknown'
+
+  const coverImage = data.images?.coverImage || {}
+  const coverImageUrl =
+    coverImage?.extraLarge ||
+    coverImage?.large ||
+    coverImage?.medium ||
+    'https://s4.anilist.co/file/anilistcdn/staff/large/default.jpg'
+
+  return {
+    ...data,
+    id: aniListId,
+    aniList_id: aniListId,
+    title,
+    // title_full: title,
+    type: data.type?.toLowerCase() ?? null,
+    status: data.status ?? null,
+    episodes: data.episodes ?? null,
+    volumes: data.volumes ?? null,
+    chapters: data.chapters ?? null,
+    coverImage,
+    coverImageUrl,
+    bannerImage:
+      data.bannerImage || coverImage.extraLarge || coverImageUrl || ''
+  }
+}
+
 export default function UserItemModal ({
   data = undefined,
   setShowUserItemModal,
@@ -29,85 +53,100 @@ export default function UserItemModal ({
   refetchReviews = undefined,
   userItemModalTab = undefined
 }) {
-  const { windowWidth } = useContext(RootContext)
-  // auth state to get the user_id
   const { loggedInUser } = useAuth()
-  // item data from user_item table in the DB
   const [userItemData, setUserItemData] = useState(null)
-  // item data from jikan
-  const [jikanData, setJikanData] = useState(data ?? null)
-  // derived mediatype needed in both tabs & in adding rows to appwrite tables (if userItemTableData & data are null set mediaType as null and derive it in UserItemStatusComponent)
-  const [mediaType, setMediaType] = useState(
-    userItemTableData?.mediaType ??
-      (data
-        ? animeTypes.includes(data?.type?.toLowerCase())
-          ? 'anime'
-          : 'manga'
-        : null)
+  const [aniListData, setAniListData] = useState(() =>
+    normalizeModalData(data ?? null)
   )
 
-  // item form-states
+  const [mediaType, setMediaType] = useState(
+    () => userItemTableData?.mediaType ?? aniListData?.type ?? null
+  )
   const [currentTab, setCurrentTab] = useState('status')
 
-  // fetch jikanData if it data==null
+  const [aniListStatus, setAniListStatus] = useState(
+    aniListData ? 'ready' : 'loading'
+  )
+
   useEffect(() => {
     if (data) {
-      setJikanData(data)
+      setAniListData(normalizeModalData(data))
+      setAniListStatus('ready')
       return
     }
+
+    const id = userItemTableData?.aniList_id
+    if (!id) {
+      setAniListStatus('error')
+      return
+    }
+
     let active = true
+    setAniListStatus('loading')
     ;(async () => {
       try {
-        const detailData = await jikanFetchWithCache(
-          `https://api.jikan.moe/v4/${userItemTableData?.mediaType}/${userItemTableData?.mal_id}`
-        )
-        console.log(detailData)
+        const aniListResult = await queryAniList(USER_ITEM_MODAL_QUERY, {
+          id: Number(id)
+        })
         if (!active) return
-        setJikanData(detailData ?? null)
+        const normalized = normalizeModalData(aniListResult?.Media ?? null)
+        setAniListData(normalized)
+        setAniListStatus(normalized ? 'ready' : 'error')
       } catch (error) {
-        console.log(error)
+        console.error('Failed to load AniList data:', error)
+        if (!active) return
+        setAniListStatus('error')
       }
     })()
     return () => {
       active = false
     }
-  }, [data])
-
-  // fetch the item data from user_item table in the DB
-  async function fetchUserItemFromDb () {
-    if (userItemTableData) return setUserItemData(userItemTableData)
-    try {
-      const res = await tablesDB.listRows({
-        databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
-        tableId: import.meta.env.VITE_TABLE_ID_USER_ITEM,
-        queries: [
-          Query.equal('user_id', loggedInUser.$id),
-          Query.equal('mal_id', jikanData?.mal_id),
-          Query.limit(1)
-        ]
-      })
-      if (!mediaType) {
-        setMediaType(res?.rows[0]?.mediaType)
-      }
-      setUserItemData(res?.rows[0])
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  }, [data, userItemTableData?.aniList_id])
 
   useEffect(() => {
-    // call fetchUserItemFromDb on component mount to populate userItemData state
+    let active = true
+    async function fetchUserItemFromDb () {
+      if (userItemTableData) {
+        setUserItemData(userItemTableData)
+        return
+      }
+      const aniListId = aniListData?.aniList_id
+      if (!loggedInUser?.$id || !aniListId) return
+      try {
+        const res = await tablesDB.listRows({
+          databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+          tableId: import.meta.env.VITE_TABLE_ID_USER_ITEM,
+          queries: [
+            Query.equal('user_id', loggedInUser.$id),
+            Query.equal('aniList_id', Number(aniListId)),
+            Query.limit(1)
+          ]
+        })
+        if (!active) return
+        const existingItem = res?.rows?.[0] ?? null
+        if (existingItem?.mediaType) {
+          setMediaType(existingItem.mediaType)
+        }
+        setUserItemData(existingItem)
+      } catch (error) {
+        console.error('Failed to fetch user item:', error)
+      }
+    }
     fetchUserItemFromDb()
-    // addEventListener to close modal on pressing "escape"
+    return () => {
+      active = false
+    }
+  }, [userItemTableData, aniListData?.aniList_id, loggedInUser?.$id])
+
+  useEffect(() => {
     const handleKeyDown = e => {
       if (e.key === 'Escape') {
         setShowUserItemModal(false)
       }
     }
-    document.documentElement.addEventListener('keydown', handleKeyDown)
-    return () =>
-      document.documentElement.removeEventListener('keydown', handleKeyDown)
-  }, [])
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [setShowUserItemModal])
 
   return (
     <div className='z-50 fixed top-0 left-[-2.5vw] w-[102.5vw] h-screen backdrop-blur-lg'>
@@ -165,31 +204,53 @@ export default function UserItemModal ({
             </div>
           </div>
 
-          {currentTab === 'status' && (
-            <UserItemStatusComponent
-              jikanData={jikanData}
-              mediaType={mediaType}
-              setMediaType={setMediaType}
-              setUserItems={setUserItems}
-              userItemData={userItemData}
-              setUserItemData={setUserItemData}
-            />
+          {aniListStatus === 'loading' && (
+            <section className='rounded-2xl border border-white/10 section-colors-medium p-8 shadow-inner shadow-slate-900/30 flex justify-center'>
+              <div className='relative scale-75'>
+                <LoaderComponent />
+              </div>
+            </section>
           )}
 
-          {currentTab === 'lists' && (
-            <UserItemListsComponent
-              jikanData={jikanData}
-              mediaType={mediaType}
-              userItemTableData={userItemTableData}
-            />
+          {aniListStatus === 'error' && (
+            <section className='rounded-2xl border border-white/10 section-colors-medium p-4 shadow-inner shadow-slate-900/30'>
+              <p className='text-sm text-rose-600 dark:text-rose-400'>
+                Couldn't load this title from AniList. Please close this and try
+                again.
+              </p>
+            </section>
           )}
-          {currentTab === 'review' && (
-            <UserItemReviewModal
-              jikanData={jikanData}
-              mediaType={mediaType}
-              userItemData={userItemData}
-              refetchReviews={refetchReviews}
-            />
+
+          {aniListStatus === 'ready' && (
+            <>
+              {currentTab === 'status' && (
+                <UserItemStatusComponent
+                  aniListData={aniListData}
+                  mediaType={mediaType}
+                  setMediaType={setMediaType}
+                  setUserItems={setUserItems}
+                  userItemData={userItemData}
+                  setUserItemData={setUserItemData}
+                />
+              )}
+
+              {currentTab === 'lists' && (
+                <UserItemListsComponent
+                  aniListData={aniListData}
+                  mediaType={mediaType}
+                  userItemTableData={userItemTableData}
+                />
+              )}
+
+              {currentTab === 'review' && (
+                <UserItemReviewModal
+                  aniListData={aniListData}
+                  mediaType={mediaType}
+                  userItemData={userItemData}
+                  refetchReviews={refetchReviews}
+                />
+              )}
+            </>
           )}
         </div>
       </div>

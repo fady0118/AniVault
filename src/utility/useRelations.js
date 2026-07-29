@@ -7,7 +7,7 @@ export function useRelations (data) {
   const visibleRelations = showAllRelations ? relations : relations.slice(0, 3)
 
   const relationsImgs = relations.map(rel => ({
-    mal_id: rel.mal_id,
+    aniList_id: rel.id,
     image:
       rel.images?.jpg?.image_url || rel.images?.jpg?.large_image_url || null
   }))

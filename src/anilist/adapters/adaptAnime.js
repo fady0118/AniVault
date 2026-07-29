@@ -80,7 +80,11 @@ export function adaptAnimeDetail (media) {
     },
     isAdult: media.isAdult,
     images: {
-      coverImage: media.coverImage?.extraLarge,
+      coverImage: {
+        extraLarge: media.coverImage?.extraLarge,
+        large: media.coverImage?.large,
+        medium: media.coverImage?.medium
+      },
       bannerImage: media.bannerImage
     },
     trailer: media.trailer
@@ -101,7 +105,9 @@ export function adaptAnimeDetail (media) {
 
 export function adaptCharacters (allEdges = []) {
   // aniList characters data require extra work for deduplicating & sorting by role
-  const deduplicatedArray = [... new Map(allEdges.map(e=>[e.node.id, e])).values()]
+  const deduplicatedArray = [
+    ...new Map(allEdges.map(e => [e.node.id, e])).values()
+  ]
   const sortedArray = sortCharactersByRole(deduplicatedArray)
   const dataArr = sortedArray.map(edge => ({
     character: {

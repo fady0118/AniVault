@@ -11,17 +11,15 @@ const statusEnum = {
   manga: ['unread', 'plan_to_read', 'reading', 'completed', 'dropped']
 }
 export default function UserItemStatusComponent ({
-  jikanData,
+  aniListData,
   mediaType,
   setMediaType,
   setUserItems,
   userItemData,
   setUserItemData
 }) {
-  // auth state to get the user_id
   const { loggedInUser } = useAuth()
-  // item form-states
-  const [itemStatus, setItemStatus] = useState(null) // unwatched, plan_to_watch, watching, completed, dropped
+  const [itemStatus, setItemStatus] = useState(null)
   const [progress, setProgress] = useState(null)
   const [mangaProgress, setMangaProgress] = useState({
     vols: null,
@@ -29,16 +27,13 @@ export default function UserItemStatusComponent ({
   })
   const [timesWatched, setTimesWatched] = useState(null)
 
-  // form status
   const { status, setStatus, error, setError } = useFormStatusHandling()
 
-  // update userItem data in the DB
   async function updateData () {
     setStatus('loading')
     let res
     try {
       if (!userItemData) {
-        // create new row
         res = await tablesDB.createRow({
           databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
           tableId: import.meta.env.VITE_TABLE_ID_USER_ITEM,
@@ -50,18 +45,17 @@ export default function UserItemStatusComponent ({
             manga_vols: Number(mangaProgress.vols) || null,
             manga_chaps: Number(mangaProgress.chaps) || null,
             mediaType: mediaType,
-            mal_id: jikanData?.mal_id ?? userItemData?.mal_id,
+            aniList_id: aniListData?.aniList_id,
             cached_img:
-              jikanData?.images?.jpg?.image_url ??
-              jikanData?.images?.webp?.image_url ??
-              userItemData?.cached_img,
-            title: jikanData?.title ?? userItemData?.title,
+              aniListData?.coverImage?.extraLarge ??
+              aniListData?.coverImage?.large ??
+              aniListData?.coverImage?.medium,
+            title: aniListData?.title,
             user_id: loggedInUser?.$id,
             user_id_str: loggedInUser?.$id
           }
         })
       } else {
-        // update existing row
         res = await tablesDB.updateRow({
           databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
           tableId: import.meta.env.VITE_TABLE_ID_USER_ITEM,
@@ -85,14 +79,18 @@ export default function UserItemStatusComponent ({
                 mangaItems,
                 animeItems: [
                   res,
-                  ...animeItems.filter(item => item?.mal_id !== res?.mal_id)
+                  ...animeItems.filter(
+                    item => item?.aniList_id !== res?.aniList_id
+                  )
                 ]
               }
             : {
                 animeItems,
                 mangaItems: [
                   res,
-                  ...mangaItems.filter(item => item?.mal_id !== res?.mal_id)
+                  ...mangaItems.filter(
+                    item => item?.aniList_id !== res?.aniList_id
+                  )
                 ]
               }
         })
@@ -105,10 +103,8 @@ export default function UserItemStatusComponent ({
     }
   }
 
-  // sync form states with fetched data
   useEffect(() => {
     if (!userItemData) return
-    // update form states
     setItemStatus(userItemData?.status)
     setProgress(userItemData?.progress)
     setTimesWatched(userItemData?.times_watched)
@@ -118,7 +114,6 @@ export default function UserItemStatusComponent ({
     })
   }, [userItemData])
 
-  // reactions to user changing any form states
   useEffect(() => {
     switch (itemStatus) {
       case 'unwatched':
@@ -127,7 +122,7 @@ export default function UserItemStatusComponent ({
         break
       case 'completed':
         setTimesWatched(prevState => prevState ?? 1)
-        setProgress(jikanData?.episodes ?? null)
+        setProgress(aniListData?.episodes ?? null)
         break
       case 'plan_to_watch':
         setProgress(null)
@@ -140,11 +135,9 @@ export default function UserItemStatusComponent ({
         setTimesWatched(null)
         break
     }
-  }, [itemStatus, jikanData])
+  }, [itemStatus, aniListData])
 
-  // update form status when the user makes changes
   useLayoutEffect(() => {
-    // if (!userItemData) return;
     const initialStatus = userItemData?.status ?? null
     const initialProgress = userItemData?.progress ?? null
     const initialTimesWatched = userItemData?.times_watched ?? null
@@ -165,24 +158,20 @@ export default function UserItemStatusComponent ({
         <div className='flex flex-col gap-4'>
           <div className='flex flex-row flex-wrap items-start gap-4'>
             <img
-              src={
-                userItemData?.cached_img ||
-                jikanData?.images?.webp?.large_image_url ||
-                jikanData?.images?.webp?.image_url
-              }
+              src={userItemData?.cached_img || aniListData?.coverImageUrl}
               className='w-24 h-32 rounded-sm object-cover'
-              alt={jikanData?.title || userItemData?.title}
+              alt={aniListData?.title || userItemData?.title}
             />
             <div className='flex flex-col items-start gap-4 grow'>
               <div className='flex flex-row flex-wrap items-center gap-x-1.5 min-w-0'>
                 <p className='font-bold text-sm sm:text-lg truncate'>
-                  {jikanData?.title || userItemData?.title}
+                  {aniListData?.title || userItemData?.title}
                 </p>
                 <span
                   className={`inline-flex items-center rounded-md px-2 py-1 text-2xs font-medium ${
                     mediaType === 'anime'
                       ? 'text-indigo-500 dark:text-indigo-400 inset-ring inset-ring-indigo-500/50 dark:inset-ring-indigo-400/50'
-                      : 'text-purple-500 dark:text-purple-400 inset-ring inset-ring-purple-500/50 dark:inset-ring-purple-400/50'
+                      : 'text-purple-500 dark:text-purple-400 inset-ring inset-ring-purple-500/50 dark:inset-ring-purple-500/50'
                   }`}
                 >
                   {mediaType}
@@ -203,7 +192,7 @@ export default function UserItemStatusComponent ({
                     <option disabled value=''>
                       Select status
                     </option>
-                    {jikanData?.status?.toLowerCase() === 'not yet aired'
+                    {aniListData?.status?.toLowerCase() === 'not yet aired'
                       ? statusEnum[mediaType].slice(0, 2).map((str, i) => (
                           <option key={i} value={str}>
                             {str}
@@ -245,7 +234,7 @@ export default function UserItemStatusComponent ({
                               {Array.from(
                                 {
                                   length:
-                                    Number(jikanData?.episodes ?? null) || 0
+                                    Number(aniListData?.episodes ?? null) || 0
                                 },
                                 (_, i) => i + 1
                               ).map(value => (
@@ -284,7 +273,7 @@ export default function UserItemStatusComponent ({
                                 {Array.from(
                                   {
                                     length:
-                                      Number(jikanData?.volumes ?? null) || 0
+                                      Number(aniListData?.volumes ?? null) || 0
                                   },
                                   (_, i) => i + 1
                                 ).map(value => (
@@ -318,7 +307,7 @@ export default function UserItemStatusComponent ({
                                 {Array.from(
                                   {
                                     length:
-                                      Number(jikanData?.chapters ?? null) || 0
+                                      Number(aniListData?.chapters ?? null) || 0
                                   },
                                   (_, i) => i + 1
                                 ).map(value => (

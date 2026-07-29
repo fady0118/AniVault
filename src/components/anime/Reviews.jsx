@@ -18,11 +18,11 @@ export default function Reviews ({ data, item_id, mediaType }) {
         const queries = mediaType
           ? [
               Query.equal('mediaType', mediaType),
-              Query.equal('item_mal_id', Number(item_id)),
+              Query.equal('item_aniList_id', Number(item_id)),
               Query.select(['*', 'userItem.*', 'userProfile.*'])
             ]
           : [
-              Query.equal('item_mal_id', Number(item_id)),
+              Query.equal('item_aniList_id', Number(item_id)),
               Query.select(['*', 'userItem.*', 'userProfile.*'])
             ]
         const res = await tablesDB.listRows({

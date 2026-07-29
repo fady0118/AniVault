@@ -49,19 +49,11 @@ export function adaptMangaDetail (media) {
     source: media.source,
     status: media.status,
     url: media.siteUrl || `https://myanimelist.net/manga/${media.idMal}`,
-    title: media.title?.english || media.title?.romaji || media.title?.native,
-    title_english: media.title?.english,
-    title_japanese: media.title?.native,
-    title_full: {
+    title: {
       romaji: media.title?.romaji,
       english: media.title?.english,
       native: media.title?.native
     },
-    titles: [
-      { type: 'romaji', title: media.title?.romaji },
-      { type: 'english', title: media.title?.english },
-      { type: 'native', title: media.title?.native }
-    ].filter(t => t.title),
     description: media.description,
     volumes: media.volumes,
     chapters: media.chapters,
@@ -90,14 +82,11 @@ export function adaptMangaDetail (media) {
     },
     isAdult: media.isAdult,
     images: {
-      jpg: {
-        large_image_url:
-          media.coverImage?.large ||
-          media.coverImage?.extraLarge ||
-          media.bannerImage ||
-          null
+      coverImage: {
+        extraLarge: media.coverImage?.extraLarge,
+        large: media.coverImage?.large,
+        medium: media.coverImage?.medium
       },
-      coverImage: media.coverImage?.extraLarge,
       bannerImage: media.bannerImage
     },
     external: (media.externalLinks ?? []).map(link => ({
@@ -153,6 +142,6 @@ export function adaptRecommendations (media) {
   return { recommendationsDataArr }
 }
 
-export function adaptPictureResults(pictures) {
-  return pictures.map(picture=>({jpg:{image_url:picture}}))||[]
+export function adaptPictureResults (pictures) {
+  return pictures.map(picture => ({ jpg: { image_url: picture } })) || []
 }

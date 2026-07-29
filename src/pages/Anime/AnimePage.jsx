@@ -1,3 +1,4 @@
+//animePage.jsx
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import Character from '../../components/CardBox/Box'
@@ -69,7 +70,7 @@ export default function AnimePage () {
   const charactersQ = useQuery({
     queryKey: ['animeCharacters', id],
     queryFn: async () => {
-      return await getItemCharactersData(id, "ANIME")
+      return await getItemCharactersData(id, 'ANIME')
     }
   })
 
@@ -183,7 +184,12 @@ export default function AnimePage () {
                           <div id='poster' className='w-full h-full'>
                             <img
                               className='h-full w-full object-cover rounded-lg overflow-hidden'
-                              src={animeQ?.data?.anime?.images?.coverImage}
+                              src={
+                                animeQ?.data?.anime?.images?.coverImage
+                                  .extraLarge ||
+                                animeQ?.data?.anime?.images?.coverImage.large
+                                  .extraLarge
+                              }
                               alt={animeQ?.data?.anime?.title.english}
                             />
                           </div>
@@ -216,7 +222,11 @@ export default function AnimePage () {
                         <div id='poster' className='w-full h-full'>
                           <img
                             className='h-full w-full object-cover rounded-lg overflow-hidden'
-                            src={animeQ?.data?.anime?.images?.coverImage}
+                            src={
+                              animeQ?.data?.anime?.images?.coverImage
+                                .extraLarge ||
+                              animeQ?.data?.anime?.images?.coverImage.large
+                            }
                             alt={animeQ?.data?.anime?.title.english}
                           />
                         </div>
@@ -403,12 +413,6 @@ export default function AnimePage () {
                       </div>
                       <div className='px-3 py-2 text-xs font-light'>
                         <div className='grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]'>
-                          {/* {renderInfoStr(
-                            'score',
-                            `${
-                              animeQ?.data?.anime?.score
-                            } (scored by ${animeQ?.data?.anime?.scored_by?.toLocaleString()} users) `
-                          )} */}
                           {renderInfoStr(
                             'ranked',
                             `#${animeQ?.data?.anime?.rank}`
@@ -731,7 +735,10 @@ export default function AnimePage () {
             >
               <img
                 className='w-full h-full aspect-auto object-cover blur-lg scale-105 brightness-35 bg-repeat-y'
-                src={animeQ?.data?.anime?.images?.coverImage}
+                src={
+                  animeQ?.data?.anime?.images?.coverImage.extraLarge ||
+                  animeQ?.data?.anime?.images?.coverImage.large
+                }
                 alt={animeQ?.data?.anime?.title.english}
               />
             </div>

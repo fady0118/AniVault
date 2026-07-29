@@ -8,18 +8,19 @@ import {
 } from '../adapters/adaptManga'
 import { queryAniList } from '../client'
 import { getGalleryForManga } from '../Mangadex/Mangadex'
-import { MANGA_DETAIL_QUERY } from '../queries/mangaDetail'
+import { MEDIA_DETAIL_QUERY } from '../queries/mediaDetail'
 
 export async function getMangaDetailPage (id) {
   try {
-    const aniListResult = await queryAniList(MANGA_DETAIL_QUERY, {
-      id: Number(id)
+    const aniListResult = await queryAniList(MEDIA_DETAIL_QUERY, {
+      id: Number(id),
+      mediaType: 'MANGA'
     })
-    
+
     const mangaDexResults = await getGalleryForManga(aniListResult?.Media)
 
     const adaptedData = {
-      ...adaptMangaDetail(aniListResult?.Media),
+      manga: adaptMangaDetail(aniListResult?.Media),
       reviews: adaptReviews(aniListResult?.Media),
       recommendations: adaptRecommendations(aniListResult?.Media),
       pictures: adaptPictureResults(mangaDexResults ?? [])

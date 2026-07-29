@@ -85,7 +85,7 @@ export function renderInfoArr(title, arr, path = null) {
                     {i !== arr.length - 1 ? ", " : ""}
                   </p>
                 ) : (
-                  <Link className="blue-link whitespace-pre-wrap" to={`${path}${item.mal_id}`}>
+                  <Link className="blue-link whitespace-pre-wrap" to={`${path}${item.aniList_id}`}>
                     {item.name}
                     {i !== arr.length - 1 ? ", " : ""}
                   </Link>

@@ -123,7 +123,7 @@ function ReviewCard ({
     <div className='w-full rounded-xl border border-amethyst-smoke-400/25 dark:border-amethyst-smoke-800/25 box-colors-lighter p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-md  dark:bg-dark-amethyst-smoke-950/80'>
       <div className='flex flex-row gap-4'>
         {item?.cached_img && (
-          <Link to={`/${review?.mediaType}/${review?.item_mal_id}`}>
+          <Link to={`/${review?.mediaType}/${review?.item_aniList_id}`}>
             <img
               src={item?.cached_img}
               alt={item?.title}
@@ -137,7 +137,7 @@ function ReviewCard ({
             <div className='flex flex-col gap-1.5'>
               <div className='flex flex-wrap items-center gap-x-2'>
                 <Link
-                  to={`/${review?.mediaType}/${review?.item_mal_id}`}
+                  to={`/${review?.mediaType}/${review?.item_aniList_id}`}
                   className='text-base font-semibold text-dark-amethyst-smoke-900 dark:text-amethyst-smoke-100 hover:text-amethyst-smoke-700 duration-200'
                 >
                   {item?.title}
