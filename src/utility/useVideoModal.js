@@ -3,8 +3,8 @@ import { useRef, useState } from "react";
 export function useVideoModal() {
   const videoRef = useRef(null);
   const [showVideoModal, setShowVideoModal] = useState(false);
-  function playVideo(videoLink) {
-    videoRef.current = videoLink;
+  function playVideo(videoData) {
+    videoRef.current = videoData;
     setShowVideoModal(true);
   }
   function closeVideo() {

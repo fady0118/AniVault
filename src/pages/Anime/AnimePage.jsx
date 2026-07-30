@@ -724,7 +724,7 @@ export default function AnimePage () {
             </div>
           </div>
           {showVideoModal && videoRef.current && (
-            <VideoModal closeModal={closeVideo} link={videoRef.current} />
+            <VideoModal closeModal={closeVideo} data={videoRef.current} />
           )}
           {showModal && (
             <Gallery

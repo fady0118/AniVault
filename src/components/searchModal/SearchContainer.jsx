@@ -143,11 +143,12 @@ export default function SearchContainer ({ keyword, type, closeModal }) {
                   />
                   <p>{item.name}</p>
                 </Link>
-                <X
+                <div
+                  className='rounded-sm mx-3 p-1.5 hover:bg-amethyst-smoke-600/15 duration-200'
                   onClick={() => removeRecentSearch(item.id)}
-                  size={20}
-                  className='mx-3 rounded-sm hover:cursor-pointer hover:bg-amethyst-smoke-600/20 duration-200'
-                />
+                >
+                  <X size={20} className='hover:cursor-pointer ' />
+                </div>
               </div>
             ))
           ) : (
@@ -230,7 +231,7 @@ function SearchResultItem ({ item, searchType, handleClick }) {
       </div>
 
       <div className='flex flex-col'>
-        <p className='text-[1.1em] font-semibold'>{name}</p>
+        <p className='text-[1.25em] font-semibold'>{name}</p>
         {item.format && (
           <p className='text-[0.85em] font-medium opacity-60 capitalize'>
             {item.format}

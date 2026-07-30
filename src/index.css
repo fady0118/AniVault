@@ -232,7 +232,7 @@
   }
 
   .searchResult-hover {
-    @apply hover:cursor-pointer hover:bg-amethyst-smoke-400/50 dark:hover:bg-dark-amethyst-smoke-300/50 hover:text-indigo-600/75 dark:hover:text-indigo-400/75
+    @apply hover:cursor-pointer hover:bg-amethyst-smoke-400/50 dark:hover:bg-dark-amethyst-smoke-300/50 hover:text-indigo-600/90 dark:hover:text-indigo-400/90
   }
 
   .searchResult-hovered {

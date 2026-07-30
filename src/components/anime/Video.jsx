@@ -4,10 +4,14 @@ import { getYouTubeUrls } from '../../utility/utils'
 export default function Video ({ data, playVideo }) {
   if (!data?.youtube_id) return
   const { thumbnail, embedUrl } = getYouTubeUrls(data?.youtube_id)
+  const videoData = {
+    link:embedUrl,
+    title: data?.title
+  }
   return (
     <div
       onClick={() => {
-        playVideo(embedUrl)
+        playVideo(videoData)
       }}
       className='group relative w-full aspect-video rounded-md overflow-hidden hover:scale-105 hover:cursor-pointer duration-200'
     >

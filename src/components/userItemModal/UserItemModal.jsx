@@ -1,4 +1,3 @@
-// UserItemModal.jsx
 import { useEffect, useState } from 'react'
 import { tablesDB } from '../../appwrite'
 import { useAuth } from '../../Contexts/AuthContext'
@@ -9,6 +8,7 @@ import UserItemListsComponent from './UserItemListsComponent'
 import UserItemReviewModal from './UserItemReviewModal'
 import LoaderComponent from '../LoaderComponent'
 import { Query } from 'appwrite'
+import { X } from 'lucide-react'
 
 function normalizeModalData (data) {
   if (!data) return null
@@ -151,13 +151,16 @@ export default function UserItemModal ({
   return (
     <div className='z-50 fixed top-0 left-[-2.5vw] w-[102.5vw] h-screen backdrop-blur-lg'>
       <div className='fixed top-1/2 left-1/2 -translate-1/2 h-fit w-[90%] sm:w-4/5 md:w-3/5 xl:w-1/2 rounded-xl p-3 xs:p-4 max-h-[90vh] overflow-y-auto box-colors'>
+        {/* Close button */}
         <button
+          type='button'
           onClick={() => setShowUserItemModal(false)}
-          className='btn btn-ghost btn-sm btn-circle absolute top-1 right-1 sm:right-2 sm:top-2 bg-transparent'
-          aria-label='Close authentication modal'
+          className='absolute top-2 right-2 sm:right-3 sm:top-3 inline-flex h-9 w-9 items-center justify-center rounded-full border border-amethyst-smoke-700/30 dark:border-amethyst-smoke-400/30 text-amethyst-smoke-800 dark:text-amethyst-smoke-200 box-colors hover:cursor-pointer hover:bg-amethyst-smoke-700/40 dark:hover:bg-amethyst-smoke-800/65 duration-200'
+          aria-label='Close search'
         >
-          ✕
+          <X size={16} />
         </button>
+
         <div className='flex flex-col gap-4'>
           <div className='flex flex-row justify-between items-center gap-2'>
             <div
