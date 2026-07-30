@@ -13,6 +13,7 @@ import { marked } from 'marked'
 
 export default function CharacterPage () {
   const { id } = useParams()
+
   const characterQ = useQuery({
     queryKey: ['character', id],
     queryFn: async () => {
@@ -25,10 +26,19 @@ export default function CharacterPage () {
   const characterPicturesQ = useQuery({
     queryKey: ['characterPictures', id, character],
     queryFn: async () => {
-      const characterPictures = await getCharacterGallery(character?.name)
+      const characterName = {
+        first: character?.name?.first,
+        last: character?.name?.last
+      }
+      const showName = characterQ?.data?.character?.anime[0]?.title;
+      const characterPictures = await getCharacterGallery(
+        characterName,
+        showName
+      )
       return characterPictures || []
     },
-    throwOnError: false
+    throwOnError: false,
+    retry: 1,
   })
 
   const { dispatch, showModal, openGallery, closeGallery, activeIndex } =
@@ -169,6 +179,7 @@ export default function CharacterPage () {
 
           <div id='Pictures' className='order-3 box-colors rounded-md'>
             <Pictures
+              loadingStatus={characterPicturesQ?.isPending}
               pictures={characterPicturesQ?.data}
               openGallery={openGallery}
               cols={3}

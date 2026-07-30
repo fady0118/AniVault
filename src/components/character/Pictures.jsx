@@ -1,60 +1,86 @@
-import { useState } from "react";
+import { useState } from 'react'
+import LoaderComponent from '../LoaderComponent'
 
-export default function Pictures({ pictures, openGallery, cols }) {
-  const [showAllPics, setShowAllPics] = useState(false);
+export default function Pictures ({
+  loadingStatus,
+  pictures,
+  openGallery,
+  cols
+}) {
+  const [showAllPics, setShowAllPics] = useState(false)
   const classes = {
-    pictures: "aspect-2/3 hover:cursor-pointer hover:scale-105 hover:border-4 hover:border-amethyst-smoke-900/30 dark:hover:border-amethyst-smoke-400/30 transition-transform duration-200",
+    pictures:
+      'aspect-2/3 hover:cursor-pointer hover:scale-105 hover:border-4 hover:border-amethyst-smoke-900/30 dark:hover:border-amethyst-smoke-400/30 transition-transform duration-200',
     columnsMap: {
       2: `grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-9`,
-      3: "grid-cols-3 2xs:grid-cols-4 xs:grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 xl:grid-cols-10",
-    },
-  };
+      3: 'grid-cols-3 2xs:grid-cols-4 xs:grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 xl:grid-cols-10'
+    }
+  }
   return (
     <>
-      <div className="border-b subtle-border-colors-darker pt-1 px-3 font-semibold text-md/relaxed capitalize">Pictures</div>
-      {!pictures?.length ? (
-        <p className="p-3 text-xs font-light">No pictures found.</p>
-      ) : (
-        <div className={`grid ${classes.columnsMap[cols]} gap-2 p-2`}>
-          {pictures.slice(0, 10).map((picture, i) => (
-            <div
-              data-image-index={i}
-              onClick={(e) => {
-                openGallery(Number(e.target.dataset.imageIndex));
-              }}
-              key={`picture-${i}`}
-              className={classes.pictures}
-            >
-              <img className="w-full h-full object-cover pointer-events-none" src={picture.jpg.image_url} alt="" />
-            </div>
-          ))}
-          {!showAllPics && pictures.slice(10).length ? (
-            <div
-              onClick={() => {
-                setShowAllPics(true);
-              }}
-              className="aspect-2/3 flex justify-center items-center text-xl hover:cursor-pointer hover:scale-105 border-4 border-amethyst-smoke-900/30 dark:border-amethyst-smoke-400/30 text-amethyst-smoke-900 dark:text-amethyst-smoke-400 transition-transform duration-200"
-            >
-              +{pictures.slice(10).length}
-            </div>
-          ) : (
-            ""
-          )}
-          {showAllPics &&
-            pictures.slice(10).map((picture, i) => (
-              <div
-                data-image-index={i + 10}
-                onClick={(e) => {
-                  openGallery(Number(e.target.dataset.imageIndex));
-                }}
-                key={`picture-${i + 10}`}
-                className={classes.pictures}
-              >
-                <img className="w-full h-full object-cover pointer-events-none" src={picture.jpg.image_url} />
-              </div>
-            ))}
+      <div className='border-b subtle-border-colors-darker pt-1 px-3 font-semibold text-md/relaxed capitalize'>
+        Pictures
+      </div>
+      {loadingStatus ? (
+        <div className='py-5 w-1/3 flex'>
+          <div className='scale-135 translate-x-1/4 mx-5'>
+            <LoaderComponent type='progress' />
+          </div>
         </div>
+      ) : (
+        <>
+          {!pictures?.length ? (
+            <p className='p-3 text-xs font-light'>No pictures found.</p>
+          ) : (
+            <div className={`grid ${classes.columnsMap[cols]} gap-2 p-2`}>
+              {pictures.slice(0, 10).map((picture, i) => (
+                <div
+                  data-image-index={i}
+                  onClick={e => {
+                    openGallery(Number(e.target.dataset.imageIndex))
+                  }}
+                  key={`picture-${i}`}
+                  className={classes.pictures}
+                >
+                  <img
+                    className='w-full h-full object-cover pointer-events-none'
+                    src={picture.jpg.image_url}
+                    alt=''
+                  />
+                </div>
+              ))}
+              {!showAllPics && pictures.slice(10).length ? (
+                <div
+                  onClick={() => {
+                    setShowAllPics(true)
+                  }}
+                  className='aspect-2/3 flex justify-center items-center text-xl hover:cursor-pointer hover:scale-105 border-4 border-amethyst-smoke-900/30 dark:border-amethyst-smoke-400/30 text-amethyst-smoke-900 dark:text-amethyst-smoke-400 transition-transform duration-200'
+                >
+                  +{pictures.slice(10).length}
+                </div>
+              ) : (
+                ''
+              )}
+              {showAllPics &&
+                pictures.slice(10).map((picture, i) => (
+                  <div
+                    data-image-index={i + 10}
+                    onClick={e => {
+                      openGallery(Number(e.target.dataset.imageIndex))
+                    }}
+                    key={`picture-${i + 10}`}
+                    className={classes.pictures}
+                  >
+                    <img
+                      className='w-full h-full object-cover pointer-events-none'
+                      src={picture.jpg.image_url}
+                    />
+                  </div>
+                ))}
+            </div>
+          )}
+        </>
       )}
     </>
-  );
+  )
 }

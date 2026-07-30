@@ -1,20 +1,16 @@
+import { ExecutionMethod } from 'appwrite'
 import { functions } from '../../../appwrite'
 import { adaptCharacterGallery } from '../../adapters/adaptCharacterGallery'
 
-export async function getCharacterGallery (characterName) {
+export async function getCharacterGallery (characterName, showName) {
   if (!characterName || (!characterName?.last && !characterName?.first)) return
-  const characterTag = characterName?.last
-    ? `${characterName?.last}_${characterName?.first}`
-    : characterName?.first
-  const path = `/?tags=${encodeURIComponent(characterTag)}&limit=100`
-
+  const payload = { characterName, showName }
   try {
     const execution = await functions.createExecution({
-      functionId: '6a625b62003276b9befc',
-      body: '',
+      functionId: import.meta.env.VITE_FUNCTIONS_FETCH_PICTURES,
+      body: JSON.stringify(payload),
       async: false,
-      xpath: path,
-      method: 'GET'
+      method: ExecutionMethod.POST
     })
     if (execution.responseStatusCode >= 400) {
       throw new Error(
@@ -22,7 +18,6 @@ export async function getCharacterGallery (characterName) {
       )
     }
     const data = JSON.parse(execution.responseBody)
-    console.log({ data })
     return adaptCharacterGallery(data)
   } catch (err) {
     console.log(err)
