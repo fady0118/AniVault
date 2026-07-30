@@ -1,3 +1,5 @@
+import { type_status_map } from '../../utility/utils'
+
 /**
  * Map AniList genres (strings) to objects with name and mal_id
  * This mapping bridges AniList's genre names to Jikan's mal_id format
@@ -85,23 +87,7 @@ export const ANILIST_GENRE_MAP = {
  * Format status from AniList to human-readable format
  */
 function formatStatus (status, mediaType) {
-  const statusMap = {
-    ANIME: {
-      FINISHED: 'Finished airing',
-      RELEASING: 'Currently airing',
-      NOT_YET_RELEASED: 'Not yet aired',
-      CANCELLED: 'Cancelled',
-      HIATUS: 'On hiatus'
-    },
-    MANGA: {
-      FINISHED: 'Finished publishing',
-      RELEASING: 'Currently publishing',
-      NOT_YET_RELEASED: 'Not yet published',
-      CANCELLED: 'Cancelled',
-      HIATUS: 'On hiatus'
-    }
-  }
-  return statusMap[mediaType][status] || status
+  return type_status_map.status[mediaType][status] || status
 }
 
 /**

@@ -1,5 +1,11 @@
 export const SEASON_QUERY = `
-query ($season: MediaSeason, $seasonYear: Int, $page: Int, $perPage: Int) {
+query (
+    $format_in: [MediaFormat]
+    $season: MediaSeason
+    $seasonYear: Int
+    $page: Int
+    $perPage: Int
+) {
     Page(page: $page, perPage: $perPage) {
         pageInfo {
             total
@@ -11,7 +17,8 @@ query ($season: MediaSeason, $seasonYear: Int, $page: Int, $perPage: Int) {
         media(
             season: $season
             seasonYear: $seasonYear
-            type: ANIME
+            format_in: $format_in,
+            type: ANIME,
             sort: POPULARITY_DESC
         ) {
             id
@@ -31,9 +38,8 @@ query ($season: MediaSeason, $seasonYear: Int, $page: Int, $perPage: Int) {
             averageScore
             popularity
             coverImage {
-            extraLarge
+                extraLarge
                 large
-                
             }
             bannerImage
             studios(isMain: true) {

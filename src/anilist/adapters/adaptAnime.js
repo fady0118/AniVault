@@ -1,3 +1,5 @@
+import { ID } from "appwrite"
+
 function formatAniListMediaDate (dateObj) {
   if (!dateObj || !dateObj.year) return 'Unknown'
 
@@ -68,8 +70,14 @@ export function adaptAnimeDetail (media) {
       null,
     members: media.popularity,
     favourites: media.favourites,
+
+
+
     genres: (media.genres ?? []).map(name => ({ name })),
-    themes: media.tags?.filter(t => t.category?.startsWith('Theme')),
+    themes: media.tags?.filter(t => t.category?.startsWith('Theme')).map(t=>({name:t.name})),
+
+
+    
     demographics: media.tags?.filter(t => t.category === 'Demographic'),
     aired: {
       from: media.startDate,
@@ -94,10 +102,16 @@ export function adaptAnimeDetail (media) {
           images: { maximum_image_url: media.trailer.thumbnail }
         }
       : null,
+
+
+
     studios: (media.studios?.edges ?? []).map(e => ({
       name: e.node.name,
-      mal_id: e.node.id
+      id: e.node.id
     })),
+
+
+
     externalLinks: media.externalLinks,
     flattenedRelations
   }

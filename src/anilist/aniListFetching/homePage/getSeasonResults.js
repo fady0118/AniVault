@@ -1,17 +1,10 @@
-import { getCurrentSeason } from '../../../utility/utils'
 import { queryAniList } from '../../client'
 import { SEASON_QUERY } from '../../queries/season'
 
-export async function getSeasonResults () {
+export async function getSeasonResults (vars) {
   try {
-    const { season, year } = getCurrentSeason()
-    const aniListResult = await queryAniList(SEASON_QUERY, {
-      season: season.toUpperCase(),
-      seasonYear: year,
-      page: 1,
-      perPage: 15
-    })
-    return aniListResult?.Page?.media
+    const aniListResult = await queryAniList(SEASON_QUERY, vars)
+    return aniListResult
   } catch (error) {
     console.log(error)
   }

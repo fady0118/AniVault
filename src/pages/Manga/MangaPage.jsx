@@ -7,7 +7,8 @@ import {
   renderIcon,
   DateTimeFormatter,
   renderReactions,
-  dateFormatter
+  dateFormatter,
+  type_status_map
 } from '../../utility/utils'
 import useGallery from '../../utility/useGallery'
 import Gallery from '../../components/character/Gallery'
@@ -77,6 +78,9 @@ export default function MangaPage () {
         return 'upcoming'
     }
   }
+
+  const type_reverse = Object.fromEntries(Object.entries(type_status_map.type.MANGA).map(([key,value])=>[value, key]))
+
   return (
     <>
       {mangaQ.isPending ? (
@@ -253,10 +257,10 @@ export default function MangaPage () {
                             </div>
 
                             <Link
-                              to={`/manga?type=${mangaQ?.data?.manga?.type?.toLowerCase()}`}
+                              to={`/manga?type=${mangaQ?.data?.manga?.format?.toUpperCase()}`}
                               className='text-[1.2em] blue-link duration-200 w-fit'
                             >
-                              {mangaQ?.data?.manga?.type}
+                              {type_reverse[mangaQ?.data?.manga?.format?.toUpperCase()]}
                             </Link>
                             <div className='flex flex-row flex-wrap items-center text-[1.2em] w-fit'>
                               {mangaQ?.data?.manga?.authors
@@ -292,8 +296,8 @@ export default function MangaPage () {
                       <div className='grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]'>
                         {renderInfoStr(
                           'type',
-                          `${mangaQ?.data?.manga?.type}`,
-                          `/manga?type=${mangaQ?.data?.manga?.type}`
+                          `${type_reverse[mangaQ?.data?.manga?.format?.toUpperCase()]}`,
+                          `/manga?type=${mangaQ?.data?.manga?.format?.toUpperCase()}`
                         )}
                         {renderInfoStr(
                           'volumes',
@@ -305,10 +309,8 @@ export default function MangaPage () {
                         )}
                         {renderInfoStr(
                           'status',
-                          `${mangaQ?.data?.manga?.status}`,
-                          `/manga?status=${getMangaStatus(
-                            mangaQ?.data?.manga?.status
-                          )}`
+                          `${type_status_map.status.MANGA[mangaQ?.data?.manga?.status]}`,
+                          `/manga?status=${mangaQ?.data?.manga?.status?.toUpperCase()}`
                         )}
                         {renderInfoStr(
                           'published',
@@ -322,7 +324,7 @@ export default function MangaPage () {
                         {renderInfoArr(
                           'themes',
                           mangaQ?.data?.manga?.themes,
-                          '/manga?genres='
+                          '/manga?tags='
                         )}
                         {renderInfoArr(
                           'demographics',

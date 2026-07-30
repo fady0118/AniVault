@@ -5,7 +5,6 @@ import { SEARCH_QUERY } from '../queries/search'
  * Filters out empty, null, and undefined values
  */
 function buildVariables (searchParams, itemType) {
-  console.log({searchParams})
   const vars = {
     page: parseInt(searchParams.get('page')) || 1,
     perPage: 30,
@@ -40,7 +39,6 @@ function buildVariables (searchParams, itemType) {
   if (tagsExclude) {
     vars.tag_not_in = tagsExclude.split(',').filter(t => t.trim())
   }
-
 
   // Score range
   const minScore = parseInt(searchParams.get('min_score'))
@@ -94,7 +92,7 @@ function buildVariables (searchParams, itemType) {
   vars.sort = [anilistSort]
 
   // Adult content filter
-  vars.isAdult = false
+    // vars.isAdult = false
 
   return vars
 }

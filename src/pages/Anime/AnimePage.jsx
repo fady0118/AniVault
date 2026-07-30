@@ -19,7 +19,8 @@ import {
   delay,
   dateFormatter,
   renderReactions,
-  getYouTubeThumbnail
+  getYouTubeThumbnail,
+  type_status_map
 } from '../../utility/utils'
 import { useRelations } from '../../utility/useRelations'
 import useGallery from '../../utility/useGallery'
@@ -32,7 +33,6 @@ import VideoModal from '../../components/VideoModal'
 import News from '../../components/anime/News'
 import Reviews from '../../components/anime/Reviews'
 import EpisodesModal from '../../components/anime/EpisodesModal'
-import { jikanFetch } from '../../utility/jikanApi'
 import { Link } from 'react-router'
 import LoaderComponent from '../../components/LoaderComponent'
 import { useUserItemModal } from '../../components/userItemModal/useUserItemModal'
@@ -93,17 +93,8 @@ export default function AnimePage () {
   // Videos hook
   const { showVideoModal, videoRef, playVideo, closeVideo } = useVideoModal()
 
-  function getAnimeStatus (status) {
-    if (!status) return ''
-    switch (status.toLowerCase().trim()) {
-      case 'finished airing':
-        return 'complete'
-      case 'currently airing':
-        return 'airing'
-      case 'not yet aired':
-        return 'upcoming'
-    }
-  }
+  const type_reverse = Object.fromEntries(Object.entries(type_status_map.type.ANIME).map(([key,value])=>[value, key]))
+
   return (
     <>
       {animeQ.isPending ? (
@@ -268,10 +259,10 @@ export default function AnimePage () {
                                 </p>
                               </div>
                               <Link
-                                to={`/anime?type=${animeQ?.data?.anime?.type?.toLowerCase()}`}
+                                to={`/anime?type=${animeQ?.data?.anime?.format?.toUpperCase()}`}
                                 className='text-[1.2em] blue-link duration-200'
                               >
-                                {animeQ?.data?.anime?.type}
+                                {type_reverse[animeQ?.data?.anime?.format?.toUpperCase()]}
                               </Link>
 
                               <Link
@@ -312,8 +303,8 @@ export default function AnimePage () {
                         <div className='grid grid-cols-1 w-full gap-y-2.5 lg:text-[1.1em]'>
                           {renderInfoStr(
                             'type',
-                            `${animeQ?.data?.anime?.type}`,
-                            `/anime?type=${animeQ?.data?.anime?.type?.toLowerCase()}`
+                            `${type_reverse[animeQ?.data?.anime?.format?.toUpperCase()]}`,
+                            `/anime/?type=${animeQ?.data?.anime?.format?.toUpperCase()}`
                           )}
                           <div className='w-full flex flex-row  gap-x-2 items-center capitalize'>
                             <div className='flex flex-row gap-x-1'>
@@ -338,10 +329,12 @@ export default function AnimePage () {
                           </div>
                           {renderInfoStr(
                             'status',
-                            `${animeQ?.data?.anime?.status}`,
-                            `/anime?status=${getAnimeStatus(
-                              animeQ?.data?.anime?.status
-                            )}`
+                            `${
+                              type_status_map.status.ANIME[
+                                animeQ?.data?.anime?.status
+                              ]
+                            }`,
+                            `/anime?status=${animeQ?.data?.anime?.status?.toUpperCase()}`
                           )}
                           {renderInfoStr(
                             'aired',
@@ -360,19 +353,6 @@ export default function AnimePage () {
                           ) : (
                             ''
                           )}
-                          {renderInfoStr(
-                            'broadcast',
-                            `${animeQ?.data?.anime?.broadcast?.string || ''}`
-                          )}
-                          {renderInfoArr(
-                            'producers',
-                            animeQ?.data?.anime?.producers,
-                            '/producer/'
-                          )}
-                          {renderInfoArr(
-                            'licensors',
-                            animeQ?.data?.anime?.licensors
-                          )}
                           {renderInfoArr(
                             'studios',
                             animeQ?.data?.anime?.studios,
@@ -380,17 +360,17 @@ export default function AnimePage () {
                           )}
                           {renderInfoStr(
                             'source',
-                            `${animeQ?.data?.anime?.source}`
+                            `${animeQ?.data?.anime?.source?.split('_')?.join(' ')}`
                           )}
                           {renderInfoArr(
                             'genres',
                             animeQ?.data?.anime?.genres,
-                            '/anime?genres='
+                            `/anime?genres=`
                           )}
                           {renderInfoArr(
                             'themes',
                             animeQ?.data?.anime?.themes,
-                            '/anime?genres='
+                            '/anime?tags='
                           )}
                           {renderInfoArr(
                             'demographics',

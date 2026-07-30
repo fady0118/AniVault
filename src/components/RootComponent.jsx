@@ -17,6 +17,7 @@ import SortFilter from '../components/anime/filters/SortFilter'
 import ExtraFilters from '../components/anime/filters/ExtraFilters/ExtraFilters'
 import AnimeMangaContainer from '../components/anime/AnimeMangaContainer'
 import { RootContext } from '../App'
+import { DEFAULT_PARAMS, useAniListParams } from './RootPage/useAniListParams'
 
 export default function RootComponent ({
   Root,
@@ -25,31 +26,14 @@ export default function RootComponent ({
   sortData,
   setUserItemModalStates
 }) {
-  const [searchParams, setSearchParams] = useSearchParams()
   const [showFiltersSideHeader, setShowFiltersSideHeader] = useState(false)
   const filterSideBarStateRef = useRef(false)
   const sidePanelRef = useRef(null)
   const { windowWidth } = useContext(RootContext)
   const collectorStore = useRef({})
 
-  // Updated default search params for AniList
-  const defaultSearchParams = new URLSearchParams({
-    type: '',
-    status: '',
-    q: '',
-    genres: '',
-    genres_exclude: '',
-    tags: '',
-    tags_exclude: '',
-    order_by: 'POPULARITY',
-    sort: 'desc',
-    min_score: 0,
-    max_score: 100,
-    start_date: '',
-    end_date: ''
-  })
-  const effectiveSearchParams =
-    searchParams.size === 0 ? defaultSearchParams : searchParams
+  const { searchParams, setSearchParams } =
+    useAniListParams()
 
   function handleApplyFilter () {
     const type = collectorStore.current.type?.() || ''
@@ -101,7 +85,7 @@ export default function RootComponent ({
 
   useEffect(() => {
     if (searchParams.size === 0) {
-      setSearchParams(Object.fromEntries(defaultSearchParams.entries()))
+      setSearchParams(Object.fromEntries(new URLSearchParams(DEFAULT_PARAMS).entries()))
     }
     const handleClicksOutside = e => {
       if (
@@ -216,7 +200,7 @@ export default function RootComponent ({
             )}
           </div>
           <AnimeMangaContainer
-            searchParams={effectiveSearchParams}
+            searchParams={searchParams}
             itemType={Root}
             setUserItemModalStates={setUserItemModalStates}
           />

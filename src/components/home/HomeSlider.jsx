@@ -43,12 +43,15 @@ export default function HomeSlider ({ season }) {
 
     function slideNavigating (e) {
       if (e.key === 'ArrowRight') {
+        clearInterval(intervalRef.current)
         indexRef.current = (indexRef.current + 1) % season.length
         scrollIntoView(indexRef.current)
+        startInterval()
       } else if (e.key === 'ArrowLeft') {
-        indexRef.current =
-          indexRef.current > 0 ? indexRef.current - 1 : season.length - 1
+        clearInterval(intervalRef.current)
+        indexRef.current = indexRef.current > 0 ? indexRef.current - 1 : season.length - 1
         scrollIntoView(indexRef.current)
+        startInterval()
       }
     }
     document.documentElement.addEventListener('keydown', slideNavigating)
@@ -94,15 +97,9 @@ export default function HomeSlider ({ season }) {
           size={30}
           onClick={() => {
             clearInterval(intervalRef.current)
-            if (indexRef.current <= 0) {
-              indexRef.current = season.length - 1
-              scrollIntoView(indexRef.current)
-              startInterval()
-            } else {
-              indexRef.current = indexRef.current - 1
-              scrollIntoView(indexRef.current)
-              startInterval()
-            }
+            indexRef.current =  indexRef.current > 0 ? indexRef.current - 1 : season.length - 1
+            scrollIntoView(indexRef.current)
+            startInterval()
           }}
           className='p-1 box-content rounded-full hover:bg-amethyst-smoke-700/30 hover:cursor-pointer hover:text-amethyst-smoke-50 duration-300'
         />

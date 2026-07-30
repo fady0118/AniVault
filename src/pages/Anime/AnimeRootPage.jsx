@@ -2,24 +2,11 @@ import RootComponent from '../../components/RootComponent'
 import UserItemModal from '../../components/userItemModal/UserItemModal'
 import { useUserItemModal } from '../../components/userItemModal/useUserItemModal'
 import data from '../../anilist/genresData.json'
+import { type_status_map } from '../../utility/utils'
 
 const filterData = {
-  type: {
-    TV: 'TV',
-    'TV short': 'TV_SHORT',
-    Movie: 'MOVIE',
-    Special: 'SPECIAL',
-    OVA: 'OVA',
-    ONA: 'ONA',
-    Music: 'MUSIC'
-  },
-  status: {
-    'Finished airing': 'FINISHED',
-    'Currently airing': 'RELEASING',
-    'Not yet aired': 'NOT_YET_RELEASED',
-    Cancelled: 'CANCELLED',
-    'On hiatus': 'HIATUS'
-  }
+  type: type_status_map.type.ANIME,
+  status: Object.fromEntries(Object.entries(type_status_map.status.ANIME).map(([key,value])=>[value, key]))
 }
 export const getDisplayLabel = (localStateValue, category = 'type') => {
   const entries = Object.entries(filterData[category])

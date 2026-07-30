@@ -59,7 +59,7 @@ export default function AnimeCollections () {
   ]
 
   return (
-    <div className='mt-5 grid grid-cols-1 xs:grid-cols-2 gap-5 px-5 w-full lg:w-4/5 xl:w-2/3 text-sm sm:text-md md:text-lg'>
+    <div className='mt-5 grid grid-cols-1 xs:grid-cols-2 gap-5 px-3 w-full xl:w-3/4 text-sm sm:text-md md:text-lg'>
       {sections.map(section => {
         const Icon = section.icon
         return (

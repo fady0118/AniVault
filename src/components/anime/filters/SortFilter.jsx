@@ -67,7 +67,6 @@ export default function SortFilter ({ registerCollector, data, view = null }) {
 
   function filterComponentTitle () {
     let heading = getDisplayLabel(localState?.order_by)
-    console.log({ heading })
     setHeading(heading)
   }
 

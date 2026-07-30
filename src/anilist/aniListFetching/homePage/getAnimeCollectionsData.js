@@ -1,7 +1,6 @@
 import { getCurrentSeason } from '../../../utility/utils'
 import { queryAniList } from '../../client'
 import { ANIME_COLLECTIONS_QUERY } from '../../queries/animeCollections'
-import { SEASON_QUERY } from '../../queries/season'
 import { TRENDING_QUERY } from '../../queries/trendingMedia'
 
 export async function getAnimeCollectionsData (vars) {
