@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Box from './Box'
 const classes = {
   name_class:
-    'absolute bottom-0 left-0 w-full pointer-events-none text-3xs bg-amethyst-smoke-200/70 text-text-light dark:bg-dark-amethyst-smoke-200/70 dark:text-text-dark max-lines-1 cutoff-text-abs font-medium',
+    'absolute bottom-0 left-0 w-full pointer-events-none text-3xs bg-amethyst-smoke-200/70 text-text-light dark:bg-dark-amethyst-smoke-200/70 dark:text-text-dark line-clamp-1 font-medium',
   role_class:
     'absolute capitalize top-0 right-0 bg-amethyst-smoke-200/70 text-text-light dark:bg-dark-amethyst-smoke-200/70 dark:text-text-dark font-medium',
   responsive_text: 'text-2xs sm:text-2xs md:text-xs xl:text-sm'

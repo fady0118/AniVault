@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import LoaderComponent from '../components/LoaderComponent'
 import { getPersonData } from '../anilist/aniListFetching/personPage/getPersonPage'
-import { marked } from 'marked'
 import { Cake, Calendar, Clock, Droplet, Heart, Home, User } from 'lucide-react'
 import { getPersonRolesData } from '../anilist/aniListFetching/personPage/getPersonRoles'
+import { domPurifyParseMarkDown } from '../utility/utils'
 
 export default function PeoplePage () {
   const { id } = useParams()
@@ -34,11 +34,10 @@ export default function PeoplePage () {
     ? [...(person?.voiceRoles || []), ...(personRoles?.voiceRoles || [])]
     : person?.voiceRoles || []
 
-  useEffect(() => {
+  // parse markdown bio
+  const aboutBody_html = useMemo(() => {
     if (!person?.about) return
-
-    const aboutBodyElm = document.getElementById('aboutBody')
-    aboutBodyElm.innerHTML = marked.parse(person.about)
+    return domPurifyParseMarkDown(person.about)
   }, [person?.about])
 
   useEffect(() => {
@@ -105,7 +104,13 @@ export default function PeoplePage () {
               About
             </div>
             <div className='p-3 text-[0.75em] font-extralight flex flex-col space-y-2 leading-relaxed'>
-              <p id='aboutBody' className='whitespace-pre-wrap' />
+              <p
+                id='aboutBody'
+                className='whitespace-pre-wrap'
+                dangerouslySetInnerHTML={{
+                  __html: aboutBody_html || 'No personal info found'
+                }}
+              />
             </div>
           </div>
         </div>

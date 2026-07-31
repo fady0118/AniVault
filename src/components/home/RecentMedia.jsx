@@ -192,7 +192,7 @@ export default function RecentMedia ({ varsMap }) {
                 <div className='w-full grow text-sm xs:text-xs lg:text-sm'>
                   <Link
                     to={`/${path}/${item.id}`}
-                    className='w-full cutoff-text-abs max-lines-2 text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200'
+                    className='w-full line-clamp-2 text-amethyst-smoke-950 dark:text-amethyst-smoke-300 hover-blue-link duration-200'
                   >
                     {item.title}
                   </Link>

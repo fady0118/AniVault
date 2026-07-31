@@ -30,7 +30,6 @@ import { useQuery } from '@tanstack/react-query'
 import Video from '../../components/anime/Video'
 import { useVideoModal } from '../../utility/useVideoModal'
 import VideoModal from '../../components/VideoModal'
-import News from '../../components/anime/News'
 import Reviews from '../../components/anime/Reviews'
 import EpisodesModal from '../../components/anime/EpisodesModal'
 import { Link } from 'react-router'
@@ -510,7 +509,7 @@ export default function AnimePage () {
                             id='descriptionCheckbox'
                           />
                         </div>
-                        <p className='w-full text-xs font-light overflow-hidden max-lines-4 cutoff-text'>
+                        <p className='w-full text-xs font-light overflow-hidden line-clamp-4 peer-has-checked:line-clamp-none'>
                           {animeQ?.data?.anime?.description ||
                             'description missing..'}
                         </p>

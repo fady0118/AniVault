@@ -1,5 +1,7 @@
 import { LinkIcon } from 'lucide-react'
 import { Link } from 'react-router'
+import DOMPurify from 'isomorphic-dompurify'
+import { marked } from 'marked'
 
 // theme detecting and toggling function
 export function themeToggler () {
@@ -403,7 +405,7 @@ export const type_status_map = {
       Manga: 'MANGA',
       Novel: 'NOVEL',
       'One Shot': 'ONE_SHOT'
-    },
+    }
   },
   status: {
     ANIME: {
@@ -421,4 +423,63 @@ export const type_status_map = {
       HIATUS: 'On hiatus'
     }
   }
+}
+
+export function domPurifyParseMarkDown (text) {
+  const dirtyString = marked.parse(text)
+  const clean = DOMPurify.sanitize(dirtyString, { ADD_ATTR: ['target'] })
+  return clean
+}
+
+export function adaptText (raw) {
+  if (!raw) return ''
+
+  const combinedRegex =
+    /img(\d+)\((https?:\/\/\S+?)\)(?=\s|$)|(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*))/gi
+
+  let autoIndex = 0 // Fallback index for bare URLs without a number
+
+  const htmlString = raw.replace(
+    combinedRegex,
+    (match, imgNum, imgUrl, bareUrl) => {
+      // If imgNum and imgUrl are defined, Branch 1 matched. Otherwise, Branch 2 matched.
+      const url = imgUrl || bareUrl
+
+      // Use the explicit number from Img123() if it exists, otherwise increment the fallback index
+      const index = imgNum !== undefined ? imgNum : autoIndex++
+
+      try {
+        new URL(url)
+      } catch {
+        return match // If URL parsing fails, return the raw text untouched
+      }
+
+      return `<a href="${url}" class="indigo-link" target="_blank" rel="noopener noreferrer" data-img-index="${index}">${url}</a>`
+    }
+  )
+  return (
+    htmlString
+      // line breaks -> actual newlines
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>\s*<p>/gi, '\n\n')
+      .replace(/<\/?p>/gi, '')
+
+      // common inline tags -> markdown equivalents
+      .replace(/<(strong|b)>(.*?)<\/\1>/gi, '**$2**')
+      .replace(/<(em|i)>(.*?)<\/\1>/gi, '*$2*')
+
+      // non-breaking space / common entities
+
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/&lt;/gi, '<')
+      .replace(/&gt;/gi, '>')
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'")
+      .replace(/&amp;/gi, '&') // must be last
+
+      // collapse leftover whitespace runs from replaced tags
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
+  )
 }

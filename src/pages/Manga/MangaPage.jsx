@@ -442,7 +442,7 @@ export default function MangaPage () {
                           id='descriptionCheckbox'
                         />
                       </div>
-                      <p className='w-full text-xs font-light overflow-hidden max-lines-4 cutoff-text'>
+                      <p className='w-full text-xs font-light overflow-hidden line-clamp-4 peer-has-checked:line-clamp-none'>
                         {mangaQ?.data?.manga?.description ||
                           'description missing..'}
                       </p>

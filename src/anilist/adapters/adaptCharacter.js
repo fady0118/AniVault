@@ -1,3 +1,5 @@
+import { adaptText } from '../../utility/utils'
+
 const ANILIST_TYPE_MAP = {
   anime: 'anime',
   manga: 'manga',
@@ -6,15 +8,22 @@ const ANILIST_TYPE_MAP = {
   studio: 'producer'
 }
 
-function rewriteAniListLinks (markdown) {
-  return markdown.replace(
-    /(?<=\])\(https?:\/\/anilist\.co\/(anime|manga|character|staff|studio)\/(\d+)\/([^)]+)\)/g,
-    (_, type, id, slug) => `(/${ANILIST_TYPE_MAP[type] || type}/${id}/${slug})`
-  )
+function adaptDescriptionText (text) {
+  const adaptedText = adaptText(text)
+  return adaptedText
+    .replace(
+      /(?<=\])\(https?:\/\/anilist\.co\/(anime|manga|character|staff|studio)\/(\d+)\/([^)]+)\)/g,
+      (_, type, id, slug) =>
+        `(/${ANILIST_TYPE_MAP[type] || type}/${id}/${slug})`
+    )
+    .replace(
+      /~!([\s\S]+?)!~/g,
+      '<span class="al-spoiler" tabindex="0">$1</span>'
+    )
 }
 
 export function adaptCharacter (data) {
-  if (!data) return null
+  if (!data?.Character) return null
   const character = data.Character
   // Deduplicate voice actors across all media appearances
   const voiceActorMap = new Map()
@@ -63,17 +72,7 @@ export function adaptCharacter (data) {
     alternativeNames: (character.name?.alternative || []).filter(Boolean),
     image: character.image?.large || character.image?.medium,
     about: character.description
-      ? character.description
-          .replace(
-            /(?<=\])\(https?:\/\/anilist\.co\/(anime|manga|character|staff|studio)\/(\d+)\/([^)]+)\)/g,
-            (_, type, id, slug) =>
-              `(/${ANILIST_TYPE_MAP[type] || type}/${id}/${slug})`
-          )
-          .replace(
-            /~!([\s\S]+?)!~/g,
-            '<span class="al-spoiler" tabindex="0">$1</span>'
-          )
-          .replace(/<br\s*\/?>/gi, '\n')
+      ? adaptDescriptionText(character.description)
       : 'No biography written.',
     favorites: character.favourites || 0,
     gender: character.gender,

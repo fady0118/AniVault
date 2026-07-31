@@ -1,3 +1,5 @@
+import { adaptText } from "../../utility/utils"
+
 function formatAniListMediaDate (dateObj) {
   if (!dateObj || !dateObj.year) return 'Unknown'
 
@@ -54,7 +56,7 @@ export function adaptMangaDetail (media) {
       english: media.title?.english,
       native: media.title?.native
     },
-    description: media.description,
+    description: adaptText(media.description),
     volumes: media.volumes,
     chapters: media.chapters,
     score: media.averageScore ? media.averageScore / 10 : null,

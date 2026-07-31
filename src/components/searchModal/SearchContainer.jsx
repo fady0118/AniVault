@@ -30,6 +30,7 @@ export default function SearchContainer ({ keyword, type, closeModal }) {
     enabled: !!keyword
   })
 
+  // handle arrow navigation
   useEffect(() => {
     if (!searchQ?.isFetched) return
 
@@ -88,7 +89,7 @@ export default function SearchContainer ({ keyword, type, closeModal }) {
     const existingItem = savedSearches.find(item => item.id === id)
     if (existingItem) {
       const rest = savedSearches.filter(item => item.id !== id)
-      const reorderedSearches = [existingItem, ...rest].slice(0, 25)
+      const reorderedSearches = [existingItem, ...rest].slice(0, 10)
       localStorage.setItem('recentSearches', JSON.stringify(reorderedSearches))
       setRecentSearches(reorderedSearches)
       closeModal()
@@ -97,7 +98,7 @@ export default function SearchContainer ({ keyword, type, closeModal }) {
     const newSavedSearches = [
       { id, image_url, name, link },
       ...savedSearches
-    ].slice(0, 25)
+    ].slice(0, 10)
     localStorage.setItem('recentSearches', JSON.stringify(newSavedSearches))
     setRecentSearches(newSavedSearches)
     closeModal()

@@ -1,4 +1,5 @@
-import { ID } from "appwrite"
+import { ID } from 'appwrite'
+import { adaptText } from '../../utility/utils'
 
 function formatAniListMediaDate (dateObj) {
   if (!dateObj || !dateObj.year) return 'Unknown'
@@ -55,7 +56,7 @@ export function adaptAnimeDetail (media) {
       native: media.title?.native
     },
     description: media.description
-      ? media.description.replace(/<br\s*\/?>/gi, '\n')
+      ? adaptText(media.description)
       : 'No description written.',
     episodes: media.episodes,
     duration: media.duration,
@@ -71,13 +72,11 @@ export function adaptAnimeDetail (media) {
     members: media.popularity,
     favourites: media.favourites,
 
-
-
     genres: (media.genres ?? []).map(name => ({ name })),
-    themes: media.tags?.filter(t => t.category?.startsWith('Theme')).map(t=>({name:t.name})),
+    themes: media.tags
+      ?.filter(t => t.category?.startsWith('Theme'))
+      .map(t => ({ name: t.name })),
 
-
-    
     demographics: media.tags?.filter(t => t.category === 'Demographic'),
     aired: {
       from: media.startDate,
@@ -103,14 +102,10 @@ export function adaptAnimeDetail (media) {
         }
       : null,
 
-
-
     studios: (media.studios?.edges ?? []).map(e => ({
       name: e.node.name,
       id: e.node.id
     })),
-
-
 
     externalLinks: media.externalLinks,
     flattenedRelations
@@ -175,10 +170,8 @@ export function adaptReviews (media) {
   const uniqueReviews = [...new Map(reviews.map(r => [r.id, r])).values()]
   const allReviews = (uniqueReviews ?? []).map(r => ({
     id: r.id,
-    review: r.body.replace(/<br\s*\/?>/gi, '\n'),
-    summary: r.summary
-      ? r.summary.replace(/<br\s*\/?>/gi, '\n')
-      : 'No summary written.',
+    review: adaptText(r.body),
+    summary: r.summary ? adaptText(r.summary) : 'No summary written.',
     score: r.score,
     date: r.updatedAt,
     tags: bucketReviewTag(r.score),

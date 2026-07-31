@@ -1,10 +1,15 @@
 import { ChevronRight, Star } from 'lucide-react'
-import { dateFormatter, renderReactions } from '../../utility/utils'
+import {
+  adaptText,
+  dateFormatter,
+  domPurifyParseMarkDown,
+  renderReactions
+} from '../../utility/utils'
 import { Link } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { storage, tablesDB } from '../../appwrite'
 import { Query } from 'appwrite'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import AppwriteReviewCard from './AppwriteReviewCard'
 
 export default function Reviews ({ data, item_id, mediaType }) {
@@ -40,11 +45,36 @@ export default function Reviews ({ data, item_id, mediaType }) {
   })
 
   const appwriteReviews = Array.isArray(anivaultReviewsQ?.data?.rows)
-    ? anivaultReviewsQ.data.rows
+    ? anivaultReviewsQ.data.rows?.map(review => ({
+        ...review,
+        review_body: domPurifyParseMarkDown(review.review_body)
+      }))
     : []
 
   const hasAppwriteReviews = appwriteReviews.length > 0
   const hasAniListReviews = data?.featured?.length > 0
+
+  const sanitizedAniListReviewsData = useMemo(() => {
+    return hasAniListReviews
+      ? {
+          featured: data.featured?.length
+            ? data.featured.map(rev => ({
+                ...rev,
+                review: domPurifyParseMarkDown(rev.review),
+                summary: domPurifyParseMarkDown(rev.summary)
+              }))
+            : [],
+          rest: data.rest?.length
+            ? data.rest.map(rev => ({
+                ...rev,
+                review: domPurifyParseMarkDown(rev.review),
+                summary: domPurifyParseMarkDown(rev.summary)
+              }))
+            : [],
+          stats: data.stats
+        }
+      : null
+  }, [data, hasAniListReviews])
 
   return (
     <>
@@ -130,7 +160,7 @@ export default function Reviews ({ data, item_id, mediaType }) {
                     <p>All reviews ({data?.stats.all ?? 0})</p>
                   </div>
                 </div>
-                {data?.featured.map(review => (
+                {sanitizedAniListReviewsData?.featured.map(review => (
                   <div key={review.id} className='bottom-border'>
                     <div className='flex flex-col xs:flex-row'>
                       <div className='flex flex-col ml-3 xs:m-0 justify-start w-[5%] min-w-10'>
@@ -152,57 +182,95 @@ export default function Reviews ({ data, item_id, mediaType }) {
                           </p>
                         </div>
                         <div className='flex flex-row justify-between items-start gap-x-2.5'>
-                          <div
-                              className='flex flex-row items-center gap-x-1 px-1.5 border border-dark-amethyst-smoke-50/20 dark:border-amethyst-smoke-400/20'
+                          <div className='flex flex-row items-center gap-x-1 px-1.5 border border-dark-amethyst-smoke-50/20 dark:border-amethyst-smoke-400/20'>
+                            <Star
+                              size={14}
+                              className={`${
+                                review.tags?.toLowerCase() === 'recommended'
+                                  ? 'stroke-blue-800 dark:stroke-blue-400'
+                                  : review.tags?.toLowerCase() ===
+                                    'not recommended'
+                                  ? 'stroke-rose-800 dark:stroke-rose-400'
+                                  : 'stroke-gray-800 dark:stroke-gray-400'
+                              }`}
+                            />
+                            <p
+                              className={`${
+                                review.tags?.toLowerCase() === 'recommended'
+                                  ? 'text-blue-800 dark:text-blue-400'
+                                  : review.tags?.toLowerCase() ===
+                                    'not recommended'
+                                  ? 'text-rose-800 dark:text-rose-400'
+                                  : 'text-gray-800 dark:text-gray-400'
+                              }`}
                             >
-                              <Star
-                                size={14}
-                                className={`${
-                                  review.tags?.toLowerCase() === 'recommended'
-                                    ? 'stroke-blue-800 dark:stroke-blue-400'
-                                    : review.tags?.toLowerCase() === 'not recommended'
-                                    ? 'stroke-rose-800 dark:stroke-rose-400'
-                                    : 'stroke-gray-800 dark:stroke-gray-400'
-                                }`}
-                              />
-                              <p
-                                className={`${
-                                  review.tags?.toLowerCase() === 'recommended'
-                                    ? 'text-blue-800 dark:text-blue-400'
-                                    : review.tags?.toLowerCase() === 'not recommended'
-                                    ? 'text-rose-800 dark:text-rose-400'
-                                    : 'text-gray-800 dark:text-gray-400'
-                                }`}
-                              >
-                                {review.tags}
-                              </p>
-                            </div>
+                              {review.tags}
+                            </p>
+                          </div>
                         </div>
                         <div className='flex flex-col gap-y-2 w-full py-3'>
-                          <div className='peer'>
+                          <div className='mb-4 rounded-xl box-colors shadow-sm border subtle-border-colors transition-all duration-300'>
                             <input
                               type='checkbox'
-                              className='hidden'
-                              name={`review-${review.id}`}
-                              id={`review-${review.id}`}
+                              id={`accordion-${review.id}`}
+                              className='peer/accordion hidden'
                             />
-                          </div>
-                          <p className='w-full whitespace-pre-wrap max-lines-4 cutoff-text'>
-                            {review.review}
-                          </p>
 
-                          <div className='w-[97%] flex flex-row gap-x-2 items-center justify-between'>
-                            {/* <div className='flex flex-row flex-wrap space-x-1 items-center'>
-                              {renderReactions(review.reactions)}
-                              <p>{review.reactions.overall}</p>
-                            </div> */}
                             <label
-                              htmlFor={`review-${review.id}`}
-                              className="text-xs capitalize hover:text-amethyst-smoke-800 dark:hover:text-amethyst-smoke-400 hover:cursor-pointer duration-300
-                                                              before:content-['see_more'] peer-has-checked:before:content-['see_less']"
-                            ></label>
-                          </div>
+                              htmlFor={`accordion-${review.id}`}
+                              className='block w-full cursor-pointer outline-none peer-checked/accordion:[&_svg]:rotate-180'
+                            >
+                              <div className='flex items-center justify-between rounded-lg p-4 transition-colors hover:bg-amethyst-smoke-300/40 dark:hover:bg-dark-amethyst-smoke-300/75'>
+                                <p
+                                  id={`reviewSummary-${review.id}`}
+                                  className='text-[1.5em] font-semibold leading-snug'
+                                  dangerouslySetInnerHTML={{
+                                    __html: review.summary
+                                  }}
+                                />
 
+                                <svg
+                                  className='ml-4 h-5 w-5 shrink-0 text-amethyst-smoke-950/50 dark:text-amethyst-smoke-500/50 transition-transform duration-300'
+                                  fill='none'
+                                  viewBox='0 0 24 24'
+                                  stroke='currentColor'
+                                >
+                                  <path
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    strokeWidth={2}
+                                    d='M19 9l-7 7-7-7'
+                                  />
+                                </svg>
+                              </div>
+                            </label>
+
+                            <div className='grid grid-rows-[0fr] opacity-0 transition-all duration-500 ease-in-out peer-checked/accordion:grid-rows-[1fr] peer-checked/accordion:opacity-100'>
+                              <div className='overflow-hidden'>
+                                <div className='py-3 px-3 flex flex-col items-end gap-0.5'>
+                                  <input
+                                    type='checkbox'
+                                    className='peer/text hidden'
+                                    name={`review-${review.id}`}
+                                    id={`review-${review.id}`}
+                                  />
+
+                                  <div
+                                    id={`reviewBody-${review.id}`}
+                                    dangerouslySetInnerHTML={{
+                                      __html: review.review
+                                    }}
+                                    className='w-full text-[1.15em] whitespace-pre-wrap transition-all duration-300 line-clamp-10 peer-checked/text:line-clamp-none'
+                                  />
+
+                                  <label
+                                    htmlFor={`review-${review.id}`}
+                                    className="w-fit cursor-pointer rounded-xl border subtle-border-colors px-2.5 py-1 text-[1.1em] font-medium transition-all ease-out duration-200 hover:scale-105 hover:bg-amethyst-smoke-300/40 dark:hover:bg-dark-amethyst-smoke-300/75 before:content-['See_more'] peer-checked/text:before:content-['See_less']"
+                                  ></label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -143,44 +143,7 @@
     height: 100vh;
     overflow-y: hidden;
   }
-
-  .max-lines-1 {
-    --max-lines: 1;
-  }
-
-  .max-lines-2 {
-    --max-lines: 2;
-  }
-
-  .max-lines-3 {
-    --max-lines: 3;
-  }
-
-  .max-lines-4 {
-    --max-lines: 4;
-  }
-
-  .max-lines-5 {
-    --max-lines: 5;
-  }
-  .max-lines-6 {
-    --max-lines: 6;
-  }
-
-  .peer:has(:not(:checked))~.cutoff-text {
-    display: -webkit-box;
-    -webkit-line-clamp: var(--max-lines);
-    -webkit-box-orient: vertical;
-    overflow-y: hidden;
-  }
-
-  .cutoff-text-abs {
-    display: -webkit-box;
-    -webkit-line-clamp: var(--max-lines);
-    -webkit-box-orient: vertical;
-    overflow-y: hidden;
-  }
-
+  
   .box-colors-brighter {
     @apply bg-amethyst-smoke-200/75 dark:bg-dark-amethyst-smoke-300/75
   }

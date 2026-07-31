@@ -118,7 +118,7 @@ export default function UserCustomLists({ data }) {
                         )}
                       </div>
                     </div>
-                    {list?.description && <p className="text-[0.8em] max-lines-1 cutoff-text-abs text-text-light/70 dark:text-text-dark/70">{list?.description}</p>}
+                    {list?.description && <p className="text-[0.8em] line-clamp-1 text-text-light/70 dark:text-text-dark/70">{list?.description}</p>}
                     <p className="text-xs text-text-light/80 dark:text-text-dark/80">
                       {list?.listItem_id?.length || 0} item{list?.listItem_id?.length !== 1 ? "s" : ""}
                     </p>

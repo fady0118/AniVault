@@ -43,10 +43,6 @@ export default function AppwriteReviewCard ({ review }) {
   useEffect(() => {
     if (!review) return
     fetchReviewerAvatar()
-    if (review?.review_body) {
-      document.getElementById(`reviewBodyText-${review?.$id}`).innerHTML =
-        marked.parse(review?.review_body)
-    }
   }, [review])
 
   return (
@@ -138,9 +134,10 @@ export default function AppwriteReviewCard ({ review }) {
           <p
             id={`reviewBodyText-${review?.$id}`}
             className='whitespace-pre-wrap rounded-lg px-3 py-2.5 text-[1.25em] leading-6 bg-amethyst-smoke-300/20 text-dark-amethyst-smoke-600 dark:bg-amethyst-smoke-950/20 dark:text-amethyst-smoke-300'
-          >
-            {review?.review_body || 'No review content provided.'}
-          </p>
+            dangerouslySetInnerHTML={{
+              __html: review?.review_body || 'No review content provided.'
+            }}
+          />
         </div>
       </div>
     </div>

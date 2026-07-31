@@ -1,75 +1,100 @@
-import { createContext, useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { Outlet } from "react-router";
-import NavBar from "./components/Navbar/NavBar";
-import { getCurrentTheme, themeToggler } from "./utility/utils";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { setSFWValue } from "./utility/jikanApi";
-import AuthProvider from "./Contexts/AuthContext";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState
+} from 'react'
+import { Outlet } from 'react-router'
+import NavBar from './components/Navbar/NavBar'
+import { getCurrentTheme, themeToggler } from './utility/utils'
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+import { setSFWValue } from './utility/jikanApi'
+import AuthProvider from './Contexts/AuthContext'
 
-export const RootContext = createContext(null);
+export const RootContext = createContext(null)
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 3,
-      retryDelay: (i) => Math.min(1000 * 2 ** i, 8000),
+      retry: 2,
+      retryDelay: (failureCount, error) => {
+        const retryAfter =
+          error?.response?.headers?.get?.('retry-after') ||
+          error?.response?.headers?.['retry-after']
+        if (retryAfter) {
+          const seconds = parseInt(retryAfter, 10)
+          if (!isNaN(seconds)) {
+            return Math.min(seconds * 1000, 60000)
+          }
+        }
+
+        const baseDelay = Math.min(1000 * 2 ** failureCount, 8000)
+        return baseDelay
+      },
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 10,
       refetchOnWindowFocus: false,
-      throwOnError: true,
-    },
-  },
-});
+      throwOnError: true
+    }
+  }
+})
 
-function App() {
-  const [theme, setTheme] = useState(getCurrentTheme());
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [SFW, setSFW] = useState(JSON.parse(localStorage.getItem("SFW")) ?? true);
+function App () {
+  const [theme, setTheme] = useState(getCurrentTheme())
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+  const [SFW, setSFW] = useState(
+    JSON.parse(localStorage.getItem('SFW')) ?? true
+  )
 
-  const themeSelect = useCallback((themeValue) => {
+  const themeSelect = useCallback(themeValue => {
     // update theme value in localStorage
     switch (themeValue) {
-      case "light":
-        localStorage.setItem("theme", "light");
-        break;
-      case "dark":
-        localStorage.setItem("theme", "dark");
-        break;
+      case 'light':
+        localStorage.setItem('theme', 'light')
+        break
+      case 'dark':
+        localStorage.setItem('theme', 'dark')
+        break
       default:
-        localStorage.removeItem("theme");
-        break;
+        localStorage.removeItem('theme')
+        break
     }
     // render new theme
-    themeToggler();
-  }, []);
+    themeToggler()
+  }, [])
 
   useEffect(() => {
-    themeToggler();
-    window.addEventListener("resize", () => {
-      setWindowWidth(window.innerWidth);
-    });
+    themeToggler()
+    window.addEventListener('resize', () => {
+      setWindowWidth(window.innerWidth)
+    })
     return () =>
-      window.removeEventListener("resize", () => {
-        setWindowWidth(window.innerWidth);
-      });
-  }, []);
+      window.removeEventListener('resize', () => {
+        setWindowWidth(window.innerWidth)
+      })
+  }, [])
 
   useEffect(() => {
     // update SFW in localStorage
-    localStorage.setItem("SFW", JSON.stringify(SFW));
-  }, [SFW]);
+    localStorage.setItem('SFW', JSON.stringify(SFW))
+  }, [SFW])
 
   useLayoutEffect(() => {
     // update sfw value in jikanFetch
-    setSFWValue(SFW);
-  }, [SFW]);
+    setSFWValue(SFW)
+  }, [SFW])
 
   return (
     <RootContext value={{ windowWidth, SFW, setSFW }}>
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
-          <div className="font-inter">
-            <NavBar themeSelect={themeSelect} theme={theme} setTheme={setTheme} />
+          <div className='font-inter'>
+            <NavBar
+              themeSelect={themeSelect}
+              theme={theme}
+              setTheme={setTheme}
+            />
             <div>
               <Outlet />
             </div>
@@ -77,7 +102,7 @@ function App() {
         </QueryClientProvider>
       </AuthProvider>
     </RootContext>
-  );
+  )
 }
 
-export default App;
+export default App

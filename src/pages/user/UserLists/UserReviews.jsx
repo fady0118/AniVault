@@ -1,11 +1,11 @@
 import { Star } from 'lucide-react'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { RootContext } from '../../../App'
 import UserReviewDeleteModal from '../../../components/userItemModal/UserReviewDeleteModal'
 import UserReviewEditModal from '../../../components/userItemModal/UserReviewEditModal'
 import { marked } from 'marked'
 import { Link } from 'react-router'
-import { dateFormatter } from '../../../utility/utils'
+import { dateFormatter, domPurifyParseMarkDown } from '../../../utility/utils'
 
 const classes = {
   tag_classes: {
@@ -111,12 +111,9 @@ function ReviewCard ({
   }
 
   // parse markdown bio
-  useEffect(() => {
-    if (!review) return
-    if (review?.review_body) {
-      document.getElementById(`reviewBodyText-${review?.$id}`).innerHTML =
-        marked.parse(review?.review_body)
-    }
+  const reviewBody_html = useMemo(() => {
+    if (!review?.review_body) return
+    return domPurifyParseMarkDown(review?.review_body)
   }, [review])
 
   return (
@@ -222,20 +219,22 @@ function ReviewCard ({
           {windowWidth >= 640 && (
             <p
               id={`reviewBodyText-${review?.$id}`}
+              dangerouslySetInnerHTML={{
+                __html: reviewBody_html || 'No review content provided.'
+              }}
               className='mt-3 grow whitespace-pre-wrap rounded-lg px-3 py-2.5 text-sm leading-6 bg-amethyst-smoke-500/15 text-dark-amethyst-smoke-600 dark:bg-amethyst-smoke-950/15 dark:text-amethyst-smoke-300'
-            >
-              {review?.review_body || 'No review content provided.'}
-            </p>
+            />
           )}
         </div>
       </div>
       {windowWidth < 640 && (
         <p
           id={`reviewBodyText-${review?.$id}`}
+          dangerouslySetInnerHTML={{
+            __html: reviewBody_html || 'No review content provided.'
+          }}
           className='mt-3 grow whitespace-pre-wrap rounded-lg px-3 py-2.5 text-sm leading-6 bg-amethyst-smoke-500/15 text-dark-amethyst-smoke-600 dark:bg-amethyst-smoke-950/15 dark:text-amethyst-smoke-300'
-        >
-          {review?.review_body || 'No review content provided.'}
-        </p>
+        />
       )}
     </div>
   )

@@ -258,12 +258,12 @@ export default function ProducerPage () {
 
                           <Link
                             to={`/anime/${anime.id}`}
-                            className='pointer-events-auto font-semibold text-[0.95em] leading-snug text-white hover:text-amethyst-smoke-200 transition-colors cutoff-text-abs max-lines-2'
+                            className='pointer-events-auto font-semibold text-[0.95em] leading-snug text-white hover:text-amethyst-smoke-200 transition-colors line-clamp-2'
                           >
                             {anime.title_english || anime.title}
                           </Link>
 
-                          <p className='text-[0.75em] font-normal text-white/70 max-lines-1'>
+                          <p className='text-[0.75em] font-normal text-white/70 line-clamp-1'>
                             {[
                               anime.type,
                               formatSeason(anime.season, anime.seasonYear)
@@ -279,12 +279,12 @@ export default function ProducerPage () {
                         <div className='flex flex-col items-center text-center gap-y-0.5 px-2 py-2 border-b subtle-border-colors'>
                           <Link
                             to={`/anime/${anime.id}`}
-                            className='font-semibold text-[1em] leading-snug blue-link hover:cursor-pointer max-lines-1'
+                            className='font-semibold text-[1em] leading-snug blue-link hover:cursor-pointer line-clamp-1'
                           >
                             {anime.title_english || anime.title}
                           </Link>
                           {anime.title_japanese && (
-                            <p className='text-[0.8em] font-normal opacity-80 max-lines-1'>
+                            <p className='text-[0.8em] font-normal opacity-80 line-clamp-1'>
                               {anime.title_japanese}
                             </p>
                           )}
@@ -356,8 +356,8 @@ export default function ProducerPage () {
                             </div>
 
                             <div
-                              className='flex-1 min-w-0 h-fit text-[0.8em] font-normal leading-relaxed opacity-90 cutoff-text'
-                              style={{ '--max-lines': 4 }}
+                              className='flex-1 min-w-0 h-fit text-[0.8em] font-normal leading-relaxed opacity-90 line-clamp-4 peer-has-checked:line-clamp-none'
+                             
                             >
                               {stripDescription(anime.description) ||
                                 'No description available.'}

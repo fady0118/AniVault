@@ -7,9 +7,8 @@ import { useQueries, useQuery } from '@tanstack/react-query'
 import LoaderComponent from '../components/LoaderComponent'
 import { getCharacterData } from '../anilist/aniListFetching/characterPage/getCharacterPage'
 import { getCharacterGallery } from '../anilist/aniListFetching/characterPage/getCharacterImages'
-
 import { User, Cake, Star } from 'lucide-react'
-import { marked } from 'marked'
+import { domPurifyParseMarkDown } from '../utility/utils'
 
 export default function CharacterPage () {
   const { id } = useParams()
@@ -30,7 +29,7 @@ export default function CharacterPage () {
         first: character?.name?.first,
         last: character?.name?.last
       }
-      const showName = characterQ?.data?.character?.anime[0]?.title;
+      const showName = characterQ?.data?.character?.anime[0]?.title
       const characterPictures = await getCharacterGallery(
         characterName,
         showName
@@ -38,18 +37,11 @@ export default function CharacterPage () {
       return characterPictures || []
     },
     throwOnError: false,
-    retry: 1,
+    retry: 1
   })
 
   const { dispatch, showModal, openGallery, closeGallery, activeIndex } =
     useGallery(characterPicturesQ?.data ?? [])
-
-  useEffect(() => {
-    if (!character?.about) return
-
-    const aboutBodyElm = document.getElementById('aboutBody')
-    aboutBodyElm.innerHTML = marked.parse(character?.about)
-  }, [characterQ])
 
   useEffect(() => {
     function handleSpoilerClick (e) {
@@ -64,6 +56,12 @@ export default function CharacterPage () {
     document.addEventListener('click', handleSpoilerClick)
     return () => document.removeEventListener('click', handleSpoilerClick)
   }, [])
+
+  const characterBio_html = useMemo(() => {
+    if (!character?.about) return
+    return domPurifyParseMarkDown(character?.about)
+  }, [characterQ])
+
   return (
     <>
       {characterQ.isPending ? (
@@ -106,9 +104,11 @@ export default function CharacterPage () {
                 About
               </div>
               <div className='p-3 text-[0.65em] font-light flex flex-col space-y-2 leading-relaxed'>
-                <p id='aboutBody' className='whitespace-pre-wrap'>
-                  {character?.about || 'No biography written.'}
-                </p>
+                <div
+                  id='aboutBody'
+                  className='whitespace-pre-wrap'
+                  dangerouslySetInnerHTML={{ __html: characterBio_html }}
+                />
               </div>
             </div>
           </div>

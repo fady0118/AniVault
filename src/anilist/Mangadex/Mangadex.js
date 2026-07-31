@@ -19,13 +19,13 @@ function extractMalId (manga) {
   return /^\d+$/.test(idPart) ? idPart : null
 }
 
-function getAllTitles(manga) {
-  const attrs = manga.attributes;
-    const titles = [
-      ...Object.values(attrs.title||{}), 
-      ...(attrs.altTitles||[]).flatMap(t=>Object.values(t))
-    ];
-  return titles.map(title=>title.toLowerCase().trim())
+function getAllTitles (manga) {
+  const attrs = manga.attributes
+  const titles = [
+    ...Object.values(attrs.title || {}),
+    ...(attrs.altTitles || []).flatMap(t => Object.values(t))
+  ]
+  return titles.map(title => title.toLowerCase().trim())
 }
 
 function pickBestMatch (candidates, mangaMeta) {
@@ -57,19 +57,16 @@ async function findMangaDexId (mangaMeta) {
 }
 
 async function getMangaDexCovers (mangaDexId) {
-  console.log(`getting covers for ${mangaDexId}`)
   const url = `${MANGADEX_BASE}/cover?manga[]=${mangaDexId}&limit=100`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`MangaDex covers failed: ${res.status}`)
   const json = await res.json()
-console.log({json})
   return json.data.map(
     c => `${MANGADEX_UPLOADS}/covers/${mangaDexId}/${c.attributes.fileName}`
   )
 }
 
 export async function getGalleryForManga (mangaMeta) {
-  console.log({mangaMeta})
   try {
     const mdId = await findMangaDexId(mangaMeta)
     if (!mdId) {
