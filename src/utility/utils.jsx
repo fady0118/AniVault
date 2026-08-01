@@ -221,7 +221,7 @@ export function renderIcon (name) {
       return (
         <img
           className='h-3.5 w-3.5 object-contain'
-          alt='Hulu icon'
+          alt='Bilibili icon'
           src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/bilibili.png'
         />
       )
@@ -229,7 +229,7 @@ export function renderIcon (name) {
       return (
         <img
           className='h-3.5 w-3.5 object-contain'
-          alt='Hulu icon'
+          alt='Bilibili TV icon'
           src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/bilibili.png'
         />
       )
@@ -237,7 +237,7 @@ export function renderIcon (name) {
       return (
         <img
           className='h-3.5 w-3.5 object-contain'
-          alt='Hulu icon'
+          alt='Hoopla icon'
           src='https://www.richlandlibrary.org/borrow/ebooks-digital-content/hoopla-icon.png/@@images/image.png'
         />
       )
@@ -245,7 +245,7 @@ export function renderIcon (name) {
       return (
         <img
           className='h-3.5 w-3.5 object-contain'
-          alt='Hulu icon'
+          alt='Amazon Prime icon'
           src='https://cdn.jsdelivr.net/gh/selfhst/icons/png/amazon-prime-video.png'
         />
       )
@@ -261,10 +261,90 @@ export function renderIcon (name) {
       return (
         <img
           className='h-3.5 w-3.5 object-contain'
-          alt='Hulu icon'
+          alt='instagram icon'
           src='https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/instagram.png'
         />
       )
+       case 'MANGA Plus':
+    return (
+      <img
+        className="h-3.5 w-3.5 object-contain"
+        alt="MANGA Plus icon"
+        src="https://www.google.com/s2/favicons?domain=mangaplus.shueisha.co.jp&sz=32"
+      />
+    );
+
+  case 'Shonen Jump Plus':
+    return (
+      <img
+        className="h-3.5 w-3.5 object-contain"
+        alt="Shonen Jump Plus icon"
+        src="https://www.google.com/s2/favicons?domain=shonenjumpplus.com&sz=32"
+      />
+    );
+
+  case 'VIZ':
+    return (
+      <img
+        className="h-3.5 w-3.5 object-contain"
+        alt="VIZ icon"
+        src="https://www.google.com/s2/favicons?domain=viz.com&sz=32"
+      />
+    );
+
+  case 'Official Site':
+    return (
+      <img
+        className="h-3.5 w-3.5 object-contain"
+        alt="Official Site icon"
+        src="https://www.google.com/s2/favicons?domain=shueisha.co.jp&sz=32"
+      />
+    );
+
+  case 'Naver Series':
+    return (
+      <img
+        className="h-3.5 w-3.5 object-contain"
+        alt="Naver Series icon"
+        src="https://www.google.com/s2/favicons?domain=series.naver.com&sz=32"
+      />
+    );
+
+  case 'KakaoPage':
+    return (
+      <img
+        className="h-3.5 w-3.5 object-contain"
+        alt="KakaoPage icon"
+        src="https://www.google.com/s2/favicons?domain=page.kakao.com&sz=32"
+      />
+    );
+
+  case 'Kana':
+    return (
+      <img
+        className="h-3.5 w-3.5 object-contain"
+        alt="Kana icon"
+        src="https://www.google.com/s2/favicons?domain=kana.fr&sz=32"
+      />
+    );
+
+  case 'Carlsen Manga!':
+    return (
+      <img
+        className="h-3.5 w-3.5 object-contain"
+        alt="Carlsen Manga! icon"
+        src="https://www.google.com/s2/favicons?domain=carlsen.de&sz=32"
+      />
+    );
+
+  case 'ONO':
+    return (
+      <img
+        className="h-3.5 w-3.5 object-contain"
+        alt="ONO icon"
+        src="https://www.google.com/s2/favicons?domain=ono.live&sz=32"
+      />
+    );
     default:
       return <LinkIcon size={12} />
   }
