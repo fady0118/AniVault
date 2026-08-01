@@ -585,7 +585,7 @@ export default function AnimePage () {
                     {animeQ?.data?.anime?.flattenedRelations?.length ? (
                       <div
                         id='relations'
-                        className='flex justify-center w-full h-fit text-xs lg:text-sm order-5'
+                        className='flex justify-center w-full h-fit text-[0.7em] lg:text-[0.8em] order-5'
                       >
                         <div className='rounded-lg box-colors w-full '>
                           <div className='bottom-border pt-0.5 px-3 font-semibold text-md/relaxed capitalize'>
@@ -596,7 +596,7 @@ export default function AnimePage () {
                             {animeQ?.data?.anime?.flattenedRelations
                               ?.slice(0, 3)
                               .map((entry, i) => (
-                                <div key={i} className='flex flex-row w-full'>
+                                <div key={i} className='flex flex-row w-full text-[1.1em]'>
                                   <Link
                                     className='w-1/4 max-w-20 h-full aspect-2/3 '
                                     to={`/${entry.type}/${entry.id}`}
@@ -644,7 +644,7 @@ export default function AnimePage () {
                                   .map((entry, i) => (
                                     <div
                                       key={i + 3}
-                                      className='flex flex-row w-full'
+                                      className='flex flex-row w-full text-[1.1em]'
                                     >
                                       <Link
                                         className='w-1/4 max-w-20 h-full aspect-2/3 '

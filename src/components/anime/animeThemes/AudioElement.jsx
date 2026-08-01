@@ -121,7 +121,7 @@ export default function AudioElement ({ src }) {
               />
             )}
           </button>
-          <div className='min-w-10 grow h-full px-1 lg:px-2'>
+          <div className='min-w-12.5 grow h-full px-1 lg:px-2'>
             <div className='group relative flex items-center'>
               <div
                 className={`absolute h-0.5 w-full rounded-full ${colors.trackBg}`}

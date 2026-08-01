@@ -19,7 +19,7 @@ export default function AnimeThemes ({ themes }) {
                   {themes.openings?.map((opening, i) => (
                     <div
                       key={i}
-                      className='w-full flex flex-row items-center justify-between gap-x-2 mt-1'
+                      className='w-full flex flex-row flex-wrap items-center justify-between gap-x-2 mt-1'
                     >
                       <div className='flex flex-row items-center gap-x-1'>
                         <Music4Icon className='min-w-2 w-2.5 aspect-square' />
@@ -44,7 +44,7 @@ export default function AnimeThemes ({ themes }) {
                   {themes.endings?.map((ending, i) => (
                     <div
                       key={i}
-                      className='w-full flex flex-row items-center justify-between gap-x-2 mt-1'
+                      className='w-full flex flex-row flex-wrap items-center justify-between gap-x-2 mt-1'
                     >
                       <div className='flex flex-row items-center gap-x-1'>
                         <Music4Icon className='min-w-2 w-2.5 aspect-square' />

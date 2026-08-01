@@ -1,7 +1,6 @@
 const ANIME_THEMES_QUERY = `
 query ($id: [Int!]) {
     findAnimeByExternalSite(site: ANILIST, id: $id) {
-        name
         animethemes {
             type
             animethemeentries {
