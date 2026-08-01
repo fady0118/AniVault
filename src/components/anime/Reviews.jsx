@@ -11,9 +11,11 @@ import { storage, tablesDB } from '../../appwrite'
 import { Query } from 'appwrite'
 import { useEffect, useMemo, useState } from 'react'
 import AppwriteReviewCard from './AppwriteReviewCard'
+import AllReviewsModal from './AllReviewsModal'
 
 export default function Reviews ({ data, item_id, mediaType }) {
   const [reviewsTab, setReviewTab] = useState(1)
+  const [showAllReviewsModal, setShowAllReviewsModal] = useState(false)
 
   const anivaultReviewsQ = useQuery({
     queryKey: ['anivaultReviews', item_id],
@@ -44,14 +46,14 @@ export default function Reviews ({ data, item_id, mediaType }) {
     enabled: Boolean(item_id)
   })
 
-  const appwriteReviews = Array.isArray(anivaultReviewsQ?.data?.rows)
+  const sanitizedAppwriteReviews = Array.isArray(anivaultReviewsQ?.data?.rows)
     ? anivaultReviewsQ.data.rows?.map(review => ({
         ...review,
         review_body: domPurifyParseMarkDown(review.review_body)
       }))
     : []
 
-  const hasAppwriteReviews = appwriteReviews.length > 0
+  const hasAppwriteReviews = sanitizedAppwriteReviews.length > 0
   const hasAniListReviews = data?.featured?.length > 0
 
   const sanitizedAniListReviewsData = useMemo(() => {
@@ -79,8 +81,11 @@ export default function Reviews ({ data, item_id, mediaType }) {
   return (
     <>
       {(hasAniListReviews || hasAppwriteReviews) && (
-        <div id='reviews' className='order-3 rounded-lg w-full py-1'>
-          <div class='tabs tabs-box rounded-md box-colors overflow-hidden'>
+        <div
+          id='reviews'
+          className='order-3 rounded-lg w-full py-1 text-2xs/normal sm:text-xs/normal'
+        >
+          <div class='relative tabs tabs-box rounded-md box-colors overflow-hidden'>
             <input
               type='radio'
               name='reviewTabs'
@@ -94,7 +99,7 @@ export default function Reviews ({ data, item_id, mediaType }) {
             />
 
             <div class='tab-content box-colors border-amethyst-smoke-600 dark:border-dark-amethyst-smoke-300 p-2'>
-              <div className='flex flex-col w-full text-2xs/normal sm:text-xs/normal gap-y-2 p-2'>
+              <div className='flex flex-col w-full gap-y-2 p-2'>
                 <div className='flex flex-row flex-wrap gap-y-1 justify-between bottom-border pb-2'>
                   <div className='flex flex-row items-center gap-x-1 py-1 px-3 bg-amethyst-smoke-700/30 text-2xs'>
                     <p>Avg Score</p>
@@ -155,10 +160,7 @@ export default function Reviews ({ data, item_id, mediaType }) {
                       className='h-1 w-full px-3'
                     ></div>
                   </div>
-                  <div className='flex flex-row items-center gap-x-1 text-2xs'>
-                    <ChevronRight size={12} />
-                    <p>All reviews ({data?.stats.all ?? 0})</p>
-                  </div>
+                  <div></div>
                 </div>
                 {sanitizedAniListReviewsData?.featured.map(review => (
                   <div key={review.id} className='bottom-border'>
@@ -220,7 +222,7 @@ export default function Reviews ({ data, item_id, mediaType }) {
                               htmlFor={`accordion-${review.id}`}
                               className='block w-full cursor-pointer outline-none peer-checked/accordion:[&_svg]:rotate-180'
                             >
-                              <div className='flex items-center justify-between rounded-lg p-4 transition-colors hover:bg-amethyst-smoke-300/40 dark:hover:bg-dark-amethyst-smoke-300/75'>
+                              <div className='flex items-center justify-between rounded-lg p-4 transition-colors hover:bg-amethyst-smoke-300/40 dark:hover:bg-dark-amethyst-smoke-300/75 duration-200'>
                                 <p
                                   id={`reviewSummary-${review.id}`}
                                   className='text-[1.5em] font-semibold leading-snug'
@@ -292,13 +294,13 @@ export default function Reviews ({ data, item_id, mediaType }) {
             />
 
             <div class='tab-content box-colors border-amethyst-smoke-600 dark:border-dark-amethyst-smoke-300 p-2'>
-              <div className='flex flex-col w-full text-2xs/normal sm:text-xs/normal gap-y-2 py-2 px-3'>
+              <div className='flex flex-col w-full gap-y-2 py-2 px-3'>
                 {anivaultReviewsQ.isLoading ? (
                   <div className='flex min-h-36 items-center justify-center rounded-xl border border-amethyst-smoke-200/70 bg-white/70 px-6 py-8 text-center text-sm text-amethyst-smoke-700 shadow-sm dark:border-amethyst-smoke-800/70 dark:bg-dark-amethyst-smoke-950/70 dark:text-amethyst-smoke-300'>
                     <p>Loading AniVault reviews...</p>
                   </div>
                 ) : hasAppwriteReviews ? (
-                  appwriteReviews.map(review => (
+                  sanitizedAppwriteReviews.map(review => (
                     <AppwriteReviewCard key={review?.$id} review={review} />
                   ))
                 ) : (
@@ -313,8 +315,29 @@ export default function Reviews ({ data, item_id, mediaType }) {
                 )}
               </div>
             </div>
+            <button
+  type="button"
+  className="absolute top-2 right-2 flex items-center gap-1.5 px-3 py-1.5  text-[1em] font-medium border border-dark-amethyst-smoke-50/30 dark:border-amethyst-smoke-50/10 rounded-lg shadow-sm cursor-pointer transition-all duration-200 box-colors hover:bg-amethyst-smoke-300/70 dark:hover:bg-dark-amethyst-smoke-300/95 hover:shadow-md active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+  onClick={() => setShowAllReviewsModal(true)}
+>
+  All reviews (
+  {(sanitizedAniListReviewsData?.stats.all || 0) +
+    (sanitizedAppwriteReviews?.length || 0)}
+  )
+</button>
+
+
           </div>
         </div>
+      )}
+      {showAllReviewsModal && (
+        <AllReviewsModal
+          sanitizedReviewsData={{
+            aniList: sanitizedAniListReviewsData,
+            anivault: sanitizedAppwriteReviews
+          }}
+          setShowAllReviewsModal={setShowAllReviewsModal}
+        />
       )}
     </>
   )

@@ -133,7 +133,7 @@ export default function AppwriteReviewCard ({ review }) {
 
           <p
             id={`reviewBodyText-${review?.$id}`}
-            className='whitespace-pre-wrap rounded-lg px-3 py-2.5 text-[1.25em] leading-6 bg-amethyst-smoke-300/20 text-dark-amethyst-smoke-600 dark:bg-amethyst-smoke-950/20 dark:text-amethyst-smoke-300'
+            className='whitespace-pre-wrap rounded-lg px-3 py-2.5 text-[1.25em] leading-6 bg-amethyst-smoke-300/20 text-dark-amethyst-smoke-600 dark:bg-amethyst-smoke-950/20 dark:text-amethyst-smoke-300 shadow-sm'
             dangerouslySetInnerHTML={{
               __html: review?.review_body || 'No review content provided.'
             }}

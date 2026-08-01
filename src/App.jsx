@@ -95,7 +95,7 @@ function App () {
               theme={theme}
               setTheme={setTheme}
             />
-            <div>
+            <div id="outlet-container">
               <Outlet />
             </div>
           </div>

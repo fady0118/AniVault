@@ -43,6 +43,7 @@ import {
 } from '../../anilist/aniListFetching/getAnimeDetailPage'
 import { AniListFailedQueryComponent } from '../../components/anime/AniListFailedQueryComponent'
 import AnimeThemes from '../../components/anime/animeThemes/AnimeThemes'
+import AllReviewsModal from '../../components/anime/AllReviewsModal'
 
 export default function AnimePage () {
   let { id } = useParams()
@@ -93,7 +94,6 @@ export default function AnimePage () {
   const { showVideoModal, videoRef, playVideo, closeVideo } = useVideoModal()
 
   const type_reverse = Object.fromEntries(Object.entries(type_status_map.type.ANIME).map(([key,value])=>[value, key]))
-
   return (
     <>
       {animeQ.isPending ? (

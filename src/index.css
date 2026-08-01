@@ -509,5 +509,13 @@
 .al-spoiler.revealed a {
   @apply pointer-events-auto text-indigo-700 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300
 }
+
+.your-fixed-div {
+  position: fixed;
+  /* Bypasses parent boundaries by calculating coordinates from the viewport edge */
+  top: anchor(view-top, 0px); 
+  left: anchor(view-left, 0px);
+}
+
 }
 

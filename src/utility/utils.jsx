@@ -430,6 +430,11 @@ export function domPurifyParseMarkDown (text) {
   const clean = DOMPurify.sanitize(dirtyString, { ADD_ATTR: ['target'] })
   return clean
 }
+function trimUnbalancedParen(url) {
+  const opens = (url.match(/\(/g) || []).length
+  const closes = (url.match(/\)/g) || []).length
+  return closes > opens ? url.slice(0, -1) : url
+}
 
 export function adaptText (raw) {
   if (!raw) return ''
@@ -438,12 +443,12 @@ export function adaptText (raw) {
     /img(\d+)\((https?:\/\/\S+?)\)(?=\s|$)|(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*))/gi
 
   let autoIndex = 0 // Fallback index for bare URLs without a number
-
+  raw = raw.replace(/~{3,}/g, '')
   const htmlString = raw.replace(
     combinedRegex,
     (match, imgNum, imgUrl, bareUrl) => {
       // If imgNum and imgUrl are defined, Branch 1 matched. Otherwise, Branch 2 matched.
-      const url = imgUrl || bareUrl
+      const url = trimUnbalancedParen(imgUrl || bareUrl)
 
       // Use the explicit number from Img123() if it exists, otherwise increment the fallback index
       const index = imgNum !== undefined ? imgNum : autoIndex++
@@ -457,6 +462,7 @@ export function adaptText (raw) {
       return `<a href="${url}" class="indigo-link" target="_blank" rel="noopener noreferrer" data-img-index="${index}">${url}</a>`
     }
   )
+
   return (
     htmlString
       // line breaks -> actual newlines
