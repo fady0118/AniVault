@@ -11,6 +11,7 @@ import { getCurrentTheme, themeToggler } from './utility/utils'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { setSFWValue } from './utility/jikanApi'
 import AuthProvider from './Contexts/AuthContext'
+import Footer from './components/Footer'
 
 export const RootContext = createContext(null)
 
@@ -95,9 +96,10 @@ function App () {
               theme={theme}
               setTheme={setTheme}
             />
-            <div id="outlet-container">
+            <div id="outlet-container" className='min-h-screen'>
               <Outlet />
             </div>
+            <Footer/>
           </div>
         </QueryClientProvider>
       </AuthProvider>

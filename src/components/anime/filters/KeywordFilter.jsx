@@ -2,7 +2,11 @@ import { Search } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 
-export default function KeywordFilter ({ registerCollector, view = null }) {
+export default function KeywordFilter ({
+  registerCollector,
+  view = null,
+  resetPage = false
+}) {
   const [searchParams, setSearchParams] = useSearchParams()
   // keyword local state
   const [localState, setLocalState] = useState(
@@ -27,10 +31,19 @@ export default function KeywordFilter ({ registerCollector, view = null }) {
 
   // function updates only keyword in searchParams
   function handleKeywordFilter () {
-    setSearchParams(prev => ({
-      ...Object.fromEntries(prev),
-      q: localRef.current
-    }))
+    setSearchParams(prev => {
+      const newSearchParam = resetPage
+        ? {
+            ...Object.fromEntries(prev),
+            q: localRef.current,
+            page: 1
+          }
+        : {
+            ...Object.fromEntries(prev),
+            q: localRef.current
+          }
+      return newSearchParam
+    })
   }
 
   return (
@@ -41,7 +54,9 @@ export default function KeywordFilter ({ registerCollector, view = null }) {
       }`}
     >
       <input
-        className={`outline-none font-medium text-[1em] ${!view ? 'w-4/5' : 'w-full'}`}
+        className={`outline-none font-medium text-[1em] ${
+          !view ? 'w-4/5' : 'w-full'
+        }`}
         value={localState}
         onChange={e => {
           setLocalState(e.target.value)

@@ -1,14 +1,14 @@
 import { useEffect, useReducer, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import Pictures from '../components/character/Pictures'
-import Gallery from '../components/character/Gallery'
-import useGallery from '../utility/useGallery'
+import Pictures from '../../components/character/Pictures'
+import Gallery from '../../components/character/Gallery'
+import useGallery from '../../utility/useGallery'
 import { useQueries, useQuery } from '@tanstack/react-query'
-import LoaderComponent from '../components/LoaderComponent'
-import { getCharacterData } from '../anilist/aniListFetching/characterPage/getCharacterPage'
-import { getCharacterGallery } from '../anilist/aniListFetching/characterPage/getCharacterImages'
+import LoaderComponent from '../../components/LoaderComponent'
+import { getCharacterData } from '../../anilist/aniListFetching/characterPage/getCharacterPage'
+import { getCharacterGallery } from '../../anilist/aniListFetching/characterPage/getCharacterImages'
 import { User, Cake, Star } from 'lucide-react'
-import { domPurifyParseMarkDown } from '../utility/utils'
+import { domPurifyParseMarkDown } from '../../utility/utils'
 
 export default function CharacterPage () {
   const { id } = useParams()

@@ -87,10 +87,13 @@ export default function Schedual () {
     scrollIntoView(currentIndex)
   }, [currentIndex])
 
+  const moreRef = useRef(null)
+  // moreRef.current.scrollHeight
+
   return (
-    <div className='w-full box-colors-brighter backdrop-blur-md rounded-lg shadow-xl border border-white/20 dark:border-amethyst-smoke-700/30 py-3 sm:py-4 transition-all'>
+    <div className='w-full box-colors-brighter backdrop-blur-md rounded-lg shadow-xl border border-white/20 dark:border-amethyst-smoke-700/30 transition-all'>
       {/* Header */}
-      <div className='flex items-center justify-between text-sm gap-2 px-3 sm:px-4 mb-3'>
+      <div className='flex items-center justify-between text-sm gap-2 px-3 sm:px-4 py-3'>
         <div className='flex items-center gap-2 text-[1.1em]'>
           <CalendarDays
             size={20}
@@ -198,11 +201,12 @@ export default function Schedual () {
             {filtered.length > 10 && (
               <>
                 <div
-                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                    showMore ? 'max-h-500' : 'max-h-0'
-                  }`}
+                  className='overflow-hidden transition-all duration-600 ease-in-out'
+                  style={{
+                    maxHeight: showMore ? moreRef.current.scrollHeight : 0
+                  }}
                 >
-                  <div className='space-y-1.5 pt-1.5'>
+                  <div ref={moreRef} className='space-y-1.5 pt-1.5'>
                     {filtered.slice(10).map(item => (
                       <Link
                         to={`/anime/${item.id}`}
@@ -236,7 +240,7 @@ export default function Schedual () {
                 </div>
 
                 {/* Toggle button */}
-                <button
+                {/* <button
                   onClick={() => setShowMore(!showMore)}
                   className='flex items-center justify-end gap-1 w-full mt-1 text-xs text-amethyst-smoke-800 dark:text-amethyst-smoke-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors select-none cursor-pointer'
                 >
@@ -251,7 +255,22 @@ export default function Schedual () {
                       showMore ? 'rotate-180' : ''
                     }`}
                   />
-                </button>
+                </button> */}
+
+                <button
+                onClick={() => setShowMore(!showMore)}
+                className='w-full flex flex-row items-center justify-center py-2 rounded-md text-[0.85em] font-medium  text-blue-700 dark:text-blue-300  hover:bg-amethyst-smoke-500/10 dark:hover:bg-amethyst-smoke-400/10 duration-200'
+              >
+                <span>
+                  {showMore ? 'Show less' : `Show more (${filtered.length - 10})`}
+                </span>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 ${
+                    showMore ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
               </>
             )}
           </div>

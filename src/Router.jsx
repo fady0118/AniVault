@@ -2,7 +2,6 @@ import { createBrowserRouter, useRouteError } from 'react-router'
 import App from './App'
 import HomePage from './pages/HomePage'
 import AnimePage from './pages/Anime/AnimePage'
-import CharacterPage from './pages/CharacterPage'
 import PeoplePage from './pages/PeoplePage'
 import MangaPage from './pages/Manga/MangaPage'
 import MangaRootPage from './pages/Manga/MangaRootPage'
@@ -22,6 +21,8 @@ import OAuthRedirect from './pages/OAuthRedirect'
 import EmailVerificationRedirect from './pages/user/Redirects/EmailVerificationRedirect'
 import ProfileVerification from './pages/user/userProfile/ProfileVerification'
 import PasswordResetRedirect from './pages/user/Redirects/PasswordResetRedirect'
+import CharacterRootPage from './pages/character/CharacterRootPage'
+import CharacterPage from './pages/character/CharacterPage'
 
 export const router = createBrowserRouter([
   {
@@ -52,7 +53,13 @@ export const router = createBrowserRouter([
           { path: ':id/:slug?', Component: MangaPage }
         ]
       },
-      { path: 'character/:id/:slug?', Component: CharacterPage },
+      {
+        path: 'character',
+        children: [
+          { index: true, Component: CharacterRootPage },
+          { path: ':id/:slug?', Component: CharacterPage }
+        ]
+      },
       { path: 'people/:id', Component: PeoplePage },
       {
         path: 'producer',
@@ -111,7 +118,7 @@ export const router = createBrowserRouter([
         path: 'passwordReset',
         Component: PasswordResetRedirect
       }
-    ]
+    ],
   }
 ])
 
